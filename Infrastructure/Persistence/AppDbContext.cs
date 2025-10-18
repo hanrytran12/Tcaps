@@ -9,16 +9,16 @@ namespace Infrastructure.Persistence
         {
         }
 
-        DbSet<Batch> Batches { get; set; }
-        DbSet<ComponentDefect> ComponentDefects { get; set; }
-        DbSet<Income> Incomes { get; set; }
-        DbSet<Inventory> Inventories { get; set; }
-        DbSet<Material> Materials { get; set; }
-        DbSet<MaterialRequest> MaterialRequests { get; set; }
-        DbSet<Notification> Notifications { get; set; }
-        DbSet<Product> Products { get; set; }
-        DbSet<User> Users { get; set; }
-        DbSet<Workshop> Workshop { get; set; }
+        public DbSet<Batch> Batches { get; set; }
+        public DbSet<ComponentDefect> ComponentDefects { get; set; }
+        public DbSet<Income> Incomes { get; set; }
+        public DbSet<Inventory> Inventories { get; set; }
+        public DbSet<Material> Materials { get; set; }
+        public DbSet<MaterialRequest> MaterialRequests { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
+        public DbSet<Product> Products { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Workshop> Workshop { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
