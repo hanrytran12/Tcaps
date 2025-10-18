@@ -1,4 +1,11 @@
+using API.Middlewares;
+using Application.Commands.AddProduct;
+using Application.Commands.UpdateProduct;
+using Application.Queries.GetAllProduct;
+using Domain.Interfaces;
 using Infrastructure.Persistence;
+using Infrastructure.Repositories;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +16,18 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly,
+                                                                      typeof(AddProductCommand).Assembly,
+                                                                      typeof(GetAllProductQuery).Assembly,
+                                                                      typeof(UpdateProductCommand).Assembly));
+
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -21,6 +40,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseExceptionHandler();
 
 app.MapControllers();
 
