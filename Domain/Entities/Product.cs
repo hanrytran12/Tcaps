@@ -8,6 +8,7 @@ namespace Domain.Entities
         public string Name { get; private set; } = string.Empty;
         public string Image { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
+        public bool IsDeleted { get; private set; }
 
         public Product(Guid id, string code, string name, string image, string description)
             : base(id)
@@ -19,5 +20,17 @@ namespace Domain.Entities
         }
 
         private Product() : base(Guid.NewGuid()) { }
+
+        public void UpdateDetails(string? name, string? image, string? description)
+        {
+            this.Name = !string.IsNullOrWhiteSpace(name) ? name : this.Name;
+            this.Description = !string.IsNullOrWhiteSpace(description) ? description : this.Description;
+            this.Image = !string.IsNullOrWhiteSpace(image) ? image : this.Image;
+        }
+
+        public void MarkAsDeleted()
+        {
+            this.IsDeleted = true;
+        }
     }
 }

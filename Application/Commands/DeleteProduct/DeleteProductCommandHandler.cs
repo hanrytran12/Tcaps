@@ -1,0 +1,33 @@
+﻿using Application.Common;
+using Domain.Interfaces;
+using MediatR;
+
+namespace Application.Commands.DeleteProduct
+{
+    public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, Result>
+    {
+        private readonly IProductRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public DeleteProductCommandHandler(IProductRepository repository, IUnitOfWork unitOfWork)
+        {
+            _repository = repository;
+            _unitOfWork = unitOfWork;
+        }
+
+        public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+        {
+            var product = await _repository.GetByIdAsync(request.Id);
+
+            if (product is null)
+            {
+                return Result.Failure($"Không tìm thấy Product với Id: {request.Id}.");
+            }
+
+            product.MarkAsDeleted();
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Success();
+        }
+    }
+}
