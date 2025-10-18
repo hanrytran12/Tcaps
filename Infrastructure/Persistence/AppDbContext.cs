@@ -19,7 +19,7 @@ namespace Infrastructure.Persistence
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Workshop> Workshop { get; set; }
-
+        public DbSet<Assignment> Assignments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
