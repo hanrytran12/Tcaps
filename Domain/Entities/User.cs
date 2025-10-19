@@ -42,5 +42,29 @@ namespace Domain.Entities
         {
             this.Status = "Disactive";
         }
+
+        public void UpdateProfile(string fullName, string email, string phone)
+        {
+            if (string.IsNullOrEmpty(fullName))
+                throw new ArgumentException("FullName can not be empty");
+
+            if (string.IsNullOrEmpty(email))
+                throw new ArgumentException("Email can not be empty");
+
+            if (string.IsNullOrEmpty(phone))
+                throw new ArgumentException("Phone can not be empty");
+
+            FullName = fullName;
+            Email = email;
+            Phone = phone;
+        }
+
+        public void ChangePassword(string currentPasswordHash, string newPasswordHash)
+        {
+            if (PasswordHash != currentPasswordHash)
+                throw new InvalidOperationException("Mật khẩu hiện tại không chính xác.");
+
+            PasswordHash = newPasswordHash;
+        }
     }
 }
