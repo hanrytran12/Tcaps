@@ -1,7 +1,10 @@
 using API.Middlewares;
 using Application.Commands.AddProduct;
+using Application.Commands.AddUser;
+using Application.Commands.DeleteUser;
 using Application.Commands.UpdateProduct;
 using Application.Queries.GetAllProduct;
+using Application.Queries.GetAllUser;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
@@ -21,11 +24,15 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly,
                                                                       typeof(AddProductCommand).Assembly,
                                                                       typeof(GetAllProductQuery).Assembly,
-                                                                      typeof(UpdateProductCommand).Assembly));
+                                                                      typeof(UpdateProductCommand).Assembly,
+                                                                      typeof(AddUserCommand).Assembly,
+                                                                      typeof(GetAllUserQuery).Assembly,
+                                                                      typeof(DeleteUserCommand).Assembly));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 

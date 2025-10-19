@@ -8,7 +8,7 @@ namespace Domain.Entities
         public string Role { get; private set; } = string.Empty;
         public string FullName { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
-        public string PasswordHash { get; private set; } = string.Empty;
+        public string? PasswordHash { get; private set; } = string.Empty;
         public string Phone { get; private set; } = string.Empty;
         public string Status { get; private set; } = string.Empty;
         public DateTime CreatedAt { get; private set; }
@@ -28,6 +28,20 @@ namespace Domain.Entities
         }
 
         private User() : base(Guid.NewGuid()) { }
+
+        public void UpdateDetails(string? role, string? fullName, string? email, string? passwordHash, string? phone)
+        {
+            this.Role = !string.IsNullOrEmpty(role) ? role : this.Role;
+            this.FullName = !string.IsNullOrEmpty(fullName) ? fullName : this.FullName;
+            this.Email = !string.IsNullOrEmpty(email) ? email : this.Email;
+            this.PasswordHash = !string.IsNullOrEmpty(passwordHash) ? passwordHash : this.PasswordHash;
+            this.Phone = !string.IsNullOrEmpty(phone) ? phone : this.Phone;
+        }
+
+        public void MarkAsDeleted()
+        {
+            this.Status = "Disactive";
+        }
 
         public void UpdateProfile(string fullName, string email, string phone)
         {
