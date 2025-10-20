@@ -1,14 +1,12 @@
-﻿using Application.Common;
-using MediatR;
-
-namespace Application.Commands.AddBatch
+﻿namespace Application.DTOs.Response
 {
-    public class AddBatchCommand : IRequest<Result<Guid>>
+    public class BatchListItemDTO
     {
-        public Guid ProductId { get; set; }
         public string Code { get; set; } = string.Empty;
         public decimal Quantity { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
+        public double ProgressPercentage { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }

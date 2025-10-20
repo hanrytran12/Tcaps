@@ -9,5 +9,6 @@ namespace Domain.Interfaces
         Task AddAsync(Batch batch);
         void Delete(Batch batch);
         void Update(Batch batch);
+        Task<IEnumerable<Batch>> SearchAsync(Guid productId, DateOnly TargetDate);
     }
 }
