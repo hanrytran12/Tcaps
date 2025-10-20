@@ -1,0 +1,14 @@
+﻿using Domain.Entities;
+
+namespace Domain.Interfaces
+{
+    public interface IBatchRepository
+    {
+        Task<IEnumerable<Batch>> GetAllAsync();
+        Task<Batch?> GetByIdAsync(Guid Id);
+        Task AddAsync(Batch batch);
+        void Delete(Batch batch);
+        void Update(Batch batch);
+        Task<IEnumerable<Batch>> SearchAsync(Guid productId, DateOnly TargetDate);
+    }
+}
