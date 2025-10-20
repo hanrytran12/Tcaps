@@ -11,6 +11,7 @@ namespace Domain.Entities
         public DateTime EndDate { get; private set; }
         public DateOnly CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
+        public bool isDeleted { get; private set; }
 
         private readonly List<Assignment> _assignments = new();
         public IReadOnlyCollection<Assignment> Assignments => _assignments.AsReadOnly();
@@ -37,5 +38,17 @@ namespace Domain.Entities
         }
 
         private Batch() : base(Guid.NewGuid()) { }
+
+        public void MarkAsDeleted()
+        {
+            isDeleted = true;
+        }
+
+        public void UpdateDetails(decimal quantity, DateTime startDate, DateTime endDate)
+        {
+            Quantity = quantity;
+            StartDate = startDate;
+            EndDate = endDate;
+        }
     }
 }
