@@ -1,8 +1,8 @@
-﻿using Application.Commands.AddBatch;
-using Application.Commands.DeleteBatch;
-using Application.Commands.UpdateBatch;
-using Application.Queries.GetAllBatch;
-using Application.Queries.GetDashboardStats;
+﻿using Application.Features.Batches.Commands.AddBatch;
+using Application.Features.Batches.Commands.DeleteBatch;
+using Application.Features.Batches.Commands.UpdateBatch;
+using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
