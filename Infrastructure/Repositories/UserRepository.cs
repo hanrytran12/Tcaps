@@ -22,5 +22,10 @@ namespace Infrastructure.Repositories
         {
             return await _context.Users.FindAsync(userId);
         }
+
+        public void Update(User user)
+        {
+            _context.Users.Update(user);
+        }
     }
 }

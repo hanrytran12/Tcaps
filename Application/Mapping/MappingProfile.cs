@@ -14,6 +14,7 @@ namespace Application.Mapping
         public MappingProfile()
         {
             CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<Income, IncomeDTO>().ReverseMap();
         }
     }
 }

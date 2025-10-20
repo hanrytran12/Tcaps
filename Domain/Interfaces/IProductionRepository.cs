@@ -7,9 +7,9 @@ using Domain.Entities;
 
 namespace Domain.Interfaces
 {
-    public interface IUserRepository
+    public interface IProductionRepository
     {
-        Task<User?> GetByIdAsync(Guid userId);
-        void Update(User user);
+        Task<IEnumerable<Production>> GetAllAsync();
+        Task<Production> GetAsync(Guid id);
     }
 }
