@@ -15,9 +15,12 @@ namespace API.Controllers
     public class UserController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public UserController(IMediator mediator)
+        private readonly IStaffService _staffService;
+
+        public UserController(IMediator mediator, IStaffService staffService)
         {
             _mediator = mediator;
+            _staffService = staffService;
         }
 
         [HttpGet]
