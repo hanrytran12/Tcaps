@@ -7,8 +7,8 @@ namespace Domain.Entities
         public Guid ProductId { get; private set; }
         public string Code { get; private set; } = string.Empty;
         public decimal Quantity { get; private set; }
-        public DateTime StartDate { get; private set; }
-        public DateTime EndDate { get; private set; }
+        public DateOnly StartDate { get; private set; }
+        public DateOnly EndDate { get; private set; }
         public DateOnly CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public bool isDeleted { get; private set; }
@@ -25,7 +25,7 @@ namespace Domain.Entities
         private readonly List<MaterialUse> _materialUses = new();
         public IReadOnlyCollection<MaterialUse> Materials => _materialUses.AsReadOnly();
 
-        public Batch(Guid Id, Guid productId, string code, decimal quantity, DateTime startDate, DateTime endDate)
+        public Batch(Guid Id, Guid productId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
             : base(Id)
         {
             ProductId = productId;
@@ -44,7 +44,7 @@ namespace Domain.Entities
             isDeleted = true;
         }
 
-        public void UpdateDetails(decimal quantity, DateTime startDate, DateTime endDate)
+        public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
         {
             Quantity = quantity;
             StartDate = startDate;

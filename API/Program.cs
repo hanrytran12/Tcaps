@@ -9,6 +9,7 @@ using Application.Commands.UpdateProduct;
 using Application.Queries.GetAllBatch;
 using Application.Queries.GetAllProduct;
 using Application.Queries.GetAllUser;
+using Application.Queries.GetDashboardStats;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
@@ -41,7 +42,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddBatchCommand).Assembly,
                                                                       typeof(GetAllBatchQuery).Assembly,
                                                                       typeof(DeleteBatchCommand).Assembly,
-                                                                      typeof(UpdateBatchCommand).Assembly));
+                                                                      typeof(UpdateBatchCommand).Assembly,
+                                                                      typeof(GetDashboardStatsQuery).Assembly));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
