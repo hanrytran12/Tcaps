@@ -9,7 +9,7 @@ namespace Application.Commands.UpdateBatch
         [JsonIgnore]
         public Guid Id { get; set; }
         public decimal Quantity { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
     }
 }
