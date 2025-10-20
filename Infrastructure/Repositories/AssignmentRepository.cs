@@ -41,6 +41,13 @@ namespace Infrastructure.Repositories
             return await _context.Assignments.FindAsync(id);
         }
 
+        public async Task<IEnumerable<Assignment>> GetByIdsAsync(List<Guid> ids)
+        {
+            return await _context.Assignments
+                .Where(a => ids.Contains(a.WorkshopId))
+                .ToListAsync();
+        }
+
         public void Update(Assignment assignment)
         {
             _context.Assignments.Update(assignment);

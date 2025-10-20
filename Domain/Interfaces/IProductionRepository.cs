@@ -10,6 +10,9 @@ namespace Domain.Interfaces
     public interface IProductionRepository
     {
         Task<IEnumerable<Production>> GetAllAsync();
-        Task<Production> GetAsync(Guid id);
+        Task<Production?> GetByIdAsync(Guid id);
+        Task<IEnumerable<Production>> GetByUserAsync(Guid userId);
+        Task AddAsync(Production production);
+        void Update(Production production);
     }
 }

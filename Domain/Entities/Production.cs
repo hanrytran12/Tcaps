@@ -21,5 +21,31 @@ namespace Domain.Entities
         }
 
         private Production() : base(Guid.NewGuid()) { }
+
+        public void IncreaseQuantity()
+        {
+            Quantity += 1;
+        }
+
+        public void DecreaseQuantity()
+        {
+            if (Quantity <= 0)
+                throw new InvalidOperationException("Quantity cannot be negative.");
+
+            Quantity -= 1;
+        }
+
+        public void SetQuantity(int newQuantity)
+        {
+            if (newQuantity < 0)
+                throw new ArgumentException("Quantity cannot be negative.");
+
+            Quantity = newQuantity;
+        }
+
+        public void MarkAsCompleted()
+        {
+            Status = "Completed";
+        }
     }
 }

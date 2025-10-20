@@ -16,5 +16,7 @@ namespace Application.Interfaces
         Task<ResponseDTO> GetTotalIncomeAsync(Guid userId);
         Task<ResponseDTO> GetIncomeHistoryAsync(Guid userId);
         Task<ResponseDTO> GetAssignmentsAsync(Guid userId);
+        Task<ResponseDTO> GetProductionsAsync(Guid userId);
+        Task<ResponseDTO> GetEvaluateHistoryAsync(Guid userId);
     }
 }
