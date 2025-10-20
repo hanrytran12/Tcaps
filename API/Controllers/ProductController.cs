@@ -1,7 +1,7 @@
-﻿using Application.Commands.AddProduct;
-using Application.Commands.DeleteProduct;
-using Application.Commands.UpdateProduct;
-using Application.Queries.GetAllProduct;
+﻿using Application.Features.Products.Commands.AddProduct;
+using Application.Features.Products.Commands.DeleteProduct;
+using Application.Features.Products.Commands.UpdateProduct;
+using Application.Features.Products.Queries.GetAllProduct;
 using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
