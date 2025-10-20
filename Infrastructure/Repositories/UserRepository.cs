@@ -63,10 +63,5 @@ namespace Infrastructure.Repositories
         {
             _context.Users.Update(user);
         }
-
-        public void Update(User user)
-        {
-            _context.Users.Update(user);
-        }
     }
 }
