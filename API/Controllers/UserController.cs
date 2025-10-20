@@ -1,25 +1,53 @@
-﻿using Application.DTOs;
+using Application.Commands.AddUser;
+using Application.Commands.DeleteUser;
+using Application.Commands.UpdateUser;
+using Application.Queries.GetAllUser;
+using Domain.Entities;
+using MediatR;
+using Application.DTOs;
 using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Route("api/user")]
     [ApiController]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly IStaffService _staffService;
-
-        public UserController(IStaffService staffService)
+        private readonly IMediator _mediator;
+        public UserController(IMediator mediator)
         {
-            _staffService = staffService;
+            _mediator = mediator;
         }
 
-        [HttpGet("{userId:guid}")]
-        public async Task<IActionResult> GetUserProfile(Guid userId)
+        [HttpGet]
+        public async Task<List<User>> GetAllUser()
         {
-            var response = await _staffService.GetUserProfileAsync(userId);
-            return StatusCode(response.StatusCode, response);
+            var listUser = await _mediator.Send(new GetAllUserQuery());
+            return listUser;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddUser(AddUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserCommand command)
+        {
+            command.Id = id;
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            var command = new DeleteUserCommand(id);
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
         }
 
         [HttpGet("total-income/{userId:guid}")]
