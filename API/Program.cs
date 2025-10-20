@@ -39,6 +39,7 @@ builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
 builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IWorkshopRepository, WorkshopRepository>();
+builder.Services.AddScoped<IProductionRepository, ProductionRepository>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 
 
