@@ -19,11 +19,13 @@ namespace Application.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IIncomeRepository _incomeRepository;
         private readonly IAssignmentRepository _assignmentRepository;
+        private readonly IProductionRepository _productionRepository;
         private readonly ResponseDTO _responseDTO;
 
         public StaffService(IUserRepository userRepository, IMapper mapper, 
             IPasswordHasher passwordHasher, IUnitOfWork unitOfWork,
-            IIncomeRepository incomeRepository, IAssignmentRepository assignmentRepository)
+            IIncomeRepository incomeRepository, IAssignmentRepository assignmentRepository,
+            IProductionRepository productionRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -31,6 +33,7 @@ namespace Application.Services
             _unitOfWork = unitOfWork;
             _incomeRepository = incomeRepository;
             _assignmentRepository = assignmentRepository;
+            _productionRepository = productionRepository;
             _responseDTO = new ResponseDTO();
         }
 
@@ -102,6 +105,53 @@ namespace Application.Services
             return _responseDTO;
         }
 
+        public async Task<ResponseDTO> GetEvaluateHistoryAsync(Guid userId)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user == null)
+                {
+                    _responseDTO.StatusCode = 404;
+                    _responseDTO.Message = "User not found";
+                    return _responseDTO;
+                }
+
+                //lấy ds productions
+                var productions = await _productionRepository.GetByUserAsync(userId);
+
+                if (productions == null || !productions.Any())
+                {
+                    _responseDTO.StatusCode = 404;
+                    _responseDTO.Message = "Không có sản phẩm nào được sản xuất.";
+                    return _responseDTO;
+                }
+
+                //lấy được ds id của từng production
+                var assignIds = productions.Select(x => x.Id).ToList();
+
+                //lấy ds assignment dựa vào ds assignIds bên trên
+                var assignments = await _assignmentRepository.GetByIdsAsync(assignIds);
+
+                //lấy ds id của batch dựa vào assignments
+                var batchIds = assignments.Select(x => x.Id).ToList();
+
+                //lấy ds batch dựa vào ds batchIds ở trên
+
+
+                var dto = _mapper.Map<List<AssignmentDTO>>(await _assignmentRepository.GetAssignmentsAsync(user.WorkshopId.Value));
+                _responseDTO.Data = dto;
+                _responseDTO.StatusCode = 200;
+                _responseDTO.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.StatusCode = 500;
+                _responseDTO.Message = ex.Message;
+            }
+            return _responseDTO;
+        }
+
         public async Task<ResponseDTO> GetIncomeHistoryAsync(Guid userId)
         {
             try
@@ -115,6 +165,40 @@ namespace Application.Services
                 }
 
                 var dto = _mapper.Map<List<IncomeDTO>>(await _incomeRepository.GetIncomeHistoryAsync(userId));
+                _responseDTO.Data = dto;
+                _responseDTO.StatusCode = 200;
+                _responseDTO.Message = "Success";
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.StatusCode = 500;
+                _responseDTO.Message = ex.Message;
+            }
+            return _responseDTO;
+        }
+
+        public async Task<ResponseDTO> GetProductionsAsync(Guid userId)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user == null)
+                {
+                    _responseDTO.StatusCode = 404;
+                    _responseDTO.Message = "User not found";
+                    return _responseDTO;
+                }
+
+                var productions = await _productionRepository.GetByUserAsync(userId);
+
+                if (productions == null || !productions.Any())
+                {
+                    _responseDTO.StatusCode = 404;
+                    _responseDTO.Message = "Không có sản phẩm nào được sản xuất.";
+                    return _responseDTO;
+                }
+
+                var dto = _mapper.Map<List<ProductionDTO>>(productions);
                 _responseDTO.Data = dto;
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";

@@ -15,6 +15,7 @@ namespace Application.Mapping
         {
             CreateMap<User, UserDTO>().ReverseMap();
             CreateMap<Income, IncomeDTO>().ReverseMap();
+            CreateMap<Production, ProductionDTO>().ReverseMap();
         }
     }
 }
