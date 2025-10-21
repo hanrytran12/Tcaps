@@ -42,11 +42,12 @@ namespace Infrastructure.Repositories
 
         public async Task<decimal> GetTotalIncomeAsync(Guid userId)
         {
-            return await _context.Incomes
+            return _context.Incomes
                 .Where(i => i.UserId == userId)
                 .Select(i => i.TotalPrice)
+                .AsEnumerable()
                 .DefaultIfEmpty(0)
-                .SumAsync();
+                .Sum();
         }
 
         public void Update(Income income)

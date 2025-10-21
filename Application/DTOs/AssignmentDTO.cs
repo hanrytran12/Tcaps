@@ -8,12 +8,12 @@ namespace Application.DTOs
 {
     public class AssignmentDTO
     {
-        public Guid BatchId { get; private set; }
-        public Guid WorkshopId { get; private set; }
-        public int Quantity { get; private set; }
-        public DateTime StartDate { get; private set; }
-        public DateTime EndDate { get; private set; }
-        public string Status { get; private set; } = string.Empty;
+        public Guid BatchId { get; set; }
+        public Guid WorkshopId { get; set; }
+        public int Quantity { get; set; }
+        public DateTime StartDate { get; set; }
+        public DateTime EndDate { get; set; }
+        public string Status { get; set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
     }
 }
