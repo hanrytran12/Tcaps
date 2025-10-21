@@ -1,4 +1,16 @@
 using API.Middlewares;
+using Application.Features.Batches.Commands.AddBatch;
+using Application.Features.Batches.Commands.DeleteBatch;
+using Application.Features.Batches.Commands.UpdateBatch;
+using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetDashboardStats;
+using Application.Features.Products.Commands.AddProduct;
+using Application.Features.Products.Commands.UpdateProduct;
+using Application.Features.Products.Queries.GetAllProduct;
+using Application.Features.Users.Commands.AddUser;
+using Application.Features.Users.Commands.DeleteUser;
+using Application.Features.Users.Queries.GetAllUser;
+using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
@@ -6,17 +18,6 @@ using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Application.Features.Products.Commands.AddProduct;
-using Application.Features.Batches.Commands.AddBatch;
-using Application.Features.Users.Commands.AddUser;
-using Application.Features.Batches.Commands.DeleteBatch;
-using Application.Features.Users.Commands.DeleteUser;
-using Application.Features.Batches.Commands.UpdateBatch;
-using Application.Features.Products.Commands.UpdateProduct;
-using Application.Features.Batches.Queries.GetAllBatch;
-using Application.Features.Products.Queries.GetAllProduct;
-using Application.Features.Users.Queries.GetAllUser;
-using Application.Features.Batches.Queries.GetDashboardStats;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +43,8 @@ builder.Services.AddScoped<IWorkshopRepository, WorkshopRepository>();
 builder.Services.AddScoped<IProductionRepository, ProductionRepository>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 
+builder.Services.AddScoped<IAppDbContext>(provider =>
+    provider.GetRequiredService<AppDbContext>());
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly,
                                                                       typeof(AddProductCommand).Assembly,
@@ -54,7 +57,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllBatchQuery).Assembly,
                                                                       typeof(DeleteBatchCommand).Assembly,
                                                                       typeof(UpdateBatchCommand).Assembly,
-                                                                      typeof(GetDashboardStatsQuery).Assembly));
+                                                                      typeof(GetDashboardStatsQuery).Assembly,
+                                                                      typeof(GetStaffPerformanceQuery).Assembly));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
