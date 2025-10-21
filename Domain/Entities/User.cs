@@ -4,7 +4,7 @@ namespace Domain.Entities
 {
     public class User : Entity
     {
-        public Guid? WorkshopId { get; private set; }
+        public Guid WorkshopId { get; private set; }
         public string Role { get; private set; } = string.Empty;
         public string FullName { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
@@ -14,7 +14,7 @@ namespace Domain.Entities
         public DateTime CreatedAt { get; private set; }
 
 
-        public User(Guid id, Guid? workshopId, string role, string fullName, string email, string passwordHash, string phone)
+        public User(Guid id, Guid workshopId, string role, string fullName, string email, string passwordHash, string phone)
             : base(id)
         {
             WorkshopId = workshopId;
