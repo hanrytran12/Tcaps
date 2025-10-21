@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +21,7 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Income>> GetAllAsync()
         {
-            return await _context.Incomes.ToListAsync(); 
+            return await _context.Incomes.ToListAsync();
         }
 
         public async Task<Income> GetByIdAsync(Guid id)

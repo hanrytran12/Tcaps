@@ -1,15 +1,16 @@
 using API.Middlewares;
-using Application.Commands.AddBatch;
-using Application.Commands.AddProduct;
-using Application.Commands.AddUser;
-using Application.Commands.DeleteBatch;
-using Application.Commands.DeleteUser;
-using Application.Commands.UpdateBatch;
-using Application.Commands.UpdateProduct;
-using Application.Queries.GetAllBatch;
-using Application.Queries.GetAllProduct;
-using Application.Queries.GetAllUser;
-using Application.Queries.GetDashboardStats;
+using Application.Features.Batches.Commands.AddBatch;
+using Application.Features.Batches.Commands.DeleteBatch;
+using Application.Features.Batches.Commands.UpdateBatch;
+using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetDashboardStats;
+using Application.Features.Products.Commands.AddProduct;
+using Application.Features.Products.Commands.UpdateProduct;
+using Application.Features.Products.Queries.GetAllProduct;
+using Application.Features.Users.Commands.AddUser;
+using Application.Features.Users.Commands.DeleteUser;
+using Application.Features.Users.Queries.GetAllUser;
+using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
@@ -46,6 +47,8 @@ builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IProductionService, ProductionService>();
 
 
+builder.Services.AddScoped<IAppDbContext>(provider =>
+    provider.GetRequiredService<AppDbContext>());
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly,
                                                                       typeof(AddProductCommand).Assembly,
@@ -58,7 +61,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllBatchQuery).Assembly,
                                                                       typeof(DeleteBatchCommand).Assembly,
                                                                       typeof(UpdateBatchCommand).Assembly,
-                                                                      typeof(GetDashboardStatsQuery).Assembly));
+                                                                      typeof(GetDashboardStatsQuery).Assembly,
+                                                                      typeof(GetStaffPerformanceQuery).Assembly));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 

@@ -1,11 +1,11 @@
-using Application.Commands.AddUser;
-using Application.Commands.DeleteUser;
-using Application.Commands.UpdateUser;
-using Application.Queries.GetAllUser;
+using Application.DTOs;
+using Application.Features.Users.Commands.AddUser;
+using Application.Features.Users.Commands.DeleteUser;
+using Application.Features.Users.Commands.UpdateUser;
+using Application.Features.Users.Queries.GetAllUser;
+using Application.Interfaces;
 using Domain.Entities;
 using MediatR;
-using Application.DTOs;
-using Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -102,5 +102,12 @@ namespace API.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpGet("staff-performance")]
+        public async Task<IActionResult> GetStaffPerformance(Guid WorkshopId)
+        {
+            var query = new Application.Features.Users.Queries.GetStaffPerformance.GetStaffPerformanceQuery(WorkshopId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
     }
 }
