@@ -13,8 +13,10 @@ namespace Domain.Entities
         public string Status { get; private set; } = string.Empty;
         public bool isDeleted { get; private set; }
 
-        private readonly List<Assignment> _assignments = new();
-        public IReadOnlyCollection<Assignment> Assignments => _assignments.AsReadOnly();
+        //private readonly List<Assignment> _assignments = new();
+        //public IReadOnlyCollection<Assignment> Assignments => _assignments.AsReadOnly();
+
+        public ICollection<Assignment> Assignments { get; private set; } = new List<Assignment>();
 
         private readonly List<Evaluate> _evaluates = new();
         public IReadOnlyCollection<Evaluate> Evaluates => _evaluates.AsReadOnly();

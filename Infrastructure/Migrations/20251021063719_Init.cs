@@ -152,7 +152,7 @@ namespace Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -204,7 +204,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Evaluate",
+                name: "Evaluates",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -218,9 +218,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Evaluate", x => x.Id);
+                    table.PrimaryKey("PK_Evaluates", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Evaluate_Batches_BatchId",
+                        name: "FK_Evaluates_Batches_BatchId",
                         column: x => x.BatchId,
                         principalTable: "Batches",
                         principalColumn: "Id");
@@ -250,7 +250,7 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Production",
+                name: "Productions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -263,9 +263,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Production", x => x.Id);
+                    table.PrimaryKey("PK_Productions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Production_Batches_BatchId",
+                        name: "FK_Productions_Batches_BatchId",
                         column: x => x.BatchId,
                         principalTable: "Batches",
                         principalColumn: "Id");
@@ -277,8 +277,8 @@ namespace Infrastructure.Migrations
                 column: "BatchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Evaluate_BatchId",
-                table: "Evaluate",
+                name: "IX_Evaluates_BatchId",
+                table: "Evaluates",
                 column: "BatchId");
 
             migrationBuilder.CreateIndex(
@@ -287,8 +287,8 @@ namespace Infrastructure.Migrations
                 column: "BatchId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Production_BatchId",
-                table: "Production",
+                name: "IX_Productions_BatchId",
+                table: "Productions",
                 column: "BatchId");
         }
 
@@ -302,7 +302,7 @@ namespace Infrastructure.Migrations
                 name: "ComponentDefects");
 
             migrationBuilder.DropTable(
-                name: "Evaluate");
+                name: "Evaluates");
 
             migrationBuilder.DropTable(
                 name: "Incomes");
@@ -323,7 +323,7 @@ namespace Infrastructure.Migrations
                 name: "Notifications");
 
             migrationBuilder.DropTable(
-                name: "Production");
+                name: "Productions");
 
             migrationBuilder.DropTable(
                 name: "Products");

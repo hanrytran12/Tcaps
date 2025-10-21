@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251020151705_Init")]
+    [Migration("20251021063719_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -28,7 +28,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Assignment", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BatchId")
@@ -168,7 +167,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
-                    b.ToTable("Evaluate");
+                    b.ToTable("Evaluates");
                 });
 
             modelBuilder.Entity("Domain.Entities.Income", b =>
@@ -408,7 +407,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
-                    b.ToTable("Production");
+                    b.ToTable("Productions");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
@@ -443,7 +442,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("WorkshopId")
+                    b.Property<Guid>("WorkshopId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
