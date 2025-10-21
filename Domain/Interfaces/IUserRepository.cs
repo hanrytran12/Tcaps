@@ -1,10 +1,4 @@
 ﻿using Domain.Entities;
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
 
 namespace Domain.Interfaces
 {
@@ -19,6 +13,7 @@ namespace Domain.Interfaces
         Task<bool> DoesPhoneExistAsync(string phone);
         Task<bool> IsEmailTakenByAnotherUserAsync(string email, Guid userId);
         Task<bool> IsPhoneTakenByAnotherUserAsync(string phone, Guid userId);
+        Task<User?> GetByRoleAsync(string role);
         Task<User?> GetQCByWorkshopIdAsync(Guid workshopId);
     }
 }

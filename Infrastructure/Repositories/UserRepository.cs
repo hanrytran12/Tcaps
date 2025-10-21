@@ -1,11 +1,7 @@
-using Domain.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Interfaces;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -47,6 +43,11 @@ namespace Infrastructure.Repositories
         public async Task<User?> GetByIdAsync(Guid id)
         {
             return await _context.Users.FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task<User?> GetByRoleAsync(string role)
+        {
+            return await _context.Users.FirstOrDefaultAsync(p => p.Role == role);
         }
 
         public async Task<User?> GetQCByWorkshopIdAsync(Guid workshopId)
