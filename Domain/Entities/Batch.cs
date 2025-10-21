@@ -52,5 +52,10 @@ namespace Domain.Entities
             StartDate = startDate;
             EndDate = endDate;
         }
+
+        public void AddAssignment(Assignment assignment)
+        {
+            Assignments.Add(assignment);
+        }
     }
 }
