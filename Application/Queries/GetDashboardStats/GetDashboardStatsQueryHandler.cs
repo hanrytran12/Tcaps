@@ -25,7 +25,7 @@ namespace Application.Queries.GetDashboardStats
             }
 
             var batches = await _batchRepository.SearchAsync(request.Id, targetDate);
-            var batchListItemDTOs = batches.Select(b => new BatchListItemDTO
+            var batchListItemDTOs = batches.Select(b => new DashboardBatchDetailDTO
             {
                 Code = b.Code,
                 Quantity = b.Quantity,
