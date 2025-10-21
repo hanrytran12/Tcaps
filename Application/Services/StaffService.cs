@@ -57,7 +57,7 @@ namespace Application.Services
 
                 var newHash = _passwordHasher.Hash(newPassword);
 
-                user.ChangePassword(currentPassword, newHash);
+                user.ChangePassword(currentPassword, newHash, _passwordHasher);
 
                 _userRepository.Update(user);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
