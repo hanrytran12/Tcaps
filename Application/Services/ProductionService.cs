@@ -101,7 +101,7 @@ namespace Application.Services
                     return _responseDTO;
                 }
 
-                var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId.Value);
+                var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId);
                 if (qc == null)
                 {
                     _responseDTO.StatusCode = 404;
