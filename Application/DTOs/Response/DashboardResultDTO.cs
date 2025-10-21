@@ -3,6 +3,6 @@
     public class DashboardResultDTO
     {
         public DashboardStatsDTO Stats { get; set; }
-        public IEnumerable<BatchListItemDTO> Batches { get; set; }
+        public IEnumerable<DashboardBatchDetailDTO> Batches { get; set; }
     }
 }

@@ -35,8 +35,8 @@ namespace Infrastructure.Repositories
                                 .Where(b =>
                                         b.ProductId == productId &&
                                         TargetDate >= b.StartDate &&
-                                        TargetDate <= b.EndDate
-        );
+                                        TargetDate <= b.EndDate)
+                                .Include(b => b.Assignments);
 
             return await query.ToListAsync();
         }
@@ -68,7 +68,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.Batches
                 .AsNoTracking()
-                .Where(b =>  ids.Contains(b.Id))
+                .Where(b => ids.Contains(b.Id))
                 .ToListAsync();
         }
     }

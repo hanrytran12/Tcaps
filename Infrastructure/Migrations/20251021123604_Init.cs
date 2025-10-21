@@ -107,7 +107,7 @@ namespace Infrastructure.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Unit = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -209,7 +209,7 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
