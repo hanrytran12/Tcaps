@@ -1,4 +1,5 @@
-﻿using Domain.Primitives;
+﻿using Domain.Interfaces;
+using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -59,9 +60,9 @@ namespace Domain.Entities
             Phone = phone;
         }
 
-        public void ChangePassword(string currentPasswordHash, string newPasswordHash)
+        public void ChangePassword(string currentPasswordHash, string newPasswordHash, IPasswordHasher passwordHasher)
         {
-            if (PasswordHash != currentPasswordHash)
+            if (!passwordHasher.Verify(currentPasswordHash, PasswordHash))
                 throw new InvalidOperationException("Mật khẩu hiện tại không chính xác.");
 
             PasswordHash = newPasswordHash;
