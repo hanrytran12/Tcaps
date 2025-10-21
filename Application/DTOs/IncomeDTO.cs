@@ -8,9 +8,9 @@ namespace Application.DTOs
 {
     public class IncomeDTO
     {
-        public int Quantity { get; private set; }
-        public decimal UnitPrice { get; private set; }
-        public decimal TotalPrice { get; private set; }
-        public DateOnly CreatedAt { get; private set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+        public decimal TotalPrice { get; set; }
+        public DateOnly CreatedAt { get; set; }
     }
 }

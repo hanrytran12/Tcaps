@@ -39,6 +39,11 @@ namespace Infrastructure.Repositories
             return await _context.Evaluates.Where(e => e.ProductionId == productionId).ToListAsync();
         }
 
+        public async Task<IEnumerable<Evaluate>> GetByProductionIdsAsync(List<Guid> productionIds)
+        {
+            return await _context.Evaluates.Where(e => productionIds.Contains(e.ProductionId)).ToListAsync();
+        }
+
         public void Update(Evaluate evaluate)
         {
             _context.Evaluates.Update(evaluate);
