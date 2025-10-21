@@ -6,6 +6,7 @@ namespace Domain.Interfaces
     {
         Task<IEnumerable<Batch>> GetAllAsync();
         Task<Batch?> GetByIdAsync(Guid Id);
+        Task<IEnumerable<Batch>> GetBatchesByIdsAsync(List<Guid> ids);
         Task AddAsync(Batch batch);
         void Delete(Batch batch);
         void Update(Batch batch);

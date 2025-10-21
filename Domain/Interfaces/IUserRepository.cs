@@ -19,5 +19,6 @@ namespace Domain.Interfaces
         Task<bool> DoesPhoneExistAsync(string phone);
         Task<bool> IsEmailTakenByAnotherUserAsync(string email, Guid userId);
         Task<bool> IsPhoneTakenByAnotherUserAsync(string phone, Guid userId);
+        Task<User?> GetQCByWorkshopIdAsync(Guid workshopId);
     }
 }

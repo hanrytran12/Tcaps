@@ -50,5 +50,13 @@ namespace Infrastructure.Repositories
         {
             _context.Update(batch);
         }
+
+        public async Task<IEnumerable<Batch>> GetBatchesByIdsAsync(List<Guid> ids)
+        {
+            return await _context.Batches
+                .AsNoTracking()
+                .Where(b =>  ids.Contains(b.Id))
+                .ToListAsync();
+        }
     }
 }

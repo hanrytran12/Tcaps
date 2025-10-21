@@ -8,8 +8,8 @@ namespace Application.DTOs
 {
     public class UpdateProfileUserDTO
     {
-        public string FullName { get; private set; } = string.Empty;
-        public string Email { get; private set; } = string.Empty;
-        public string Phone { get; private set; } = string.Empty;
+        public string FullName { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
     }
 }

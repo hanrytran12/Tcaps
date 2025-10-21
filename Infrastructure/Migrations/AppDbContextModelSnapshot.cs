@@ -165,7 +165,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
-                    b.ToTable("Evaluate");
+                    b.ToTable("Evaluates");
                 });
 
             modelBuilder.Entity("Domain.Entities.Income", b =>
@@ -405,7 +405,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
-                    b.ToTable("Production");
+                    b.ToTable("Productions");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
