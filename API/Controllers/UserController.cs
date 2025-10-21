@@ -88,5 +88,12 @@ namespace API.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpGet("staff-performance")]
+        public async Task<IActionResult> GetStaffPerformance(Guid WorkshopId)
+        {
+            var query = new Application.Features.Users.Queries.GetStaffPerformance.GetStaffPerformanceQuery(WorkshopId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
     }
 }

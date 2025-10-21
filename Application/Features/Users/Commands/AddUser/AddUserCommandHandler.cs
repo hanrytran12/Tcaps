@@ -28,7 +28,7 @@ namespace Application.Features.Users.Commands.AddUser
                 return Result<Guid>.Failure("Phone này đã được đăng ký.");
             }
 
-            var user = new User(Guid.NewGuid(), null, request.Role, request.FullName, request.Email, request.Password == request.PasswordConfirmed ? request.Password : "", request.Phone);
+            var user = new User(Guid.NewGuid(), request.WorkshopId, request.Role, request.FullName, request.Email, request.Password == request.PasswordConfirmed ? request.Password : "", request.Phone);
             await _repository.AddAsync(user);
             await _unitOfWork.SaveChangesAsync();
             return Result<Guid>.Success(user.Id);
