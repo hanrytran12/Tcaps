@@ -63,5 +63,13 @@ namespace Infrastructure.Repositories
             return await _context.Batches.Include(b => b.Assignments)
                                  .FirstOrDefaultAsync(b => b.Assignments.Any(a => a.Id == assignmentId));
         }
+
+        public async Task<IEnumerable<Batch>> GetBatchesByIdsAsync(List<Guid> ids)
+        {
+            return await _context.Batches
+                .AsNoTracking()
+                .Where(b =>  ids.Contains(b.Id))
+                .ToListAsync();
+        }
     }
 }

@@ -47,5 +47,9 @@ namespace Domain.Entities
         {
             Status = "Completed";
         }
+
+        public void Submit() => Status = "Submitted";
+        public void Approve() => Status = "Approved";
+        public void Reject() => Status = "Rejected";
     }
 }
