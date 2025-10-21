@@ -14,12 +14,15 @@ namespace Application.Services
         private readonly IIncomeRepository _incomeRepository;
         private readonly IAssignmentRepository _assignmentRepository;
         private readonly IProductionRepository _productionRepository;
+        private readonly IBatchRepository _batchRepository;
+        private readonly IEvaluateRepository _evaluateRepository;
         private readonly ResponseDTO _responseDTO;
 
         public StaffService(IUserRepository userRepository, IMapper mapper,
             IPasswordHasher passwordHasher, IUnitOfWork unitOfWork,
             IIncomeRepository incomeRepository, IAssignmentRepository assignmentRepository,
-            IProductionRepository productionRepository)
+            IProductionRepository productionRepository, IBatchRepository batchRepository,
+            IEvaluateRepository evaluateRepository)
         {
             _userRepository = userRepository;
             _mapper = mapper;
@@ -28,6 +31,8 @@ namespace Application.Services
             _incomeRepository = incomeRepository;
             _assignmentRepository = assignmentRepository;
             _productionRepository = productionRepository;
+            _batchRepository = batchRepository;
+            _evaluateRepository = evaluateRepository;
             _responseDTO = new ResponseDTO();
         }
 
@@ -121,20 +126,42 @@ namespace Application.Services
                     return _responseDTO;
                 }
 
-                //lấy được ds id của từng production
-                var assignIds = productions.Select(x => x.Id).ToList();
+                //lấy ds productionId
+                var productionIds = productions.Select(x => x.Id).ToList();
+
+                //lấy ds evaluate
+                var evaluates = await _evaluateRepository.GetByProductionIdsAsync(productionIds);
+
+                //lấy được ds assignIds của từng production
+                var assignIds = productions.Select(x => x.AssignId).ToList();
 
                 //lấy ds assignment dựa vào ds assignIds bên trên
                 var assignments = await _assignmentRepository.GetByIdsAsync(assignIds);
 
                 //lấy ds id của batch dựa vào assignments
-                var batchIds = assignments.Select(x => x.Id).ToList();
+                var batchIds = assignments.Select(x => x.BatchId).ToList();
 
                 //lấy ds batch dựa vào ds batchIds ở trên
+                var batches = await _batchRepository.GetBatchesByIdsAsync(batchIds);
+
+                // Join dữ liệu lại
+                var result = from eval in evaluates
+                             join prod in productions on eval.ProductionId equals prod.Id
+                             join assign in assignments on prod.AssignId equals assign.Id
+                             join batch in batches on assign.BatchId equals batch.Id
+                             select new EvaluateHistoryDTO
+                             {
+                                 ProductionId = eval.ProductionId,
+                                 BatchCode = batch.Code,
+                                 QuantityProduced = prod.Quantity,
+                                 UserId = eval.UserId.Value,
+                                 Status = eval.Status,
+                                 Note = eval.Note,
+                                 CreatedAt = eval.CreatedAt
+                             };
 
 
-                var dto = _mapper.Map<List<AssignmentDTO>>(await _assignmentRepository.GetAssignmentsAsync(user.WorkshopId));
-                _responseDTO.Data = dto;
+                _responseDTO.Data = result.ToList();
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
             }
