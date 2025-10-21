@@ -1,4 +1,5 @@
-﻿using Application.Features.Assignments.Commands;
+﻿using Application.Features.Assignments.Commands.AddAssignmentCommand;
+using Application.Features.Assignments.Commands.CompleteAssignment;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,14 @@ namespace API.Controllers
         {
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
+        [HttpPut("{id:guid}/complete")]
+        public async Task<IActionResult> CompleteAssignment(Guid id)
+        {
+            var command = new CompleteAssignmentCommand { AssignmentId = id };
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? Ok() : BadRequest(result.error);
         }
     }
 }

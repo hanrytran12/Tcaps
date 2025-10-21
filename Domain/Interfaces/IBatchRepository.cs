@@ -10,5 +10,7 @@ namespace Domain.Interfaces
         void Delete(Batch batch);
         void Update(Batch batch);
         Task<IEnumerable<Batch>> SearchAsync(Guid productId, DateOnly TargetDate);
+        Task<Batch?> GetByIdWithAssignmentsAsync(Guid Id);
+        Task<Batch> GetAggregateRootByAssignmentIdAsync(Guid assignmentId);
     }
 }

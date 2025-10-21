@@ -1,4 +1,5 @@
-﻿using Domain.Primitives;
+﻿using Domain.Events;
+using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -46,6 +47,11 @@ namespace Domain.Entities
             isDeleted = true;
         }
 
+        public void UpdateStatus(string status)
+        {
+            Status = status;
+        }
+
         public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
         {
             Quantity = quantity;
@@ -56,6 +62,28 @@ namespace Domain.Entities
         public void AddAssignment(Assignment assignment)
         {
             Assignments.Add(assignment);
+        }
+
+        public void UpdateAssignmentsStatus(Guid assignmentId, string newStatus)
+        {
+            var assignment = Assignments.FirstOrDefault(a => a.Id == assignmentId);
+            if (assignment is not null)
+            {
+                assignment.UpdateStatus(newStatus);
+            }
+
+            CheckForCompletion();
+        }
+
+        private void CheckForCompletion()
+        {
+            bool has15Assignments = Assignments.Count == 15;
+            bool allAssignmentsCompleted = has15Assignments && Assignments.All(a => a.Status == "Completed");
+            if (allAssignmentsCompleted)
+            {
+                UpdateStatus("Completed");
+                AddDomainEvent(new BatchCompletedEvent(this.Id, this.Code));
+            }
         }
     }
 }

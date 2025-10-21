@@ -1,4 +1,6 @@
 using API.Middlewares;
+using Application.Features.Assignments.Commands.AddAssignmentCommand;
+using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
@@ -16,6 +18,7 @@ using Application.Services;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,10 +35,10 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBatchRepository, BatchRepository>();
-
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationService, NotificationServices>();
 builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
 builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
@@ -50,15 +53,21 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddProductCommand).Assembly,
                                                                       typeof(GetAllProductQuery).Assembly,
                                                                       typeof(UpdateProductCommand).Assembly,
+
                                                                       typeof(AddUserCommand).Assembly,
                                                                       typeof(GetAllUserQuery).Assembly,
                                                                       typeof(DeleteUserCommand).Assembly,
+
                                                                       typeof(AddBatchCommand).Assembly,
                                                                       typeof(GetAllBatchQuery).Assembly,
                                                                       typeof(DeleteBatchCommand).Assembly,
                                                                       typeof(UpdateBatchCommand).Assembly,
+
                                                                       typeof(GetDashboardStatsQuery).Assembly,
-                                                                      typeof(GetStaffPerformanceQuery).Assembly));
+                                                                      typeof(GetStaffPerformanceQuery).Assembly,
+
+                                                                      typeof(AddAssignmentCommand).Assembly,
+                                                                      typeof(CompleteAssignmentCommand).Assembly));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 

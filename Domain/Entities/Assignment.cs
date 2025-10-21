@@ -25,5 +25,10 @@ namespace Domain.Entities
         }
 
         private Assignment() : base(Guid.NewGuid()) { }
+
+        internal void UpdateStatus(string status)
+        {
+            Status = status;
+        }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using Application.Common;
 using MediatR;
 
-namespace Application.Features.Assignments.Commands
+namespace Application.Features.Assignments.Commands.AddAssignmentCommand
 {
     public class AddAssignmentCommand : IRequest<Result<Guid>>
     {
