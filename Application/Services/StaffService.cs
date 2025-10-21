@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.DTOs;
+﻿using Application.DTOs;
 using Application.Interfaces;
 using AutoMapper;
-using Domain.Entities;
 using Domain.Interfaces;
 
 namespace Application.Services
@@ -24,7 +18,7 @@ namespace Application.Services
         private readonly IEvaluateRepository _evaluateRepository;
         private readonly ResponseDTO _responseDTO;
 
-        public StaffService(IUserRepository userRepository, IMapper mapper, 
+        public StaffService(IUserRepository userRepository, IMapper mapper,
             IPasswordHasher passwordHasher, IUnitOfWork unitOfWork,
             IIncomeRepository incomeRepository, IAssignmentRepository assignmentRepository,
             IProductionRepository productionRepository, IBatchRepository batchRepository,
@@ -97,7 +91,7 @@ namespace Application.Services
                     return _responseDTO;
                 }
 
-                var dto = _mapper.Map<List<AssignmentDTO>>(await _assignmentRepository.GetAssignmentsAsync(user.WorkshopId.Value));
+                var dto = _mapper.Map<List<AssignmentDTO>>(await _assignmentRepository.GetAssignmentsAsync(user.WorkshopId));
                 _responseDTO.Data = dto;
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
@@ -165,6 +159,7 @@ namespace Application.Services
                                  Note = eval.Note,
                                  CreatedAt = eval.CreatedAt
                              };
+
 
                 _responseDTO.Data = result.ToList();
                 _responseDTO.StatusCode = 200;
@@ -276,7 +271,7 @@ namespace Application.Services
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _responseDTO.StatusCode = 500;
                 _responseDTO.Message = ex.Message;
@@ -301,7 +296,7 @@ namespace Application.Services
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
                 _responseDTO.StatusCode = 500;
                 _responseDTO.Message = ex.Message;
