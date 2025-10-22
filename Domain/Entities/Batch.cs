@@ -42,8 +42,18 @@ namespace Domain.Entities
 
         private Batch() : base(Guid.NewGuid()) { }
 
+        public static Batch Create(Guid productId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
+        {
+            return new Batch(Guid.NewGuid(), productId, code, quantity, startDate, endDate);
+        }
+
         public void MarkAsDeleted()
         {
+            if (Status != "Pending")
+            {
+                throw new InvalidOperationException($"Cannot delete batch in status: {Status}.");
+            }
+
             isDeleted = true;
         }
 
@@ -54,6 +64,11 @@ namespace Domain.Entities
 
         public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
         {
+            if (Status != "Pending")
+            {
+                throw new InvalidOperationException($"Cannot update batch in status: {Status}.");
+            }
+
             Quantity = quantity;
             StartDate = startDate;
             EndDate = endDate;

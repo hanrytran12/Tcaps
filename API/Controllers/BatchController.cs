@@ -30,7 +30,12 @@ namespace API.Controllers
         public async Task<IActionResult> AddBatch(AddBatchCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result.Value);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return CreatedAtAction(nameof(GetAllBatch), new { id = result.Value }, result.Value);
         }
 
         [HttpPut("{id:guid}")]
