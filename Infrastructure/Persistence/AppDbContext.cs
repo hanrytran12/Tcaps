@@ -1,9 +1,10 @@
-﻿using Domain.Entities;
+﻿using Application.Interfaces;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : DbContext, IAppDbContext
     {
         public AppDbContext(DbContextOptions options) : base(options)
         {
@@ -19,10 +20,24 @@ namespace Infrastructure.Persistence
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Workshop> Workshop { get; set; }
-
+        public DbSet<Assignment> Assignments { get; set; }
+        public DbSet<Production> Productions { get; set; }
+        public DbSet<Evaluate> Evaluates { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Assignment>()
+                .Property(a => a.Id)
+                .ValueGeneratedNever();
+
+            modelBuilder.Entity<Batch>(builder =>
+            {
+                builder.HasMany(o => o.Assignments)
+                          .WithOne()
+                          .HasForeignKey(a => a.BatchId)
+                          .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

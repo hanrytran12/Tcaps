@@ -17,7 +17,7 @@ namespace Domain.Entities
             Title = title;
             Message = message;
             Type = type;
-            CreatedAt = new DateOnly();
+            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
         }
 
         private Notification() : base(Guid.NewGuid()) { }
