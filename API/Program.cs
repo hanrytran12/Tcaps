@@ -1,4 +1,5 @@
-using API.Middlewares;
+﻿using API.Middlewares;
+using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.AddAssignmentCommand;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Batches.Commands.AddBatch;
@@ -16,6 +17,7 @@ using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
+using FluentValidation;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -52,6 +54,9 @@ builder.Services.AddScoped<IProductionService, ProductionService>();
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
+
+builder.Services.AddValidatorsFromAssembly(typeof(IAppDbContext).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly,
                                                                       typeof(AddProductCommand).Assembly,

@@ -13,5 +13,6 @@ namespace Domain.Interfaces
         Task<IEnumerable<Batch>> SearchAsync(Guid productId, DateOnly TargetDate);
         Task<Batch?> GetByIdWithAssignmentsAsync(Guid Id);
         Task<Batch> GetAggregateRootByAssignmentIdAsync(Guid assignmentId);
+        Task<Batch?> GetByCodeAsync(string code);
     }
 }
