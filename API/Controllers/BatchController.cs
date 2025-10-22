@@ -1,7 +1,8 @@
-﻿using Application.Commands.AddBatch;
-using Application.Commands.DeleteBatch;
-using Application.Commands.UpdateBatch;
-using Application.Queries.GetAllBatch;
+﻿using Application.Features.Batches.Commands.AddBatch;
+using Application.Features.Batches.Commands.DeleteBatch;
+using Application.Features.Batches.Commands.UpdateBatch;
+using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +47,14 @@ namespace API.Controllers
             var command = new DeleteBatchCommand(id);
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : BadRequest(result.error);
+        }
+
+
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }
