@@ -7,6 +7,8 @@ using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetDashboardStats;
+using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
+using Application.Features.MaterialRequest.Commands.UpdateMaterialRequest;
 using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
@@ -50,6 +52,8 @@ builder.Services.AddScoped<IEvaluateRepository, EvaluateRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IProductionService, ProductionService>();
+builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository>();
+builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
@@ -76,7 +80,10 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetStaffPerformanceQuery).Assembly,
 
                                                                       typeof(AddAssignmentCommand).Assembly,
-                                                                      typeof(CompleteAssignmentCommand).Assembly));
+                                                                      typeof(CompleteAssignmentCommand).Assembly,
+
+                                                                      typeof(AddMaterialRequestCommand).Assembly,
+                                                                      typeof(UpdateMaterialRequestCommand).Assembly));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
