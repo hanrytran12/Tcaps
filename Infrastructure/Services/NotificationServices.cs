@@ -1,4 +1,6 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOs;
+using Application.Interfaces;
+using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 
@@ -11,14 +13,45 @@ namespace Infrastructure.Services
         private readonly INotificationRepository _notificationRepository;
         private readonly IMaterialRepository _materialRepository;
         private readonly IBatchRepository _batchRepository;
+        private readonly IMapper _mapper;
+        private readonly ResponseDTO _responseDTO;
 
-        public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository)
+        public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
+            ,IMapper mapper)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
             _notificationRepository = notificationRepository;
             _materialRepository = materialRepository;
             _batchRepository = batchRepository;
+            _mapper = mapper;
+            _responseDTO = new ResponseDTO();
+        }
+
+        public async Task<ResponseDTO> MarkAsReadAsync(Guid notificationId)
+        {
+            try
+            {
+                var notification = await _notificationRepository.GetByIdAsync(notificationId);
+                if (notification == null)
+                {
+                    _responseDTO.StatusCode = 404;
+                    _responseDTO.Message = "Không tìm thấy thông báo này.";
+                    return _responseDTO;
+                }
+
+                await _notificationRepository.MarkAsReadAsync(notificationId);
+                await _unitOfWork.SaveChangesAsync();
+
+                _responseDTO.StatusCode = 200;
+                _responseDTO.Message = "Success";
+            }
+            catch(Exception ex)
+            {
+                _responseDTO.StatusCode = 500;
+                _responseDTO.Message = ex.Message;
+            }
+            return _responseDTO;
         }
 
         public async Task SendBatchCompletionNotificationAsync(Guid batchId, string batchCode)
@@ -47,6 +80,31 @@ namespace Infrastructure.Services
 
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<ResponseDTO> GetNotificationByUserIdAsync(Guid userId)
+        {
+            try
+            {
+                var notifications = await _notificationRepository.GetByUserIdAsync(userId);
+                if (notifications == null || !notifications.Any())
+                {
+                    _responseDTO.StatusCode = 404;
+                    _responseDTO.Message = "Không có thông báo.";
+                    return _responseDTO;
+                }
+
+                var dto = _mapper.Map<List<NotificationDTO>>(notifications);
+                _responseDTO.StatusCode = 200;
+                _responseDTO.Message = "Success";
+                _responseDTO.Data = dto;
+            }
+            catch (Exception ex)
+            {
+                _responseDTO.StatusCode = 500;
+                _responseDTO.Message = ex.Message;
+            }
+            return _responseDTO;
         }
     }
 }
