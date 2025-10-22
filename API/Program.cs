@@ -1,4 +1,7 @@
-using API.Middlewares;
+﻿using API.Middlewares;
+using Application.Common.Behaviors;
+using Application.Features.Assignments.Commands.AddAssignmentCommand;
+using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
@@ -14,8 +17,10 @@ using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
+using FluentValidation;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,33 +37,46 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IBatchRepository, BatchRepository>();
-
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+builder.Services.AddScoped<INotificationService, NotificationServices>();
 builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
 builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
 builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
 builder.Services.AddScoped<IWorkshopRepository, WorkshopRepository>();
 builder.Services.AddScoped<IProductionRepository, ProductionRepository>();
+builder.Services.AddScoped<IEvaluateRepository, EvaluateRepository>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<IProductionService, ProductionService>();
+
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
+
+builder.Services.AddValidatorsFromAssembly(typeof(IAppDbContext).Assembly);
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly,
                                                                       typeof(AddProductCommand).Assembly,
                                                                       typeof(GetAllProductQuery).Assembly,
                                                                       typeof(UpdateProductCommand).Assembly,
+
                                                                       typeof(AddUserCommand).Assembly,
                                                                       typeof(GetAllUserQuery).Assembly,
                                                                       typeof(DeleteUserCommand).Assembly,
+
                                                                       typeof(AddBatchCommand).Assembly,
                                                                       typeof(GetAllBatchQuery).Assembly,
                                                                       typeof(DeleteBatchCommand).Assembly,
                                                                       typeof(UpdateBatchCommand).Assembly,
+
                                                                       typeof(GetDashboardStatsQuery).Assembly,
-                                                                      typeof(GetStaffPerformanceQuery).Assembly));
+                                                                      typeof(GetStaffPerformanceQuery).Assembly,
+
+                                                                      typeof(AddAssignmentCommand).Assembly,
+                                                                      typeof(CompleteAssignmentCommand).Assembly));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 

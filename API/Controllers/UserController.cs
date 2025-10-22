@@ -74,6 +74,20 @@ namespace API.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
+        [HttpGet("productions/{userId:guid}")]
+        public async Task<IActionResult> GetProdutions(Guid userId)
+        {
+            var response = await _staffService.GetProductionsAsync(userId);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("evaluate-history/{userId:guid}")]
+        public async Task<IActionResult> GetEvaluateHistory(Guid userId)
+        {
+            var response = await _staffService.GetEvaluateHistoryAsync(userId);
+            return StatusCode(response.StatusCode, response);
+        }
+
         [HttpPut("change-password/{userId:guid}")]
         public async Task<IActionResult> ChangePassword(Guid userId, ChangePasswordDTO dto, CancellationToken cancellationToken)
         {

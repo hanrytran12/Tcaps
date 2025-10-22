@@ -26,6 +26,18 @@ namespace Infrastructure.Persistence
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Assignment>()
+                .Property(a => a.Id)
+                .ValueGeneratedNever();
+
+            modelBuilder.Entity<Batch>(builder =>
+            {
+                builder.HasMany(o => o.Assignments)
+                          .WithOne()
+                          .HasForeignKey(a => a.BatchId)
+                          .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

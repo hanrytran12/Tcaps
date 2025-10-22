@@ -22,7 +22,14 @@ namespace Application.Features.Batches.Commands.DeleteBatch
                 return Result.Failure($"Batch with Id: {request.Id} not found.");
             }
 
-            batch.MarkAsDeleted();
+            try
+            {
+                batch.MarkAsDeleted();
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Result.Failure(ex.Message);
+            }
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }

@@ -17,7 +17,13 @@ namespace Application.Features.Batches.Commands.AddBatch
 
         public async Task<Result<Guid>> Handle(AddBatchCommand request, CancellationToken cancellationToken)
         {
-            var batch = new Batch(Guid.NewGuid(), request.ProductId, request.Code, request.Quantity, request.StartDate, request.EndDate);
+            var batch = Batch.Create(
+                request.ProductId,
+                request.Code,
+                request.Quantity,
+                request.StartDate,
+                request.EndDate
+            );
             await _batchRepository.AddAsync(batch);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<Guid>.Success(batch.Id);

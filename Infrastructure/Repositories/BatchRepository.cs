@@ -35,8 +35,8 @@ namespace Infrastructure.Repositories
                                 .Where(b =>
                                         b.ProductId == productId &&
                                         TargetDate >= b.StartDate &&
-                                        TargetDate <= b.EndDate
-        );
+                                        TargetDate <= b.EndDate)
+                                .Include(b => b.Assignments);
 
             return await query.ToListAsync();
         }
@@ -49,6 +49,39 @@ namespace Infrastructure.Repositories
         public void Update(Batch batch)
         {
             _context.Update(batch);
+        }
+
+        public async Task<Batch?> GetByIdWithAssignmentsAsync(Guid Id)
+        {
+            return await _context.Batches
+                                 .Include(b => b.Assignments)
+                                 .FirstOrDefaultAsync(b => b.Id == Id);
+        }
+
+        public async Task<Batch> GetAggregateRootByAssignmentIdAsync(Guid assignmentId)
+        {
+            return await _context.Batches.Include(b => b.Assignments)
+                                 .FirstOrDefaultAsync(b => b.Assignments.Any(a => a.Id == assignmentId));
+        }
+
+        public async Task<IEnumerable<Batch>> GetBatchesByIdsAsync(List<Guid> ids)
+        {
+            return await _context.Batches
+                .AsNoTracking()
+                .Where(b => ids.Contains(b.Id))
+                .ToListAsync();
+        }
+
+        public async Task<Batch?> GetByCodeAsync(string code)
+        {
+            return await _context.Batches
+                                 .FirstOrDefaultAsync(b => b.Code == code);
+        }
+
+        public async Task<bool> IsProductInUseAsync(Guid productId)
+        {
+            return await _context.Batches
+                                 .AnyAsync(b => b.ProductId == productId && !b.isDeleted);
         }
     }
 }
