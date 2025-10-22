@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251022052246_Init")]
+    [Migration("20251022154736_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -328,6 +328,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Message")
                         .IsRequired()
