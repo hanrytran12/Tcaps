@@ -1,4 +1,5 @@
-﻿using Domain.Primitives;
+﻿using Domain.Events;
+using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -7,14 +8,16 @@ namespace Domain.Entities
         public Guid ProductId { get; private set; }
         public string Code { get; private set; } = string.Empty;
         public decimal Quantity { get; private set; }
-        public DateTime StartDate { get; private set; }
-        public DateTime EndDate { get; private set; }
+        public DateOnly StartDate { get; private set; }
+        public DateOnly EndDate { get; private set; }
         public DateOnly CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public bool isDeleted { get; private set; }
 
-        private readonly List<Assignment> _assignments = new();
-        public IReadOnlyCollection<Assignment> Assignments => _assignments.AsReadOnly();
+        //private readonly List<Assignment> _assignments = new();
+        //public IReadOnlyCollection<Assignment> Assignments => _assignments.AsReadOnly();
+
+        public ICollection<Assignment> Assignments { get; private set; } = new List<Assignment>();
 
         private readonly List<Evaluate> _evaluates = new();
         public IReadOnlyCollection<Evaluate> Evaluates => _evaluates.AsReadOnly();
@@ -25,7 +28,7 @@ namespace Domain.Entities
         private readonly List<MaterialUse> _materialUses = new();
         public IReadOnlyCollection<MaterialUse> Materials => _materialUses.AsReadOnly();
 
-        public Batch(Guid Id, Guid productId, string code, decimal quantity, DateTime startDate, DateTime endDate)
+        public Batch(Guid Id, Guid productId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
             : base(Id)
         {
             ProductId = productId;
@@ -44,11 +47,43 @@ namespace Domain.Entities
             isDeleted = true;
         }
 
-        public void UpdateDetails(decimal quantity, DateTime startDate, DateTime endDate)
+        public void UpdateStatus(string status)
+        {
+            Status = status;
+        }
+
+        public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
         {
             Quantity = quantity;
             StartDate = startDate;
             EndDate = endDate;
+        }
+
+        public void AddAssignment(Assignment assignment)
+        {
+            Assignments.Add(assignment);
+        }
+
+        public void UpdateAssignmentsStatus(Guid assignmentId, string newStatus)
+        {
+            var assignment = Assignments.FirstOrDefault(a => a.Id == assignmentId);
+            if (assignment is not null)
+            {
+                assignment.UpdateStatus(newStatus);
+            }
+
+            CheckForCompletion();
+        }
+
+        private void CheckForCompletion()
+        {
+            bool has15Assignments = Assignments.Count == 15;
+            bool allAssignmentsCompleted = has15Assignments && Assignments.All(a => a.Status == "Completed");
+            if (allAssignmentsCompleted)
+            {
+                UpdateStatus("Completed");
+                AddDomainEvent(new BatchCompletedEvent(this.Id, this.Code));
+            }
         }
     }
 }

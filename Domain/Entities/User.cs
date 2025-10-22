@@ -1,10 +1,11 @@
-﻿using Domain.Primitives;
+﻿using Domain.Interfaces;
+using Domain.Primitives;
 
 namespace Domain.Entities
 {
     public class User : Entity
     {
-        public Guid? WorkshopId { get; private set; }
+        public Guid WorkshopId { get; private set; }
         public string Role { get; private set; } = string.Empty;
         public string FullName { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
@@ -14,7 +15,7 @@ namespace Domain.Entities
         public DateTime CreatedAt { get; private set; }
 
 
-        public User(Guid id, Guid? workshopId, string role, string fullName, string email, string passwordHash, string phone)
+        public User(Guid id, Guid workshopId, string role, string fullName, string email, string passwordHash, string phone)
             : base(id)
         {
             WorkshopId = workshopId;
@@ -59,9 +60,9 @@ namespace Domain.Entities
             Phone = phone;
         }
 
-        public void ChangePassword(string currentPasswordHash, string newPasswordHash)
+        public void ChangePassword(string currentPasswordHash, string newPasswordHash, IPasswordHasher passwordHasher)
         {
-            if (PasswordHash != currentPasswordHash)
+            if (!passwordHasher.Verify(currentPasswordHash, PasswordHash))
                 throw new InvalidOperationException("Mật khẩu hiện tại không chính xác.");
 
             PasswordHash = newPasswordHash;

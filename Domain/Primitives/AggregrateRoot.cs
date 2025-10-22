@@ -1,17 +1,19 @@
-﻿namespace Domain.Primitives
+﻿using MediatR;
+
+namespace Domain.Primitives
 {
     public abstract class AggregrateRoot : Entity
     {
-        private readonly List<IDomainEvent> _domainEvents = new();
+        private readonly List<INotification> _domainEvents = new();
 
-        public IReadOnlyCollection<IDomainEvent> DomainEvents => _domainEvents.AsReadOnly();
+        public IReadOnlyCollection<INotification> DomainEvents => _domainEvents.AsReadOnly();
 
-        protected void AddDomainEvent(IDomainEvent domainEvent)
+        public void AddDomainEvent(INotification domainEvent)
         {
             _domainEvents.Add(domainEvent);
         }
 
-        protected void ClearDomainEvent()
+        public void ClearDomainEvent()
         {
             _domainEvents.Clear();
         }
