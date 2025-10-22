@@ -26,7 +26,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddProduct(AddProductCommand command)
+        public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
             var result = await _mediator.Send(command);
             return result.IsSuccess ? CreatedAtAction(nameof(GetAllProduct), new { id = result.Value }, new { id = result.Value })
