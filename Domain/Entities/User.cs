@@ -30,6 +30,11 @@ namespace Domain.Entities
 
         private User() : base(Guid.NewGuid()) { }
 
+        public static User Create(Guid workshopId, string role, string fullName, string email, string passwordHash, string phone)
+        {
+            return new User(Guid.NewGuid(), workshopId, role, fullName, email, passwordHash, phone);
+        }
+
         public void UpdateDetails(string? role, string? fullName, string? email, string? passwordHash, string? phone)
         {
             this.Role = !string.IsNullOrEmpty(role) ? role : this.Role;
@@ -41,7 +46,7 @@ namespace Domain.Entities
 
         public void MarkAsDeleted()
         {
-            this.Status = "Disactive";
+            this.Status = "Inactive";
         }
 
         public void UpdateProfile(string fullName, string email, string phone)

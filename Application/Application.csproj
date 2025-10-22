@@ -26,6 +26,7 @@
 
   <ItemGroup>
     <Folder Include="Features\Assignments\Queries\" />
+    <Folder Include="Features\MaterialRequest\Queries\" />
   </ItemGroup>
 
 </Project>
