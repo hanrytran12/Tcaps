@@ -21,7 +21,15 @@ namespace Application.Features.Batches.Commands.UpdateBatch
             {
                 return Result.Failure($"Batch with Id: {request.Id} not found.");
             }
-            batch.UpdateDetails(request.Quantity, request.StartDate, request.EndDate);
+
+            try
+            {
+                batch.UpdateDetails(request.Quantity, request.StartDate, request.EndDate);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Result.Failure(ex.Message);
+            }
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
