@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +21,12 @@ namespace Infrastructure.Repositories
 
         public void Delete(Workshop workshop)
         {
-           _context.Workshop.Remove(workshop);
+            _context.Workshop.Remove(workshop);
+        }
+
+        public Task<bool> ExistsAsync(Guid id)
+        {
+            return _context.Workshop.AnyAsync(ws => ws.Id == id);
         }
 
         public async Task<IEnumerable<Workshop>> FindByNameAsync(string name)
