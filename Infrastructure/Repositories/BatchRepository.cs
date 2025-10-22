@@ -71,5 +71,11 @@ namespace Infrastructure.Repositories
                 .Where(b => ids.Contains(b.Id))
                 .ToListAsync();
         }
+
+        public async Task<Batch?> GetByCodeAsync(string code)
+        {
+            return await _context.Batches
+                                 .FirstOrDefaultAsync(b => b.Code == code);
+        }
     }
 }
