@@ -8,6 +8,7 @@ namespace Domain.Entities
         public string Title { get; private set; } = string.Empty;
         public string Message { get; private set; } = string.Empty;
         public string Type { get; private set; } = string.Empty;
+        public bool IsRead { get; private set; }
         public DateOnly CreatedAt { get; private set; }
 
         public Notification(Guid id, Guid userId, string title, string message, string type)
@@ -21,5 +22,10 @@ namespace Domain.Entities
         }
 
         private Notification() : base(Guid.NewGuid()) { }
+
+        public void MarkAsRead()
+        {
+            IsRead = true;
+        }
     }
 }
