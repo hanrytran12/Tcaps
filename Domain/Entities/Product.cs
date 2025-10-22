@@ -21,6 +21,11 @@ namespace Domain.Entities
 
         private Product() : base(Guid.NewGuid()) { }
 
+        public static Product Create(string code, string name, string image, string description)
+        {
+            return new Product(Guid.NewGuid(), code, name, image, description);
+        }
+
         public void UpdateDetails(string? name, string? image, string? description)
         {
             this.Name = !string.IsNullOrWhiteSpace(name) ? name : this.Name;
