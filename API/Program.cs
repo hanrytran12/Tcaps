@@ -9,6 +9,8 @@ using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.UpdateMaterialRequest;
+using Application.Features.Notifications.Commands.MarkNotificationAsRead;
+using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
@@ -83,7 +85,11 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(CompleteAssignmentCommand).Assembly,
 
                                                                       typeof(AddMaterialRequestCommand).Assembly,
-                                                                      typeof(UpdateMaterialRequestCommand).Assembly));
+                                                                      typeof(UpdateMaterialRequestCommand).Assembly,
+
+                                                                      typeof(GetNotificationsQuery).Assembly,
+                                                                      typeof(MarkNotificationAsReadCommand).Assembly
+                                                                      ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 

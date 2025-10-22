@@ -124,7 +124,8 @@ namespace Infrastructure.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
