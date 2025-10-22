@@ -17,13 +17,7 @@ namespace Application.Features.Products.Commands.AddProduct
 
         public async Task<Result<Guid>> Handle(AddProductCommand request, CancellationToken cancellationToken)
         {
-            var isCodeUnieque = await _repository.IsCodeUniqueAsync(request.Code);
-            if (!isCodeUnieque)
-            {
-                return Result<Guid>.Failure($"Mã sản phẩm đã tồn tại.");
-            }
-
-            var product = new Product(Guid.NewGuid(), request.Code, request.Name, request.ImageURL, request.Description);
+            var product = Product.Create(request.Code, request.Name, request.ImageURL, request.Description);
             await _repository.AddAsync(product);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<Guid>.Success(product.Id);
