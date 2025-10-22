@@ -3,6 +3,7 @@ using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.UpdateUser;
 using Application.Features.Users.Queries.GetAllUser;
+using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Interfaces;
 using Domain.Entities;
 using MediatR;
@@ -103,9 +104,8 @@ namespace API.Controllers
         }
 
         [HttpGet("staff-performance")]
-        public async Task<IActionResult> GetStaffPerformance(Guid WorkshopId)
+        public async Task<IActionResult> GetStaffPerformance([FromQuery] GetStaffPerformanceQuery query)
         {
-            var query = new Application.Features.Users.Queries.GetStaffPerformance.GetStaffPerformanceQuery(WorkshopId);
             var result = await _mediator.Send(query);
             return Ok(result);
         }
