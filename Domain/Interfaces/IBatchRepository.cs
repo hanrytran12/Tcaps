@@ -14,5 +14,6 @@ namespace Domain.Interfaces
         Task<Batch?> GetByIdWithAssignmentsAsync(Guid Id);
         Task<Batch> GetAggregateRootByAssignmentIdAsync(Guid assignmentId);
         Task<Batch?> GetByCodeAsync(string code);
+        Task<bool> IsProductInUseAsync(Guid productId);
     }
 }
