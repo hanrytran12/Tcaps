@@ -77,5 +77,11 @@ namespace Infrastructure.Repositories
             return await _context.Batches
                                  .FirstOrDefaultAsync(b => b.Code == code);
         }
+
+        public async Task<bool> IsProductInUseAsync(Guid productId)
+        {
+            return await _context.Batches
+                                 .AnyAsync(b => b.ProductId == productId && !b.isDeleted);
+        }
     }
 }
