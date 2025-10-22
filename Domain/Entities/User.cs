@@ -46,7 +46,7 @@ namespace Domain.Entities
 
         public void MarkAsDeleted()
         {
-            this.Status = "Disactive";
+            this.Status = "Inactive";
         }
 
         public void UpdateProfile(string fullName, string email, string phone)
