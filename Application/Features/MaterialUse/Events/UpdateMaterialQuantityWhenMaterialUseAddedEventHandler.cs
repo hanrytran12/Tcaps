@@ -8,10 +8,12 @@ namespace Application.Features.MaterialUse.Events
     {
         private readonly IMaterialRepository _materialRepository;
         private readonly IUnitOfWork _unitOfWork;
-        public UpdateMaterialQuantityWhenMaterialUseAddedEventHandler(IMaterialRepository materialRepository, IUnitOfWork unitOfWork)
+        private readonly IMediator _mediator;
+        public UpdateMaterialQuantityWhenMaterialUseAddedEventHandler(IMaterialRepository materialRepository, IUnitOfWork unitOfWork, IMediator mediator)
         {
             _materialRepository = materialRepository;
             _unitOfWork = unitOfWork;
+            _mediator = mediator;
         }
 
         public async Task Handle(MaterialUseAddedEvent notification, CancellationToken cancellationToken)
@@ -21,6 +23,12 @@ namespace Application.Features.MaterialUse.Events
             {
                 materials.DecreaseQuantity((int)notification.QuantityDivide);
                 await _unitOfWork.SaveChangesAsync();
+
+                foreach (var domainEvent in materials.DomainEvents)
+                {
+                    await _mediator.Publish(domainEvent, cancellationToken);
+                }
+                materials.ClearDomainEvent();
             }
         }
     }
