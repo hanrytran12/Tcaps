@@ -34,9 +34,6 @@ namespace API.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        }
-
-
         [HttpGet]
         public async Task<IActionResult> GetNotifications([FromQuery] GetNotificationsQuery query)
         {
