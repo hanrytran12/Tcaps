@@ -15,9 +15,17 @@ namespace API.Controllers
         }
 
         [HttpGet("{userId:guid}")]
-        public async Task<IActionResult> GetNotificationByUserId(Guid userId)
+        public async Task<IActionResult> GetNotificationByUserId(Guid userId,
+            [FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
-            var response = await _notificationService.GetNotificationByUserIdAsync(userId);
+            var response = await _notificationService.GetNotificationByUserIdAsync(userId, pageNumber, pageSize);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("count/{userId:guid}")]
+        public async Task<IActionResult> CountNotification(Guid userId)
+        {
+            var response = await _notificationService.CountNotificationAsync(userId);
             return StatusCode(response.StatusCode, response);
         }
 
