@@ -6,8 +6,13 @@ namespace Application.Interfaces
     {
         Task SendBatchCompletionNotificationAsync(Guid batchId, string batchCode);
         Task SendMaterialRequestApprovalNotificationAsync(Guid materialId, Guid batchId, decimal quantityRequest);
+
+        Task<ResponseDTO> GetNotificationByUserIdAsync(Guid userId, int pageNumber, int pageSize);
+
         Task SendStockUpdateNotificationToAdminAsync(string name, int newStockQuantity, int stockChange);
         Task<ResponseDTO> GetNotificationByUserIdAsync(Guid userId);
+
         Task<ResponseDTO> MarkAsReadAsync(Guid notificationId);
+        Task<ResponseDTO> CountNotificationAsync(Guid userId);
     }
 }
