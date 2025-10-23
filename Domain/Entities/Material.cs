@@ -1,8 +1,9 @@
-﻿using Domain.Primitives;
+﻿using Domain.Events;
+using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class Material : Entity
+    public class Material : AggregrateRoot
     {
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
@@ -23,5 +24,16 @@ namespace Domain.Entities
         }
 
         private Material() : base(Guid.NewGuid()) { }
+
+        public void IncreaseQuantity(int amount)
+        {
+            if (amount <= 0)
+            {
+                throw new ArgumentException("Amount to increase must be non-negative.", nameof(amount));
+            }
+            Quantity += amount;
+
+            AddDomainEvent(new MaterialStockUpdatedEvent(Name, Quantity, amount));
+        }
     }
 }
