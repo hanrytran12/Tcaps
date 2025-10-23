@@ -3,6 +3,7 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Repositories;
 
 namespace Infrastructure.Services
 {
@@ -82,24 +83,72 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<ResponseDTO> GetNotificationByUserIdAsync(Guid userId)
+        public async Task<ResponseDTO> GetNotificationByUserIdAsync(Guid userId, int pageNumber, int pageSize)
         {
             try
             {
-                var notifications = await _notificationRepository.GetByUserIdAsync(userId);
-                if (notifications == null || !notifications.Any())
+                //var notifications = await _notificationRepository.GetByUserIdAsync(userId);
+                //lấy dữ liệu có phân trang
+                var notifications = await _notificationRepository.GetPagedAsync(
+                    filter: n => n.UserId == userId,
+                    orderBy: q => q.OrderByDescending(n => n.CreatedAt),
+                    pageSize: pageSize,
+                    pageNumber: pageNumber);
+
+                if (notifications == null || !notifications.Items.Any())
                 {
                     _responseDTO.StatusCode = 404;
                     _responseDTO.Message = "Không có thông báo.";
                     return _responseDTO;
                 }
 
-                var dto = _mapper.Map<List<NotificationDTO>>(notifications);
+                var dto = _mapper.Map<List<NotificationDTO>>(notifications.Items);
+
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
-                _responseDTO.Data = dto;
+                _responseDTO.Data = new
+                {
+                    Items = dto,
+                    notifications.TotalCount,
+                    notifications.TotalPages,
+                    notifications.PageSize,
+                    notifications.CurrentPage
+                };
             }
             catch (Exception ex)
+            {
+                _responseDTO.StatusCode = 500;
+                _responseDTO.Message = ex.Message;
+            }
+            return _responseDTO;
+        }
+
+        public async Task<ResponseDTO> CountNotificationAsync(Guid userId)
+        {
+            try
+            {
+                var user = await _userRepository.GetByIdAsync(userId);
+                if (user == null)
+                {
+                    _responseDTO.StatusCode = 404;
+                    _responseDTO.Message = "User not found.";
+                    return _responseDTO;
+                }
+
+                var count = await _notificationRepository.CountNotificationAsync(userId);
+                if (count == 0)
+                {
+                    _responseDTO.StatusCode = 200;
+                    _responseDTO.Message = "Bạn không có thông báo.";
+                    _responseDTO.Data = count;
+                    return _responseDTO;
+                }
+
+                _responseDTO.StatusCode = 200;
+                _responseDTO.Message = "Success";
+                _responseDTO.Data = count;
+            }
+            catch(Exception ex)
             {
                 _responseDTO.StatusCode = 500;
                 _responseDTO.Message = ex.Message;

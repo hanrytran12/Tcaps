@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class NotificationRepository : INotificationRepository
+    public class NotificationRepository : GenericRepository<Notification>, INotificationRepository
     {
         private readonly AppDbContext _context;
 
-        public NotificationRepository(AppDbContext context)
+        public NotificationRepository(AppDbContext context) : base(context)
         {
             _context = context;
         }
@@ -17,6 +17,12 @@ namespace Infrastructure.Repositories
         public async Task AddAsync(Notification notification)
         {
             await _context.Notifications.AddAsync(notification);
+        }
+
+        public async Task<int> CountNotificationAsync(Guid userId)
+        {
+            return await _context.Notifications
+                .Where(n => n.UserId == userId && n.IsRead == false).CountAsync();
         }
 
         public void Delete(Notification notification)
