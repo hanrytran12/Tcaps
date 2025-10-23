@@ -208,6 +208,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
 
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
 
