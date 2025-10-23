@@ -25,8 +25,10 @@ namespace Domain.Entities
         private readonly List<Production> _productions = new();
         public IReadOnlyCollection<Production> Productions => _productions.AsReadOnly();
 
-        private readonly List<MaterialUse> _materialUses = new();
-        public IReadOnlyCollection<MaterialUse> Materials => _materialUses.AsReadOnly();
+        //private readonly List<MaterialUse> _materialUses = new();
+        //public IReadOnlyCollection<MaterialUse> Materials => _materialUses.AsReadOnly();
+
+        public ICollection<MaterialUse> MaterialUses { get; private set; } = new List<MaterialUse>();
 
         public Batch(Guid Id, Guid productId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
             : base(Id)
@@ -99,6 +101,11 @@ namespace Domain.Entities
                 UpdateStatus("Completed");
                 AddDomainEvent(new BatchCompletedEvent(this.Id, this.Code));
             }
+        }
+
+        public void AddMaterialUse(MaterialUse materialUse)
+        {
+            MaterialUses.Add(materialUse);
         }
     }
 }
