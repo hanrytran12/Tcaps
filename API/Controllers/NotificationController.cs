@@ -1,4 +1,4 @@
-﻿using Application.Features.Notifications.Queries.GetNotifications;
+using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +17,25 @@ namespace API.Controllers
             _mediator = mediator;
             _notificationService = notificationService;
         }
+
+
+        [HttpGet("{userId:guid}")]
+        public async Task<IActionResult> GetNotificationByUserId(Guid userId,
+            [FromQuery] int pageNumber, [FromQuery] int pageSize)
+        {
+            var response = await _notificationService.GetNotificationByUserIdAsync(userId, pageNumber, pageSize);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpGet("count/{userId:guid}")]
+        public async Task<IActionResult> CountNotification(Guid userId)
+        {
+            var response = await _notificationService.CountNotificationAsync(userId);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetNotifications([FromQuery] GetNotificationsQuery query)

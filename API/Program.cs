@@ -58,7 +58,9 @@ builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IProductionService, ProductionService>();
 builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository>();
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+
 
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
