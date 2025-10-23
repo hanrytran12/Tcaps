@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251022160700_Init")]
+    [Migration("20251023053430_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -210,6 +210,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateOnly>("Date")
                         .HasColumnType("date");
+
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
