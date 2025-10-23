@@ -123,7 +123,6 @@ namespace Infrastructure.Services
             return _responseDTO;
         }
 
-
         public async Task<ResponseDTO> CountNotificationAsync(Guid userId)
         {
             try
@@ -166,7 +165,6 @@ namespace Infrastructure.Services
             var notification = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
-
         }
     }
 }
