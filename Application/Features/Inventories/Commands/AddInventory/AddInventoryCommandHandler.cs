@@ -10,11 +10,13 @@ namespace Application.Features.Inventories.Commands.AddInventory
         private readonly IInventoryRepository _inventoryRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMaterialRepository _materialRepository;
-        public AddInventoryCommandHandler(IInventoryRepository inventoryRepository, IUnitOfWork unitOfWork, IMaterialRepository materialRepository)
+        private readonly IMediator _mediator;
+        public AddInventoryCommandHandler(IInventoryRepository inventoryRepository, IUnitOfWork unitOfWork, IMaterialRepository materialRepository, IMediator mediator)
         {
             _inventoryRepository = inventoryRepository;
             _unitOfWork = unitOfWork;
             _materialRepository = materialRepository;
+            _mediator = mediator;
         }
 
         public async Task<Result<Guid>> Handle(AddInventoryCommand request, CancellationToken cancellationToken)
@@ -45,6 +47,13 @@ namespace Application.Features.Inventories.Commands.AddInventory
             var inventory = Inventory.Create(request.MaterialId, request.Quantity, imageUrl);
             await _inventoryRepository.AddAsync(inventory);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            foreach (var domainEvents in inventory.DomainEvents)
+            {
+                await _mediator.Publish(domainEvents, cancellationToken);
+            }
+
+            inventory.ClearDomainEvent();
             return Result<Guid>.Success(inventory.Id);
         }
     }

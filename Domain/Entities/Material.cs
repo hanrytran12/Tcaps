@@ -23,5 +23,14 @@ namespace Domain.Entities
         }
 
         private Material() : base(Guid.NewGuid()) { }
+
+        public void IncreaseQuantity(int amount)
+        {
+            if (amount <= 0)
+            {
+                throw new ArgumentException("Amount to increase must be non-negative.", nameof(amount));
+            }
+            Quantity += amount;
+        }
     }
 }
