@@ -7,6 +7,8 @@ using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetDashboardStats;
+using Application.Features.Inventories.Commands.AddInventory;
+using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.UpdateMaterialRequest;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
@@ -56,6 +58,7 @@ builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IProductionService, ProductionService>();
 builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository>();
 builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
@@ -88,7 +91,10 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(UpdateMaterialRequestCommand).Assembly,
 
                                                                       typeof(GetNotificationsQuery).Assembly,
-                                                                      typeof(MarkNotificationAsReadCommand).Assembly
+                                                                      typeof(MarkNotificationAsReadCommand).Assembly,
+
+                                                                      typeof(AddInventoryCommand).Assembly,
+                                                                      typeof(GetInventoryByIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

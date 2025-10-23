@@ -17,7 +17,7 @@ namespace Infrastructure.Services
         private readonly ResponseDTO _responseDTO;
 
         public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
-            ,IMapper mapper)
+            , IMapper mapper)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -46,7 +46,7 @@ namespace Infrastructure.Services
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _responseDTO.StatusCode = 500;
                 _responseDTO.Message = ex.Message;
@@ -105,6 +105,17 @@ namespace Infrastructure.Services
                 _responseDTO.Message = ex.Message;
             }
             return _responseDTO;
+        }
+
+        public async Task SendStockUpdateNotificationToAdminAsync(string name, int newStockQuantity, int stockChange)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            var title = "Material Stock Updated";
+            var message = $"Material {name} stock has been updated. New stock quantity: {newStockQuantity} (Change: {stockChange}).";
+            var type = "MaterialStockUpdate";
+            var notification = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }
