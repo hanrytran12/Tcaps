@@ -32,7 +32,9 @@ namespace API.Controllers
         {
             var response = await _notificationService.CountNotificationAsync(userId);
             return StatusCode(response.StatusCode, response);
+
         }
+
 
         [HttpGet]
         public async Task<IActionResult> GetNotifications([FromQuery] GetNotificationsQuery query)
