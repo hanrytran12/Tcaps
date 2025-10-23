@@ -155,6 +155,7 @@ namespace Infrastructure.Services
                 _responseDTO.Message = ex.Message;
             }
             return _responseDTO;
+        }
 
         public async Task SendStockUpdateNotificationToAdminAsync(string name, int newStockQuantity, int stockChange)
         {
