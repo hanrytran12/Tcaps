@@ -31,6 +31,10 @@ namespace Infrastructure.Persistence
                 .Property(a => a.Id)
                 .ValueGeneratedNever();
 
+            modelBuilder.Entity<MaterialUse>()
+                .Property(mu => mu.Id)
+                .ValueGeneratedNever();
+
             modelBuilder.Entity<Batch>(builder =>
             {
                 builder.HasMany(o => o.Assignments)

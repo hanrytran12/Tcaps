@@ -96,7 +96,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(MarkNotificationAsReadCommand).Assembly,
 
                                                                       typeof(AddInventoryCommand).Assembly,
-                                                                      typeof(GetInventoryByIdQuery).Assembly
+                                                                      typeof(GetInventoryByIdQuery).Assembly,
+
+                                                                      typeof(AddMaterialRequestCommand).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
