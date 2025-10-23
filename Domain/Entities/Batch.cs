@@ -106,6 +106,8 @@ namespace Domain.Entities
         public void AddMaterialUse(MaterialUse materialUse)
         {
             MaterialUses.Add(materialUse);
+
+            AddDomainEvent(new MaterialUseAddedEvent(materialUse.MaterialId, materialUse.BatchId, materialUse.AssignId, materialUse.QuantityDivide));
         }
     }
 }
