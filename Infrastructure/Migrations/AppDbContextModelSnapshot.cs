@@ -293,7 +293,6 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.MaterialUse", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssignId")
@@ -308,10 +307,13 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("QuantityRemaining")
+                    b.Property<decimal>("QuantityDivide")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("QuantityUsed")
+                    b.Property<decimal>("QuantityRequest")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("QuantityStaffUse")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
@@ -493,7 +495,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.MaterialUse", b =>
                 {
                     b.HasOne("Domain.Entities.Batch", null)
-                        .WithMany("Materials")
+                        .WithMany("MaterialUses")
                         .HasForeignKey("BatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -512,7 +514,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Evaluates");
 
-                    b.Navigation("Materials");
+                    b.Navigation("MaterialUses");
 
                     b.Navigation("Productions");
                 });

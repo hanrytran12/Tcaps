@@ -35,5 +35,16 @@ namespace Domain.Entities
 
             AddDomainEvent(new MaterialStockUpdatedEvent(Name, Quantity, amount));
         }
+
+        public void DecreaseQuantity(int amount)
+        {
+            if (amount <= 0)
+            {
+                throw new ArgumentException("Amount to increase must be non-negative.", nameof(amount));
+            }
+            Quantity -= amount;
+
+            AddDomainEvent(new MaterialStockUpdatedEvent(Name, Quantity, amount * -1));
+        }
     }
 }

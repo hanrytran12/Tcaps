@@ -236,8 +236,9 @@ namespace Infrastructure.Migrations
                     MaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QuantityUsed = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    QuantityRemaining = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    QuantityDivide = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    QuantityStaffUse = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    QuantityRequest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
