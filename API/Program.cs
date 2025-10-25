@@ -8,6 +8,7 @@ using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
+using Application.Features.ComponentDefects.Query.GetComponentDefects;
 using Application.Features.Inventories.Commands.AddInventory;
 using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
@@ -100,7 +101,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddInventoryCommand).Assembly,
                                                                       typeof(GetInventoryByIdQuery).Assembly,
 
-                                                                      typeof(AddMaterialRequestCommand).Assembly
+                                                                      typeof(AddMaterialRequestCommand).Assembly,
+
+                                                                      typeof(GetComponentDefectsQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
