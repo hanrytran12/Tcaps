@@ -1,4 +1,5 @@
 ﻿using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
+using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,19 @@ namespace API.Controllers
         [HttpPut("approve/{id:guid}")]
         public async Task<IActionResult> ApproveMaterialRequest([FromRoute] Guid id)
         {
-            var command = new Application.Features.MaterialRequest.Commands.UpdateMaterialRequest.UpdateMaterialRequestCommand { Id = id };
+            var command = new Application.Features.MaterialRequest.Commands.ApproveRequestFromLead.ApproveRequestFromLeadCommand { Id = id };
+            var result = await _mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest(result.error);
+        }
+
+        [HttpPut("confirmed/{id:guid}")]
+        public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id)
+        {
+            var command = new ConfirmRequestFromQcCommand { Id = id };
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {

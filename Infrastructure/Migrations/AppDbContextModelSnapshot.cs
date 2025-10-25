@@ -262,6 +262,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid>("AssignId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("BatchId")
                         .HasColumnType("uniqueidentifier");
 
