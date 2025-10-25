@@ -89,6 +89,7 @@ namespace Infrastructure.Migrations
                     MaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuantityRequest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
