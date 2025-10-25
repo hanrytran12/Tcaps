@@ -16,7 +16,7 @@ namespace Application.Features.MaterialRequest.Commands.AddMaterialRequest
 
         public async Task<Result<Guid>> Handle(AddMaterialRequestCommand request, CancellationToken cancellationToken)
         {
-            var materialRequest = Domain.Entities.MaterialRequest.Create(request.MaterialId, request.UserId, request.BatchId, request.QuantityRequest, request.Note);
+            var materialRequest = Domain.Entities.MaterialRequest.Create(request.MaterialId, request.UserId, request.BatchId, request.AssignId, request.QuantityRequest, request.Note);
             await _materialRequestRepository.AddAsync(materialRequest);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<Guid>.Success(materialRequest.Id);
