@@ -35,6 +35,11 @@ namespace Infrastructure.Repositories
             return result;
         }
 
+        public async Task<User?> FindByEmailOrPhoneAsync(string emailOrPhone)
+        {
+            return await _context.Users.FirstOrDefaultAsync(x => x.Email == emailOrPhone || x.Phone == emailOrPhone);
+        }
+
         public async Task<IEnumerable<User>> GetAllAsync()
         {
             return await _context.Users.ToListAsync();
