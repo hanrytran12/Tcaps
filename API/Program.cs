@@ -168,6 +168,15 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin", policy =>
         policy.RequireRole("Admin"));
+
+    options.AddPolicy("Lead", policy =>
+        policy.RequireRole("Lead"));
+
+    options.AddPolicy("QC", policy =>
+        policy.RequireRole("QC"));
+
+    options.AddPolicy("CanCreateMaterialRequest", policy =>
+        policy.RequireRole("Lead", "QC"));
 });
 
 var app = builder.Build();

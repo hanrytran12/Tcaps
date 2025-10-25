@@ -1,6 +1,7 @@
 ﻿using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,6 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = ("CanCreateMaterialRequest"))]
         public async Task<IActionResult> CreateMaterialRequest([FromBody] AddMaterialRequestCommand command)
         {
             var result = await _mediator.Send(command);
@@ -27,6 +29,7 @@ namespace API.Controllers
         }
 
         [HttpPut("approve/{id:guid}")]
+        [Authorize(Policy = ("Lead"))]
         public async Task<IActionResult> ApproveMaterialRequest([FromRoute] Guid id)
         {
             var command = new Application.Features.MaterialRequest.Commands.ApproveRequestFromLead.ApproveRequestFromLeadCommand { Id = id };
@@ -39,6 +42,7 @@ namespace API.Controllers
         }
 
         [HttpPut("confirmed/{id:guid}")]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id)
         {
             var command = new ConfirmRequestFromQcCommand { Id = id };
