@@ -49,7 +49,7 @@ namespace Domain.Entities
                 throw new InvalidOperationException("Only pending requests can be approved.");
 
             Status = "Confirmed";
-            AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, QuantityRequest));
+            AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, AssignId, QuantityRequest));
         }
     }
 }
