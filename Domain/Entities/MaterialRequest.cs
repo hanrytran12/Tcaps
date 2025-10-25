@@ -41,5 +41,13 @@ namespace Domain.Entities
             AddDomainEvent(new MaterialRequestApprovedEvent(MaterialId, BatchId, QuantityRequest));
         }
 
+        public void MarkAsConfirmed()
+        {
+            if (Status != "Pending")
+                throw new InvalidOperationException("Only pending requests can be approved.");
+
+            Status = "Confirmed";
+
+        }
     }
 }
