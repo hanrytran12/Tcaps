@@ -6,6 +6,7 @@ using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -42,6 +43,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddBatch(AddBatchCommand command)
         {
             var result = await _mediator.Send(command);
