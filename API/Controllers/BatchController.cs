@@ -2,6 +2,7 @@
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
 using MediatR;
@@ -24,6 +25,20 @@ namespace API.Controllers
         {
             var listBatch = await _mediator.Send(new GetAllBatchQuery());
             return listBatch;
+        }
+
+        [HttpGet("dashboard")]
+        public async Task<IActionResult> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("for-qc")]
+        public async Task<List<Batch>> GetBatchByWorkshopId([FromQuery] GetBatchByWorkshopIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return result;
         }
 
         [HttpPost]
@@ -52,14 +67,6 @@ namespace API.Controllers
             var command = new DeleteBatchCommand(id);
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : BadRequest(result.error);
-        }
-
-
-        [HttpGet("dashboard")]
-        public async Task<IActionResult> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
-        {
-            var result = await _mediator.Send(query);
-            return Ok(result);
         }
     }
 }

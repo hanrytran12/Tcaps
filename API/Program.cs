@@ -6,6 +6,7 @@ using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Application.Features.Inventories.Commands.AddInventory;
 using Application.Features.Inventories.Queries.GetInventoryById;
@@ -82,6 +83,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllBatchQuery).Assembly,
                                                                       typeof(DeleteBatchCommand).Assembly,
                                                                       typeof(UpdateBatchCommand).Assembly,
+                                                                      typeof(GetBatchByWorkshopIdQuery).Assembly,
 
                                                                       typeof(GetDashboardStatsQuery).Assembly,
                                                                       typeof(GetStaffPerformanceQuery).Assembly,
