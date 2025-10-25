@@ -7,6 +7,7 @@ using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Interfaces;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -32,6 +33,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser(AddUserCommand command)
         {
             var result = await _mediator.Send(command);
