@@ -3,6 +3,7 @@ using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -20,6 +21,15 @@ namespace API.Controllers
         [Authorize(Policy = ("CanCreateMaterialRequest"))]
         public async Task<IActionResult> CreateMaterialRequest([FromBody] AddMaterialRequestCommand command)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Không thể xác định người dùng từ token.");
+            }
+
+            var userId = Guid.Parse(userIdString);
+            command.UserId = userId;
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {

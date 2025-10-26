@@ -133,8 +133,6 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddInventoryCommand).Assembly,
                                                                       typeof(GetInventoryByIdQuery).Assembly,
 
-                                                                      typeof(AddMaterialRequestCommand).Assembly,
-
                                                                       typeof(GetComponentDefectsQuery).Assembly,
 
                                                                       typeof(LoginQuery).Assembly

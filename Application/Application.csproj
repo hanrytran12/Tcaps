@@ -28,6 +28,7 @@
   <ItemGroup>
     <Folder Include="Features\Assignments\Queries\" />
     <Folder Include="Features\MaterialRequest\Queries\" />
+    <Folder Include="Features\MaterialUse\Commands\" />
     <Folder Include="Features\MaterialUse\Queries\" />
   </ItemGroup>
 
