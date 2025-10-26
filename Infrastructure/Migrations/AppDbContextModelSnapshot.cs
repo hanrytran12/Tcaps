@@ -36,6 +36,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
+                    b.Property<DateOnly>("ExpectedDeliveryDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 

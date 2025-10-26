@@ -22,6 +22,9 @@ namespace Application.Features.Assignments.Commands.AddAssignment
             RuleFor(x => x.EndDate)
                 .NotEmpty().WithMessage("End Date is required")
                 .GreaterThan(x => x.StartDate).WithMessage("End date must be after start date.");
+
+            RuleFor(x => x.ExpectedDeliveryDate)
+                .NotEmpty().WithMessage("Expected Delivery Date is required");
         }
     }
 }

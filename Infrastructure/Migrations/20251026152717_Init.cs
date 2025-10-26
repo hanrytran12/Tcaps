@@ -192,6 +192,7 @@ namespace Infrastructure.Migrations
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ExpectedDeliveryDate = table.Column<DateOnly>(type: "date", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
                 },
