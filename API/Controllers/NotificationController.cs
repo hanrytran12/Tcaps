@@ -1,7 +1,8 @@
-using Application.Features.Notifications.Queries.GetNotifications;
+﻿using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -37,7 +38,15 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetNotifications([FromQuery] GetNotificationsQuery query)
         {
-            query.UserId = Guid.Parse("A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D");
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Không thể xác định người dùng từ token.");
+            }
+
+            var userId = Guid.Parse(userIdString);
+            query.UserId = userId;
             var notifications = await _mediator.Send(query);
             return Ok(notifications);
         }
