@@ -9,16 +9,25 @@ namespace Application.Features.Batches.Commands.AddBatch
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBatchRepository _batchRepository;
-        public AddBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository)
+        private readonly IProductRepository _productRepository;
+
+        public AddBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository, IProductRepository productRepository)
         {
             _unitOfWork = unitOfWork;
             _batchRepository = batchRepository;
+            _productRepository = productRepository;
         }
 
         public async Task<Result<Guid>> Handle(AddBatchCommand request, CancellationToken cancellationToken)
         {
+            var product = await _productRepository.GetByCodeAsync(request.CodeProduct);
+            if (product is null)
+            {
+                return Result<Guid>.Failure("Product is not exist.");
+            }
+
             var batch = Batch.Create(
-                request.ProductId,
+                product.Id,
                 request.Code,
                 request.Quantity,
                 request.StartDate,
