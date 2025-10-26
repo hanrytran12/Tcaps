@@ -26,6 +26,11 @@ namespace Domain.Entities
 
         private Assignment() : base(Guid.NewGuid()) { }
 
+        public static Assignment Create(Guid batchId, Guid workshopId, int quantity, DateOnly startDate, DateOnly endDate)
+        {
+            return new Assignment(Guid.NewGuid(), batchId, workshopId, quantity, startDate, endDate);
+        }
+
         internal void UpdateStatus(string status)
         {
             Status = status;

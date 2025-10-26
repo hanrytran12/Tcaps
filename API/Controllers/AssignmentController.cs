@@ -1,6 +1,7 @@
 ﻿using Application.Features.Assignments.Commands.AddAssignmentCommand;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -16,6 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Lead")]
         public async Task<IActionResult> AddAssignment([FromBody] AddAssignmentCommand command)
         {
             var result = await _mediator.Send(command);
