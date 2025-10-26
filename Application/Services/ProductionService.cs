@@ -120,7 +120,7 @@ namespace Application.Services
                 production.Submit();
                 _productionRepository.Update(production);
 
-                var evaluate = new Evaluate(Guid.NewGuid(), production.Id, qc.Id, string.Empty, string.Empty);
+                var evaluate = new Evaluate(Guid.NewGuid(), production.Id, qc.Id, string.Empty, 0, string.Empty);
                 await _evaluateRepository.AddAsync(evaluate);
 
                 var notification = new Notification

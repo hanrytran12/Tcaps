@@ -29,6 +29,11 @@ namespace Infrastructure.Repositories
             return await _context.Incomes.FindAsync(id);
         }
 
+        public async Task<Income> GetByProductionIdAsync(Guid productionId)
+        {
+            return await _context.Incomes.FirstOrDefaultAsync(i => i.ProductionId == productionId);
+        }
+
         public async Task<IEnumerable<Income>> GetIncomeHistoryAsync(Guid userId)
         {
             return await _context.Incomes

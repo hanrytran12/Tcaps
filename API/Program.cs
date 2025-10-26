@@ -10,6 +10,10 @@ using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Application.Features.ComponentDefects.Query.GetComponentDefects;
+using Application.Features.Evaluates.Commands.AddEvaluate;
+using Application.Features.Evaluates.Commands.UpdateEvaluate;
+using Application.Features.Evaluates.Queries.GetAllEvaluate;
+using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
 using Application.Features.Inventories.Commands.AddInventory;
 using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
@@ -95,6 +99,7 @@ builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
+builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
@@ -137,7 +142,12 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(GetComponentDefectsQuery).Assembly,
 
-                                                                      typeof(LoginQuery).Assembly
+                                                                      typeof(LoginQuery).Assembly,
+
+                                                                      typeof(AddEvaluateCommand).Assembly,
+                                                                      typeof(UpdateEvaluateCommand).Assembly,
+                                                                      typeof(GetAllEvaluateQuery).Assembly,
+                                                                      typeof(GetEvaluatesByQCIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

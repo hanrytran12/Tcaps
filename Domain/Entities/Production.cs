@@ -43,6 +43,17 @@ namespace Domain.Entities
             Quantity = newQuantity;
         }
 
+        public void ReduceQuantity(int quantityError)
+        {
+            if (quantityError <= 0)
+                return;
+
+            if (Quantity < quantityError)
+                throw new InvalidOperationException("Không thể giảm số lượng vượt quá số lượng hiện tại.");
+
+            Quantity -= quantityError;
+        }
+
         public void MarkAsCompleted()
         {
             Status = "Completed";

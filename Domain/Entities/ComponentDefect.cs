@@ -1,4 +1,5 @@
 ﻿using Domain.Primitives;
+using FluentValidation;
 
 namespace Domain.Entities
 {
@@ -25,5 +26,18 @@ namespace Domain.Entities
         }
 
         private ComponentDefect() : base(Guid.NewGuid()) { }
+
+        public static ComponentDefect Create(Guid evaluateId, string defectType, string serverity, string description, string solution, string status)
+        {
+            return new ComponentDefect(Guid.NewGuid(), evaluateId, defectType, serverity, description, solution, status);
+        }
+
+        public void Update(string defectType, string severity, string description, string solution)
+        {
+            DefectType = defectType;
+            Serverity = severity;
+            Description = description;
+            Solution = solution;
+        }
     }
 }
