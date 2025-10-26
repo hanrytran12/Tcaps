@@ -79,6 +79,8 @@ namespace Domain.Entities
         public void AddAssignment(Assignment assignment)
         {
             Assignments.Add(assignment);
+
+            AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId));
         }
 
         public void UpdateAssignmentsStatus(Guid assignmentId, string newStatus)
