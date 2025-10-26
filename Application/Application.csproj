@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Features\Evaluate\**" />
+    <EmbeddedResource Remove="Features\Evaluate\**" />
+    <None Remove="Features\Evaluate\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 

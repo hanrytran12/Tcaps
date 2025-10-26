@@ -10,5 +10,6 @@ namespace Application.Interfaces
         Task SendStockUpdateNotificationToAdminAsync(string name, int newStockQuantity, int stockChange);
         Task<ResponseDTO> MarkAsReadAsync(Guid notificationId);
         Task<ResponseDTO> CountNotificationAsync(Guid userId);
+        Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note);
     }
 }

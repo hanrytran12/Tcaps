@@ -15,10 +15,12 @@ namespace Infrastructure.Services
         private readonly IMaterialRepository _materialRepository;
         private readonly IBatchRepository _batchRepository;
         private readonly IMapper _mapper;
+        private readonly IProductionRepository _productionRepository;
+        private readonly IIncomeRepository _incomeRepository;
         private readonly ResponseDTO _responseDTO;
 
         public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
-            , IMapper mapper)
+            , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -26,6 +28,8 @@ namespace Infrastructure.Services
             _materialRepository = materialRepository;
             _batchRepository = batchRepository;
             _mapper = mapper;
+            _productionRepository = productionRepository;
+            _incomeRepository = incomeRepository;
             _responseDTO = new ResponseDTO();
         }
 
@@ -163,6 +167,37 @@ namespace Infrastructure.Services
             var message = $"Material {name} stock has been updated. New stock quantity: {newStockQuantity} (Change: {stockChange}).";
             var type = "MaterialStockUpdate";
             var notification = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note)
+        {
+            if (quantityError > 0)
+            {
+                var production = await _productionRepository.GetByIdAsync(productionId);
+                if (production != null)
+                {
+                    production.ReduceQuantity(quantityError);
+                    _productionRepository.Update(production);
+                }
+            }
+
+            if (quantityError > 0)
+            {
+                var income = await _incomeRepository.GetByProductionIdAsync(productionId);
+                if (income != null)
+                {
+                    income.ReduceQuantity(quantityError);
+                    _incomeRepository.Update(income);
+                }
+            }
+
+            var staff = await _productionRepository.GetStaffByProductionIdAsync(productionId);
+            var title = "Báo lỗi sản phẩm";
+            var message = $"Sản phẩm của {staff.FullName} có {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
+            var type = "EvaluateError";
+            var notification = new Notification(Guid.NewGuid(), staff.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
