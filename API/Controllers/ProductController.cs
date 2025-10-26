@@ -4,6 +4,7 @@ using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -26,6 +27,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
             var result = await _mediator.Send(command);

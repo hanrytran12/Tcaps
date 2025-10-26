@@ -73,7 +73,8 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false)
+                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    ImageURL = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -88,6 +89,7 @@ namespace Infrastructure.Migrations
                     MaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuantityRequest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -124,6 +126,7 @@ namespace Infrastructure.Migrations
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsRead = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
@@ -234,8 +237,9 @@ namespace Infrastructure.Migrations
                     MaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QuantityUsed = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    QuantityRemaining = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    QuantityDivide = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    QuantityStaffUse = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    QuantityRequest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>

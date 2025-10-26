@@ -2,12 +2,15 @@
 
 namespace Domain.Interfaces
 {
-    public interface INotificationRepository
+    public interface INotificationRepository : IGenericRepository<Notification>
     {
         Task<IEnumerable<Notification>> GetAllAsync();
+        Task<IEnumerable<Notification>> GetByUserIdAsync(Guid userId);
         Task<Notification?> GetByIdAsync(Guid id);
         Task AddAsync(Notification notification);
         void Update(Notification notification);
         void Delete(Notification notification);
+        Task MarkAsReadAsync(Guid notificationId);
+        Task<int> CountNotificationAsync(Guid userId);
     }
 }
