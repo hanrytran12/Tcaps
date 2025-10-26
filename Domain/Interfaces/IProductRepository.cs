@@ -10,5 +10,6 @@ namespace Domain.Interfaces
         void Update(Product product);
         void Delete(Product product);
         Task<bool> IsCodeUniqueAsync(string code);
+        Task<Product?> GetByCodeAsync(string code);
     }
 }

@@ -5,20 +5,13 @@ namespace Application.Features.Batches.Commands.AddBatch
 {
     public class AddBatchCommandValidator : AbstractValidator<AddBatchCommand>
     {
-        private readonly IProductRepository _productRepository;
         private readonly IBatchRepository _batchRepository;
-        public AddBatchCommandValidator(IBatchRepository batchRepository, IProductRepository productRepository)
+        public AddBatchCommandValidator(IBatchRepository batchRepository)
         {
             _batchRepository = batchRepository;
-            _productRepository = productRepository;
 
-            RuleFor(x => x.ProductId)
-                .NotEmpty().WithMessage("Product ID is required.")
-                .MustAsync(async (productId, cancellation) =>
-                {
-                    var product = await _productRepository.GetByIdAsync(productId);
-                    return product is not null;
-                }).WithMessage("Product ID must refer to an existing production.");
+            RuleFor(x => x.CodeProduct)
+                .NotEmpty().WithMessage("Product ID is required.");
 
             RuleFor(x => x.Code)
                 .NotEmpty().WithMessage("Batch code is required.")
