@@ -3,7 +3,6 @@ using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Repositories;
 
 namespace Infrastructure.Services
 {
@@ -14,10 +13,11 @@ namespace Infrastructure.Services
         private readonly INotificationRepository _notificationRepository;
         private readonly IMaterialRepository _materialRepository;
         private readonly IBatchRepository _batchRepository;
+        private readonly IWorkshopRepository _workshopRepository;
         private readonly IMapper _mapper;
         private readonly ResponseDTO _responseDTO;
 
-        public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
+        public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository, IWorkshopRepository workshopRepository
             , IMapper mapper)
         {
             _userRepository = userRepository;
@@ -25,6 +25,7 @@ namespace Infrastructure.Services
             _notificationRepository = notificationRepository;
             _materialRepository = materialRepository;
             _batchRepository = batchRepository;
+            _workshopRepository = workshopRepository;
             _mapper = mapper;
             _responseDTO = new ResponseDTO();
         }
@@ -148,7 +149,7 @@ namespace Infrastructure.Services
                 _responseDTO.Message = "Success";
                 _responseDTO.Data = count;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _responseDTO.StatusCode = 500;
                 _responseDTO.Message = ex.Message;
@@ -163,6 +164,18 @@ namespace Infrastructure.Services
             var message = $"Material {name} stock has been updated. New stock quantity: {newStockQuantity} (Change: {stockChange}).";
             var type = "MaterialStockUpdate";
             var notification = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate)
+        {
+            var qc = await _userRepository.GetQCByWorkshopIdAsync(workshopId);
+            var workshop = await _workshopRepository.GetByIdAsync(workshopId);
+            var title = "Công việc mới được giao";
+            var message = $"Một lô hàng mới, mã lô {batchCode}, vừa được phân công cho xưởng của bạn {workshop?.Name}. Dự kiến giao nguyên liệu vào ngày {expectedDeliveryDate}";
+            var type = "NEW_ASSIGNMENT";
+            var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
