@@ -14,7 +14,7 @@ namespace Application.Features.Assignments.Events
 
         public async Task Handle(AssignmentAddedEvent notification, CancellationToken cancellationToken)
         {
-            await _notification.SendAssignmentAddNotificationToQcAsync(notification.BatchCode, notification.WorkshopId);
+            await _notification.SendAssignmentAddNotificationToQcAsync(notification.BatchCode, notification.WorkshopId, notification.ExpectedDeliveryDate);
         }
     }
 }

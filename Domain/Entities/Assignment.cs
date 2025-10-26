@@ -9,10 +9,11 @@ namespace Domain.Entities
         public int Quantity { get; private set; }
         public DateOnly StartDate { get; private set; }
         public DateOnly EndDate { get; private set; }
+        public DateOnly ExpectedDeliveryDate { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
 
-        public Assignment(Guid id, Guid batchId, Guid workshopId, int quantity, DateOnly startDate, DateOnly endDate)
+        public Assignment(Guid id, Guid batchId, Guid workshopId, int quantity, DateOnly startDate, DateOnly endDate, DateOnly expectedDeliveryDate)
             : base(id)
         {
             BatchId = batchId;
@@ -22,13 +23,14 @@ namespace Domain.Entities
             EndDate = endDate;
             Status = "Pending";
             CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            ExpectedDeliveryDate = expectedDeliveryDate;
         }
 
         private Assignment() : base(Guid.NewGuid()) { }
 
-        public static Assignment Create(Guid batchId, Guid workshopId, int quantity, DateOnly startDate, DateOnly endDate)
+        public static Assignment Create(Guid batchId, Guid workshopId, int quantity, DateOnly startDate, DateOnly endDate, DateOnly expectedDeliveryDate)
         {
-            return new Assignment(Guid.NewGuid(), batchId, workshopId, quantity, startDate, endDate);
+            return new Assignment(Guid.NewGuid(), batchId, workshopId, quantity, startDate, endDate, expectedDeliveryDate);
         }
 
         internal void UpdateStatus(string status)

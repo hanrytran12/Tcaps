@@ -6,11 +6,13 @@ namespace Domain.Events
     {
         public string BatchCode { get; }
         public Guid WorkshopId { get; }
+        public DateOnly ExpectedDeliveryDate { get; }
 
-        public AssignmentAddedEvent(string batchCode, Guid workshopId)
+        public AssignmentAddedEvent(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate)
         {
             BatchCode = batchCode;
             WorkshopId = workshopId;
+            ExpectedDeliveryDate = expectedDeliveryDate;
         }
     }
 }

@@ -32,7 +32,7 @@ namespace Application.Features.Assignments.Commands.AddAssignmentCommand
                 return Result<Guid>.Failure("Workshop is not exist.");
             }
 
-            var assignment = Assignment.Create(request.BatchId, request.WorkshopId, request.Quantity, request.StartDate, request.EndDate);
+            var assignment = Assignment.Create(request.BatchId, request.WorkshopId, request.Quantity, request.StartDate, request.EndDate, request.ExpectedDeliveryDate);
             batch.AddAssignment(assignment);
             await _unitOfWork.SaveChangesAsync();
             return Result<Guid>.Success(assignment.Id);

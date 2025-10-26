@@ -168,12 +168,12 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId)
+        public async Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate)
         {
             var qc = await _userRepository.GetQCByWorkshopIdAsync(workshopId);
             var workshop = await _workshopRepository.GetByIdAsync(workshopId);
             var title = "Công việc mới được giao";
-            var message = $"Một lô hàng mới, mã lô {batchCode}, vừa được phân công cho xưởng của bạn {workshop?.Name}";
+            var message = $"Một lô hàng mới, mã lô {batchCode}, vừa được phân công cho xưởng của bạn {workshop?.Name}. Dự kiến giao nguyên liệu vào ngày {expectedDeliveryDate}";
             var type = "NEW_ASSIGNMENT";
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);

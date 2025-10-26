@@ -80,7 +80,7 @@ namespace Domain.Entities
         {
             Assignments.Add(assignment);
 
-            AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId));
+            AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId, assignment.ExpectedDeliveryDate));
         }
 
         public void UpdateAssignmentsStatus(Guid assignmentId, string newStatus)
