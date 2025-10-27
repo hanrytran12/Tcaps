@@ -1,6 +1,4 @@
 ﻿using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
-using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
-using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,7 +41,7 @@ namespace API.Controllers
         [Authorize(Policy = ("Lead"))]
         public async Task<IActionResult> ApproveMaterialRequest([FromRoute] Guid id)
         {
-            var command = new Application.Features.MaterialRequest.Commands.UpdateMaterialRequest.UpdateMaterialRequestCommand { Id = id };
+            var command = new Application.Features.MaterialRequest.Commands.ApproveRequestFromLead.ApproveRequestFromLeadCommand { Id = id };
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
