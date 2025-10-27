@@ -49,5 +49,31 @@ namespace API.Controllers
             }
             return BadRequest(result.error);
         }
+
+        [HttpPut("confirmed/{id:guid}")]
+        [Authorize(Policy = ("QC"))]
+        public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id)
+        {
+            var command = new Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc.ConfirmRequestFromQcCommand { Id = id };
+            var result = await _mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest(result.error);
+        }
+
+        [HttpPut("rejected/{id:guid}")]
+        [Authorize(Policy = ("QC"))]
+        public async Task<IActionResult> RejectMaterialRequest([FromRoute] Guid id)
+        {
+            var command = new Application.Features.MaterialRequest.Commands.RejectMaterialRequest.RejectMaterialRequestCommand { Id = id };
+            var result = await _mediator.Send(command);
+            if (result.IsSuccess)
+            {
+                return NoContent();
+            }
+            return BadRequest(result.error);
+        }
     }
 }
