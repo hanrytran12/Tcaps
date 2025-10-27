@@ -41,7 +41,7 @@ namespace Domain.Entities
             StartDate = startDate;
             EndDate = endDate;
             CreatedAt = DateOnly.FromDateTime(DateTime.Now);
-            Status = "Pending";
+            Status = "Planned";
         }
 
         private Batch() : base(Guid.NewGuid()) { }
@@ -53,12 +53,13 @@ namespace Domain.Entities
 
         public void MarkAsDeleted()
         {
-            if (Status != "Pending")
+            if (Status == "Completed")
             {
-                throw new InvalidOperationException($"Cannot delete batch in status: {Status}.");
+                throw new InvalidOperationException($"Cannot delete batch in completed.");
             }
 
             isDeleted = true;
+            Status = "Cancelled";
         }
 
         public void UpdateStatus(string status)
@@ -68,7 +69,7 @@ namespace Domain.Entities
 
         public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
         {
-            if (Status != "Pending")
+            if (Status != "Planned" && Status != "InProgress")
             {
                 throw new InvalidOperationException($"Cannot update batch in status: {Status}.");
             }
