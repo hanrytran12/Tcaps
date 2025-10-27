@@ -284,6 +284,9 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("QuantityRequest")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");

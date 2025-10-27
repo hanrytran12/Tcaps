@@ -15,6 +15,7 @@ using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Features.Products.Commands.AddProduct;
@@ -126,6 +127,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddMaterialRequestCommand).Assembly,
                                                                       typeof(ApproveRequestFromLeadCommand).Assembly,
                                                                       typeof(ConfirmRequestFromQcCommand).Assembly,
+                                                                      typeof(RejectMaterialRequestCommand).Assembly,
 
                                                                       typeof(GetNotificationsQuery).Assembly,
                                                                       typeof(MarkNotificationAsReadCommand).Assembly,

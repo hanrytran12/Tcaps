@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251026152717_Init")]
+    [Migration("20251027091238_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -286,6 +286,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("QuantityRequest")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()

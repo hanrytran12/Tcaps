@@ -13,6 +13,7 @@ namespace Domain.Entities
         public string Status { get; private set; } = string.Empty;
         public string Note { get; private set; } = string.Empty;
         public DateOnly Date { get; private set; }
+        public string? RejectionReason { get; private set; } = null;
 
         public MaterialRequest(Guid id, Guid materialId, Guid userId, Guid batchId, Guid assignId, decimal quantityRequest, string note)
             : base(id)
@@ -46,10 +47,19 @@ namespace Domain.Entities
         public void MarkAsConfirmed()
         {
             if (Status != "Pending")
-                throw new InvalidOperationException("Only pending requests can be approved.");
+                throw new InvalidOperationException("Only pending requests can be confirmed.");
 
             Status = "Confirmed";
             AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, AssignId, QuantityRequest));
+        }
+
+        public void MarkAdRejected(string rejectedReason)
+        {
+            if (Status != "Pending")
+                throw new InvalidOperationException("Only pending requests can be rejected.");
+
+            Status = "Rejected";
+            RejectionReason = rejectedReason;
         }
     }
 }
