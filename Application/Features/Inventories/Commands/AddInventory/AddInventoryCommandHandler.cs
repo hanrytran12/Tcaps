@@ -44,7 +44,7 @@ namespace Application.Features.Inventories.Commands.AddInventory
                 return Result<Guid>.Failure("Material not found.");
             }
 
-            var inventory = Inventory.Create(request.MaterialId, request.Quantity, imageUrl);
+            var inventory = Inventory.Create(request.MaterialId, request.Quantity, imageUrl, request.Price);
             await _inventoryRepository.AddAsync(inventory);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

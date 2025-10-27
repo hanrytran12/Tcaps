@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251027135405_Init")]
+    [Migration("20251027155232_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -224,6 +224,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");

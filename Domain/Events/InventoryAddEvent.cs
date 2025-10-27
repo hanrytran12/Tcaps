@@ -6,10 +6,12 @@ namespace Domain.Events
     {
         public Guid MaterialId { get; }
         public int AddedQuantity { get; }
-        public InventoryAddEvent(Guid materialId, int addedQuantity)
+        public decimal Price { get; }
+        public InventoryAddEvent(Guid materialId, int addedQuantity, decimal price)
         {
             MaterialId = materialId;
             AddedQuantity = addedQuantity;
+            Price = price;
         }
     }
 }
