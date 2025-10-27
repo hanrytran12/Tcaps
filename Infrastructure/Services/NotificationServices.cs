@@ -171,32 +171,72 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note)
+        public async Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note, string status)
         {
-            if (quantityError > 0)
-            {
-                var production = await _productionRepository.GetByIdAsync(productionId);
-                if (production != null)
-                {
-                    production.ReduceQuantity(quantityError);
-                    _productionRepository.Update(production);
-                }
-            }
-
-            if (quantityError > 0)
-            {
-                var income = await _incomeRepository.GetByProductionIdAsync(productionId);
-                if (income != null)
-                {
-                    income.ReduceQuantity(quantityError);
-                    _incomeRepository.Update(income);
-                }
-            }
-
             var staff = await _productionRepository.GetStaffByProductionIdAsync(productionId);
-            var title = "Báo lỗi sản phẩm";
-            var message = $"Sản phẩm của {staff.FullName} có {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
-            var type = "EvaluateError";
+            var title = "";
+            var message = "";
+            var type = "";
+
+            if (status == "Pass")
+            {
+                title = "Không có sản phẩm lỗi.";
+                message = $"Sản phẩm của {staff.FullName} không có sản phẩm lỗi. Ghi chú: {note}.";
+                type = "EvaluatePass";
+            }
+            else if (status == "Fail")
+            {
+                if (quantityError > 0)
+                {
+                    var production = await _productionRepository.GetByIdAsync(productionId);
+                    if (production != null)
+                    {
+                        production.ReduceQuantity(quantityError);
+                        _productionRepository.Update(production);
+                    }
+                }
+
+                if (quantityError > 0)
+                {
+                    var income = await _incomeRepository.GetByProductionIdAsync(productionId);
+                    if (income != null)
+                    {
+                        income.ReduceQuantity(quantityError);
+                        _incomeRepository.Update(income);
+                    }
+                }
+
+                title = "Báo lỗi sản phẩm";
+                message = $"Sản phẩm của {staff.FullName} có {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
+                type = "EvaluateFail";
+            }
+            else
+            {
+                if (quantityError > 0)
+                {
+                    var production = await _productionRepository.GetByIdAsync(productionId);
+                    if (production != null)
+                    {
+                        production.ReduceQuantity(quantityError);
+                        _productionRepository.Update(production);
+                    }
+                }
+
+                if (quantityError > 0)
+                {
+                    var income = await _incomeRepository.GetByProductionIdAsync(productionId);
+                    if (income != null)
+                    {
+                        income.ReduceQuantity(quantityError);
+                        _incomeRepository.Update(income);
+                    }
+                }
+
+                title = "Báo lỗi sản phẩm";
+                message = $"Sản phẩm của {staff.FullName} có {quantityError} sản phẩm lỗi và không thể sữa chữa. Ghi chú: {note}.";
+                type = "EvaluateReject";
+            }
+
             var notification = new Notification(Guid.NewGuid(), staff.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();

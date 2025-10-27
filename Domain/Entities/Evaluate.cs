@@ -13,7 +13,7 @@ namespace Domain.Entities
         public string Image { get; private set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
 
-        public Evaluate(Guid id, Guid productionId, Guid? userId, string note, int quantityError, string image)
+        public Evaluate(Guid id, Guid productionId, Guid? userId, string note, int quantityError, string image, string status)
             : base(id)
         {
             ProductionId = productionId;
@@ -22,16 +22,16 @@ namespace Domain.Entities
             QuantityError = quantityError;
             Image = image;
             CreatedAt = new DateOnly();
-            Status = "Pending";
+            Status = status;
 
-            AddDomainEvent(new EvaluateCreatedEvent(Id, productionId, userId.Value, quantityError, note));
+            AddDomainEvent(new EvaluateCreatedEvent(Id, productionId, userId.Value, quantityError, note, status));
         }
 
         private Evaluate() : base(Guid.NewGuid()) { }
 
-        public static Evaluate Create(Guid productionId, Guid userId, int quantityError, string note, string image)
+        public static Evaluate Create(Guid productionId, Guid userId, int quantityError, string note, string image, string status)
         {
-            return new Evaluate(Guid.NewGuid(), productionId, userId, note, quantityError, image);
+            return new Evaluate(Guid.NewGuid(), productionId, userId, note, quantityError, image, status);
         }
 
         public void Update(string note, int quantityError, string image)

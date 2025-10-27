@@ -11,12 +11,13 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
 {
     public class AddEvaluateCommand : IRequest<Result<Guid>>
     {
-        public Guid ProductionId { get; private set; }
-        public Guid? UserId { get; private set; }
-        public string Note { get; private set; } = string.Empty;
-        public int QuantityError { get; private set; }
-        public string Image { get; private set; } = string.Empty;
-        public DateOnly CreatedAt { get; private set; }
+        public Guid ProductionId { get; set; }
+        public Guid? UserId { get; set; }
+        public string Note { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
+        public int QuantityError { get; set; }
+        public string Image { get; set; } = string.Empty;
+        public DateOnly CreatedAt { get; set; }
 
         public List<ComponentDefectsDTO> Defects { get; set; } = new();
     }
