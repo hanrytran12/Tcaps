@@ -179,5 +179,16 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task SendStockUpdateNotificationToLeadAsync(string name, int newStockQuantity, int stockChange)
+        {
+            var lead = await _userRepository.GetByRoleAsync("Lead");
+            var title = "Material Stock Updated";
+            var message = $"Material {name} stock has been updated. New stock quantity: {newStockQuantity} (Change: {stockChange}).";
+            var type = "MaterialStockUpdate";
+            var notification = new Notification(Guid.NewGuid(), lead.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
