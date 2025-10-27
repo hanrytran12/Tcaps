@@ -16,6 +16,10 @@ namespace Application.Features.Assignments.Commands.AddAssignment
                 .NotEmpty().WithMessage("Quantity is required.")
                 .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
 
+            RuleFor(x => x.UnitPrice)
+                .NotEmpty().WithMessage("UnitPrice is required.")
+                .GreaterThan(0).WithMessage("UnitPrice must be greater than zero.");
+
             RuleFor(x => x.StartDate)
                 .NotEmpty().WithMessage("Start Date is required");
 

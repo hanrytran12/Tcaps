@@ -193,6 +193,7 @@ namespace Infrastructure.Migrations
                     BatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
                     ExpectedDeliveryDate = table.Column<DateOnly>(type: "date", nullable: false),
