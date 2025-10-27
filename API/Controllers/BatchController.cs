@@ -6,6 +6,7 @@ using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -42,6 +43,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddBatch(AddBatchCommand command)
         {
             var result = await _mediator.Send(command);
@@ -54,6 +56,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> UpdateBatch(Guid id, UpdateBatchCommand command)
         {
             command.Id = id;
@@ -62,6 +65,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteBatch(Guid id)
         {
             var command = new DeleteBatchCommand(id);

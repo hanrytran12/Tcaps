@@ -36,6 +36,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
+                    b.Property<DateOnly>("ExpectedDeliveryDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -71,6 +74,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
+
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -280,6 +287,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("QuantityRequest")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("RejectionReason")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()

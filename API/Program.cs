@@ -15,6 +15,7 @@ using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Features.Products.Commands.AddProduct;
@@ -124,16 +125,13 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(CompleteAssignmentCommand).Assembly,
 
                                                                       typeof(AddMaterialRequestCommand).Assembly,
-                                                                      typeof(ApproveRequestFromLeadCommand).Assembly,
-                                                                      typeof(ConfirmRequestFromQcCommand).Assembly,
+                                                                      typeof(UpdateMaterialRequestCommand).Assembly,
 
                                                                       typeof(GetNotificationsQuery).Assembly,
                                                                       typeof(MarkNotificationAsReadCommand).Assembly,
 
                                                                       typeof(AddInventoryCommand).Assembly,
                                                                       typeof(GetInventoryByIdQuery).Assembly,
-
-                                                                      typeof(AddMaterialRequestCommand).Assembly,
 
                                                                       typeof(GetComponentDefectsQuery).Assembly,
 
@@ -168,6 +166,15 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin", policy =>
         policy.RequireRole("Admin"));
+
+    options.AddPolicy("Lead", policy =>
+        policy.RequireRole("Lead"));
+
+    options.AddPolicy("QC", policy =>
+        policy.RequireRole("QC"));
+
+    options.AddPolicy("CanCreateMaterialRequest", policy =>
+        policy.RequireRole("Lead", "QC"));
 });
 
 var app = builder.Build();

@@ -28,6 +28,11 @@ namespace Infrastructure.Repositories
             return await _context.Products.ToListAsync();
         }
 
+        public async Task<Product?> GetByCodeAsync(string code)
+        {
+            return await _context.Products.FirstOrDefaultAsync(x => x.Code == code);
+        }
+
         public async Task<Product?> GetByIdAsync(Guid id)
         {
             return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);

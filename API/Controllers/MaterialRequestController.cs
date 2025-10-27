@@ -1,7 +1,10 @@
 ﻿using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -16,8 +19,18 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = ("CanCreateMaterialRequest"))]
         public async Task<IActionResult> CreateMaterialRequest([FromBody] AddMaterialRequestCommand command)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Không thể xác định người dùng từ token.");
+            }
+
+            var userId = Guid.Parse(userIdString);
+            command.UserId = userId;
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
@@ -27,21 +40,10 @@ namespace API.Controllers
         }
 
         [HttpPut("approve/{id:guid}")]
+        [Authorize(Policy = ("Lead"))]
         public async Task<IActionResult> ApproveMaterialRequest([FromRoute] Guid id)
         {
-            var command = new Application.Features.MaterialRequest.Commands.ApproveRequestFromLead.ApproveRequestFromLeadCommand { Id = id };
-            var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return NoContent();
-            }
-            return BadRequest(result.error);
-        }
-
-        [HttpPut("confirmed/{id:guid}")]
-        public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id)
-        {
-            var command = new ConfirmRequestFromQcCommand { Id = id };
+            var command = new Application.Features.MaterialRequest.Commands.UpdateMaterialRequest.UpdateMaterialRequestCommand { Id = id };
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
