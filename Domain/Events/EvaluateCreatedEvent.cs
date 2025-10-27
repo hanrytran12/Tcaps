@@ -14,14 +14,16 @@ namespace Domain.Events
         public Guid? UserId { get; }
         public int QuantityError { get; }
         public string Note { get; } = string.Empty;
+        public string Status { get; }
 
-        public EvaluateCreatedEvent(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note)
+        public EvaluateCreatedEvent(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note, string status)
         {
             EvaluateId = evaluateId;
             ProductionId = productionId;
             UserId = userId;
             QuantityError = quantityError;
             Note = note;
+            Status = status;
         }
     }
 }

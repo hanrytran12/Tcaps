@@ -20,7 +20,7 @@ namespace Application.Features.Evaluates.Events
         }
         public async Task Handle(EvaluateCreatedEvent notification, CancellationToken cancellationToken)
         {
-            await _notificationService.SendEvaluateFixErrorNotificationAsync(notification.EvaluateId, notification.ProductionId, notification.UserId.Value, notification.QuantityError, notification.Note);
+            await _notificationService.SendEvaluateFixErrorNotificationAsync(notification.EvaluateId, notification.ProductionId, notification.UserId.Value, notification.QuantityError, notification.Note, notification.Status);
         }
     }
 }

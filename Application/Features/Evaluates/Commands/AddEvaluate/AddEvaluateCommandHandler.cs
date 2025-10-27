@@ -38,18 +38,22 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
                 request.UserId.Value,
                 request.QuantityError,
                 request.Note,
-                request.Image);
+                request.Image,
+                request.Status);
 
-            foreach (var item in request.Defects)
+            if (request.Status != "Pass")
             {
-                var component = ComponentDefect.Create(
-                    evaluate.Id,
-                    item.DefectType,
-                    item.Serverity,
-                    item.Description,
-                    item.Solution,
-                    item.Status);
-                await _componentDefectRepository.AddAsync(component);
+                foreach (var item in request.Defects)
+                {
+                    var component = ComponentDefect.Create(
+                        evaluate.Id,
+                        item.DefectType,
+                        item.Serverity,
+                        item.Description,
+                        item.Solution,
+                        item.Status);
+                    await _componentDefectRepository.AddAsync(component);
+                }
             }
 
             await _evaluateRepository.AddAsync(evaluate);
