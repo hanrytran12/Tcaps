@@ -8,7 +8,6 @@ namespace Application.Features.Users.Commands.UpdateUser
     {
         private readonly IUserRepository _userRepository;
         private readonly IUnitOfWork _unitOfWork;
-
         public UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork)
         {
             _userRepository = userRepository;
@@ -40,7 +39,7 @@ namespace Application.Features.Users.Commands.UpdateUser
                 }
             }
 
-            user.UpdateDetails(request.Role, request.FullName, request.Email, request.Phone);
+            user.UpdateDetails(request.Role, request.FullName, request.Email, request.PasswordHash, request.Phone);
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
