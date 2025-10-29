@@ -2,7 +2,7 @@
 {
     public class DashboardAssignmentDTO
     {
-        public Guid WorkshopId { get; set; }
+        public string WorkshopName { get; set; }
         public int Quantity { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
