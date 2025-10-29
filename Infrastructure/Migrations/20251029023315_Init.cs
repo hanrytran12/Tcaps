@@ -96,7 +96,8 @@ namespace Infrastructure.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
-                    RejectionReason = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    NoteFromQC = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ActualReceivedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
                 constraints: table =>
                 {

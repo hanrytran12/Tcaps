@@ -1,4 +1,5 @@
 ﻿using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
+using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,9 +53,9 @@ namespace API.Controllers
 
         [HttpPut("confirmed/{id:guid}")]
         [Authorize(Policy = ("QC"))]
-        public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id)
+        public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id, [FromBody] ConfirmRequestFromQcCommand command)
         {
-            var command = new Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc.ConfirmRequestFromQcCommand { Id = id };
+            command.Id = id;
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
