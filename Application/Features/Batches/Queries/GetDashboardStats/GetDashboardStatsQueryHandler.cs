@@ -1,78 +1,68 @@
 ﻿using Application.DTOs.Response;
-using Domain.Entities;
-using Domain.Interfaces;
+using Application.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Batches.Queries.GetDashboardStats
 {
     public class GetDashboardStatsQueryHandler : IRequestHandler<GetDashboardStatsQuery, DashboardResultDTO>
     {
-        private readonly IBatchRepository _batchRepository;
-        public GetDashboardStatsQueryHandler(IBatchRepository batchRepository)
+        private readonly IAppDbContext _context;
+        public GetDashboardStatsQueryHandler(IAppDbContext context)
         {
-            _batchRepository = batchRepository;
+            _context = context;
         }
+
         public async Task<DashboardResultDTO> Handle(GetDashboardStatsQuery request, CancellationToken cancellationToken)
         {
-            var year = DateTime.Now.Year;
-            DateOnly targetDate;
-            try
+            var query = _context.Batches.AsNoTracking();
+            query = query.Where(batch => batch.ProductId == request.ProductId && !batch.isDeleted);
+
+            if (request.StartDate != null)
             {
-                targetDate = new DateOnly(year, request.Month, request.Day);
-            }
-            catch (ArgumentOutOfRangeException)
-            {
-                throw new ArgumentException("Invalid day or month provided.");
+                query = query.Where(query => query.StartDate >= request.StartDate);
             }
 
-            var batches = await _batchRepository.SearchAsync(request.Id, targetDate);
+            if (request.EndDate != null)
+            {
+                query = query.Where(query => query.EndDate <= request.EndDate);
+            }
 
             var stats = new DashboardStatsDTO
             {
-                TotalBatches = batches.Count(),
-                InProgressBatches = batches.Count(b => b.Status == "Pending"),
-                CompletedBatches = batches.Count(b => b.Status == "Completed"),
+                TotalBatches = await query.CountAsync(),
+                InProgressBatches = await query.CountAsync(b => b.Status == "InProgress"),
+                CompletedBatches = await query.CountAsync(b => b.Status == "Completed"),
             };
 
-            var batchDetails = batches.Select(b =>
+            var batchDetails = await query.Include(b => b.Assignments).Select(b => new DashboardBatchDetailDTO
             {
-                var assignments = b.Assignments ?? new List<Assignment>();
-                int completedAssignments = assignments.Count(a => a.Status == "Completed");
-                if (completedAssignments > 15)
-                {
-                    completedAssignments = 15;
-                }
-                double progressPercentage = (assignments.Any())
-                ? Math.Round((double)completedAssignments / 15 * 100, 2)
-                : 0;
-
-
-                return new DashboardBatchDetailDTO
-                {
-                    Code = b.Code,
-                    Quantity = b.Quantity,
-                    StartDate = b.StartDate,
-                    EndDate = b.EndDate,
-                    Status = b.Status,
-                    ProgressPercentage = progressPercentage,
-                    Assignments = assignments.Select(a => new DashboardAssignmentDTO
+                Code = b.Code,
+                Quantity = b.Quantity,
+                Status = b.Status,
+                ProgressPercentage = b.Assignments.Any() ? Math.Round((double)b.Assignments.Count(a => a.Status == "Completed") / 15 * 100, 2) : 0,
+                StartDate = b.StartDate,
+                EndDate = b.EndDate,
+                Assignments =
+                (
+                    from a in b.Assignments
+                    join w in _context.Workshop on a.WorkshopId equals w.Id
+                    select new DashboardAssignmentDTO
                     {
-                        WorkshopId = a.WorkshopId,
+                        WorkshopName = w.Name,
                         Quantity = a.Quantity,
+                        Status = a.Status,
                         StartDate = a.StartDate,
                         EndDate = a.EndDate,
-                        Status = a.Status
-                    }).ToList()
-                };
-            });
+                    }
+                ).ToList()
+            }).ToListAsync();
 
-            var result = new DashboardResultDTO
+            return new DashboardResultDTO
             {
                 Stats = stats,
                 Batches = batchDetails
             };
-
-            return result;
         }
     }
 }
