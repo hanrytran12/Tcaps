@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251027161102_Init")]
+    [Migration("20251029023315_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -278,6 +278,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("ActualReceivedQuantity")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("AssignId")
                         .HasColumnType("uniqueidentifier");
 
@@ -294,11 +297,11 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("NoteFromQC")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("QuantityRequest")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("RejectionReason")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()

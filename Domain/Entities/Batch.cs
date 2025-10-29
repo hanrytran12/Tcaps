@@ -108,11 +108,11 @@ namespace Domain.Entities
             }
         }
 
-        public void AddMaterialUse(MaterialUse materialUse)
+        public void AddMaterialUse(MaterialUse materialUse, decimal quantityRequest)
         {
             MaterialUses.Add(materialUse);
 
-            AddDomainEvent(new MaterialUseAddedEvent(materialUse.MaterialId, materialUse.BatchId, materialUse.AssignId, materialUse.QuantityDivide));
+            AddDomainEvent(new MaterialUseAddedEvent(materialUse.MaterialId, materialUse.BatchId, materialUse.AssignId, quantityRequest));
         }
     }
 }

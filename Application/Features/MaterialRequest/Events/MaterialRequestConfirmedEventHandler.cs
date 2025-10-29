@@ -18,8 +18,8 @@ namespace Application.Features.MaterialRequest.Events
         public async Task Handle(MaterialRequestConfirmedEvent notification, CancellationToken cancellationToken)
         {
             var batch = await _batchRepository.GetByIdAsync(notification.BatchId);
-            var materialUse = Domain.Entities.MaterialUse.Create(notification.MaterialId, notification.BatchId, notification.AssignId, notification.QuantityRequest);
-            batch.AddMaterialUse(materialUse);
+            var materialUse = Domain.Entities.MaterialUse.Create(notification.MaterialId, notification.BatchId, notification.AssignId, notification.ActualReceivedQuantity);
+            batch.AddMaterialUse(materialUse, notification.QuantityRequest);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
