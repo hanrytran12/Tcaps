@@ -12,6 +12,7 @@ namespace Application.Features.Batches.Commands.UpdateBatch
 
             RuleFor(x => x.StartDate)
                 .NotEmpty().WithMessage("StartDate is required.");
+
             RuleFor(x => x.EndDate)
                 .NotEmpty().WithMessage("EndDate is required.")
                 .GreaterThan(x => x.StartDate).WithMessage("End date must be after start date.");

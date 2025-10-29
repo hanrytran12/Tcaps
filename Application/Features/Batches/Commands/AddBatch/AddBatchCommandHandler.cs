@@ -1,8 +1,8 @@
 ﻿using Application.Common;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Hosting;
 
 namespace Application.Features.Batches.Commands.AddBatch
 {
@@ -11,14 +11,14 @@ namespace Application.Features.Batches.Commands.AddBatch
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBatchRepository _batchRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IFileStorageService _fileStorageService;
 
-        public AddBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository, IProductRepository productRepository, IWebHostEnvironment webHostEnvironment)
+        public AddBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository, IProductRepository productRepository, IFileStorageService fileStorageService)
         {
             _unitOfWork = unitOfWork;
             _batchRepository = batchRepository;
             _productRepository = productRepository;
-            _webHostEnvironment = webHostEnvironment;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<Result<Guid>> Handle(AddBatchCommand request, CancellationToken cancellationToken)
@@ -35,25 +35,7 @@ namespace Application.Features.Batches.Commands.AddBatch
                 return Result<Guid>.Failure("Batch code is not unique.");
             }
 
-            string imageUrl = string.Empty;
-            if (request.ImageFile != null && request.ImageFile.Length > 0)
-            {
-                string uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "images", "batches");
-
-                if (!Directory.Exists(uploadPath))
-                {
-                    Directory.CreateDirectory(uploadPath);
-                }
-
-                string uniqueFileName = Guid.NewGuid().ToString() + "_" + request.ImageFile.FileName;
-                string filePath = Path.Combine(uploadPath, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await request.ImageFile.CopyToAsync(stream, cancellationToken);
-                }
-                imageUrl = $"/images/products/{uniqueFileName}";
-            }
+            var imageUrl = await _fileStorageService.SaveFileAsync(request.ImageFile, "batches", cancellationToken);
 
             var result = Batch.Create(
                 product.Id,
