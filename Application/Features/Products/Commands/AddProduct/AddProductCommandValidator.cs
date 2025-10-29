@@ -1,24 +1,13 @@
-﻿using Domain.Interfaces;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Application.Features.Products.Commands.AddProduct
 {
     public class AddProductCommandValidator : AbstractValidator<AddProductCommand>
     {
-        private readonly IProductRepository _repository;
-
-        public AddProductCommandValidator(IProductRepository repository)
+        public AddProductCommandValidator()
         {
-            _repository = repository;
-
             RuleFor(x => x.Code)
-                .NotEmpty().WithMessage("Product code is required.")
-                .MaximumLength(50).WithMessage("Product code must not exceed 50 characters.")
-                .MustAsync(async (code, cancellation) =>
-                {
-                    var isCodeUnique = await _repository.IsCodeUniqueAsync(code);
-                    return isCodeUnique;
-                }).WithMessage("Product code must be unique.");
+                .NotEmpty().WithMessage("Product code is required.");
 
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Product name is required.")

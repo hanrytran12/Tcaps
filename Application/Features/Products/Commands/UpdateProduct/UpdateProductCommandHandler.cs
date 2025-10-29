@@ -23,7 +23,7 @@ namespace Application.Features.Products.Commands.UpdateProduct
                 return Result.Failure($"Không tìm thấy Product với Id: {request.Id}.");
             }
 
-            product.UpdateDetails(request.Name, request.ImageURL, request.Description);
+            product.UpdateDetails(request.Name, request.Description);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
