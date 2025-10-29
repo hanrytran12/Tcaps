@@ -36,6 +36,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> UpdateProduct(Guid id, UpdateProductCommand command)
         {
             command.Id = id;
@@ -44,6 +45,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
             var command = new DeleteProductCommand(id);
