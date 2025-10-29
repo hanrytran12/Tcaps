@@ -35,12 +35,11 @@ namespace Domain.Entities
             return new User(Guid.NewGuid(), workshopId, role, fullName, email, passwordHash, phone);
         }
 
-        public void UpdateDetails(string? role, string? fullName, string? email, string? passwordHash, string? phone)
+        public void UpdateDetails(string? role, string? fullName, string? email, string? phone)
         {
             this.Role = !string.IsNullOrEmpty(role) ? role : this.Role;
             this.FullName = !string.IsNullOrEmpty(fullName) ? fullName : this.FullName;
             this.Email = !string.IsNullOrEmpty(email) ? email : this.Email;
-            this.PasswordHash = !string.IsNullOrEmpty(passwordHash) ? passwordHash : this.PasswordHash;
             this.Phone = !string.IsNullOrEmpty(phone) ? phone : this.Phone;
         }
 
