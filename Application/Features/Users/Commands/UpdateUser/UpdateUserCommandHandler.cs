@@ -39,7 +39,7 @@ namespace Application.Features.Users.Commands.UpdateUser
                 }
             }
 
-            user.UpdateDetails(request.Role, request.FullName, request.Email, request.PasswordHash, request.Phone);
+            user.UpdateDetails(request.Role, request.FullName, request.Email, request.Phone);
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
