@@ -11,5 +11,6 @@ namespace Application.Interfaces
         Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate);
         Task<ResponseDTO> MarkAsReadAsync(Guid notificationId);
         Task<ResponseDTO> CountNotificationAsync(Guid userId);
+        Task CreateStockUpdateNotificationForRoleAsync(string role, string materialName, int newStock, int change);
     }
 }
