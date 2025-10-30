@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = ("CanCreateMaterialRequest"))]
+        //[Authorize(Policy = ("CanCreateMaterialRequest"))]
         public async Task<IActionResult> CreateMaterialRequest([FromBody] AddMaterialRequestCommand command)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -53,7 +53,7 @@ namespace API.Controllers
         }
 
         [HttpPut("confirmed/{id:guid}")]
-        [Authorize(Policy = ("QC"))]
+        //[Authorize(Policy = ("QC"))]
         public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id, [FromBody] ConfirmRequestFromQcCommand command)
         {
             command.Id = id;

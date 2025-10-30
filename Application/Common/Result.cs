@@ -1,6 +1,8 @@
-﻿namespace Application.Common
+﻿using Application.Common.Behaviors;
+
+namespace Application.Common
 {
-    public class Result<T>
+    public class Result<T> : IResult
     {
         public bool IsSuccess { get; }
         public bool IsFailure => !IsSuccess;
@@ -28,7 +30,7 @@
         public static Result<T> Failure(string error) => new Result<T>(false, default, error);
     }
 
-    public class Result
+    public class Result : IResult
     {
         public bool IsSuccess { get; }
         public bool IsFailure => !IsSuccess;

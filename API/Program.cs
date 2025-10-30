@@ -97,8 +97,12 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
+    provider.GetRequiredService<AppDbContext>());
+
+builder.Services.AddScoped<IUnitOfWork>(provider =>
     provider.GetRequiredService<AppDbContext>());
 
 builder.Services.AddValidatorsFromAssembly(typeof(IAppDbContext).Assembly);
@@ -139,7 +143,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(GetComponentDefectsQuery).Assembly,
 
-                                                                      typeof(LoginQuery).Assembly
+                                                                      typeof(LoginQuery).Assembly,
+
+                                                                      typeof(TransactionBehavior<,>).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

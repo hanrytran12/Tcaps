@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +17,11 @@ namespace Infrastructure.Repositories
         public async Task AddAsync(Assignment assignment)
         {
             await _context.Assignments.AddAsync(assignment);
+        }
+
+        public async Task<bool> ExistsAndBelongsToBatchAsync(Guid assignmentId, Guid batchId)
+        {
+            return await _context.Assignments.AnyAsync(a => a.Id == assignmentId && a.BatchId == batchId);
         }
 
         public async Task<IEnumerable<Assignment>> GetAllAssignmentsAsync()

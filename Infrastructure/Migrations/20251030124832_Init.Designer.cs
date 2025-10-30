@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251029023315_Init")]
+    [Migration("20251030124832_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -345,7 +345,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
-                    b.ToTable("MaterialUse");
+                    b.ToTable("MaterialUses");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
