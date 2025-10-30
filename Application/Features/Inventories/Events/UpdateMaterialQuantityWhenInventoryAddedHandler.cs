@@ -7,14 +7,10 @@ namespace Application.Features.Inventories.Events
     public class UpdateMaterialQuantityWhenInventoryAddedHandler : INotificationHandler<InventoryAddEvent>
     {
         private readonly IMaterialRepository _materialRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMediator _mediator;
 
-        public UpdateMaterialQuantityWhenInventoryAddedHandler(IMaterialRepository materialRepository, IUnitOfWork unitOfWork, IMediator mediator)
+        public UpdateMaterialQuantityWhenInventoryAddedHandler(IMaterialRepository materialRepository)
         {
             _materialRepository = materialRepository;
-            _unitOfWork = unitOfWork;
-            _mediator = mediator;
         }
 
         public async Task Handle(InventoryAddEvent notification, CancellationToken cancellationToken)
@@ -24,13 +20,6 @@ namespace Application.Features.Inventories.Events
             {
                 material.IncreasePrice(notification.Price);
                 material.IncreaseQuantity(notification.AddedQuantity);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-                foreach (var domainEvent in material.DomainEvents)
-                {
-                    await _mediator.Publish(domainEvent, cancellationToken);
-                }
-                material.ClearDomainEvent();
             }
         }
     }

@@ -13,5 +13,6 @@ namespace Domain.Interfaces
         Task<MaterialUse> GetByIdAsync(Guid id);
         Task<List<MaterialUse>> GetByAssignIdAsync(Guid assignId);
         void Update(MaterialUse materialUse);
+        Task AddAsync(MaterialUse materialUse);
     }
 }

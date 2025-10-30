@@ -6,7 +6,7 @@ namespace Application.Common.Behaviors
 {
     public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
-        where TResponse : Result
+        where TResponse : IResult
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly AppDbContext _context;
