@@ -24,17 +24,26 @@ namespace Application.Features.Users.Queries.GetStaffPerformance
                 query = query.Where(user => user.WorkshopId == request.WorkshopId.Value);
             }
 
-            var finalQuery = query.Select(u => new StaffPerformanceDTO
-            {
-                UserId = u.Id,
-                FullName = u.FullName,
-                TotalIncome = (from order in _context.Incomes
-                               where order.UserId == u.Id
-                               select order.TotalPrice).Sum(),
-                TotalQuantitySold = (from order in _context.Incomes
-                                     where order.UserId == u.Id
-                                     select order.Quantity).Sum()
-            });
+            var incomeStats = _context.Incomes
+                .GroupBy(x => x.UserId)
+                .Select(g => new StaffPerformanceDTO
+                {
+                    UserId = g.Key,
+                    TotalIncome = g.Sum(i => (decimal?)i.TotalPrice) ?? 0,
+                    TotalQuantitySold = g.Sum(i => (int?)i.Quantity) ?? 0
+                });
+
+            var finalQuery = from user in query
+                             join income in _context.Incomes on user.Id equals income.UserId into userIncomes
+                             from ui in userIncomes.DefaultIfEmpty()
+                             group ui by new { user.Id, user.FullName } into g
+                             select new StaffPerformanceDTO
+                             {
+                                 UserId = g.Key.Id,
+                                 FullName = g.Key.FullName,
+                                 TotalIncome = g.Sum(x => x != null ? x.TotalPrice : 0),
+                                 TotalQuantitySold = (int)g.Sum(x => x != null ? x.Quantity : 0)
+                             };
 
             return await finalQuery.AsNoTracking().ToListAsync(cancellationToken);
         }

@@ -22,6 +22,7 @@ namespace Application.Features.Inventories.Events
             var material = await _materialRepository.GetByIdAsync(notification.MaterialId);
             if (material is not null)
             {
+                material.IncreasePrice(notification.Price);
                 material.IncreaseQuantity(notification.AddedQuantity);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
 

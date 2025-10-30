@@ -20,6 +20,7 @@ using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Features.Productions.Command.AddProduction;
@@ -106,12 +107,15 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
 builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
 
 builder.Services.AddValidatorsFromAssembly(typeof(IAppDbContext).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
 builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly,
                                                                       typeof(AddProductCommand).Assembly,
@@ -137,14 +141,13 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddMaterialRequestCommand).Assembly,
                                                                       typeof(ApproveRequestFromLeadCommand).Assembly,
                                                                       typeof(ConfirmRequestFromQcCommand).Assembly,
+                                                                      typeof(RejectMaterialRequestCommand).Assembly,
 
                                                                       typeof(GetNotificationsQuery).Assembly,
                                                                       typeof(MarkNotificationAsReadCommand).Assembly,
 
                                                                       typeof(AddInventoryCommand).Assembly,
                                                                       typeof(GetInventoryByIdQuery).Assembly,
-
-                                                                      typeof(AddMaterialRequestCommand).Assembly,
 
                                                                       typeof(GetComponentDefectsQuery).Assembly,
 

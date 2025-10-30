@@ -1,38 +1,30 @@
-﻿using Domain.Interfaces;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Application.Features.Batches.Commands.AddBatch
 {
     public class AddBatchCommandValidator : AbstractValidator<AddBatchCommand>
     {
-        private readonly IProductRepository _productRepository;
-        private readonly IBatchRepository _batchRepository;
-        public AddBatchCommandValidator(IBatchRepository batchRepository, IProductRepository productRepository)
+        public AddBatchCommandValidator()
         {
-            _batchRepository = batchRepository;
-            _productRepository = productRepository;
-
-            RuleFor(x => x.ProductId)
-                .NotEmpty().WithMessage("Product ID is required.")
-                .MustAsync(async (productId, cancellation) =>
-                {
-                    var product = await _productRepository.GetByIdAsync(productId);
-                    return product is not null;
-                }).WithMessage("Product ID must refer to an existing production.");
+            RuleFor(x => x.CodeProduct)
+                .NotEmpty().WithMessage("Product ID is required.");
 
             RuleFor(x => x.Code)
                 .NotEmpty().WithMessage("Batch code is required.")
-                .MaximumLength(50).WithMessage("Batch code must not exceed 50 characters.")
-                .MustAsync(async (code, cancellation) =>
-                {
-                    var existingBatch = await _batchRepository.GetByCodeAsync(code);
-                    return existingBatch is null;
-                }).WithMessage("Batch code must be unique.");
+                .MaximumLength(50).WithMessage("Batch code must not exceed 50 characters.");
 
             RuleFor(x => x.Quantity)
+                .NotEmpty().WithMessage("Quantity is required.")
                 .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
 
+            RuleFor(x => x.ImageFile)
+                .NotEmpty().WithMessage("Image is required.");
+
+            RuleFor(x => x.StartDate)
+                .NotEmpty().WithMessage("StartDate is required.");
+
             RuleFor(x => x.EndDate)
+                .NotEmpty().WithMessage("EndDate is required.")
                 .GreaterThan(x => x.StartDate).WithMessage("End date must be after start date.");
         }
     }

@@ -29,6 +29,7 @@ namespace API.Controllers
         }
 
         [HttpGet("dashboard")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
         {
             var result = await _mediator.Send(query);
@@ -56,6 +57,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> UpdateBatch(Guid id, UpdateBatchCommand command)
         {
             command.Id = id;
@@ -64,6 +66,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteBatch(Guid id)
         {
             var command = new DeleteBatchCommand(id);

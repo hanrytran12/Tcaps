@@ -24,7 +24,16 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
                 return Result.Failure("Material request not found.");
             }
 
-            materialRequest.MarkAsConfirmed();
+            if (materialRequest.QuantityRequest - request.ActualReceivedQuantity == 0)
+            {
+                materialRequest.MarkAsConfirmed(request.ActualReceivedQuantity, request.NoteFromQC);
+
+            }
+            else
+            {
+                materialRequest.MarkAsConfirmedWithDiscrepancy(request.ActualReceivedQuantity, request.NoteFromQC);
+            }
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
