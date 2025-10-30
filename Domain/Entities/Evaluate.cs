@@ -13,6 +13,9 @@ namespace Domain.Entities
         public string Image { get; private set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
 
+        private readonly List<ComponentDefect> _componentDefects = new();
+        public IReadOnlyCollection<ComponentDefect> ComponentDefects => _componentDefects.AsReadOnly();
+
         public Evaluate(Guid id, Guid productionId, Guid? userId, string note, int quantityError, string image, string status)
             : base(id)
         {
@@ -21,7 +24,7 @@ namespace Domain.Entities
             Note = note;
             QuantityError = quantityError;
             Image = image;
-            CreatedAt = new DateOnly();
+            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
             Status = status;
 
             AddDomainEvent(new EvaluateCreatedEvent(Id, productionId, userId.Value, quantityError, note, status));
@@ -39,6 +42,32 @@ namespace Domain.Entities
             Note = note;
             QuantityError = quantityError;
             Image = image;
+        }
+
+        public void UpdateResolveComponent(Guid componentId, string status)
+        {
+            if (string.IsNullOrEmpty(status))
+                throw new Exception("Status không được để trống.");
+
+            var component = _componentDefects.FirstOrDefault(x => x.Id == componentId);
+            if (component == null)
+                throw new Exception($"Không tìm thấy ComponentDefect với Id = {componentId}");
+
+            component.Resolve(status);
+            AddDomainEvent(new ComponentResolvedEvent(componentId, component.EvaluateId, component.Quantity, status));
+        }
+
+        public void UpdateConfirmComponent(Guid componentId, string status)
+        {
+            if (string.IsNullOrEmpty(status))
+                throw new Exception("Status không được để trống.");
+
+            var component = _componentDefects.FirstOrDefault(x => x.Id == componentId);
+            if (component == null)
+                throw new Exception($"Không tìm thấy ComponentDefect với Id = {componentId}");
+
+            component.Confirmed(status);
+            AddDomainEvent(new ComponentConfirmEvent(componentId, component.EvaluateId, component.Quantity, status));
         }
     }
 }

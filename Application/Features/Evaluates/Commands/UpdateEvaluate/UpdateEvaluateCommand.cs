@@ -13,9 +13,9 @@ namespace Application.Features.Evaluates.Commands.UpdateEvaluate
     public class UpdateEvaluateCommand : IRequest<Result<ResponseDTO>>
     {
         public Guid Id { get; set; }
-        public string Note { get; private set; } = string.Empty;
-        public int QuantityError { get; private set; }
-        public string Image { get; private set; } = string.Empty;
+        public string Note { get; set; } = string.Empty;
+        public int QuantityError { get; set; }
+        public string Image { get; set; } = string.Empty;
 
         public List<UpdateComponentDefectDTO> Defects { get; set; } = new();
     }

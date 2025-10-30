@@ -9,7 +9,7 @@ namespace Application.Interfaces
 {
     public interface IProductionService
     {
-        Task<ResponseDTO> SubmitProductionAsync(ProductionDTO dto, CancellationToken cancellationToken);
+        //Task<ResponseDTO> SubmitProductionAsync(ProductionDTO dto, CancellationToken cancellationToken);
         Task<ResponseDTO> IncreaseQuantityAsync(Guid productionId, CancellationToken cancellationToken);
         Task<ResponseDTO> DecreaseQuantityAsync(Guid productionId, CancellationToken cancellationToken);
         Task<ResponseDTO> UpdateQuantityAsync(Guid productionId, int newQuantity, CancellationToken cancellationToken);

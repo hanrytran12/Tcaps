@@ -22,6 +22,7 @@ namespace Application.Mapping
             CreateMap<NotificationDTO, Notification>().ReverseMap();
             CreateMap<EvaluateDTO, Evaluate>().ReverseMap();
             CreateMap<ComponentDefectsDTO, ComponentDefect>().ReverseMap();
+            CreateMap<Material, MaterialDTO>().ReverseMap();
         }
     }
 }

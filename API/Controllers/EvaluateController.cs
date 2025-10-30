@@ -1,5 +1,6 @@
 ﻿using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Evaluates.Commands.AddEvaluate;
+using Application.Features.Evaluates.Commands.UpdateEvaluate;
 using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
 using MediatR;
@@ -44,11 +45,11 @@ namespace API.Controllers
         }
 
         [HttpPut("{evaluateId:guid}")]
-        public async Task<IActionResult> UpdateEvaluate(Guid evaluateId, [FromBody] UpdateBatchCommand command)
+        public async Task<IActionResult> UpdateEvaluate(Guid evaluateId, [FromBody] UpdateEvaluateCommand command)
         {
             command.Id = evaluateId;
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            return result.IsSuccess ? NoContent() : BadRequest(new {success = false, message = result.Error ?? "Update evaluate failed" });
         }
     }
 }

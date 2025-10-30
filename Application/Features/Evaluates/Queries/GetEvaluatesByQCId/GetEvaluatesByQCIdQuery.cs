@@ -11,6 +11,6 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
     public class GetEvaluatesByQCIdQuery : IRequest<List<EvaluateDTO>>
     {
         public Guid QC_Id { get; set; }
-        public string Status { get; set; }
+        public string? Status { get; set; }
     }
 }

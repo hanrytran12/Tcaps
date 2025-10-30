@@ -29,7 +29,9 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
             var evaluates = await _evaluateRepository.GetByQCIdAsync(request.QC_Id);
 
             if (!string.IsNullOrEmpty(request.Status))
-                evaluates = evaluates.Where(e => e.Status == request.Status);
+                evaluates = evaluates
+                    .Where(e => e.Status.Equals(request.Status, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
 
             var dto = _mapper.Map<List<EvaluateDTO>>(evaluates);
 

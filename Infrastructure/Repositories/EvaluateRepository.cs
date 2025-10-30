@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories
 
         public async Task<Evaluate> GetByIdAsync(Guid id)
         {
-            return await _context.Evaluates.FindAsync(id);
+            return await _context.Evaluates.Include(e => e.ComponentDefects).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<IEnumerable<Evaluate>> GetByProductionIdAsync(Guid productionId)

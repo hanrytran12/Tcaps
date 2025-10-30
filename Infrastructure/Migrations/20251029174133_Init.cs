@@ -31,24 +31,6 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ComponentDefects",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    EvaluateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DefectType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Serverity = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Solution = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
-                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ComponentDefects", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Incomes",
                 columns: table => new
                 {
@@ -215,6 +197,7 @@ namespace Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    QuantityError = table.Column<int>(type: "int", nullable: false),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
                     BatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
@@ -273,12 +256,48 @@ namespace Infrastructure.Migrations
                         column: x => x.BatchId,
                         principalTable: "Batches",
                         principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Productions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ComponentDefects",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EvaluateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DefectType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Serverity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Solution = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ComponentDefects", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ComponentDefects_Evaluates_EvaluateId",
+                        column: x => x.EvaluateId,
+                        principalTable: "Evaluates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Assignments_BatchId",
                 table: "Assignments",
                 column: "BatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ComponentDefects_EvaluateId",
+                table: "ComponentDefects",
+                column: "EvaluateId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Evaluates_BatchId",
@@ -294,6 +313,11 @@ namespace Infrastructure.Migrations
                 name: "IX_Productions_BatchId",
                 table: "Productions",
                 column: "BatchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Productions_UserId",
+                table: "Productions",
+                column: "UserId");
         }
 
         /// <inheritdoc />
@@ -304,9 +328,6 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ComponentDefects");
-
-            migrationBuilder.DropTable(
-                name: "Evaluates");
 
             migrationBuilder.DropTable(
                 name: "Incomes");
@@ -333,10 +354,13 @@ namespace Infrastructure.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Workshop");
 
             migrationBuilder.DropTable(
-                name: "Workshop");
+                name: "Evaluates");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Batches");
