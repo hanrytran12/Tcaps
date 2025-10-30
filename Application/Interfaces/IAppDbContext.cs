@@ -11,6 +11,7 @@ namespace Application.Interfaces
         public DbSet<Inventory> Inventories { get; }
         public DbSet<Material> Materials { get; }
         public DbSet<MaterialRequest> MaterialRequests { get; }
+        public DbSet<MaterialUse> MaterialUse { get; }
         public DbSet<Notification> Notifications { get; }
         public DbSet<Product> Products { get; }
         public DbSet<User> Users { get; }

@@ -91,12 +91,5 @@ namespace Domain.Entities
 
             AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId, assignment.ExpectedDeliveryDate));
         }
-
-        public void AddMaterialUse(MaterialUse materialUse, decimal quantityRequest)
-        {
-            MaterialUses.Add(materialUse);
-
-            AddDomainEvent(new MaterialUseAddedEvent(materialUse.MaterialId, materialUse.BatchId, materialUse.AssignId, quantityRequest));
-        }
     }
 }

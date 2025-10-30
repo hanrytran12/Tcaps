@@ -1,13 +1,19 @@
 ﻿using Application.Interfaces;
 using Domain.Entities;
+using Domain.Interfaces;
+using Domain.Primitives;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence
 {
-    public class AppDbContext : DbContext, IAppDbContext
+    public class AppDbContext : DbContext, IAppDbContext, IUnitOfWork
     {
-        public AppDbContext(DbContextOptions options) : base(options)
+        private readonly IMediator _mediator;
+
+        public AppDbContext(DbContextOptions options, IMediator mediator) : base(options)
         {
+            _mediator = mediator;
         }
 
         public DbSet<Batch> Batches { get; set; }
@@ -43,6 +49,34 @@ namespace Infrastructure.Persistence
                           .HasForeignKey(a => a.BatchId)
                           .OnDelete(DeleteBehavior.Cascade);
             });
+        }
+
+        public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                var domainEvents = ChangeTracker
+                .Entries<AggregrateRoot>()
+                .Select(e => e.Entity)
+                .Where(e => e.DomainEvents.Any())
+                .SelectMany(e =>
+                {
+                    var events = e.DomainEvents.ToList();
+                    e.ClearDomainEvent();
+                    return events;
+                }).ToList();
+
+                if (!domainEvents.Any())
+                {
+                    break;
+                }
+
+                foreach (var domainEvent in domainEvents)
+                {
+                    await _mediator.Publish(domainEvent, cancellationToken);
+                }
+            }
+            return await base.SaveChangesAsync(cancellationToken);
         }
     }
 }

@@ -15,5 +15,6 @@ namespace Application.Interfaces
         Task SendSubmitProductionNotification(Guid assignId, Guid userId, int quantity);
         Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status);
         Task SendComponentConfirmNotification(Guid componentId, Guid evaluateId, int quantity, string status);
+        Task CreateStockUpdateNotificationForRoleAsync(string role, string materialName, int newStock, int change);
     }
 }
