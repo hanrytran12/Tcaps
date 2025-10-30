@@ -89,62 +89,62 @@ namespace Application.Services
             return _responseDTO;
         }
 
-        public async Task<ResponseDTO> SubmitProductionAsync(ProductionDTO dto, CancellationToken cancellationToken)
-        {
-            try
-            {
-                var user = await _userRepository.GetByIdAsync(dto.UserId);
-                if (user == null)
-                {
-                    _responseDTO.StatusCode = 404;
-                    _responseDTO.Message = "User not found.";
-                    return _responseDTO;
-                }
+        //public async Task<ResponseDTO> SubmitProductionAsync(ProductionDTO dto, CancellationToken cancellationToken)
+        //{
+        //    try
+        //    {
+        //        var user = await _userRepository.GetByIdAsync(dto.UserId);
+        //        if (user == null)
+        //        {
+        //            _responseDTO.StatusCode = 404;
+        //            _responseDTO.Message = "User not found.";
+        //            return _responseDTO;
+        //        }
 
-                var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId);
-                if (qc == null)
-                {
-                    _responseDTO.StatusCode = 404;
-                    _responseDTO.Message = "QC not found for this workshop.";
-                    return _responseDTO;
-                }
+        //        var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId);
+        //        if (qc == null)
+        //        {
+        //            _responseDTO.StatusCode = 404;
+        //            _responseDTO.Message = "QC not found for this workshop.";
+        //            return _responseDTO;
+        //        }
 
-                var production = await _productionRepository.GetByIdAsync(dto.Id);
-                if (production == null)
-                {
-                    _responseDTO.StatusCode = 404;
-                    _responseDTO.Message = "Production not found.";
-                    return _responseDTO;
-                }
+        //        var production = await _productionRepository.GetByIdAsync(dto.Id);
+        //        if (production == null)
+        //        {
+        //            _responseDTO.StatusCode = 404;
+        //            _responseDTO.Message = "Production not found.";
+        //            return _responseDTO;
+        //        }
 
-                production.Submit();
-                _productionRepository.Update(production);
+        //        production.PendingQC();
+        //        _productionRepository.Update(production);
 
-                var evaluate = new Evaluate(Guid.NewGuid(), production.Id, qc.Id, string.Empty, string.Empty);
-                await _evaluateRepository.AddAsync(evaluate);
+        //        var evaluate = new Evaluate(Guid.NewGuid(), production.Id, qc.Id, string.Empty, 0, string.Empty);
+        //        await _evaluateRepository.AddAsync(evaluate);
 
-                var notification = new Notification
-                (
-                    Guid.NewGuid(),
-                    qc.Id,
-                    "Yêu cầu đánh giá sản lượng",
-                    $"{user.FullName} đã gửi yêu cầu đánh giá sản lượng {dto.Quantity}.",
-                    "Yêu cầu đánh giá"
-                );
-                await _notificationRepository.AddAsync(notification);
-                await _unitOfWork.SaveChangesAsync(cancellationToken);
+        //        var notification = new Notification
+        //        (
+        //            Guid.NewGuid(),
+        //            qc.Id,
+        //            "Yêu cầu đánh giá sản lượng",
+        //            $"{user.FullName} đã gửi yêu cầu đánh giá sản lượng {dto.Quantity}.",
+        //            "Yêu cầu đánh giá"
+        //        );
+        //        await _notificationRepository.AddAsync(notification);
+        //        await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-                _responseDTO.StatusCode = 200;
-                _responseDTO.Message = "Sucess";
-                _responseDTO.Data = true;
-            }
-            catch (Exception ex)
-            {
-                _responseDTO.StatusCode = 500;
-                _responseDTO.Message = ex.Message;
-            }
-            return _responseDTO;
-        }
+        //        _responseDTO.StatusCode = 200;
+        //        _responseDTO.Message = "Sucess";
+        //        _responseDTO.Data = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _responseDTO.StatusCode = 500;
+        //        _responseDTO.Message = ex.Message;
+        //    }
+        //    return _responseDTO;
+        //}
 
         public async Task<ResponseDTO> UpdateQuantityAsync(Guid productionId, int newQuantity, CancellationToken cancellationToken)
         {

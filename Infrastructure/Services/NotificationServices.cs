@@ -15,10 +15,14 @@ namespace Infrastructure.Services
         private readonly IBatchRepository _batchRepository;
         private readonly IWorkshopRepository _workshopRepository;
         private readonly IMapper _mapper;
+        private readonly IProductionRepository _productionRepository;
+        private readonly IIncomeRepository _incomeRepository;
+        private readonly IEvaluateRepository _evaluateRepository;
         private readonly ResponseDTO _responseDTO;
 
-        public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository, IWorkshopRepository workshopRepository
-            , IMapper mapper)
+        public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
+            , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository,
+            IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -27,6 +31,9 @@ namespace Infrastructure.Services
             _batchRepository = batchRepository;
             _workshopRepository = workshopRepository;
             _mapper = mapper;
+            _productionRepository = productionRepository;
+            _incomeRepository = incomeRepository;
+            _evaluateRepository = evaluateRepository;
             _responseDTO = new ResponseDTO();
         }
 
@@ -155,6 +162,58 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
         }
 
+
+        public async Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note, string status)
+        {
+            var staff = await _productionRepository.GetStaffByProductionIdAsync(productionId);
+            var production = await _productionRepository.GetByIdAsync(productionId);
+            var title = "";
+            var message = "";
+            var type = "";
+
+            if (status == "Pass")
+            {
+                title = "Không có sản phẩm lỗi.";
+                message = $"Sản phẩm của {staff?.FullName} không có sản phẩm lỗi. Ghi chú: {note}.";
+                type = "EvaluatePass";
+                production?.MarkAsCompleted();
+                _productionRepository.Update(production);
+            }
+            else if (status == "Fail")
+            {
+                title = "Báo lỗi sản phẩm";
+                message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
+                type = "EvaluateFail";
+                production?.Rework();
+                _productionRepository.Update(production);
+            }
+            else
+            {
+                title = "Báo lỗi sản phẩm";
+                message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm lỗi và không thể sữa chữa. Ghi chú: {note}.";
+                type = "EvaluateReject";
+                production?.CompleteWithLoss();
+                _productionRepository.Update(production);
+            }
+
+            var notification = new Notification(Guid.NewGuid(), staff.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendSubmitProductionNotification(Guid assignId, Guid userId, int quantity)
+        {
+            var user = await _userRepository.GetByIdAsync(userId);
+            var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId);
+
+            var title = "Nộp sản phẩm";
+            var message = $"Nhân viên {user.FullName} nộp {quantity} sản phẩm để QC kiểm tra.";
+            var type = "SubmitProduction";
+            var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
         public async Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate)
         {
             var qc = await _userRepository.GetQCByWorkshopIdAsync(workshopId);
@@ -162,7 +221,44 @@ namespace Infrastructure.Services
             var title = "Công việc mới được giao";
             var message = $"Một lô hàng mới, mã lô {batchCode}, vừa được phân công cho xưởng của bạn {workshop?.Name}. Dự kiến giao nguyên liệu vào ngày {expectedDeliveryDate}";
             var type = "NEW_ASSIGNMENT";
+
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status)
+        {
+            var evaluate = await _evaluateRepository.GetByIdAsync(evaluateId);
+
+            var qc = await _userRepository.GetByIdAsync(evaluate.UserId.Value);
+
+            var production = await _productionRepository.GetByIdAsync(evaluate.ProductionId);
+
+            var user = await _userRepository.GetByIdAsync(production.UserId);
+
+            var title = "Nộp sản phẩm đã sửa lỗi.";
+            var message = $"Nhân viên {user.FullName} nộp {quantity} sản phẩm đã sửa chữa để QC kiểm tra.";
+            var type = "ResolveProduction";
+            var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendComponentConfirmNotification(Guid componentId, Guid evaluateId, int quantity, string status)
+        {
+            var evaluate = await _evaluateRepository.GetByIdAsync(evaluateId);
+
+            var qc = await _userRepository.GetByIdAsync(evaluate.UserId.Value);
+
+            var production = await _productionRepository.GetByIdAsync(evaluate.ProductionId);
+
+            var user = await _userRepository.GetByIdAsync(production.UserId);
+
+            var title = "Chấp nhận sản phẩm đã sửa lỗi thành công.";
+            var message = $"QC {qc.FullName} chấp nhận {quantity} sản phẩm đã sửa chữa thành công.";
+            var type = "ConfirmProduction";
+            var notification = new Notification(Guid.NewGuid(), user.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }

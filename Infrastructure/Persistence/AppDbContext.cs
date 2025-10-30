@@ -22,7 +22,6 @@ namespace Infrastructure.Persistence
         public DbSet<Inventory> Inventories { get; set; }
         public DbSet<Material> Materials { get; set; }
         public DbSet<MaterialRequest> MaterialRequests { get; set; }
-        public DbSet<MaterialUse> MaterialUses { get; set; }
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
@@ -30,7 +29,7 @@ namespace Infrastructure.Persistence
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Production> Productions { get; set; }
         public DbSet<Evaluate> Evaluates { get; set; }
-
+        public DbSet<MaterialUse> MaterialUse { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

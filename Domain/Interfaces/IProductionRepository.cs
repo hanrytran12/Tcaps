@@ -11,8 +11,10 @@ namespace Domain.Interfaces
     {
         Task<IEnumerable<Production>> GetAllAsync();
         Task<Production?> GetByIdAsync(Guid id);
+        Task<User?> GetStaffByProductionIdAsync(Guid productionId);
         Task<IEnumerable<Production>> GetByUserAsync(Guid userId);
         Task AddAsync(Production production);
         void Update(Production production);
+        IQueryable<Production> Query();
     }
 }

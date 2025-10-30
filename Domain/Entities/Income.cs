@@ -25,5 +25,16 @@ namespace Domain.Entities
         }
 
         private Income() : base(Guid.NewGuid()) { }
+
+        public void ReduceQuantity(int quantityError)
+        {
+            if (quantityError <= 0)
+                return;
+
+            if (Quantity < quantityError)
+                throw new InvalidOperationException("Không thể giảm số lượng vượt quá số lượng hiện tại.");
+
+            Quantity -= quantityError;
+        }
     }
 }

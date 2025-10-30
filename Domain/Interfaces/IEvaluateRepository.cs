@@ -11,6 +11,7 @@ namespace Domain.Interfaces
     {
         Task<IEnumerable<Evaluate>> GetAllAsync();
         Task<IEnumerable<Evaluate>> GetByProductionIdAsync(Guid productionId);
+        Task<IEnumerable<Evaluate>> GetByQCIdAsync(Guid qcId);
         Task<IEnumerable<Evaluate>> GetByProductionIdsAsync(List<Guid> productionIds);
         Task<Evaluate> GetByIdAsync(Guid id);
         Task AddAsync(Evaluate evaluate);

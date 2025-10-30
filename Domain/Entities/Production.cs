@@ -1,8 +1,9 @@
-﻿using Domain.Primitives;
+﻿using Domain.Events;
+using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class Production : Entity
+    public class Production : AggregrateRoot
     {
         public Guid AssignId { get; private set; }
         public Guid UserId { get; private set; }
@@ -16,8 +17,10 @@ namespace Domain.Entities
             AssignId = assignId;
             UserId = userId;
             Quantity = quantity;
-            Date = new DateOnly();
-            Status = "Pending";
+            Date = DateOnly.FromDateTime(DateTime.UtcNow);
+            Status = "PendingQC";
+
+            AddDomainEvent(new ProductionCreatedEvent(assignId, userId, quantity));
         }
 
         private Production() : base(Guid.NewGuid()) { }
@@ -43,13 +46,24 @@ namespace Domain.Entities
             Quantity = newQuantity;
         }
 
+        public void ReduceQuantity(int quantityError)
+        {
+            if (quantityError <= 0)
+                return;
+
+            if (Quantity < quantityError)
+                throw new InvalidOperationException("Không thể giảm số lượng vượt quá số lượng hiện tại.");
+
+            Quantity -= quantityError;
+        }
+
         public void MarkAsCompleted()
         {
             Status = "Completed";
         }
 
-        public void Submit() => Status = "Submitted";
-        public void Approve() => Status = "Approved";
-        public void Reject() => Status = "Rejected";
+        public void PendingQC() => Status = "PendingQC";
+        public void Rework() => Status = "Rework";
+        public void CompleteWithLoss() => Status = "CompleteWithLoss";
     }
 }
