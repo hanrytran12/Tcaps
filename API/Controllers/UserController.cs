@@ -106,6 +106,7 @@ namespace API.Controllers
         }
 
         [HttpGet("staff-performance")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetStaffPerformance([FromQuery] GetStaffPerformanceQuery query)
         {
             var result = await _mediator.Send(query);
