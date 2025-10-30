@@ -153,7 +153,6 @@ namespace Infrastructure.Services
             var type = "MaterialStockUpdate";
             var notification = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
-            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate)
@@ -176,7 +175,19 @@ namespace Infrastructure.Services
             var type = "MaterialStockUpdate";
             var notification = new Notification(Guid.NewGuid(), lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
-            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task CreateStockUpdateNotificationForRoleAsync(string role, string materialName, int newStock, int change)
+        {
+            var users = await _userRepository.GetByRoleAsync(role);
+            if (users is null) return;
+
+            var title = "Cập nhật Tồn kho Nguyên vật liệu";
+            var message = $"Tồn kho của '{materialName}' đã thay đổi. Số lượng mới: {newStock} (thay đổi: {change}).";
+            var type = "MaterialStockUpdate";
+
+            var notification = Notification.Create(users.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
         }
     }
 }
