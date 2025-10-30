@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class User : Entity
+    public class User : AggregrateRoot
     {
         public Guid WorkshopId { get; private set; }
         public string Role { get; private set; } = string.Empty;
@@ -14,6 +14,7 @@ namespace Domain.Entities
         public string Status { get; private set; } = string.Empty;
         public DateTime CreatedAt { get; private set; }
 
+        public ICollection<Production> Productions { get; private set; } = new List<Production>();
 
         public User(Guid id, Guid workshopId, string role, string fullName, string email, string passwordHash, string phone)
             : base(id)
@@ -71,6 +72,11 @@ namespace Domain.Entities
                 throw new InvalidOperationException("Mật khẩu hiện tại không chính xác.");
 
             PasswordHash = newPasswordHash;
+        }
+
+        public void AddProduction(Production production)
+        {
+            Productions.Add(production);
         }
     }
 }

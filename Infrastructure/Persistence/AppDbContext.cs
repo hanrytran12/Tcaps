@@ -23,6 +23,7 @@ namespace Infrastructure.Persistence
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Production> Productions { get; set; }
         public DbSet<Evaluate> Evaluates { get; set; }
+        public DbSet<MaterialUse> MaterialUse { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

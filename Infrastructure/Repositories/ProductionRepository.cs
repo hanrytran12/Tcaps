@@ -45,6 +45,11 @@ namespace Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.Id == production.UserId);
         }
 
+        public IQueryable<Production> Query()
+        {
+            return _context.Productions.AsQueryable();
+        }
+
         public void Update(Production production)
         {
             _context.Productions.Update(production);

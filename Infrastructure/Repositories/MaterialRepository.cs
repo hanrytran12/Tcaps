@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -10,6 +11,11 @@ namespace Infrastructure.Repositories
         public MaterialRepository(AppDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<IEnumerable<Material>> GetAllAsync()
+        {
+            return await _context.Materials.ToListAsync();
         }
 
         public async Task<Material?> GetByIdAsync(Guid materialId)

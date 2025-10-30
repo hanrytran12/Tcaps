@@ -60,6 +60,20 @@ namespace Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.WorkshopId == workshopId && u.Role == "QC");
         }
 
+        public async Task<IEnumerable<User>> GetUsersByWorkshopIdAsync(Guid workshopId)
+        {
+            return await _context.Users
+                .Where(u => u.WorkshopId == workshopId && u.Role == "Staff")
+                .ToListAsync();
+        }
+
+        public async Task<Guid> GetWorkshopIdByQCIdAsync(Guid qc_id)
+        {
+            return await _context.Users
+                .Where(u => u.Id == qc_id)
+                .Select(u => u.WorkshopId).FirstOrDefaultAsync();
+        }
+
         public async Task<bool> IsEmailTakenByAnotherUserAsync(string email, Guid userId)
         {
             return await _context.Users.AnyAsync(u => u.Email == email && u.Id != userId);

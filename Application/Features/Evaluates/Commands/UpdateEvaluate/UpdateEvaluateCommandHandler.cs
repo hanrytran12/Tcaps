@@ -46,13 +46,14 @@ namespace Application.Features.Evaluates.Commands.UpdateEvaluate
                 {
                     if (!item.Id.HasValue)
                     {
-                        var component = ComponentDefect.Create(
+                        var component = Domain.Entities.ComponentDefect.Create(
                             evaluate.Id,
                             item.DefectType,
                             item.Severity,
                             item.Description,
                             item.Solution,
-                            "In Progress");
+                            item.Quantity,
+                            item.Status);
                         await _componentDefectRepository.AddAsync(component);
                     }
                     else
@@ -64,7 +65,9 @@ namespace Application.Features.Evaluates.Commands.UpdateEvaluate
                                 item.DefectType,
                                 item.Severity,
                                 item.Description,
-                                item.Solution
+                                item.Solution,
+                                item.Quantity,
+                                item.Status
                             );
                             _componentDefectRepository.Update(defect);
                         }

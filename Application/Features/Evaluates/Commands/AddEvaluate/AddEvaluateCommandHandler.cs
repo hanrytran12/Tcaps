@@ -45,12 +45,13 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
             {
                 foreach (var item in request.Defects)
                 {
-                    var component = ComponentDefect.Create(
+                    var component = Domain.Entities.ComponentDefect.Create(
                         evaluate.Id,
                         item.DefectType,
                         item.Serverity,
                         item.Description,
                         item.Solution,
+                        item.Quantity,
                         item.Status);
                     await _componentDefectRepository.AddAsync(component);
                 }

@@ -9,6 +9,7 @@ using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
+using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
 using Application.Features.ComponentDefects.Query.GetComponentDefects;
 using Application.Features.Evaluates.Commands.AddEvaluate;
 using Application.Features.Evaluates.Commands.UpdateEvaluate;
@@ -21,6 +22,10 @@ using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
+using Application.Features.Productions.Command.AddProduction;
+using Application.Features.Productions.Query.GetAllProduction;
+using Application.Features.Productions.Query.GetAllProductionByQCId;
+using Application.Features.Productions.Query.GetAllProductionByStaffId;
 using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
@@ -100,6 +105,7 @@ builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepositor
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
+builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
@@ -147,7 +153,14 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddEvaluateCommand).Assembly,
                                                                       typeof(UpdateEvaluateCommand).Assembly,
                                                                       typeof(GetAllEvaluateQuery).Assembly,
-                                                                      typeof(GetEvaluatesByQCIdQuery).Assembly
+                                                                      typeof(GetEvaluatesByQCIdQuery).Assembly,
+
+                                                                      typeof(AddProductionCommand).Assembly,
+                                                                      typeof(GetAllProductionQuery).Assembly,
+                                                                      typeof(GetAllProductionByQCIdQuery).Assembly,
+                                                                      typeof(GetAllProductionByStaffIdQuery).Assembly,
+
+                                                                      typeof(UpdateComponentDefectResolvedCommand).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -206,6 +219,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseExceptionHandler();
+//app.UseDeveloperExceptionPage();
+
 
 app.MapControllers();
 
