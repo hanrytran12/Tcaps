@@ -56,18 +56,6 @@ namespace Infrastructure.Services
             return _responseDTO;
         }
 
-        public async Task SendBatchCompletionNotificationAsync(Guid batchId, string batchCode)
-        {
-            var user = await _userRepository.GetByRoleAsync("Admin");
-            var title = $"Batch {batchCode} Completed";
-            var message = $"Batch {batchCode} with ID {batchId} has been completed.";
-            var type = "BatchCompletion";
-            var notification = new Notification(Guid.NewGuid(), user.Id, title, message, type);
-
-            await _notificationRepository.AddAsync(notification);
-            await _unitOfWork.SaveChangesAsync();
-        }
-
         public async Task SendMaterialRequestApprovalNotificationAsync(Guid materialId, Guid batchId, decimal quantityRequest)
         {
             var user = await _userRepository.GetByRoleAsync("Lead");

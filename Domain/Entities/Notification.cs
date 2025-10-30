@@ -21,6 +21,11 @@ namespace Domain.Entities
             CreatedAt = DateOnly.FromDateTime(DateTime.Now);
         }
 
+        public static Notification Create(Guid userId, string title, string message, string type)
+        {
+            return new Notification(Guid.NewGuid(), userId, title, message, type);
+        }
+
         private Notification() : base(Guid.NewGuid()) { }
 
         public void MarkAsRead()

@@ -11,8 +11,8 @@ namespace Domain.Interfaces
         void Delete(Batch batch);
         void Update(Batch batch);
         Task<Batch?> GetByIdWithAssignmentsAsync(Guid Id);
-        Task<Batch> GetAggregateRootByAssignmentIdAsync(Guid assignmentId);
         Task<Batch?> GetByCodeAsync(string code);
         Task<bool> IsProductInUseAsync(Guid productId);
+        Task<bool> AreAllAssignmentsCompletedAsync(Guid batchId);
     }
 }
