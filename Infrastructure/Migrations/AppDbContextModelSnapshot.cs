@@ -350,7 +350,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
-                    b.ToTable("MaterialUses");
+                    b.ToTable("MaterialUse");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>

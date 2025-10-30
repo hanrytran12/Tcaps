@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251030124832_Init")]
+    [Migration("20251030134701_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -126,6 +126,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("EvaluateId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
                     b.Property<string>("Serverity")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -139,6 +142,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EvaluateId");
 
                     b.ToTable("ComponentDefects");
                 });
@@ -165,6 +170,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<Guid>("ProductionId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("QuantityError")
+                        .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -345,7 +353,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
-                    b.ToTable("MaterialUses");
+                    b.ToTable("MaterialUse");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>
@@ -439,6 +447,8 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Productions");
                 });
 
@@ -510,6 +520,15 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entities.ComponentDefect", b =>
+                {
+                    b.HasOne("Domain.Entities.Evaluate", null)
+                        .WithMany("ComponentDefects")
+                        .HasForeignKey("EvaluateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Domain.Entities.Evaluate", b =>
                 {
                     b.HasOne("Domain.Entities.Batch", null)
@@ -531,6 +550,12 @@ namespace Infrastructure.Migrations
                     b.HasOne("Domain.Entities.Batch", null)
                         .WithMany("Productions")
                         .HasForeignKey("BatchId");
+
+                    b.HasOne("Domain.Entities.User", null)
+                        .WithMany("Productions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Domain.Entities.Batch", b =>
@@ -541,6 +566,16 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("MaterialUses");
 
+                    b.Navigation("Productions");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Evaluate", b =>
+                {
+                    b.Navigation("ComponentDefects");
+                });
+
+            modelBuilder.Entity("Domain.Entities.User", b =>
+                {
                     b.Navigation("Productions");
                 });
 #pragma warning restore 612, 618
