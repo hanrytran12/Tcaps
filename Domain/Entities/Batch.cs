@@ -67,6 +67,12 @@ namespace Domain.Entities
             Status = status;
         }
 
+        public void CompleteBatch()
+        {
+            UpdateStatus("Completed");
+            AddDomainEvent(new BatchCompletedEvent(Id, Code));
+        }
+
         public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
         {
             if (Status != "Planned" && Status != "InProgress")
@@ -84,28 +90,6 @@ namespace Domain.Entities
             Assignments.Add(assignment);
 
             AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId, assignment.ExpectedDeliveryDate));
-        }
-
-        public void UpdateAssignmentsStatus(Guid assignmentId, string newStatus)
-        {
-            var assignment = Assignments.FirstOrDefault(a => a.Id == assignmentId);
-            if (assignment is not null)
-            {
-                assignment.UpdateStatus(newStatus);
-            }
-
-            CheckForCompletion();
-        }
-
-        private void CheckForCompletion()
-        {
-            bool has15Assignments = Assignments.Count == 15;
-            bool allAssignmentsCompleted = has15Assignments && Assignments.All(a => a.Status == "Completed");
-            if (allAssignmentsCompleted)
-            {
-                UpdateStatus("Completed");
-                AddDomainEvent(new BatchCompletedEvent(this.Id, this.Code));
-            }
         }
 
         public void AddMaterialUse(MaterialUse materialUse, decimal quantityRequest)

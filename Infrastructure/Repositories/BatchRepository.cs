@@ -45,12 +45,6 @@ namespace Infrastructure.Repositories
                                  .FirstOrDefaultAsync(b => b.Id == Id);
         }
 
-        public async Task<Batch> GetAggregateRootByAssignmentIdAsync(Guid assignmentId)
-        {
-            return await _context.Batches.Include(b => b.Assignments)
-                                 .FirstOrDefaultAsync(b => b.Assignments.Any(a => a.Id == assignmentId));
-        }
-
         public async Task<IEnumerable<Batch>> GetBatchesByIdsAsync(List<Guid> ids)
         {
             return await _context.Batches
@@ -69,6 +63,12 @@ namespace Infrastructure.Repositories
         {
             return await _context.Batches
                                  .AnyAsync(b => b.ProductId == productId && !b.isDeleted);
+        }
+
+        public async Task<bool> AreAllAssignmentsCompletedAsync(Guid batchId)
+        {
+            var count = await _context.Assignments.CountAsync(a => a.BatchId == batchId && a.Status == "Completed");
+            return (count == 14);
         }
     }
 }
