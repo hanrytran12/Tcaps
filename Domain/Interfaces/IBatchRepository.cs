@@ -10,10 +10,9 @@ namespace Domain.Interfaces
         Task AddAsync(Batch batch);
         void Delete(Batch batch);
         void Update(Batch batch);
-        Task<IEnumerable<Batch>> SearchAsync(Guid productId, DateOnly TargetDate);
         Task<Batch?> GetByIdWithAssignmentsAsync(Guid Id);
-        Task<Batch> GetAggregateRootByAssignmentIdAsync(Guid assignmentId);
         Task<Batch?> GetByCodeAsync(string code);
         Task<bool> IsProductInUseAsync(Guid productId);
+        Task<bool> AreAllAssignmentsCompletedAsync(Guid batchId);
     }
 }

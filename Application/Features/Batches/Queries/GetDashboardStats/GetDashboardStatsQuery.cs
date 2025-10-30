@@ -7,14 +7,9 @@ namespace Application.Features.Batches.Queries.GetDashboardStats
     public class GetDashboardStatsQuery : IRequest<DashboardResultDTO>
     {
         [Required]
-        public Guid Id { get; set; }
+        public Guid ProductId { get; set; }
 
-        [Required]
-        [Range(1, 31)]
-        public int Day { get; set; }
-
-        [Required]
-        [Range(1, 12)]
-        public int Month { get; set; }
+        public DateOnly? StartDate { get; set; }
+        public DateOnly? EndDate { get; set; }
     }
 }

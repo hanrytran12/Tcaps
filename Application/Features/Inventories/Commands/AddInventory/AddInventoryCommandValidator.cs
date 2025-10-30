@@ -15,6 +15,10 @@ namespace Application.Features.Inventories.Commands.AddInventory
 
             RuleFor(x => x.ImageURL)
                 .NotNull().WithMessage("ImageURL is required.");
+
+            RuleFor(x => x.Price)
+                .NotNull().WithMessage("Price is required.")
+                .GreaterThan(0).WithMessage("Price must be greater than zero.");
         }
     }
 }

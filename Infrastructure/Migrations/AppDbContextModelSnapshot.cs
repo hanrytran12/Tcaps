@@ -36,6 +36,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
+                    b.Property<DateOnly>("ExpectedDeliveryDate")
+                        .HasColumnType("date");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -45,6 +48,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("UnitPrice")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("WorkshopId")
                         .HasColumnType("uniqueidentifier");
@@ -71,6 +77,10 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
+
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
@@ -223,6 +233,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -270,6 +283,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<decimal?>("ActualReceivedQuantity")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<Guid>("AssignId")
                         .HasColumnType("uniqueidentifier");
 
@@ -284,6 +300,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<string>("Note")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NoteFromQC")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("QuantityRequest")

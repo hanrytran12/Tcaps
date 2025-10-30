@@ -13,6 +13,8 @@ namespace Domain.Entities
         public string Status { get; private set; } = string.Empty;
         public string Note { get; private set; } = string.Empty;
         public DateOnly Date { get; private set; }
+        public string? NoteFromQC { get; private set; } = null;
+        public decimal? ActualReceivedQuantity { get; private set; }
 
         public MaterialRequest(Guid id, Guid materialId, Guid userId, Guid batchId, Guid assignId, decimal quantityRequest, string note)
             : base(id)
@@ -43,13 +45,35 @@ namespace Domain.Entities
             AddDomainEvent(new MaterialRequestApprovedEvent(MaterialId, BatchId, QuantityRequest));
         }
 
-        public void MarkAsConfirmed()
+        public void MarkAsConfirmed(decimal actualReceivedQuantity, string noteFromQC)
         {
             if (Status != "Pending")
-                throw new InvalidOperationException("Only pending requests can be approved.");
+                throw new InvalidOperationException("Only pending requests can be confirmed.");
 
             Status = "Confirmed";
-            AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, AssignId, QuantityRequest));
+            ActualReceivedQuantity = actualReceivedQuantity;
+            NoteFromQC = noteFromQC;
+            AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, AssignId, QuantityRequest, actualReceivedQuantity));
+        }
+
+        public void MarkAsConfirmedWithDiscrepancy(decimal actualReceivedQuantity, string noteFromQC)
+        {
+            if (Status != "Pending")
+                throw new InvalidOperationException("Only pending requests can be confirmed.");
+
+            Status = "ConfirmedWithDiscrepancy";
+            ActualReceivedQuantity = actualReceivedQuantity;
+            NoteFromQC = noteFromQC;
+            AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, AssignId, QuantityRequest, actualReceivedQuantity));
+        }
+
+        public void MarkAdRejected(string rejectedReason)
+        {
+            if (Status != "Pending")
+                throw new InvalidOperationException("Only pending requests can be rejected.");
+
+            Status = "Rejected";
+            NoteFromQC = rejectedReason;
         }
     }
 }

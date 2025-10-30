@@ -25,6 +25,15 @@ namespace Domain.Entities
 
         private Material() : base(Guid.NewGuid()) { }
 
+        public void IncreasePrice(decimal price)
+        {
+            if (price <= 0)
+            {
+                throw new ArgumentException("Price to increase must be non-negative.", nameof(price));
+            }
+            Price += price;
+        }
+
         public void IncreaseQuantity(int amount)
         {
             if (amount <= 0)

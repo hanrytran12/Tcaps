@@ -8,23 +8,25 @@ namespace Domain.Entities
         public Guid MaterialId { get; private set; }
         public int Quantity { get; private set; }
         public DateOnly Date { get; private set; }
+        public decimal Price { get; private set; }
         public string ImageURL { get; private set; } = string.Empty;
 
-        public Inventory(Guid Id, Guid materialId, int quantity, string imageURL)
+        public Inventory(Guid Id, Guid materialId, int quantity, string imageURL, decimal price)
             : base(Id)
         {
             MaterialId = materialId;
             Quantity = quantity;
             Date = DateOnly.FromDateTime(DateTime.Now);
             ImageURL = imageURL;
+            Price = price;
         }
 
         private Inventory() : base(Guid.NewGuid()) { }
 
-        public static Inventory Create(Guid materialId, int quantity, string imageURL)
+        public static Inventory Create(Guid materialId, int quantity, string imageURL, decimal price)
         {
-            var inventory = new Inventory(Guid.NewGuid(), materialId, quantity, imageURL);
-            inventory.AddDomainEvent(new InventoryAddEvent(inventory.MaterialId, inventory.Quantity));
+            var inventory = new Inventory(Guid.NewGuid(), materialId, quantity, imageURL, price);
+            inventory.AddDomainEvent(new InventoryAddEvent(inventory.MaterialId, inventory.Quantity, inventory.Price));
             return inventory;
         }
     }

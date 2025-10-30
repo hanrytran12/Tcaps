@@ -11,7 +11,6 @@ namespace Application.Features.Users.Commands.UpdateUser
         public string? Role { get; set; } = null;
         public string? FullName { get; set; } = null;
         public string? Email { get; set; } = null;
-        public string? PasswordHash { get; set; } = null;
         public string? Phone { get; set; } = null;
     }
 }
