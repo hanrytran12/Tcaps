@@ -22,13 +22,6 @@ namespace Application.Features.MaterialUse.Events
             if (materials is not null)
             {
                 materials.DecreaseQuantity((int)notification.QuantityDivide);
-                await _unitOfWork.SaveChangesAsync();
-
-                foreach (var domainEvent in materials.DomainEvents)
-                {
-                    await _mediator.Publish(domainEvent, cancellationToken);
-                }
-                materials.ClearDomainEvent();
             }
         }
     }

@@ -6,12 +6,10 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
 {
     public class ConfirmRequestFromQcCommandHandler : IRequestHandler<ConfirmRequestFromQcCommand, Result>
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IMaterialRequestRepository _materialRequestRepository;
 
-        public ConfirmRequestFromQcCommandHandler(IUnitOfWork unitOfWork, IMaterialRequestRepository materialRequestRepository)
+        public ConfirmRequestFromQcCommandHandler(IMaterialRequestRepository materialRequestRepository)
         {
-            _unitOfWork = unitOfWork;
             _materialRequestRepository = materialRequestRepository;
         }
 
@@ -34,7 +32,6 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
                 materialRequest.MarkAsConfirmedWithDiscrepancy(request.ActualReceivedQuantity, request.NoteFromQC);
             }
 
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
     }

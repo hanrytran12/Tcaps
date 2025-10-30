@@ -6,21 +6,22 @@ namespace Application.Features.MaterialRequest.Events
 {
     public class MaterialRequestConfirmedEventHandler : INotificationHandler<MaterialRequestConfirmedEvent>
     {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IBatchRepository _batchRepository;
+        private readonly IMaterialRepository _materialRepository;
+        private readonly IMaterialUseRepository _materialUseRepository;
 
-        public MaterialRequestConfirmedEventHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository)
+        public MaterialRequestConfirmedEventHandler(IMaterialUseRepository materialUseRepository, IMaterialRepository materialRepository)
         {
-            _unitOfWork = unitOfWork;
-            _batchRepository = batchRepository;
+            _materialRepository = materialRepository;
+            _materialUseRepository = materialUseRepository;
         }
 
         public async Task Handle(MaterialRequestConfirmedEvent notification, CancellationToken cancellationToken)
         {
-            var batch = await _batchRepository.GetByIdAsync(notification.BatchId);
             var materialUse = Domain.Entities.MaterialUse.Create(notification.MaterialId, notification.BatchId, notification.AssignId, notification.ActualReceivedQuantity);
-            batch.AddMaterialUse(materialUse, notification.QuantityRequest);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _materialUseRepository.AddAsync(materialUse);
+
+            var material = await _materialRepository.GetByIdAsync(notification.MaterialId);
+            material?.DecreaseQuantity((int)notification.QuantityRequest);
         }
     }
 }
