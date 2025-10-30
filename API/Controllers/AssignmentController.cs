@@ -25,6 +25,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id:guid}/complete")]
+        [Authorize(Policy = "Lead")]
         public async Task<IActionResult> CompleteAssignment(Guid id)
         {
             var command = new CompleteAssignmentCommand { AssignmentId = id };

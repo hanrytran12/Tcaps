@@ -35,7 +35,7 @@ namespace Domain.Entities
             return new Assignment(Guid.NewGuid(), batchId, workshopId, quantity, startDate, endDate, expectedDeliveryDate, unitPrice);
         }
 
-        internal void UpdateStatus(string status)
+        public void UpdateStatus(string status)
         {
             Status = status;
         }
