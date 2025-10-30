@@ -31,7 +31,7 @@ namespace Infrastructure.Repositories
 
         public async Task<Evaluate> GetByIdAsync(Guid id)
         {
-            return await _context.Evaluates.FindAsync(id);
+            return await _context.Evaluates.Include(e => e.ComponentDefects).FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<IEnumerable<Evaluate>> GetByProductionIdAsync(Guid productionId)
@@ -42,6 +42,12 @@ namespace Infrastructure.Repositories
         public async Task<IEnumerable<Evaluate>> GetByProductionIdsAsync(List<Guid> productionIds)
         {
             return await _context.Evaluates.Where(e => productionIds.Contains(e.ProductionId)).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Evaluate>> GetByQCIdAsync(Guid qcId)
+        {
+            return await _context.Evaluates
+                .Where(e => e.UserId == qcId).ToListAsync();
         }
 
         public void Update(Evaluate evaluate)

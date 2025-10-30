@@ -11,6 +11,7 @@ namespace Domain.Interfaces
     {
         Task<IEnumerable<Income>> GetAllAsync();
         Task<Income> GetByIdAsync(Guid id);
+        Task<Income> GetByProductionIdAsync(Guid productionId);
         Task<decimal> GetTotalIncomeAsync(Guid userId);
         Task<IEnumerable<Income>> GetIncomeHistoryAsync(Guid userId);
         Task AddAsync(Income income);

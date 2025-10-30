@@ -39,6 +39,17 @@ namespace Infrastructure.Repositories
             return await _context.Productions.Where(p => p.UserId == userId).ToListAsync();
         }
 
+        public async Task<User?> GetStaffByProductionIdAsync(Guid productionId)
+        {
+            var production = await _context.Productions.FindAsync(productionId);
+            return await _context.Users.FirstOrDefaultAsync(u => u.Id == production.UserId);
+        }
+
+        public IQueryable<Production> Query()
+        {
+            return _context.Productions.AsQueryable();
+        }
+
         public void Update(Production production)
         {
             _context.Productions.Update(production);

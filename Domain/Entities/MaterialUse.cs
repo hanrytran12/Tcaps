@@ -28,5 +28,13 @@ namespace Domain.Entities
         {
             return new MaterialUse(Guid.NewGuid(), materialId, batchId, assignId, quantityDivide);
         }
+
+        public void IncreaseQuantityStaffUse(int quantityProduction)
+        {
+            if (quantityProduction < 0)
+                throw new InvalidOperationException("Quantity cannot be negative.");
+
+            QuantityStaffUse += quantityProduction;
+        }
     }
 }
