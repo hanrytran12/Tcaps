@@ -4,8 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.DTOs;
+using Application.DTOs.Response;
 using AutoMapper;
 using Domain.Entities;
+using NotificationDTO = Application.DTOs.NotificationDTO;
 
 namespace Application.Mapping
 {
@@ -18,6 +20,9 @@ namespace Application.Mapping
             CreateMap<Production, ProductionDTO>().ReverseMap();
             CreateMap<AssignmentDTO, Assignment>().ReverseMap();
             CreateMap<NotificationDTO, Notification>().ReverseMap();
+            CreateMap<EvaluateDTO, Evaluate>().ReverseMap();
+            CreateMap<ComponentDefectsDTO, ComponentDefect>().ReverseMap();
+            CreateMap<Material, MaterialDTO>().ReverseMap();
         }
     }
 }
