@@ -8,6 +8,7 @@ using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -37,10 +38,21 @@ namespace API.Controllers
         }
 
         [HttpGet("for-qc")]
-        public async Task<List<Batch>> GetBatchByWorkshopId([FromQuery] GetBatchByWorkshopIdQuery query)
+        [Authorize(Policy = "QC")]
+        public async Task<IActionResult> GetBatchByWorkshopId([FromQuery] string? Status, DateOnly? FromDate, DateOnly? ToDate)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Không thể xác định người dùng từ token.");
+            }
+
+            var userId = Guid.Parse(userIdString);
+
+            var query = new GetBatchByWorkshopIdQuery(userId, Status, FromDate, ToDate);
             var result = await _mediator.Send(query);
-            return result;
+            return Ok(result);
         }
 
         [HttpPost]
