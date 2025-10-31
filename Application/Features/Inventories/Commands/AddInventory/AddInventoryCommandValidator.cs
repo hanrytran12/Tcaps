@@ -6,8 +6,8 @@ namespace Application.Features.Inventories.Commands.AddInventory
     {
         public AddInventoryCommandValidator()
         {
-            RuleFor(x => x.MaterialId)
-                .NotEmpty().WithMessage("MaterialId is required.");
+            RuleFor(x => x.MaterialName)
+                .NotEmpty().WithMessage("MaterialName is required.");
 
             RuleFor(x => x.Quantity)
                 .NotEmpty().WithMessage("Quantity is required.")

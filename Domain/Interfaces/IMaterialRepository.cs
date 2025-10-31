@@ -6,5 +6,7 @@ namespace Domain.Interfaces
     {
         Task<Material?> GetByIdAsync(Guid materialId);
         Task<IEnumerable<Material>> GetAllAsync();
+        Task AddAsync(Material material);
+        Task<Material?> GetByNameAsync(string name);
     }
 }
