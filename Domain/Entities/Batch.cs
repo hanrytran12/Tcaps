@@ -87,6 +87,11 @@ namespace Domain.Entities
 
         public void AddAssignment(Assignment assignment)
         {
+            if (Status == "Planned")
+            {
+                Status = "InProgress";
+            }
+
             Assignments.Add(assignment);
 
             AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId, assignment.ExpectedDeliveryDate));

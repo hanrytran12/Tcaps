@@ -7,10 +7,12 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
     public class ConfirmRequestFromQcCommandHandler : IRequestHandler<ConfirmRequestFromQcCommand, Result>
     {
         private readonly IMaterialRequestRepository _materialRequestRepository;
+        private readonly IAssignmentRepository _assignmentRepository;
 
-        public ConfirmRequestFromQcCommandHandler(IMaterialRequestRepository materialRequestRepository)
+        public ConfirmRequestFromQcCommandHandler(IMaterialRequestRepository materialRequestRepository, IAssignmentRepository assignmentRepository)
         {
             _materialRequestRepository = materialRequestRepository;
+            _assignmentRepository = assignmentRepository;
         }
 
         public async Task<Result> Handle(ConfirmRequestFromQcCommand request, CancellationToken cancellationToken)
@@ -21,6 +23,9 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
             {
                 return Result.Failure("Material request not found.");
             }
+
+            var assigment = await _assignmentRepository.GetByIdAsync(materialRequest.AssignId);
+            assigment.UpdateWhenQcConfrimed();
 
             if (materialRequest.QuantityRequest - request.ActualReceivedQuantity == 0)
             {
