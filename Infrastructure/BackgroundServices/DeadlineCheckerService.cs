@@ -1,0 +1,63 @@
+﻿using Application.Interfaces;
+using Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
+namespace Infrastructure.BackgroundServices
+{
+    public class DeadlineCheckerService : BackgroundService
+    {
+        private readonly ILogger<DeadlineCheckerService> _logger;
+        private readonly IServiceScopeFactory _scopeFactory;
+
+        public DeadlineCheckerService(ILogger<DeadlineCheckerService> logger, IServiceScopeFactory scopeFactory)
+        {
+            _logger = logger;
+            _scopeFactory = scopeFactory;
+        }
+
+        protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Deadline Checker Service is starting.");
+
+            while (!cancellationToken.IsCancellationRequested)
+            {
+                try
+                {
+                    await CheckDeadlineAsync(cancellationToken);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "An error occured while checking assignment deadlines.");
+                }
+
+                await Task.Delay(TimeSpan.FromHours(1), cancellationToken);
+            }
+        }
+
+        private async Task CheckDeadlineAsync(CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("Running deadline check...");
+
+            using (var scope = _scopeFactory.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
+                var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
+
+                var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+                var assingmentsToUpdate = await context.Assignments.Where(a => a.EndDate == today && a.Status == "InProgress").ToListAsync(cancellationToken);
+                if (assingmentsToUpdate.Any())
+                {
+                    foreach (var assignments in assingmentsToUpdate)
+                    {
+                        assignments.UpdateStatus("ReadyForTransfer");
+                    }
+                    await unitOfWork.SaveChangesAsync(cancellationToken);
+                }
+            }
+        }
+    }
+}
