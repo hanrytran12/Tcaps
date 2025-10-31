@@ -10,20 +10,23 @@ namespace Domain.Entities
         public int Quantity { get; private set; }
         public decimal Price { get; private set; }
         public string Unit { get; private set; }
-        public string ImageURL { get; private set; } = string.Empty;
 
-        public Material(Guid id, string name, string description, int quantity, decimal price, string unit, string imageURL)
+        public Material(Guid id, string name, string description, string unit)
             : base(id)
         {
             Name = name;
             Description = description;
-            Quantity = quantity;
-            Price = price;
+            Quantity = 0;
+            Price = 0;
             Unit = unit;
-            ImageURL = imageURL;
         }
 
         private Material() : base(Guid.NewGuid()) { }
+
+        public static Material Create(string name, string description, string unit)
+        {
+            return new Material(Guid.NewGuid(), name, description, unit);
+        }
 
         public void IncreasePrice(decimal price)
         {

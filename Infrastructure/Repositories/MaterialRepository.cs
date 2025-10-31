@@ -13,6 +13,11 @@ namespace Infrastructure.Repositories
             _context = context;
         }
 
+        public async Task AddAsync(Material material)
+        {
+            await _context.Materials.AddAsync(material);
+        }
+
         public async Task<IEnumerable<Material>> GetAllAsync()
         {
             return await _context.Materials.ToListAsync();
@@ -21,6 +26,11 @@ namespace Infrastructure.Repositories
         public async Task<Material?> GetByIdAsync(Guid materialId)
         {
             return await _context.Materials.FindAsync(materialId);
+        }
+
+        public async Task<Material?> GetByNameAsync(string name)
+        {
+            return await _context.Materials.FirstOrDefaultAsync(i => i.Name == name);
         }
     }
 }
