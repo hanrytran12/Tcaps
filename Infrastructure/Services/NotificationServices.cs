@@ -224,7 +224,6 @@ namespace Infrastructure.Services
 
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
-            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status)
