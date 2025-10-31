@@ -8,13 +8,11 @@ namespace Application.Features.Assignments.Commands.AddAssignmentCommand
     public class AddAssignmentCommandHandler : IRequestHandler<AddAssignmentCommand, Result<Guid>>
     {
         private readonly IBatchRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IWorkshopRepository _workshopRepository;
 
-        public AddAssignmentCommandHandler(IBatchRepository repository, IUnitOfWork unitOfWork, IWorkshopRepository workshopRepository)
+        public AddAssignmentCommandHandler(IBatchRepository repository, IWorkshopRepository workshopRepository)
         {
             _repository = repository;
-            _unitOfWork = unitOfWork;
             _workshopRepository = workshopRepository;
         }
 
@@ -34,7 +32,6 @@ namespace Application.Features.Assignments.Commands.AddAssignmentCommand
 
             var assignment = Assignment.Create(request.BatchId, request.WorkshopId, request.Quantity, request.StartDate, request.EndDate, request.ExpectedDeliveryDate, request.UnitPrice);
             batch.AddAssignment(assignment);
-            await _unitOfWork.SaveChangesAsync();
             return Result<Guid>.Success(assignment.Id);
         }
     }
