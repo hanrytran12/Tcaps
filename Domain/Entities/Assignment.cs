@@ -41,5 +41,18 @@ namespace Domain.Entities
         {
             Status = status;
         }
+
+        public void UpdateWhenQcConfrimed()
+        {
+            if (StepOrder == 1)
+            {
+                UpdateStatus("InProgress");
+            }
+
+            else if (StepOrder > 1)
+            {
+                UpdateStatus("Ready");
+            }
+        }
     }
 }
