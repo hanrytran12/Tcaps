@@ -29,9 +29,6 @@ namespace Application.Features.Assignments.Commands.AddAssignment
 
             RuleFor(x => x.ExpectedDeliveryDate)
                 .NotEmpty().WithMessage("Expected Delivery Date is required");
-
-            RuleFor(x => x.StepOrder)
-                .NotEmpty().WithMessage("StepOrder is required");
         }
     }
 }
