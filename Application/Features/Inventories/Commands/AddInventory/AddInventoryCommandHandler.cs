@@ -23,13 +23,14 @@ namespace Application.Features.Inventories.Commands.AddInventory
         {
             string imageUrl = await _fileStorageService.SaveFileAsync(request.ImageURL, "inventories", cancellationToken);
 
-            var materials = await _materialRepository.GetByIdAsync(request.MaterialId);
+            var materials = await _materialRepository.GetByNameAsync(request.MaterialName);
             if (materials is null)
             {
-                return Result<Guid>.Failure("Material not found.");
+                materials = Material.Create(request.MaterialName, request.NameMaterialDescription, request.UnitMaterial);
+                await _materialRepository.AddAsync(materials);
             }
 
-            var inventory = Inventory.Create(request.MaterialId, request.Quantity, imageUrl, request.Price);
+            var inventory = Inventory.Create(materials.Id, request.Quantity, imageUrl, request.Price);
             await _inventoryRepository.AddAsync(inventory);
 
             return Result<Guid>.Success(inventory.Id);
