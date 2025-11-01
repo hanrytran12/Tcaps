@@ -54,5 +54,10 @@ namespace Domain.Entities
                 UpdateStatus("Ready");
             }
         }
+
+        public void Active()
+        {
+            UpdateStatus("InProgress");
+        }
     }
 }

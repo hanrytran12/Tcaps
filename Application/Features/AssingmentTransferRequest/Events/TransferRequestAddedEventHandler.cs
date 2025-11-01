@@ -29,7 +29,6 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
             var noti = Notification.Create(user.Id, title, message, type);
             await _notificationRepository.AddAsync(noti);
-
         }
     }
 }
