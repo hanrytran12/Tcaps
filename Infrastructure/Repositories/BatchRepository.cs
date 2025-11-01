@@ -70,5 +70,10 @@ namespace Infrastructure.Repositories
             var count = await _context.Assignments.CountAsync(a => a.BatchId == batchId && a.Status == "Completed");
             return (count == 14);
         }
+
+        public async Task<Batch?> GetByAssignmentIdAsync(Guid assignmentId)
+        {
+            return await _context.Batches.Include(b => b.Assignments).FirstOrDefaultAsync(b => b.Assignments.Any(a => a.Id == assignmentId));
+        }
     }
 }

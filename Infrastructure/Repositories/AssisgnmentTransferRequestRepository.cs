@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -16,6 +17,11 @@ namespace Infrastructure.Repositories
         public async Task AddAsync(AssignmentTransferRequest assignmentTransferRequest)
         {
             await _appDbContext.AssignmentTransferRequests.AddAsync(assignmentTransferRequest);
+        }
+
+        public async Task<AssignmentTransferRequest?> GetByIdAsync(Guid transferRequestId)
+        {
+            return await _appDbContext.AssignmentTransferRequests.FirstOrDefaultAsync(x => x.Id == transferRequestId);
         }
     }
 }
