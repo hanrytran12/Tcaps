@@ -1,5 +1,6 @@
 ﻿using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -16,6 +17,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> CreateTransferRequest([FromBody] AddAssignmentTransferRequestCommand command)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);

@@ -21,6 +21,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{assignmentId:guid}/completion-stats")]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> CompletionStats(Guid assignmentId)
         {
             var totalQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assignmentId);
