@@ -18,7 +18,7 @@ namespace Domain.Entities
             AssignmentId = assignmentId;
             UserId = userId;
             CompletedQuantity = completedQuantity;
-            Status = "PendingLead";
+            Status = "PendingApproval";
             Note = note;
             CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
         }
@@ -30,6 +30,11 @@ namespace Domain.Entities
             var transferRequest = new AssignmentTransferRequest(Guid.NewGuid(), assignmentId, userId, completedQuantity, note);
             transferRequest.AddDomainEvent(new TransferRequestAddedEvent(userId));
             return transferRequest;
+        }
+
+        public void MarkAsApproved()
+        {
+            this.Status = "Apprvoed";
         }
     }
 }

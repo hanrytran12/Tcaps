@@ -96,5 +96,26 @@ namespace Domain.Entities
 
             AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId, assignment.ExpectedDeliveryDate));
         }
+
+        public void CompleteAndActiveNextAssignment(Guid completedAssignmentId)
+        {
+            var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
+
+            currentAssignment.UpdateStatus("Completed");
+
+            var nextStepOrder = currentAssignment.StepOrder + 1;
+            var nextAssignment = this.Assignments.FirstOrDefault(a => a.StepOrder == nextStepOrder);
+
+            if (nextAssignment is not null)
+            {
+                nextAssignment.Active();
+                AddDomainEvent(new AssignmentActivedEvent(Code, currentAssignment.WorkshopId, nextAssignment.StartDate, nextAssignment.WorkshopId));
+            }
+
+            else
+            {
+                this.CompleteBatch();
+            }
+        }
     }
 }

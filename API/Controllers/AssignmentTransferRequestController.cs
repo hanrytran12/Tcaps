@@ -1,4 +1,5 @@
 ﻿using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
+using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,14 @@ namespace API.Controllers
             command.UserId = userId;
             var result = await _mediator.Send(command);
             return (result.IsSuccess) ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
+        [HttpPut("approved/{transferRequestId:guid}")]
+        public async Task<IActionResult> ApproveTrasnferRequest(Guid transferRequestId)
+        {
+            var command = new UpdateAssignmentTransferRequestCommand(transferRequestId);
+            var result = await _mediator.Send(command);
+            return Ok(result);
         }
     }
 }
