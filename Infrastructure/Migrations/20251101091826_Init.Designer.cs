@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251031151559_Init")]
+    [Migration("20251101091826_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -66,6 +66,37 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BatchId");
 
                     b.ToTable("Assignments");
+                });
+
+            modelBuilder.Entity("Domain.Entities.AssignmentTransferRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("CompletedQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("AssignmentTransferRequests");
                 });
 
             modelBuilder.Entity("Domain.Entities.Batch", b =>
