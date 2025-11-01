@@ -1,5 +1,6 @@
 ﻿using Application.Features.Assignments.Commands.AddAssignmentCommand;
 using Application.Features.Assignments.Commands.CompleteAssignment;
+using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,19 @@ namespace API.Controllers
     public class AssignmentController : ControllerBase
     {
         private readonly IMediator _mediator;
-        public AssignmentController(IMediator mediator)
+        private readonly IAssignmentCompletionService _assignmentCompletionService;
+
+        public AssignmentController(IMediator mediator, IAssignmentCompletionService assignmentCompletionService)
         {
             _mediator = mediator;
+            _assignmentCompletionService = assignmentCompletionService;
+        }
+
+        [HttpGet("{assignmentId:guid}/completion-stats")]
+        public async Task<IActionResult> CompletionStats(Guid assignmentId)
+        {
+            var totalQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assignmentId);
+            return Ok(totalQuantity);
         }
 
         [HttpPost]
