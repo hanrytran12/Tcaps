@@ -75,5 +75,28 @@ namespace Infrastructure.Repositories
         {
             return await _context.Batches.Include(b => b.Assignments).FirstOrDefaultAsync(b => b.Assignments.Any(a => a.Id == assignmentId));
         }
+
+        public async Task<int?> GetLastCodeIndexAsync(string prefix)
+        {
+            var query = _context.Batches.Where(b => b.Code.StartsWith(prefix)).Select(b => b.Code.Substring(prefix.Length));
+            var numberQuery = query.Select(b => int.Parse(b));
+
+            if (!await numberQuery.AnyAsync())
+            {
+                return null;
+            }
+
+            var lastNumberString = await query
+                .OrderByDescending(b => b.Length)
+                .ThenByDescending(b => b)
+                .FirstOrDefaultAsync();
+
+            if (int.TryParse(lastNumberString, out var lastIndex))
+            {
+                return lastIndex;
+            }
+
+            return null;
+        }
     }
 }

@@ -10,6 +10,7 @@ namespace Application.Features.Batches.Commands.AddBatch
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBatchRepository _batchRepository;
         private readonly IProductRepository _productRepository;
+        private const string CodeBatch = "LO_";
 
         public AddBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository, IProductRepository productRepository)
         {
@@ -20,21 +21,19 @@ namespace Application.Features.Batches.Commands.AddBatch
 
         public async Task<Result<Guid>> Handle(AddBatchCommand request, CancellationToken cancellationToken)
         {
+            var lastIndex = await _batchRepository.GetLastCodeIndexAsync(CodeBatch);
+            var nextIndex = (lastIndex ?? 0) + 1;
+            var newCode = $"{CodeBatch}{nextIndex}";
+
             var product = await _productRepository.GetByCodeAsync(request.CodeProduct);
             if (product is null)
             {
                 return Result<Guid>.Failure("Product is not exist.");
             }
 
-            var batch = await _batchRepository.GetByCodeAsync(request.Code);
-            if (batch is not null)
-            {
-                return Result<Guid>.Failure("Batch code is not unique.");
-            }
-
             var result = Batch.Create(
                 product.Id,
-                request.Code,
+                newCode,
                 request.Quantity,
                 request.StartDate,
                 request.EndDate
