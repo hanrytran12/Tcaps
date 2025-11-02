@@ -1,5 +1,4 @@
 ﻿using Application.Common;
-using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
@@ -11,14 +10,12 @@ namespace Application.Features.Batches.Commands.AddBatch
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBatchRepository _batchRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IFileStorageService _fileStorageService;
 
-        public AddBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository, IProductRepository productRepository, IFileStorageService fileStorageService)
+        public AddBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository, IProductRepository productRepository)
         {
             _unitOfWork = unitOfWork;
             _batchRepository = batchRepository;
             _productRepository = productRepository;
-            _fileStorageService = fileStorageService;
         }
 
         public async Task<Result<Guid>> Handle(AddBatchCommand request, CancellationToken cancellationToken)
@@ -35,13 +32,10 @@ namespace Application.Features.Batches.Commands.AddBatch
                 return Result<Guid>.Failure("Batch code is not unique.");
             }
 
-            var imageUrl = await _fileStorageService.SaveFileAsync(request.ImageFile, "batches", cancellationToken);
-
             var result = Batch.Create(
                 product.Id,
                 request.Code,
                 request.Quantity,
-                imageUrl,
                 request.StartDate,
                 request.EndDate
             );
