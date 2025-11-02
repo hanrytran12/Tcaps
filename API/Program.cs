@@ -1,8 +1,10 @@
 ﻿using API.Middlewares;
 using Application.Common.Behaviors;
-using Application.Features.Assignments.Commands.AddAssignmentCommand;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Assignments.Queries;
+using Application.Features.Assignments.Commands.PlanAssignments;
+using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
+using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using Application.Features.Auth.Queries;
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
@@ -35,6 +37,7 @@ using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetStaffPerformance;
+using Application.Features.Workshop.Queries.GetWorkshopTemplate;
 using Application.Interfaces;
 using Application.Services;
 using Domain.Interfaces;
@@ -110,6 +113,8 @@ builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
 builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
+builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
@@ -141,7 +146,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetDashboardStatsQuery).Assembly,
                                                                       typeof(GetStaffPerformanceQuery).Assembly,
 
-                                                                      typeof(AddAssignmentCommand).Assembly,
+                                                                      typeof(PlanAssignmentsCommand).Assembly,
                                                                       typeof(CompleteAssignmentCommand).Assembly,
                                                                       typeof(GetAssignmentsByStaffIdQuery).Assembly,
 
@@ -170,7 +175,12 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllProductionByQCIdQuery).Assembly,
                                                                       typeof(GetAllProductionByStaffIdQuery).Assembly,
 
-                                                                      typeof(UpdateComponentDefectResolvedCommand).Assembly
+                                                                      typeof(UpdateComponentDefectResolvedCommand).Assembly,
+
+                                                                      typeof(AddAssignmentTransferRequestCommand).Assembly,
+                                                                      typeof(UpdateAssignmentTransferRequestCommand).Assembly,
+
+                                                                      typeof(GetWorkshopTemplateQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
