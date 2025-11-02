@@ -38,6 +38,32 @@ namespace Infrastructure.Repositories
             return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<int?> GetLastCodeIndexAsync(string prefix)
+        {
+            var query = _context.Products
+                .Where(p => p.Code.StartsWith(prefix))
+                .Select(p => p.Code.Substring(prefix.Length));
+
+            var numberQuery = query.Select(p => int.Parse(p));
+
+            if (!await numberQuery.AnyAsync())
+            {
+                return null;
+            }
+
+            var lastNumberString = await query
+                .OrderByDescending(p => p.Length)
+                .ThenByDescending(p => p)
+                .FirstOrDefaultAsync();
+
+            if (int.TryParse(lastNumberString, out var lastIndex))
+            {
+                return lastIndex;
+            }
+
+            return null;
+        }
+
         public async Task<bool> IsCodeUniqueAsync(string code)
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Code == code);

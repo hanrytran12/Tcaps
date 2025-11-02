@@ -11,6 +11,7 @@ namespace Application.Features.Products.Commands.AddProduct
         private readonly IProductRepository _repository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IFileStorageService _fileStorageService;
+        private const string ProductPrefix = "NON_";
 
         public AddProductCommandHandler(IProductRepository repository, IUnitOfWork unitOfWork, IFileStorageService fileStorageService)
         {
@@ -21,15 +22,13 @@ namespace Application.Features.Products.Commands.AddProduct
 
         public async Task<Result<Guid>> Handle(AddProductCommand request, CancellationToken cancellationToken)
         {
-            var isCodeUnique = await _repository.GetByCodeAsync(request.Code);
-            if (isCodeUnique is not null)
-            {
-                return Result<Guid>.Failure("Code is already exist.");
-            }
+            var lastIndex = await _repository.GetLastCodeIndexAsync(ProductPrefix);
+            var nextIdex = (lastIndex ?? 0) + 1;
+            var newCode = $"{ProductPrefix}{nextIdex}";
 
             string imageUrl = await _fileStorageService.SaveFileAsync(request.ImageFile, "products", cancellationToken);
 
-            var product = Product.Create(request.Code, request.Name, imageUrl, request.Description);
+            var product = Product.Create(newCode, request.Name, imageUrl, request.Description);
             await _repository.AddAsync(product);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<Guid>.Success(product.Id);
