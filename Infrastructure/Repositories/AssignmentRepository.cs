@@ -24,6 +24,11 @@ namespace Infrastructure.Repositories
             return await _context.Assignments.AnyAsync(a => a.Id == assignmentId && a.BatchId == batchId);
         }
 
+        public async Task<Assignment?> FindByBatchAndStepOrderAsync(Guid batchId, int stepOrder)
+        {
+            return await _context.Assignments.FirstOrDefaultAsync(x => x.BatchId == batchId && x.StepOrder == stepOrder);
+        }
+
         public async Task<IEnumerable<Assignment>> GetAllAssignmentsAsync()
         {
             return await _context.Assignments.ToListAsync();

@@ -17,9 +17,6 @@ namespace Application.Features.Batches.Commands.AddBatch
                 .NotEmpty().WithMessage("Quantity is required.")
                 .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
 
-            RuleFor(x => x.ImageFile)
-                .NotEmpty().WithMessage("Image is required.");
-
             RuleFor(x => x.StartDate)
                 .NotEmpty().WithMessage("StartDate is required.");
 
