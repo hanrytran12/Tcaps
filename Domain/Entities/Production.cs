@@ -59,7 +59,7 @@ namespace Domain.Entities
 
         public void MarkAsCompleted()
         {
-            Status = "Completed";
+            Status = "Passed";
         }
 
         public void PendingQC() => Status = "PendingQC";

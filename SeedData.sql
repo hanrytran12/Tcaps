@@ -6,7 +6,7 @@ VALUES
 ('B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 'Lead', N'Trần Thị Bình', 'manager@company.com', 'hashed_password_2', '0902345678', 'Active', GETDATE()),
 ('C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Lê Văn Cường', 'worker1@company.com', 'hashed_password_3', '0903456789', 'Active', GETDATE()),
 ('D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Phạm Thị Dung', 'worker2@company.com', 'hashed_password_4', '0904567890', 'Active', GETDATE()),
-('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'B8C9D1E2-F3A4-4B5C-6D7E-8F9A1B2C3D4E', 'QC', N'Hoàng Văn Em', 'qc@company.com', 'hashed_password_5', '0905678901', 'Active', GETDATE());
+('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QC', N'Hoàng Văn Em', 'qc@company.com', 'hashed_password_5', '0905678901', 'Active', GETDATE());
 
 -- INSERT dữ liệu cho bảng Workshop
 INSERT INTO Workshop (Id, Name, Description)
@@ -54,14 +54,14 @@ VALUES
 ('A4B5C6D7-E8F9-4A5B-2C3D-4E5F6A7B8C9D', 'B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', N'Báo cáo tuần', N'Vui lòng nộp báo cáo sản xuất tuần này', N'Report', 1, GETDATE());
 
 -- INSERT dữ liệu cho bảng Materials
-INSERT INTO [Materials] (Id, Name, Description, Quantity, Price, Unit, ImageURL)
+INSERT INTO [Materials] (Id, Name, Description, Quantity, Price, Unit)
 VALUES 
-('F3A4B5C6-D7E8-4F5A-1B2C-3D4E5F6A7B8C', N'Thép tấm A36', N'Thép tấm carbon thường dùng trong công nghiệp', 1000, 15000, N'Kg', N'/images/materials/steel_plate.jpg'),
-('A4B5C6D7-E8F9-4A5B-2C3D-4E5F6A7B8C9D', N'Ốc vít M8', N'Ốc vít đường kính 8mm tiêu chuẩn', 5000, 500, N'Cái', N'/images/materials/bolt_m8.jpg'),
-('B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', N'Sơn chống gỉ', N'Sơn chống gỉ màu xám công nghiệp', 200, 80000, N'Lít', N'/images/materials/paint.jpg'),
-('C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', N'Ổ bi 6205', N'Ổ bi đường kính trong 25mm', 500, 25000, N'Cái', N'/images/materials/bearing.jpg'),
-('D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', N'Dầu thủy lực', N'Dầu thủy lực ISO VG 46', 150, 120000, N'Lít', N'/images/materials/hydraulic_oil.jpg'),
-('E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', N'Băng tải cao su', N'Băng tải cao su độ dày 5mm', 300, 250000, N'Mét', N'/images/materials/conveyor_belt.jpg');
+('F3A4B5C6-D7E8-4F5A-1B2C-3D4E5F6A7B8C', N'Thép tấm A36', N'Thép tấm carbon thường dùng trong công nghiệp', 1000, 15000, N'Kg'),
+('A4B5C6D7-E8F9-4A5B-2C3D-4E5F6A7B8C9D', N'Ốc vít M8', N'Ốc vít đường kính 8mm tiêu chuẩn', 5000, 500, N'Cái'),
+('B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', N'Sơn chống gỉ', N'Sơn chống gỉ màu xám công nghiệp', 200, 80000, N'Lít'),
+('C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', N'Ổ bi 6205', N'Ổ bi đường kính trong 25mm', 500, 25000, N'Cái'),
+('D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', N'Dầu thủy lực', N'Dầu thủy lực ISO VG 46', 150, 120000, N'Lít'),
+('E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', N'Băng tải cao su', N'Băng tải cao su độ dày 5mm', 300, 250000, N'Mét');
 -- INSERT dữ liệu cho bảng Product (Non)
 INSERT INTO [Products] (Id, Code, Name, Image, Description, IsDeleted)
 VALUES 
@@ -72,13 +72,14 @@ VALUES
 ('B2C3D4E5-F6A7-4B5C-9D1E-3F3A3B3C3D3E', 'NON-005', N'Nón bảo hiểm thể thao', N'/images/products/helmet_sport.jpg', N'Nón bảo hiểm thể thao Motocross, chất liệu composite', 0);
 
 -- INSERT dữ liệu cho bảng Batches (Lô hàng)
-INSERT INTO [Batches] (Id, ProductId, Code, Quantity, StartDate, EndDate, CreatedAt, Status, isDeleted)
+INSERT INTO [dbo].[Batches] 
+    ([Id], [ProductId], [Code], [Quantity], [ImageURL], [StartDate], [EndDate], [CreatedAt], [Status], [isDeleted])
 VALUES 
-('A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'BATCH-2024-001', 100, '2024-10-01', '2024-10-15', GETDATE(), N'Đang sản xuất', 0),
-('B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', 'BATCH-2024-002', 50, '2024-10-05', '2024-10-20', GETDATE(), N'Đang sản xuất', 0),
-('C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'BATCH-2024-003', 150, '2024-10-10', '2024-10-25', GETDATE(), N'Chưa bắt đầu', 0),
-('D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'F9A1B2C3-D4E5-4F5A-7B8C-9D1E2F3A4B5C', 'BATCH-2024-004', 80, '2024-10-12', '2024-10-28', GETDATE(), N'Chưa bắt đầu', 0),
-('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'A1B2C3D4-E5F6-4A5B-8C9D-2E2F2A2B2C2D', 'BATCH-2024-005', 120, '2024-09-25', '2024-10-08', GETDATE(), N'Hoàn thành', 0);
+    ('A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'BATCH-2024-001', 100, 'https://example.com/images/batch-001.jpg', '2024-10-01', '2024-10-15', GETDATE(), N'Đang sản xuất', 0),
+    ('B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', 'BATCH-2024-002', 50, 'https://example.com/images/batch-002.jpg', '2024-10-05', '2024-10-20', GETDATE(), N'Đang sản xuất', 0),
+    ('C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'BATCH-2024-003', 150, 'https://example.com/images/batch-003.jpg', '2024-10-10', '2024-10-25', GETDATE(), N'Chưa bắt đầu', 0),
+    ('D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'F9A1B2C3-D4E5-4F5A-7B8C-9D1E2F3A4B5C', 'BATCH-2024-004', 80, 'https://example.com/images/batch-004.jpg', '2024-10-12', '2024-10-28', GETDATE(), N'Chưa bắt đầu', 0),
+    ('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'A1B2C3D4-E5F6-4A5B-8C9D-2E2F2A2B2C2D', 'BATCH-2024-005', 120, 'https://example.com/images/batch-005.jpg', '2024-09-25', '2024-10-08', GETDATE(), N'Hoàn thành', 0);
 
 -- INSERT dữ liệu cho bảng MaterialRequest
 INSERT INTO MaterialRequests (Id, MaterialId, UserId, BatchId, AssignId, QuantityRequest, Status, Note, Date)
@@ -88,14 +89,15 @@ VALUES
 ('F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 'B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', 'E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'A4B5C6D7-E8F9-4A5B-2C3D-4E5F6A7B8C9D', 50, N'Chờ duyệt', N'Cho lô sơn', '2024-10-05');
 
 -- INSERT dữ liệu cho bảng Inventory (Kho)
-INSERT INTO [TcapsDB].[dbo].[Inventories] (Id, MaterialId, Quantity, Date, ImageURL)
+INSERT INTO [TcapsDB].[dbo].[Inventories] 
+    ([Id], [MaterialId], [Quantity], [Date], [Price], [ImageURL])
 VALUES 
-('A7B8C9D1-E2F3-4A5B-5C6D-7E8F9A1B2C3D', 'F3A4B5C6-D7E8-4F5A-1B2C-3D4E5F6A7B8C', 800, GETDATE(), 'https://example.com/images/inventory1.jpg'),
-('B8C9D1E2-F3A4-4B5C-6D7E-8F9A1B2C3D4E', 'A4B5C6D7-E8F9-4A5B-2C3D-4E5F6A7B8C9D', 4500, GETDATE(), 'https://example.com/images/inventory2.jpg'),
-('C9D1E2F3-A4B5-4C5D-7E8F-9A1B2C3D4E5F', 'B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', 180, GETDATE(), 'https://example.com/images/inventory3.jpg'),
-('D1E2F3A4-B5C6-4D5E-8F9A-1B2C3D4E5F6A', 'C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', 450, GETDATE(), 'https://example.com/images/inventory4.jpg'),
-('E2F3A4B5-C6D7-4E5F-9A1B-2C3D4E5F6A7B', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 120, GETDATE(), 'https://example.com/images/inventory5.jpg'),
-('F3A4B5C6-D7E8-4F5A-1B2C-3D4E5F6A7B8C', 'E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', 280, GETDATE(), 'https://example.com/images/inventory6.jpg');
+    ('A7B8C9D1-E2F3-4A5B-5C6D-7E8F9A1B2C3D', 'F3A4B5C6-D7E8-4F5A-1B2C-3D4E5F6A7B8C', 800,  GETDATE(), 15000, 'https://example.com/images/inventory1.jpg'),
+    ('B8C9D1E2-F3A4-4B5C-6D7E-8F9A1B2C3D4E', 'A4B5C6D7-E8F9-4A5B-2C3D-4E5F6A7B8C9D', 4500, GETDATE(), 8000,  'https://example.com/images/inventory2.jpg'),
+    ('C9D1E2F3-A4B5-4C5D-7E8F-9A1B2C3D4E5F', 'B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', 180,  GETDATE(), 12000, 'https://example.com/images/inventory3.jpg'),
+    ('D1E2F3A4-B5C6-4D5E-8F9A-1B2C3D4E5F6A', 'C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', 450,  GETDATE(), 9500,  'https://example.com/images/inventory4.jpg'),
+    ('E2F3A4B5-C6D7-4E5F-9A1B-2C3D4E5F6A7B', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 120,  GETDATE(), 30000, 'https://example.com/images/inventory5.jpg'),
+    ('F3A4B5C6-D7E8-4F5A-1B2C-3D4E5F6A7B8C', 'E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', 280,  GETDATE(), 22000, 'https://example.com/images/inventory6.jpg');
 
 -- INSERT dữ liệu cho bảng MaterialUse (VL sử dụng theo lô)
 INSERT INTO [TcapsDB].[dbo].[MaterialUse] 
@@ -108,13 +110,15 @@ VALUES
 ('E2F3A4B5-C6D7-4E5F-9A1B-2C3D4E5F6A7B', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', 120, 40, 160, GETDATE());
 
 -- INSERT dữ liệu cho bảng Assignments
-INSERT INTO [Assignments] (Id, BatchId, WorkshopId, Quantity, StartDate, EndDate, Status, CreatedAt)
+INSERT INTO [TcapsDB].[dbo].[Assignments] 
+    ([Id], [BatchId], [WorkshopId], [StepOrder], [Quantity], [UnitPrice], [StartDate], [EndDate], [ExpectedDeliveryDate], [Status], [CreatedAt])
 VALUES 
-('E2F3A4B5-C6D7-4E5F-9A1B-2C3D4E5F6A7B', 'A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 100, '2024-10-01', '2024-10-10', N'Đang thực hiện', GETDATE()),
-('F3A4B5C6-D7E8-4F5A-1B2C-3D4E5F6A7B8C', 'B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'A7B8C9D1-E2F3-4A5B-5C6D-7E8F9A1B2C3D', 50, '2024-10-05', '2024-10-15', N'Đang thực hiện', GETDATE()),
-('A4B5C6D7-E8F9-4A5B-2C3D-4E5F6A7B8C9D', 'A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'B8C9D1E2-F3A4-4B5C-6D7E-8F9A1B2C3D4E', 100, '2024-10-11', '2024-10-15', N'Chưa bắt đầu', GETDATE()),
-('B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', 'C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 150, '2024-10-10', '2024-10-22', N'Chưa bắt đầu', GETDATE()),
-('C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', 'D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'A7B8C9D1-E2F3-4A5B-5C6D-7E8F9A1B2C3D', 80, '2024-10-12', '2024-10-25', N'Chưa bắt đầu', GETDATE());
+    ('E2F3A4B5-C6D7-4E5F-9A1B-2C3D4E5F6A7B', 'A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 1, 100, 25000, '2024-10-01', '2024-10-10', '2024-10-12', N'Đang thực hiện', GETDATE()),
+    ('F3A4B5C6-D7E8-4F5A-1B2C-3D4E5F6A7B8C', 'B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'A7B8C9D1-E2F3-4A5B-5C6D-7E8F9A1B2C3D', 2, 50, 30000, '2024-10-05', '2024-10-15', '2024-10-18', N'Đang thực hiện', GETDATE()),
+    ('A4B5C6D7-E8F9-4A5B-2C3D-4E5F6A7B8C9D', 'A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'B8C9D1E2-F3A4-4B5C-6D7E-8F9A1B2C3D4E', 3, 100, 22000, '2024-10-11', '2024-10-15', '2024-10-17', N'Chưa bắt đầu', GETDATE()),
+    ('B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', 'C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 4, 150, 20000, '2024-10-10', '2024-10-22', '2024-10-25', N'Chưa bắt đầu', GETDATE()),
+    ('C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', 'D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'A7B8C9D1-E2F3-4A5B-5C6D-7E8F9A1B2C3D', 5, 80, 27000, '2024-10-12', '2024-10-25', '2024-10-28', N'Chưa bắt đầu', GETDATE());
+
 
 -- INSERT dữ liệu cho bảng Income
 INSERT INTO [Incomes] (Id, BatchId, ProductionId, UserId, Quantity, UnitPrice, TotalPrice, CreatedAt)
@@ -152,8 +156,10 @@ VALUES
 select * from Evaluates
 select * from ComponentDefects
 select * from Users
+select * from Assignments
 select * from Workshop
 select * from Productions
-select * from Assignments
+
 select * from Notifications
-update Users set Role = 'Staff' where Id = 'D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A'
+select * from ComponentDefects
+update Assignments set WorkshopId = 'A1C9B3A0-4F12-4E81-B17B-000000000003' where Id = 'E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B'

@@ -41,7 +41,22 @@ namespace Application.Features.Productions.Query.GetAllProductionByStaffId
             }
 
             var productions = await query.ToListAsync(cancellationToken);
-            var dtos = _mapper.Map<List<ProductionDTO>>(productions);
+            //var dtos = _mapper.Map<List<ProductionDTO>>(productions);
+            var dtos = productions.Select(p =>
+            {
+                return new ProductionDTO
+                {
+                    Id = p.Id,
+                    AssignId = p.AssignId,
+                    UserId = p.UserId,
+                    FullName = user.FullName,
+                    Quantity = p.Quantity,
+                    Date = p.Date,
+                    Status = p.Status
+                };
+            })
+            .OrderByDescending(p => p.Date)
+            .ToList();
             return dtos;
         }
     }
