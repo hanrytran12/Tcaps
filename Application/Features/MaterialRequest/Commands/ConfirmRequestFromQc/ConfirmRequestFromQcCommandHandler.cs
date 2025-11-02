@@ -24,9 +24,6 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
                 return Result.Failure("Material request not found.");
             }
 
-            var assigment = await _assignmentRepository.GetByIdAsync(materialRequest.AssignId);
-            assigment.UpdateWhenQcConfrimed();
-
             if (materialRequest.QuantityRequest - request.ActualReceivedQuantity == 0)
             {
                 materialRequest.MarkAsConfirmed(request.ActualReceivedQuantity, request.NoteFromQC);
@@ -36,6 +33,8 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
             {
                 materialRequest.MarkAsConfirmedWithDiscrepancy(request.ActualReceivedQuantity, request.NoteFromQC);
             }
+            var assignemnt = await _assignmentRepository.GetByIdAsync(materialRequest.AssignId);
+            assignemnt.UpdateWhenQcConfirmed();
 
             return Result.Success();
         }

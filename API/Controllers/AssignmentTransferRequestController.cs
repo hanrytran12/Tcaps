@@ -39,7 +39,7 @@ namespace API.Controllers
         {
             var command = new UpdateAssignmentTransferRequestCommand(transferRequestId);
             var result = await _mediator.Send(command);
-            return Ok(result);
+            return (result.IsSuccess) ? NoContent() : BadRequest(result.error);
         }
     }
 }
