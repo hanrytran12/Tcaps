@@ -196,7 +196,7 @@ namespace Infrastructure.Migrations
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    ExpectedDeliveryDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ExpectedDeliveryDate = table.Column<DateOnly>(type: "date", nullable: true),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
                 },
