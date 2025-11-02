@@ -24,9 +24,18 @@ namespace Application.Features.Assignments.Events
             var workshop = await _workshopRepository.GetByIdAsync(notificationEvent.WorkshopId);
 
             var title = "Công việc mới được giao";
-            var message = $"Một lô hàng mới, mã lô {notificationEvent.BatchCode}, vừa được phân công cho xưởng của bạn ({workshop?.Name}). Dự kiến giao nguyên liệu vào ngày {notificationEvent.ExpectedDeliveryDate}.";
+            var message = string.Empty;
             var type = "NEW_ASSIGNMENT";
 
+            if (notificationEvent.ExpectedDeliveryDate != null)
+            {
+                message = $"Một lô hàng mới, mã lô {notificationEvent.BatchCode}, vừa được phân công cho xưởng của bạn ({workshop?.Name}). Dự kiến giao nguyên liệu vào ngày {notificationEvent.ExpectedDeliveryDate}.";
+
+            }
+            else
+            {
+                message = $"Một lô hàng mới, mã lô {notificationEvent.BatchCode}, vừa được phân công cho xưởng của bạn ({workshop?.Name}).";
+            }
             var notification = Notification.Create(user.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
         }
