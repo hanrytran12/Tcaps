@@ -7,12 +7,12 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
     public class ConfirmRequestFromQcCommandHandler : IRequestHandler<ConfirmRequestFromQcCommand, Result>
     {
         private readonly IMaterialRequestRepository _materialRequestRepository;
-        private readonly IAssignmentRepository _assignmentRepository;
+        private readonly IBatchRepository _batchRepository;
 
-        public ConfirmRequestFromQcCommandHandler(IMaterialRequestRepository materialRequestRepository, IAssignmentRepository assignmentRepository)
+        public ConfirmRequestFromQcCommandHandler(IMaterialRequestRepository materialRequestRepository, IBatchRepository batchRepository)
         {
             _materialRequestRepository = materialRequestRepository;
-            _assignmentRepository = assignmentRepository;
+            _batchRepository = batchRepository;
         }
 
         public async Task<Result> Handle(ConfirmRequestFromQcCommand request, CancellationToken cancellationToken)
@@ -33,8 +33,8 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
             {
                 materialRequest.MarkAsConfirmedWithDiscrepancy(request.ActualReceivedQuantity, request.NoteFromQC);
             }
-            var assignemnt = await _assignmentRepository.GetByIdAsync(materialRequest.AssignId);
-            assignemnt.UpdateWhenQcConfirmed();
+            var batch = await _batchRepository.GetByIdAsync(materialRequest.BatchId);
+            batch.ConfirmMaterialReceiptForAssignment(materialRequest.AssignId);
 
             return Result.Success();
         }

@@ -42,14 +42,18 @@ namespace Domain.Entities
             Status = status;
         }
 
-        public void UpdateWhenQcConfirmed()
+        public void UpdateWhenQcConfirmed(bool isFirstStepInPlan)
         {
-            if (StepOrder == 1)
+            if (Status != "Planned")
+            {
+                return;
+            }
+
+            if (isFirstStepInPlan)
             {
                 UpdateStatus("InProgress");
             }
-
-            else if (Status == "Planned")
+            else
             {
                 UpdateStatus("Ready");
             }
