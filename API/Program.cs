@@ -1,6 +1,7 @@
 ﻿using API.Middlewares;
 using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.CompleteAssignment;
+using Application.Features.Assignments.Queries;
 using Application.Features.Assignments.Commands.PlanAssignments;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
@@ -147,6 +148,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(PlanAssignmentsCommand).Assembly,
                                                                       typeof(CompleteAssignmentCommand).Assembly,
+                                                                      typeof(GetAssignmentsByStaffIdQuery).Assembly,
 
                                                                       typeof(AddMaterialRequestCommand).Assembly,
                                                                       typeof(ApproveRequestFromLeadCommand).Assembly,
