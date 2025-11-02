@@ -1,5 +1,6 @@
 ﻿using Application.Features.Assignments.Commands.AddAssignmentCommand;
 using Application.Features.Assignments.Commands.CompleteAssignment;
+using Application.Features.Assignments.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,13 @@ namespace API.Controllers
             var command = new CompleteAssignmentCommand { AssignmentId = id };
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok() : BadRequest(result.error);
+        }
+
+        [HttpGet("for-staff")]
+        public async Task<IActionResult> GetAssignmentsForStaffById([FromQuery] GetAssignmentsByStaffIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

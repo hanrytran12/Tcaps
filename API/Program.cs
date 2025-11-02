@@ -2,6 +2,7 @@
 using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.AddAssignmentCommand;
 using Application.Features.Assignments.Commands.CompleteAssignment;
+using Application.Features.Assignments.Queries;
 using Application.Features.Auth.Queries;
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
@@ -142,6 +143,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(AddAssignmentCommand).Assembly,
                                                                       typeof(CompleteAssignmentCommand).Assembly,
+                                                                      typeof(GetAssignmentsByStaffIdQuery).Assembly,
 
                                                                       typeof(AddMaterialRequestCommand).Assembly,
                                                                       typeof(ApproveRequestFromLeadCommand).Assembly,
