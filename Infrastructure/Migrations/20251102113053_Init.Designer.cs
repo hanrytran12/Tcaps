@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251102081222_Init")]
+    [Migration("20251102113053_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -39,7 +39,7 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly>("ExpectedDeliveryDate")
+                    b.Property<DateOnly?>("ExpectedDeliveryDate")
                         .HasColumnType("date");
 
                     b.Property<int>("Quantity")

@@ -8,6 +8,6 @@
         public decimal UnitPrice { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
-        public DateOnly ExpectedDeliveryDate { get; set; }
+        public DateOnly? ExpectedDeliveryDate { get; set; }
     }
 }
