@@ -1,5 +1,6 @@
 ﻿using Application.Features.ComponentDefect.Commands.UpdateComponentDefectConfirm;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
+using Application.Features.ComponentDefect.Query.GetComponentByEvaluateId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,6 +31,13 @@ namespace API.Controllers
             command.ComponentId = componentId;
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : BadRequest(result.error);
+        }
+
+        [HttpGet("for-staff")]
+        public async Task<IActionResult> GetAllByEvaluateIdAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

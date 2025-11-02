@@ -14,6 +14,7 @@ namespace Infrastructure.Services
         private readonly IMaterialRepository _materialRepository;
         private readonly IBatchRepository _batchRepository;
         private readonly IWorkshopRepository _workshopRepository;
+        private readonly IComponentDefectRepository _componentDefectRepository;
         private readonly IMapper _mapper;
         private readonly IProductionRepository _productionRepository;
         private readonly IIncomeRepository _incomeRepository;
@@ -22,7 +23,7 @@ namespace Infrastructure.Services
 
         public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
             , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository,
-            IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository)
+            IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository, IComponentDefectRepository componentDefectRepository)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -30,6 +31,7 @@ namespace Infrastructure.Services
             _materialRepository = materialRepository;
             _batchRepository = batchRepository;
             _workshopRepository = workshopRepository;
+            _componentDefectRepository = componentDefectRepository;
             _mapper = mapper;
             _productionRepository = productionRepository;
             _incomeRepository = incomeRepository;
@@ -171,7 +173,7 @@ namespace Infrastructure.Services
             var message = "";
             var type = "";
 
-            if (status == "Pass")
+            if (status == "Passed")
             {
                 title = "Không có sản phẩm lỗi.";
                 message = $"Sản phẩm của {staff?.FullName} không có sản phẩm lỗi. Ghi chú: {note}.";
@@ -179,7 +181,7 @@ namespace Infrastructure.Services
                 production?.MarkAsCompleted();
                 _productionRepository.Update(production);
             }
-            else if (status == "Fail")
+            else if (status == "Failed")
             {
                 title = "Báo lỗi sản phẩm";
                 message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
@@ -254,6 +256,12 @@ namespace Infrastructure.Services
 
             var user = await _userRepository.GetByIdAsync(production.UserId);
 
+            var componentDefects = await _componentDefectRepository.GetAllByEvaluateIdAsync(evaluateId);
+            if (componentDefects.All(a => a.Status == "Confirm"))
+            {
+                production.MarkAsCompleted();
+                _productionRepository.Update(production);
+            }
             var title = "Chấp nhận sản phẩm đã sửa lỗi thành công.";
             var message = $"QC {qc.FullName} chấp nhận {quantity} sản phẩm đã sửa chữa thành công.";
             var type = "ConfirmProduction";

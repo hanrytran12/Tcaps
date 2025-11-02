@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Request;
 using Application.Features.Assignments.Commands.CompleteAssignment;
+using Application.Features.Assignments.Queries;
 using Application.Features.Assignments.Commands.PlanAssignments;
 using Application.Interfaces;
 using MediatR;
@@ -55,6 +56,13 @@ namespace API.Controllers
             var command = new CompleteAssignmentCommand { AssignmentId = id };
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok() : BadRequest(result.error);
+        }
+
+        [HttpGet("for-staff")]
+        public async Task<IActionResult> GetAssignmentsForStaffById([FromQuery] GetAssignmentsByStaffIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }

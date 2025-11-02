@@ -48,9 +48,25 @@ namespace Application.Features.Productions.Query.GetAllProductionByQCId
             }
 
             var productions = await query.ToListAsync(cancellationToken);
-            var dto = _mapper.Map<List<ProductionDTO>>(productions);
+            //var dto = _mapper.Map<List<ProductionDTO>>(productions);
+            var dtos = productions.Select(p =>
+            {
+                var user = users.FirstOrDefault(u => u.Id == p.UserId);
+                return new ProductionDTO
+                {
+                    Id = p.Id,
+                    AssignId = p.AssignId,
+                    UserId = p.UserId,
+                    FullName = user.FullName,
+                    Quantity = p.Quantity,
+                    Date = p.Date,
+                    Status = p.Status
+                };
+            })
+            .OrderByDescending(p => p.Date)
+            .ToList();
 
-            return dto;
+            return dtos;
         }
     }
 }
