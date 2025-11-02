@@ -33,7 +33,7 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
             {
                 materialRequest.MarkAsConfirmedWithDiscrepancy(request.ActualReceivedQuantity, request.NoteFromQC);
             }
-            var batch = await _batchRepository.GetByIdAsync(materialRequest.BatchId);
+            var batch = await _batchRepository.GetByIdWithAssignmentsAsync(materialRequest.BatchId);
             batch.ConfirmMaterialReceiptForAssignment(materialRequest.AssignId);
 
             return Result.Success();
