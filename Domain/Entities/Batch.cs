@@ -95,14 +95,33 @@ namespace Domain.Entities
             AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId, assignment.ExpectedDeliveryDate));
         }
 
+        public void ConfirmMaterialReceiptForAssignment(Guid assignmentId)
+        {
+            var assignmentToConfirm = this.Assignments.FirstOrDefault(a => a.Id == assignmentId);
+
+            if (assignmentToConfirm is null)
+            {
+                throw new InvalidOperationException("Công đoạn không tồn tại trong lô hàng này.");
+            }
+
+            if (assignmentToConfirm.Status != "Planned")
+            {
+                return;
+            }
+
+            var firstStepOrderInPlan = this.Assignments.Min(a => a.StepOrder);
+            bool isFirstStep = (assignmentToConfirm.StepOrder == firstStepOrderInPlan);
+            assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
+        }
+
         public void CompleteAndActiveNextAssignment(Guid completedAssignmentId)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
             currentAssignment.UpdateStatus("Completed");
 
-            var nextStepOrder = currentAssignment.StepOrder + 1;
-            var nextAssignment = this.Assignments.FirstOrDefault(a => a.StepOrder == nextStepOrder);
+            var currentSteporder = currentAssignment.StepOrder;
+            var nextAssignment = this.Assignments.Where(a => a.StepOrder > currentSteporder).OrderBy(a => a.StepOrder).FirstOrDefault();
 
             if (nextAssignment is not null)
             {
