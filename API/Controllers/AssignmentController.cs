@@ -1,5 +1,6 @@
-﻿using Application.Features.Assignments.Commands.AddAssignmentCommand;
+﻿using Application.DTOs.Request;
 using Application.Features.Assignments.Commands.CompleteAssignment;
+using Application.Features.Assignments.Commands.PlanAssignments;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -28,12 +29,23 @@ namespace API.Controllers
             return Ok(totalQuantity);
         }
 
-        [HttpPost]
+        [HttpPost("{batchId:guid}/plan-assignments")]
         [Authorize(Policy = "Lead")]
-        public async Task<IActionResult> AddAssignment([FromBody] AddAssignmentCommand command)
+        public async Task<IActionResult> PlanAssignments(Guid batchId, [FromBody] List<AssignmentPlanItemDTO> planItems)
         {
+            var command = new PlanAssignmentsCommand
+            {
+                BatchId = batchId,
+                PlanItems = planItems
+            };
+
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+            if (result.IsSuccess)
+            {
+                return Ok("Kế hoạch sản xuất đã được tạo thành công.");
+            }
+
+            return BadRequest(result.error);
         }
 
         [HttpPut("{id:guid}/complete")]

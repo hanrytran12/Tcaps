@@ -1,11 +1,7 @@
-﻿using Application.Common;
-using MediatR;
-
-namespace Application.Features.Assignments.Commands.AddAssignmentCommand
+﻿namespace Application.DTOs.Request
 {
-    public class AddAssignmentCommand : IRequest<Result<Guid>>
+    public class AssignmentPlanItemDTO
     {
-        public Guid BatchId { get; set; }
         public Guid WorkshopId { get; set; }
         public int StepOrder { get; set; }
         public int Quantity { get; set; }
