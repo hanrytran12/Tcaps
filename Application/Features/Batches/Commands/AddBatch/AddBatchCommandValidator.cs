@@ -9,10 +9,6 @@ namespace Application.Features.Batches.Commands.AddBatch
             RuleFor(x => x.CodeProduct)
                 .NotEmpty().WithMessage("Product ID is required.");
 
-            RuleFor(x => x.Code)
-                .NotEmpty().WithMessage("Batch code is required.")
-                .MaximumLength(50).WithMessage("Batch code must not exceed 50 characters.");
-
             RuleFor(x => x.Quantity)
                 .NotEmpty().WithMessage("Quantity is required.")
                 .GreaterThan(0).WithMessage("Quantity must be greater than zero.");

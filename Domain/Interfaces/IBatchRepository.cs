@@ -15,5 +15,6 @@ namespace Domain.Interfaces
         Task<bool> IsProductInUseAsync(Guid productId);
         Task<bool> AreAllAssignmentsCompletedAsync(Guid batchId);
         Task<Batch?> GetByAssignmentIdAsync(Guid assignmentId);
+        Task<int?> GetLastCodeIndexAsync(string prefix);
     }
 }
