@@ -40,24 +40,22 @@ namespace Application.Features.Productions.Events
 
             foreach (var item in materialUses)
             {
+                var newQuantity = item.QuantityStaffUse + notification.Quantity;
+                var maxAllow = item.QuantityDivide + item.QuantityRequest;
+
+                if (newQuantity > maxAllow)
+                {
+                    throw new Exception("Vượt quá số lượng vật liệu được cấp phép (bao gồm phần cấp thêm).");
+                }
+
                 item.IncreaseQuantityStaffUse(notification.Quantity);
-
-                decimal maxAllow = item.QuantityDivide + item.QuantityRequest;
-
-                if (item.QuantityDivide == item.QuantityStaffUse)
-                {
-                    throw new Exception("Đã sử dụng hết vật liệu được phân công.");
-                }
-                else if (item.QuantityStaffUse >= maxAllow)
-                {
-                    throw new Exception("Đã sử dụng hết vật liệu (bao gồm cả phần yêu cầu thêm).");
-                }
+                _materialUseRepository.Update(item);
 
                 _materialUseRepository.Update(item);
             }
 
-            await _notificationService.SendSubmitProductionNotification(notification.AssignId, notification.StaffId, notification.Quantity);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+            await _notificationService.SendSubmitProductionNotification(notification.AssignId, notification.StaffId, notification.Quantity);
         }
     }
 }

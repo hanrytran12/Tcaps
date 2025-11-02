@@ -3,6 +3,7 @@ using Application.Features.Evaluates.Commands.AddEvaluate;
 using Application.Features.Evaluates.Commands.UpdateEvaluate;
 using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
+using Application.Features.Evaluates.Queries.GetEvaluatesByStaffId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +29,13 @@ namespace API.Controllers
 
         [HttpGet("for-qc")]
         public async Task<IActionResult> GetByQCId([FromQuery] GetEvaluatesByQCIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("for-staff")]
+        public async Task<IActionResult> GetByStaffId([FromQuery] GetEvaluatesByStaffIdQuery query)
         {
             var result = await _mediator.Send(query);
             return Ok(result);
