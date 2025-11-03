@@ -1,5 +1,4 @@
-﻿using Domain.Events;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -20,10 +19,15 @@ namespace Domain.Entities
             Date = DateOnly.FromDateTime(DateTime.UtcNow);
             Status = "PendingQC";
 
-            AddDomainEvent(new ProductionCreatedEvent(assignId, userId, quantity));
+            //AddDomainEvent(new ProductionCreatedEvent(assignId, userId, quantity));
         }
 
         private Production() : base(Guid.NewGuid()) { }
+
+        public static Production Create(Guid assignId, Guid userId, int quantity)
+        {
+            return new Production(Guid.NewGuid(), assignId, userId, quantity);
+        }
 
         public void IncreaseQuantity()
         {
