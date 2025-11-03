@@ -1,11 +1,11 @@
-﻿using Application.DTOs;
-using Application.Features.Productions.Command.AddProduction;
+﻿using Application.Features.Productions.Command.AddProductionReport;
 using Application.Features.Productions.Query.GetAllProduction;
 using Application.Features.Productions.Query.GetAllProductionByQCId;
 using Application.Features.Productions.Query.GetAllProductionByStaffId;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -43,11 +43,20 @@ namespace API.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPost("submit-request")]
-        public async Task<IActionResult> SubmitProduction([FromBody]  AddProductionCommand command)
+        //[HttpPost("submit-request")]
+        //public async Task<IActionResult> SubmitProduction([FromBody] AddProductionCommand command)
+        //{
+        //    var result = await _mediator.Send(command);
+        //    return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        //}
+
+        [HttpPost("report-work")]
+        public async Task<IActionResult> ReportWork([FromBody] AddProductionReportCommand command)
         {
+            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            command.StaffId = userId;
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+            return (result.IsSuccess) ? Ok(result) : BadRequest(result);
         }
 
         [HttpGet("all")]
