@@ -116,11 +116,20 @@ builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 
-
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
 builder.Services.AddScoped<IUnitOfWork>(provider =>
     provider.GetRequiredService<AppDbContext>());
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:8081")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddValidatorsFromAssembly(typeof(IAppDbContext).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
@@ -234,13 +243,13 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
+app.UseCors("AllowedFrontend");
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.UseExceptionHandler();
-//app.UseDeveloperExceptionPage();
-
 
 app.MapControllers();
 
