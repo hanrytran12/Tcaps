@@ -1,8 +1,8 @@
 ﻿using API.Middlewares;
 using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.CompleteAssignment;
-using Application.Features.Assignments.Queries;
 using Application.Features.Assignments.Commands.PlanAssignments;
+using Application.Features.Assignments.Queries;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using Application.Features.Auth.Queries;
@@ -20,9 +20,9 @@ using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
 using Application.Features.Inventories.Commands.AddInventory;
 using Application.Features.Inventories.Queries.GetInventoryById;
-using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
@@ -150,7 +150,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(CompleteAssignmentCommand).Assembly,
                                                                       typeof(GetAssignmentsByStaffIdQuery).Assembly,
 
-                                                                      typeof(AddMaterialRequestCommand).Assembly,
+                                                                      typeof(DispatchRequestCommand).Assembly,
                                                                       typeof(ApproveRequestFromLeadCommand).Assembly,
                                                                       typeof(ConfirmRequestFromQcCommand).Assembly,
                                                                       typeof(RejectMaterialRequestCommand).Assembly,
