@@ -5,6 +5,7 @@ using Application.Features.Assignments.Commands.PlanAssignments;
 using Application.Features.Assignments.Queries;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
+using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using Application.Features.Auth.Queries;
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
@@ -189,7 +190,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddAssignmentTransferRequestCommand).Assembly,
                                                                       typeof(UpdateAssignmentTransferRequestCommand).Assembly,
 
-                                                                      typeof(GetWorkshopTemplateQuery).Assembly
+                                                                      typeof(GetWorkshopTemplateQuery).Assembly,
+
+                                                                      typeof(GetReconciliationSummaryQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
