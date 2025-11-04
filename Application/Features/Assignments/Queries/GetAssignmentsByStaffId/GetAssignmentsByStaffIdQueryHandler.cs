@@ -3,7 +3,7 @@ using AutoMapper;
 using Domain.Interfaces;
 using MediatR;
 
-namespace Application.Features.Assignments.Queries
+namespace Application.Features.Assignments.Queries.GetAssignmentsByStaffId
 {
     public class GetAssignmentsByStaffIdQueryHandler : IRequestHandler<GetAssignmentsByStaffIdQuery, List<AssignForStaffDTO>>
     {
