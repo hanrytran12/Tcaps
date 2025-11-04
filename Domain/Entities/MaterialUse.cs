@@ -37,5 +37,13 @@ namespace Domain.Entities
 
             QuantityStaffUse += quantityProduction;
         }
+
+        public void UpdateReconciledQuantity(decimal quantity)
+        {
+            if (quantity < 0)
+                throw new InvalidOperationException("Quantity cannot be negative.");
+
+            ReconciledQuantity += quantity;
+        }
     }
 }
