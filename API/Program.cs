@@ -2,7 +2,8 @@
 using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Assignments.Commands.PlanAssignments;
-using Application.Features.Assignments.Queries;
+using Application.Features.Assignments.Queries.GetAllocatedMaterials;
+using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
@@ -192,7 +193,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(GetWorkshopTemplateQuery).Assembly,
 
-                                                                      typeof(GetReconciliationSummaryQuery).Assembly
+                                                                      typeof(GetReconciliationSummaryQuery).Assembly,
+                                                                      typeof(GetAllocatedMaterialsQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
