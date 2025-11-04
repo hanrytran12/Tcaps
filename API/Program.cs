@@ -207,7 +207,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddIncomeCommandHandler).Assembly,
 
                                                                       typeof(AddMaterialWorkshopCommand).Assembly,
-                                                                      typeof(UpdateConfirmMaterialWorkshopCommand).Assembly
+                                                                      typeof(UpdateConfirmMaterialWorkshopCommand).Assembly,
 
                                                                       typeof(GetReconciliationSummaryQuery).Assembly,
                                                                       typeof(GetAllocatedMaterialsQuery).Assembly
