@@ -35,17 +35,24 @@ namespace Application.Features.Batches.Queries.GetDashboardStats
                 CompletedBatches = await query.CountAsync(b => b.Status == "Completed"),
             };
 
-            var batchDetails = await query.Include(b => b.Assignments).Select(b => new DashboardBatchDetailDTO
+            var batchDetails = await query.Include(b => b.Assignments).Select(b => new
             {
-                Code = b.Code,
-                Quantity = b.Quantity,
-                Status = b.Status,
-                ProgressPercentage = b.Assignments.Any() ? Math.Round((double)b.Assignments.Count(a => a.Status == "Completed") / 15 * 100, 2) : 0,
-                StartDate = b.StartDate,
-                EndDate = b.EndDate,
+                Batch = b,
+                TotalAssignments = b.Assignments.Count(),
+                CompletedAssignments = b.Assignments.Count(a => a.Status == "Completed")
+            })
+            .Select(data => new DashboardBatchDetailDTO
+            {
+                Code = data.Batch.Code,
+                Quantity = data.Batch.Quantity,
+                Status = data.Batch.Status,
+                StartDate = data.Batch.StartDate,
+                EndDate = data.Batch.EndDate,
+
+                ProgressPercentage = (data.TotalAssignments > 0) ? Math.Round((double)data.CompletedAssignments / data.TotalAssignments * 100, 2) : 0,
                 Assignments =
                 (
-                    from a in b.Assignments
+                    from a in data.Batch.Assignments
                     join w in _context.Workshop on a.WorkshopId equals w.Id
                     select new DashboardAssignmentDTO
                     {
@@ -54,9 +61,8 @@ namespace Application.Features.Batches.Queries.GetDashboardStats
                         Status = a.Status,
                         StartDate = a.StartDate,
                         EndDate = a.EndDate,
-                    }
-                ).ToList()
-            }).ToListAsync();
+                    }).ToList()
+            }).AsNoTracking().ToListAsync();
 
             return new DashboardResultDTO
             {
