@@ -1,8 +1,8 @@
-﻿using Application.Features.Products.Commands.AddProduct;
+﻿using Application.DTOs.Response;
+using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.DeleteProduct;
 using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
-using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<Product>> GetAllProduct()
+        public async Task<List<ProductsDTO>> GetAllProduct()
         {
             var listProduct = await _mediator.Send(new GetAllProductQuery());
             return listProduct;
