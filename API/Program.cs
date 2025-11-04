@@ -1,10 +1,12 @@
 ﻿using API.Middlewares;
 using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.CompleteAssignment;
-using Application.Features.Assignments.Queries;
 using Application.Features.Assignments.Commands.PlanAssignments;
+using Application.Features.Assignments.Queries.GetAllocatedMaterials;
+using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
+using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using Application.Features.Auth.Queries;
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
@@ -20,13 +22,14 @@ using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
 using Application.Features.Inventories.Commands.AddInventory;
 using Application.Features.Inventories.Queries.GetInventoryById;
-using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
 using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
-using Application.Features.Productions.Command.AddProduction;
+using Application.Features.Productions.Command.AddProductionReport;
 using Application.Features.Productions.Query.GetAllProduction;
 using Application.Features.Productions.Query.GetAllProductionByQCId;
 using Application.Features.Productions.Query.GetAllProductionByStaffId;
@@ -122,11 +125,20 @@ builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTran
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
 
-
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
 builder.Services.AddScoped<IUnitOfWork>(provider =>
     provider.GetRequiredService<AppDbContext>());
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowedFrontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:8081")
+        .AllowAnyHeader()
+        .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddValidatorsFromAssembly(typeof(IAppDbContext).Assembly);
 builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
@@ -156,10 +168,11 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(CompleteAssignmentCommand).Assembly,
                                                                       typeof(GetAssignmentsByStaffIdQuery).Assembly,
 
-                                                                      typeof(AddMaterialRequestCommand).Assembly,
+                                                                      typeof(DispatchRequestCommand).Assembly,
                                                                       typeof(ApproveRequestFromLeadCommand).Assembly,
                                                                       typeof(ConfirmRequestFromQcCommand).Assembly,
                                                                       typeof(RejectMaterialRequestCommand).Assembly,
+                                                                      typeof(GetPendingRequestForQcQuery).Assembly,
 
                                                                       typeof(GetNotificationsQuery).Assembly,
                                                                       typeof(MarkNotificationAsReadCommand).Assembly,
@@ -176,7 +189,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllEvaluateQuery).Assembly,
                                                                       typeof(GetEvaluatesByQCIdQuery).Assembly,
 
-                                                                      typeof(AddProductionCommand).Assembly,
+                                                                      typeof(AddProductionReportCommand).Assembly,
                                                                       typeof(GetAllProductionQuery).Assembly,
                                                                       typeof(GetAllProductionByQCIdQuery).Assembly,
                                                                       typeof(GetAllProductionByStaffIdQuery).Assembly,
@@ -195,6 +208,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(AddMaterialWorkshopCommand).Assembly,
                                                                       typeof(UpdateConfirmMaterialWorkshopCommand).Assembly
+
+                                                                      typeof(GetReconciliationSummaryQuery).Assembly,
+                                                                      typeof(GetAllocatedMaterialsQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -248,13 +264,14 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 
+app.UseCors("AllowedFrontend");
+
 app.UseAuthentication();
 
 app.UseAuthorization();
 
 app.UseExceptionHandler();
-app.UseDeveloperExceptionPage();
-
+//app.UseDeveloperExceptionPage();
 
 app.MapControllers();
 

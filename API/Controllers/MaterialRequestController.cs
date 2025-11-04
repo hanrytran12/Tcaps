@@ -1,6 +1,9 @@
-﻿using Application.Features.MaterialRequest.Commands.AddMaterialRequest;
+﻿using Application.DTOs.Request;
+using Application.DTOs.Response;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,25 +21,32 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
-        [Authorize(Policy = ("CanCreateMaterialRequest"))]
-        public async Task<IActionResult> CreateMaterialRequest([FromBody] AddMaterialRequestCommand command)
+        [HttpGet("pending-confirmation")]
+        public async Task<ActionResult<List<PendingRequestDTO>>> GetPendingRequests()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var qcId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
 
-            if (string.IsNullOrEmpty(userIdString))
+            var query = new GetPendingRequestForQcQuery(qcId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPost("{assignmentId:guid}/dispatch-materials")]
+        [Authorize(Policy = "Lead")]
+        public async Task<IActionResult> DispatchMaterialsToAssignment(Guid assignmentId, [FromBody] List<MaterialRequestItemDTO> items)
+        {
+            var leadId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var command = new DispatchRequestCommand
             {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
+                AssignmentId = assignmentId,
+                UserId = leadId,
+                Items = items
+            };
 
-            var userId = Guid.Parse(userIdString);
-            command.UserId = userId;
             var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
+
+            return result.IsSuccess ? Ok() : BadRequest(result.error);
         }
 
         [HttpPut("approve/{id:guid}")]

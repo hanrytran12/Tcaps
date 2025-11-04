@@ -134,5 +134,13 @@ namespace Domain.Entities
                 this.CompleteBatch();
             }
         }
+
+        public void UpdateMaterialUsage(Guid assignmentId, Guid materialId, decimal reconciledQuantity, Guid userId)
+        {
+            var currentMaterialUsage = this.MaterialUses.FirstOrDefault(m => m.AssignId == assignmentId && m.MaterialId == materialId);
+            currentMaterialUsage.UpdateReconciledQuantity(reconciledQuantity);
+
+            AddDomainEvent(new MaterialUsageReconciledEvent(Code, currentMaterialUsage.Id, userId, reconciledQuantity));
+        }
     }
 }
