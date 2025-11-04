@@ -7,7 +7,7 @@ using Application.DTOs;
 using Domain.Entities;
 using MediatR;
 
-namespace Application.Features.Assignments.Queries
+namespace Application.Features.Assignments.Queries.GetAssignmentsByStaffId
 {
     public class GetAssignmentsByStaffIdQuery : IRequest<List<AssignForStaffDTO>>
     {
