@@ -55,6 +55,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+using Application.Features.Incomes.Queries.GetIncomesByStaffId;
+using Application.Features.Incomes.Command.AddIncome;
+using Domain.Events;
+using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -118,6 +123,7 @@ builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
 builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
+builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
@@ -195,6 +201,14 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(GetWorkshopTemplateQuery).Assembly,
 
+                                                                      typeof(AddIncomeCommand).Assembly,
+                                                                      typeof(GetIncomesByStaffIdQuery).Assembly,
+                                                                      typeof(EvaluateCreatedEvent).Assembly,
+                                                                      typeof(AddIncomeCommandHandler).Assembly,
+
+                                                                      typeof(AddMaterialWorkshopCommand).Assembly,
+                                                                      typeof(UpdateConfirmMaterialWorkshopCommand).Assembly
+
                                                                       typeof(GetReconciliationSummaryQuery).Assembly,
                                                                       typeof(GetAllocatedMaterialsQuery).Assembly
                                                                       ));
@@ -257,6 +271,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseExceptionHandler();
+//app.UseDeveloperExceptionPage();
 
 app.MapControllers();
 
