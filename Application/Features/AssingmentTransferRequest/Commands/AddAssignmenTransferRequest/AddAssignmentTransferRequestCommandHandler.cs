@@ -43,7 +43,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
 
             foreach (var item in request.ReconciliationMaterials)
             {
-                batch.UpdateMaterialUsage(request.AssignmentId, item.MaterialId, item.ReconciliationQuantity);
+                batch.UpdateMaterialUsage(request.AssignmentId, item.MaterialId, item.ReconciliationQuantity, request.UserId);
             }
 
             var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
