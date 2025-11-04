@@ -19,6 +19,12 @@ namespace Application.Common.Behaviors
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
+            // 🔹 Nếu đã có transaction, không mở mới nữa
+            if (_context.Database.CurrentTransaction != null)
+            {
+                // Chạy request trong transaction hiện có
+                return await next();
+            }
             await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
             try

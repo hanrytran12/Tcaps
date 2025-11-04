@@ -9,40 +9,40 @@ VALUES
 ('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QC', N'Hoàng Văn Em', 'qc@company.com', 'hashed_password_5', '0905678901', 'Active', GETDATE());
 
 -- INSERT dữ liệu cho bảng Workshop
-INSERT INTO Workshop (Id, Name, Description)
+INSERT INTO Workshop (Id, Name, Description, StepOrder)
 VALUES 
 -- 1. Cắt laser (nếu có)
-('A1C9B3A0-4F12-4E81-B17B-000000000003', N'Cắt laser (nếu có)', N'Công đoạn Cắt laser (nếu có)'),
+('A1C9B3A0-4F12-4E81-B17B-000000000003', N'Cắt laser (nếu có)', N'Công đoạn Cắt laser (nếu có)', 1),
 -- 2. Cắt vải ép keo
-('A1C9B3A0-4F12-4E81-B17B-000000000004', N'Cắt vải ép keo', N'Công đoạn Cắt vải ép keo'),
+('A1C9B3A0-4F12-4E81-B17B-000000000004', N'Cắt vải ép keo', N'Công đoạn Cắt vải ép keo', 2),
 -- 3. Dán vải
-('A1C9B3A0-4F12-4E81-B17B-000000000005', N'Dán vải', N'Công đoạn Dán vải'),
+('A1C9B3A0-4F12-4E81-B17B-000000000005', N'Dán vải', N'Công đoạn Dán vải', 3),
 -- 4. Cắt vải ra đủ bộ
-('A1C9B3A0-4F12-4E81-B17B-000000000006', N'Cắt vải ra đủ bộ', N'Công đoạn Cắt vải ra đủ bộ'),
+('A1C9B3A0-4F12-4E81-B17B-000000000006', N'Cắt vải ra đủ bộ', N'Công đoạn Cắt vải ra đủ bộ', 4),
 -- 5. In + thêu
-('A1C9B3A0-4F12-4E81-B17B-000000000007', N'In + thêu', N'Công đoạn In + thêu'),
+('A1C9B3A0-4F12-4E81-B17B-000000000007', N'In + thêu', N'Công đoạn In + thêu', 5),
 -- 6. Làm chỏm
-('A1C9B3A0-4F12-4E81-B17B-000000000008', N'Làm chỏm', N'Công đoạn Làm chỏm'),
+('A1C9B3A0-4F12-4E81-B17B-000000000008', N'Làm chỏm', N'Công đoạn Làm chỏm', 6),
 -- 7. Làm kết
-('A1C9B3A0-4F12-4E81-B17B-000000000009', N'Làm kết', N'Công đoạn Làm kết'),
+('A1C9B3A0-4F12-4E81-B17B-000000000009', N'Làm kết', N'Công đoạn Làm kết', 7),
 -- 8. Đóng nút bấm đuôi (nếu có)
-('A1C9B3A0-4F12-4E81-B17B-000000000010', N'Đóng nút bấm đuôi (nếu có)', N'Công đoạn Đóng nút bấm đuôi (nếu có)'),
+('A1C9B3A0-4F12-4E81-B17B-000000000010', N'Đóng nút bấm đuôi (nếu có)', N'Công đoạn Đóng nút bấm đuôi (nếu có)', 8),
 -- 9. Xỏ cây dựng + vắt sổ
-('A1C9B3A0-4F12-4E81-B17B-000000000011', N'Xỏ cây dựng + vắt sổ', N'Công đoạn Xỏ cây dựng + vắt sổ'),
+('A1C9B3A0-4F12-4E81-B17B-000000000011', N'Xỏ cây dựng + vắt sổ', N'Công đoạn Xỏ cây dựng + vắt sổ', 9),
 -- 10. Vào nón + vào đai
-('A1C9B3A0-4F12-4E81-B17B-000000000012', N'Vào nón + vào đai', N'Công đoạn Vào nón + vào đai'),
+('A1C9B3A0-4F12-4E81-B17B-000000000012', N'Vào nón + vào đai', N'Công đoạn Vào nón + vào đai', 10),
 -- 11. Trần đầu nón
-('A1C9B3A0-4F12-4E81-B17B-000000000013', N'Trần đầu nón', N'Công đoạn Trần đầu nón'),
+('A1C9B3A0-4F12-4E81-B17B-000000000013', N'Trần đầu nón', N'Công đoạn Trần đầu nón', 11),
 -- 12. May đuôi khóa vào nón (nếu có)
-('A1C9B3A0-4F12-4E81-B17B-000000000014', N'May đuôi khóa vào nón (nếu có)', N'Công đoạn May đuôi khóa vào nón (nếu có)'),
+('A1C9B3A0-4F12-4E81-B17B-000000000014', N'May đuôi khóa vào nón (nếu có)', N'Công đoạn May đuôi khóa vào nón (nếu có)', 12),
 -- 13. May tem
-('A1C9B3A0-4F12-4E81-B17B-000000000015', N'May tem', N'Công đoạn May tem'),
+('A1C9B3A0-4F12-4E81-B17B-000000000015', N'May tem', N'Công đoạn May tem', 13),
 -- 14. Cắt chỉ dư + xỏ tem thẻ bài
-('A1C9B3A0-4F12-4E81-B17B-000000000016', N'Cắt chỉ dư + xỏ tem thẻ bài', N'Công đoạn Cắt chỉ dư + xỏ tem thẻ bài'),
+('A1C9B3A0-4F12-4E81-B17B-000000000016', N'Cắt chỉ dư + xỏ tem thẻ bài', N'Công đoạn Cắt chỉ dư + xỏ tem thẻ bài', 14),
 -- 15. Ủi nón
-('A1C9B3A0-4F12-4E81-B17B-000000000017', N'Ủi nón', N'Công đoạn Ủi nón'),
+('A1C9B3A0-4F12-4E81-B17B-000000000017', N'Ủi nón', N'Công đoạn Ủi nón', 15),
 -- 16. Gấp cây + đóng bịch
-('A1C9B3A0-4F12-4E81-B17B-000000000018', N'Gấp cây + đóng bịch', N'Công đoạn Gấp cây + đóng bịch');
+('A1C9B3A0-4F12-4E81-B17B-000000000018', N'Gấp cây + đóng bịch', N'Công đoạn Gấp cây + đóng bịch', 16);
 
 -- INSERT dữ liệu cho bảng Notifications
 INSERT INTO [Notifications] (Id, UserId, Title, Message, Type, IsRead, CreatedAt)
@@ -73,13 +73,13 @@ VALUES
 
 -- INSERT dữ liệu cho bảng Batches (Lô hàng)
 INSERT INTO [dbo].[Batches] 
-    ([Id], [ProductId], [Code], [Quantity], [ImageURL], [StartDate], [EndDate], [CreatedAt], [Status], [isDeleted])
+    ([Id], [ProductId], [Code], [Quantity], [StartDate], [EndDate], [CreatedAt], [Status], [isDeleted])
 VALUES 
-    ('A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'BATCH-2024-001', 100, 'https://example.com/images/batch-001.jpg', '2024-10-01', '2024-10-15', GETDATE(), N'Đang sản xuất', 0),
-    ('B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', 'BATCH-2024-002', 50, 'https://example.com/images/batch-002.jpg', '2024-10-05', '2024-10-20', GETDATE(), N'Đang sản xuất', 0),
-    ('C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'BATCH-2024-003', 150, 'https://example.com/images/batch-003.jpg', '2024-10-10', '2024-10-25', GETDATE(), N'Chưa bắt đầu', 0),
-    ('D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'F9A1B2C3-D4E5-4F5A-7B8C-9D1E2F3A4B5C', 'BATCH-2024-004', 80, 'https://example.com/images/batch-004.jpg', '2024-10-12', '2024-10-28', GETDATE(), N'Chưa bắt đầu', 0),
-    ('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'A1B2C3D4-E5F6-4A5B-8C9D-2E2F2A2B2C2D', 'BATCH-2024-005', 120, 'https://example.com/images/batch-005.jpg', '2024-09-25', '2024-10-08', GETDATE(), N'Hoàn thành', 0);
+    ('A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'BATCH-2024-001', 100,  '2024-10-01', '2024-10-15', GETDATE(), N'Đang sản xuất', 0),
+    ('B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', 'BATCH-2024-002', 50,  '2024-10-05', '2024-10-20', GETDATE(), N'Đang sản xuất', 0),
+    ('C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'BATCH-2024-003', 150,  '2024-10-10', '2024-10-25', GETDATE(), N'Chưa bắt đầu', 0),
+    ('D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'F9A1B2C3-D4E5-4F5A-7B8C-9D1E2F3A4B5C', 'BATCH-2024-004', 80,  '2024-10-12', '2024-10-28', GETDATE(), N'Chưa bắt đầu', 0),
+    ('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'A1B2C3D4-E5F6-4A5B-8C9D-2E2F2A2B2C2D', 'BATCH-2024-005', 120,  '2024-09-25', '2024-10-08', GETDATE(), N'Hoàn thành', 0);
 
 -- INSERT dữ liệu cho bảng MaterialRequest
 INSERT INTO MaterialRequests (Id, MaterialId, UserId, BatchId, AssignId, QuantityRequest, Status, Note, Date)
@@ -121,11 +121,11 @@ VALUES
 
 
 -- INSERT dữ liệu cho bảng Income
-INSERT INTO [Incomes] (Id, BatchId, ProductionId, UserId, Quantity, UnitPrice, TotalPrice, CreatedAt)
+INSERT INTO [Incomes] (Id, BatchId, ProductionId, UserId, Quantity, TotalPrice, CreatedAt)
 VALUES 
-('B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', 'A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', 'C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 50, 500000, 25000000, GETDATE()),
-('C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', 'B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 25, 800000, 20000000, GETDATE()),
-('D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', 'C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 30, 500000, 15000000, GETDATE());
+('B5C6D7E8-F9A1-4B5C-3D4E-5F6A7B8C9D1E', 'A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', 'C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 50, 25000000, GETDATE()),
+('C6D7E8F9-A1B2-4C5D-4E5F-6A7B8C9D1E2F', 'B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 25, 20000000, GETDATE()),
+('D7E8F9A1-B2C3-4D5E-5F6A-7B8C9D1E2F3A', 'A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'E8F9A1B2-C3D4-4E5F-6A7B-8C9D1E2F3A4B', 'C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 30, 15000000, GETDATE());
 
 -- INSERT dữ liệu cho bảng Productions (Sản lượng)
 INSERT INTO [Productions] (Id, AssignId, UserId, Quantity, Date, Status)
@@ -159,7 +159,7 @@ select * from Users
 select * from Assignments
 select * from Workshop
 select * from Productions
-
+select * from Incomes
 select * from Notifications
 select * from ComponentDefects
 update Assignments set WorkshopId = 'A1C9B3A0-4F12-4E81-B17B-000000000003' where Id = 'E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B'
