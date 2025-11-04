@@ -371,6 +371,9 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("QuantityStaffUse")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<decimal>("ReconciledQuantity")
+                        .HasColumnType("decimal(18,2)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BatchId");

@@ -9,6 +9,7 @@ namespace Domain.Entities
         public Guid AssignId { get; private set; }
         public decimal QuantityDivide { get; private set; }
         public decimal QuantityStaffUse { get; private set; }
+        public decimal ReconciledQuantity { get; private set; }
         public decimal QuantityRequest { get; private set; }
         public DateOnly Date { get; private set; }
 
