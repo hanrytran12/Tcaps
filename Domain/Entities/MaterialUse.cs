@@ -9,6 +9,7 @@ namespace Domain.Entities
         public Guid AssignId { get; private set; }
         public decimal QuantityDivide { get; private set; }
         public decimal QuantityStaffUse { get; private set; }
+        public decimal ReconciledQuantity { get; private set; }
         public decimal QuantityRequest { get; private set; }
         public DateOnly Date { get; private set; }
 
@@ -35,6 +36,14 @@ namespace Domain.Entities
                 throw new InvalidOperationException("Quantity cannot be negative.");
 
             QuantityStaffUse += quantityProduction;
+        }
+
+        public void UpdateReconciledQuantity(decimal quantity)
+        {
+            if (quantity < 0)
+                throw new InvalidOperationException("Quantity cannot be negative.");
+
+            ReconciledQuantity += quantity;
         }
     }
 }

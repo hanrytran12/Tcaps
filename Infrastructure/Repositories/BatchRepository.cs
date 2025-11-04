@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Batch>> GetAllAsync()
         {
-            return await _context.Batches.ToListAsync();
+            return await _context.Batches.Where(b => !b.isDeleted).ToListAsync();
         }
 
         public async Task<Batch?> GetByIdAsync(Guid Id)
@@ -97,6 +97,11 @@ namespace Infrastructure.Repositories
             }
 
             return null;
+        }
+
+        public async Task<Batch?> GetByIdAssignmentWithMaterialUse(Guid assignmentId)
+        {
+            return await _context.Batches.Include(b => b.Assignments).Include(batch => batch.MaterialUses).FirstOrDefaultAsync(b => b.Assignments.Any(a => a.Id == assignmentId));
         }
     }
 }
