@@ -245,6 +245,7 @@ namespace Infrastructure.Migrations
                     AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuantityDivide = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     QuantityStaffUse = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ReconciledQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     QuantityRequest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false)
                 },

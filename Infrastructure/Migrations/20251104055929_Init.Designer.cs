@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251102113053_Init")]
+    [Migration("20251104055929_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -372,6 +372,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("QuantityStaffUse")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ReconciledQuantity")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
