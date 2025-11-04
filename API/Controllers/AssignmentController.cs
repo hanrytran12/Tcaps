@@ -1,7 +1,9 @@
 ﻿using Application.DTOs.Request;
+using Application.DTOs.Response;
 using Application.Features.Assignments.Commands.CompleteAssignment;
-using Application.Features.Assignments.Queries;
 using Application.Features.Assignments.Commands.PlanAssignments;
+using Application.Features.Assignments.Queries.GetAllocatedMaterials;
+using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +30,14 @@ namespace API.Controllers
         {
             var totalQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assignmentId);
             return Ok(totalQuantity);
+        }
+
+        [HttpGet("{assignmentId:guid}/allocated-materials")]
+        public async Task<ActionResult<List<AllocatedMaterialDto>>> GetAllocatedMaterials(Guid assignmentId)
+        {
+            var query = new GetAllocatedMaterialsQuery(assignmentId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost("{batchId:guid}/plan-assignments")]
