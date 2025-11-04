@@ -47,6 +47,6 @@ namespace Domain.Entities
         public void Rework() => Status = "Rework";
         public void Resolve(string status) => Status = status;
         public void Confirmed(string status) => Status = status;
-        public void Unfixable() => Status = "Unfixable";
+        public void Unfixable() => Status = "Unfixabled";
     }
 }

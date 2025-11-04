@@ -31,6 +31,7 @@ namespace Infrastructure.Persistence
         public DbSet<Evaluate> Evaluates { get; set; }
         public DbSet<MaterialUse> MaterialUse { get; set; }
         public DbSet<AssignmentTransferRequest> AssignmentTransferRequests { get; set; }
+        public DbSet<MaterialWorkshop> MaterialWorkshops { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -50,6 +51,9 @@ namespace Infrastructure.Persistence
                           .HasForeignKey(a => a.BatchId)
                           .OnDelete(DeleteBehavior.Cascade);
             });
+            modelBuilder.Entity<Income>()
+                .Property(x => x.TotalPrice)
+                .HasPrecision(18, 2);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)

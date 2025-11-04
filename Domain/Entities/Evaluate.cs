@@ -27,7 +27,7 @@ namespace Domain.Entities
             CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
             Status = status;
 
-            AddDomainEvent(new EvaluateCreatedEvent(Id, productionId, userId.Value, quantityError, note, status));
+            //AddDomainEvent(new EvaluateCreatedEvent(Id, productionId, userId.Value, quantityError, note, status));
         }
 
         private Evaluate() : base(Guid.NewGuid()) { }

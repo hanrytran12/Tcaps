@@ -34,7 +34,7 @@ namespace Infrastructure.Repositories
             return await _context.Evaluates.Include(e => e.ComponentDefects).FirstOrDefaultAsync(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<Evaluate>> GetByProductionIdAsync(Guid productionId)
+        public async Task<IEnumerable<Evaluate>> GetByProductionIdsAsync(Guid productionId)
         {
             return await _context.Evaluates.Where(e => e.ProductionId == productionId).ToListAsync();
         }
@@ -48,6 +48,11 @@ namespace Infrastructure.Repositories
         {
             return await _context.Evaluates
                 .Where(e => e.UserId == qcId).ToListAsync();
+        }
+
+        public async Task<Evaluate> GetEvaluateByProductionIdAsync(Guid productionId)
+        {
+            return await _context.Evaluates.FirstOrDefaultAsync(e => e.ProductionId == productionId);
         }
 
         public void Update(Evaluate evaluate)
