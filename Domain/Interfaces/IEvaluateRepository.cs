@@ -10,10 +10,11 @@ namespace Domain.Interfaces
     public interface IEvaluateRepository
     {
         Task<IEnumerable<Evaluate>> GetAllAsync();
-        Task<IEnumerable<Evaluate>> GetByProductionIdAsync(Guid productionId);
+        Task<IEnumerable<Evaluate>> GetByProductionIdsAsync(Guid productionId);
         Task<IEnumerable<Evaluate>> GetByQCIdAsync(Guid qcId);
         Task<IEnumerable<Evaluate>> GetByProductionIdsAsync(List<Guid> productionIds);
         Task<Evaluate> GetByIdAsync(Guid id);
+        Task<Evaluate> GetEvaluateByProductionIdAsync(Guid productionId);
         Task AddAsync(Evaluate evaluate);
         void Update(Evaluate evaluate);
     }

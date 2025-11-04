@@ -1,4 +1,5 @@
-﻿using Application.DTOs;
+﻿using System.Data;
+using Application.DTOs;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -257,7 +258,7 @@ namespace Infrastructure.Services
             var user = await _userRepository.GetByIdAsync(production.UserId);
 
             var componentDefects = await _componentDefectRepository.GetAllByEvaluateIdAsync(evaluateId);
-            if (componentDefects.All(a => a.Status == "Confirm"))
+            if (componentDefects.All(a => a.Status == "Confirmed"))
             {
                 production.MarkAsCompleted();
                 _productionRepository.Update(production);
@@ -290,6 +291,20 @@ namespace Infrastructure.Services
             var type = "MaterialStockUpdate";
 
             var notification = Notification.Create(users.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+        }
+
+        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive, string name)
+        {
+            var lead = await _userRepository.GetByRoleAsync("Lead");
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            if (lead is null || admin is null) return;
+
+            var title = "Chấp nhận đơn hàng";
+            var message = "";
+            var type = "ConfirmMaterialWorkshop";
+
+            var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
         }
     }

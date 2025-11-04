@@ -8,23 +8,26 @@ namespace Domain.Entities
         public Guid ProductionId { get; private set; }
         public Guid UserId { get; private set; }
         public int Quantity { get; private set; }
-        public decimal UnitPrice { get; private set; }
         public decimal TotalPrice { get; private set; }
         public DateOnly CreatedAt { get; private set; }
 
-        public Income(Guid id, Guid batchId, Guid productionId, Guid userId, int quantity, decimal unitPrice, decimal totalPrice)
+        public Income(Guid id, Guid batchId, Guid productionId, Guid userId, int quantity, decimal totalPrice)
             : base(id)
         {
             BatchId = batchId;
             ProductionId = productionId;
             UserId = userId;
             Quantity = quantity;
-            UnitPrice = unitPrice;
             TotalPrice = totalPrice;
-            CreatedAt = new DateOnly();
+            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
         }
 
         private Income() : base(Guid.NewGuid()) { }
+
+        public static Income Create(Guid batchId, Guid productionId, Guid userId, int quantity, decimal totalPrice)
+        {
+            return new Income(Guid.NewGuid(), batchId, productionId, userId, quantity, totalPrice);
+        }
 
         public void ReduceQuantity(int quantityError)
         {

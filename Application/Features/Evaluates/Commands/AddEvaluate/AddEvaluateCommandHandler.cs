@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Application.Common;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Http.Metadata;
@@ -19,16 +20,18 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
         private readonly IUserRepository _userRepository;
         private readonly IComponentDefectRepository _componentDefectRepository;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
         public AddEvaluateCommandHandler(IUnitOfWork unitOfWork, IEvaluateRepository evaluateRepository,
             IUserRepository userRepository, IComponentDefectRepository componentDefectRepository
-            ,IMapper mapper)
+            ,IMapper mapper, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
             _evaluateRepository = evaluateRepository;
             _userRepository = userRepository;
             _componentDefectRepository = componentDefectRepository;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         public async Task<Result<Guid>> Handle(AddEvaluateCommand request, CancellationToken cancellationToken)
@@ -41,7 +44,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
                 request.Image,
                 request.Status);
 
-            if (request.Status != "Pass")
+            if (request.Status != "Passed")
             {
                 foreach (var item in request.Defects)
                 {
@@ -59,6 +62,16 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
 
             await _evaluateRepository.AddAsync(evaluate);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            // Trigger event sau khi DB đã có record
+            await _mediator.Publish(new EvaluateCreatedEvent(
+                evaluate.Id,
+                evaluate.ProductionId,
+                evaluate.UserId.Value,
+                evaluate.QuantityError,
+                evaluate.Note,
+                evaluate.Status
+            ));
             return Result<Guid>.Success(evaluate.Id);
         }
     }
