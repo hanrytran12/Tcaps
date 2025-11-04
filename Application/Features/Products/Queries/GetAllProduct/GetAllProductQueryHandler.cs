@@ -17,6 +17,7 @@ namespace Application.Features.Products.Queries.GetAllProduct
             var listProduct = await _repository.GetAllAsync();
             var listProductDTO = listProduct.Select(p => new ProductsDTO
             {
+                ProductId = p.Id,
                 Code = p.Code,
                 Name = p.Name,
                 Image = p.Image,
