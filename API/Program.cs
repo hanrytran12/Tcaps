@@ -26,6 +26,7 @@ using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Features.Productions.Command.AddProductionReport;
@@ -165,6 +166,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(ApproveRequestFromLeadCommand).Assembly,
                                                                       typeof(ConfirmRequestFromQcCommand).Assembly,
                                                                       typeof(RejectMaterialRequestCommand).Assembly,
+                                                                      typeof(GetPendingRequestForQcQuery).Assembly,
 
                                                                       typeof(GetNotificationsQuery).Assembly,
                                                                       typeof(MarkNotificationAsReadCommand).Assembly,

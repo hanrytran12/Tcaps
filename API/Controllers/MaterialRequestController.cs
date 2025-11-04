@@ -1,7 +1,9 @@
 ﻿using Application.DTOs.Request;
+using Application.DTOs.Response;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,16 @@ namespace API.Controllers
         public MaterialRequestController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("pending-confirmation")]
+        public async Task<ActionResult<List<PendingRequestDTO>>> GetPendingRequests()
+        {
+            var qcId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var query = new GetPendingRequestForQcQuery(qcId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost("{assignmentId:guid}/dispatch-materials")]
