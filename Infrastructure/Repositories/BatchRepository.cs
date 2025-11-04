@@ -98,10 +98,5 @@ namespace Infrastructure.Repositories
 
             return null;
         }
-
-        public async Task<Batch?> GetByIdAssignmentWithMaterialUse(Guid assignmentId)
-        {
-            return await _context.Batches.Include(b => b.Assignments).Include(batch => batch.MaterialUses).FirstOrDefaultAsync(b => b.Assignments.Any(a => a.Id == assignmentId));
-        }
     }
 }
