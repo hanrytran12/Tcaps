@@ -41,9 +41,12 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 return Result<Guid>.Failure("Không tìm thấy lô hàng của công đoạn này.");
             }
 
-            foreach (var item in request.ReconciliationMaterials)
+            if (request.ReconciliationMaterials.Count > 0)
             {
-                batch.UpdateMaterialUsage(request.AssignmentId, item.MaterialId, item.ReconciliationQuantity, request.UserId);
+                foreach (var item in request.ReconciliationMaterials)
+                {
+                    batch.UpdateMaterialUsage(request.AssignmentId, item.MaterialId, item.ReconciliationQuantity, request.UserId);
+                }
             }
 
             var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);

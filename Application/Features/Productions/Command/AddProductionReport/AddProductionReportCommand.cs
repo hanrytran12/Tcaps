@@ -12,6 +12,6 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
         public Guid AssignId { get; set; }
         public int Quantity { get; set; }
-        public List<MaterialUsageInputDTO> MaterialUsed { get; set; } = new();
+        public List<MaterialUsageInputDTO>? MaterialUsed { get; set; }
     }
 }

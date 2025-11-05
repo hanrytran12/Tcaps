@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251104055929_Init")]
+    [Migration("20251105163618_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -44,6 +44,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
+
+                    b.Property<bool>("RequiresMaterialDelivery")
+                        .HasColumnType("bit");
 
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
@@ -236,9 +239,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("UnitPrice")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("UserId")
@@ -382,6 +383,48 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BatchId");
 
                     b.ToTable("MaterialUse");
+                });
+
+            modelBuilder.Entity("Domain.Entities.MaterialWorkshop", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QuantityReceive")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantitySend")
+                        .HasColumnType("int");
+
+                    b.Property<DateOnly>("ShipDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Unit")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("WorkshopId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MaterialWorkshops");
                 });
 
             modelBuilder.Entity("Domain.Entities.Notification", b =>

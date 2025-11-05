@@ -56,8 +56,7 @@ namespace Infrastructure.Migrations
                     ProductionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TotalPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
                 },
                 constraints: table =>
@@ -116,6 +115,26 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Materials", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "MaterialWorkshops",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuantitySend = table.Column<int>(type: "int", nullable: false),
+                    QuantityReceive = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ShipDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MaterialWorkshops", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -197,6 +216,7 @@ namespace Infrastructure.Migrations
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
                     ExpectedDeliveryDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    RequiresMaterialDelivery = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
                 },
@@ -370,6 +390,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "MaterialUse");
+
+            migrationBuilder.DropTable(
+                name: "MaterialWorkshops");
 
             migrationBuilder.DropTable(
                 name: "Notifications");
