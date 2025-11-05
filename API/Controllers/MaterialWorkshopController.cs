@@ -1,5 +1,7 @@
 ﻿using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +16,20 @@ namespace API.Controllers
         public MaterialWorkshopController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("for-qc")]
+        public async Task<IActionResult> GetByQCIdAsync([FromQuery] GetMaterialWorkshopByQCIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost("for-lead")]
