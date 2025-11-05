@@ -29,7 +29,7 @@ namespace Application.Features.Assignments.Queries.GetAssignmentsByStaffId
             if (staff.WorkshopId == null)
                 throw new Exception("Staff không có xưởng liên quan.");
 
-            var assignments = await _assignmentRepository.GetAssignmentsAsync(staff.WorkshopId);
+            var assignments = await _assignmentRepository.GetAssignmentsByWorkshopIdAsync(staff.WorkshopId);
             if (assignments == null || !assignments.Any())
                 return new List<AssignForStaffDTO>();
 

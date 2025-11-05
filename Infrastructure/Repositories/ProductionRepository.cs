@@ -29,6 +29,14 @@ namespace Infrastructure.Repositories
             return await _context.Productions.ToListAsync();
         }
 
+        public async Task<IEnumerable<Guid>> GetAllStaffIdByAssignIdAsync(Guid assignId)
+        {
+            return await _context.Productions
+                .Where(p => p.AssignId == assignId)
+                .Select(p => p.UserId)
+                .ToListAsync();
+        }
+
         public async Task<Production?> GetByIdAsync(Guid id)
         {
             return await _context.Productions.FindAsync(id);
@@ -48,6 +56,13 @@ namespace Infrastructure.Repositories
         public IQueryable<Production> Query()
         {
             return _context.Productions.AsQueryable();
+        }
+
+        public async Task<int> TotalProductionByAssignIdAsync(Guid assignId)
+        {
+            return await _context.Productions
+                .Where(p => p.AssignId == assignId)
+                .SumAsync(p => p.Quantity);
         }
 
         public void Update(Production production)
