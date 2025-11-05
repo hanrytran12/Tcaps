@@ -34,6 +34,13 @@ namespace Infrastructure.Repositories
             return await _context.MaterialWorkshops.ToListAsync();
         }
 
+        public async Task<IEnumerable<MaterialWorkshop>> GetAllByWorkshopIdAsync(Guid workshopId)
+        {
+            return await _context.MaterialWorkshops
+                .Where(m => m.WorkshopId == workshopId)
+                .ToListAsync();
+        }
+
         public async Task<MaterialWorkshop> GetByIdAsync(Guid id)
         {
             return await _context.MaterialWorkshops.FindAsync(id);

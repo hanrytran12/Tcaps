@@ -35,7 +35,6 @@
   <ItemGroup>
     <Folder Include="Features\MaterialUse\Commands\" />
     <Folder Include="Features\MaterialUse\Queries\" />
-    <Folder Include="Features\MaterialWorkshops\Queries\" />
   </ItemGroup>
 
 </Project>
