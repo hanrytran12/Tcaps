@@ -2,11 +2,11 @@
 select * from Users
 INSERT INTO [Users] (Id, WorkshopId, Role, FullName, Email, PasswordHash, Phone, Status, CreatedAt)
 VALUES 
-('A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 'Admin', N'Nguyễn Văn An', 'admin@company.com', 'hashed_password_1', '0901234567', 'Active', GETDATE()),
-('B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 'Lead', N'Trần Thị Bình', 'manager@company.com', 'hashed_password_2', '0902345678', 'Active', GETDATE()),
-('C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Lê Văn Cường', 'worker1@company.com', 'hashed_password_3', '0903456789', 'Active', GETDATE()),
-('D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Phạm Thị Dung', 'worker2@company.com', 'hashed_password_4', '0904567890', 'Active', GETDATE()),
-('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QC', N'Hoàng Văn Em', 'qc@company.com', 'hashed_password_5', '0905678901', 'Active', GETDATE());
+('A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D', 'F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 'Admin', N'Nguyễn Văn An', 'admin@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0901234567', 'Active', GETDATE()),
+('B2C3D4E5-F6A7-4B5C-9D1E-2F3A4B5C6D7E', 'F6A7B8C9-D1E2-4F5A-4B5C-6D7E8F9A1B2C', 'Lead', N'Trần Thị Bình', 'manager@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0902345678', 'Active', GETDATE()),
+('C3D4E5F6-A7B8-4C5D-1E2F-3A4B5C6D7E8F', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Lê Văn Cường', 'worker1@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0903456789', 'Active', GETDATE()),
+('D4E5F6A7-B8C9-4D5E-2F3A-4B5C6D7E8F9A', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Phạm Thị Dung', 'worker2@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0904567890', 'Active', GETDATE()),
+('E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QC', N'Hoàng Văn Em', 'qc@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0905678901', 'Active', GETDATE());
 
 -- INSERT dữ liệu cho bảng Workshop
 INSERT INTO Workshop (Id, Name, Description, StepOrder)
@@ -170,4 +170,4 @@ select * from Incomes
 select * from Notifications
 select * from ComponentDefects
 select * from MaterialWorkshops
-update Assignments set WorkshopId = 'A1C9B3A0-4F12-4E81-B17B-000000000003' where Id = 'E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B'
+update Assignments set Status = 'Pending' where Id = 'E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B'

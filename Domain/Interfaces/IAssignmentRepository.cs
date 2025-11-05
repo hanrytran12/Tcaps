@@ -4,7 +4,7 @@ namespace Domain.Interfaces
 {
     public interface IAssignmentRepository
     {
-        Task<IEnumerable<Assignment>> GetAssignmentsAsync(Guid workshopId);
+        Task<IEnumerable<Assignment>> GetAssignmentsByWorkshopIdAsync(Guid workshopId);
         Task<Assignment> GetByIdAsync(Guid id);
         Task<IEnumerable<Assignment>> GetByIdsAsync(List<Guid> ids);
         Task<IEnumerable<Assignment>> GetAllAssignmentsAsync();
