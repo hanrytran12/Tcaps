@@ -3,6 +3,7 @@ using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.UpdateUser;
 using Application.Features.Users.Queries.GetAllUser;
+using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffDashboard;
 using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Interfaces;
@@ -127,6 +128,24 @@ namespace API.Controllers
             var query = new GetStaffDashboardQuery
             {
                 StaffId = Guid.Parse(userIdString),
+            };
+
+            var result = await _mediator.Send(query);
+            return Ok(result.Value);
+        }
+
+        [HttpGet("group-progress")]
+        public async Task<IActionResult> GetGroupProgress()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetGroupProgressQuery
+            {
+                UserId = Guid.Parse(userIdString),
             };
 
             var result = await _mediator.Send(query);
