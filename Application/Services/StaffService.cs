@@ -91,7 +91,7 @@ namespace Application.Services
                     return _responseDTO;
                 }
 
-                var dto = _mapper.Map<List<AssignmentDTO>>(await _assignmentRepository.GetAssignmentsAsync(user.WorkshopId));
+                var dto = _mapper.Map<List<AssignmentDTO>>(await _assignmentRepository.GetAssignmentsByWorkshopIdAsync(user.WorkshopId));
                 _responseDTO.Data = dto;
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";

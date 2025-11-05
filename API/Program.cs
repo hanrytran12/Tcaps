@@ -62,6 +62,7 @@ using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
+using Application.Features.Users.Queries.GetGroupProgress;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -214,7 +215,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetMaterialWorkshopByQCIdQuery).Assembly,
 
                                                                       typeof(GetReconciliationSummaryQuery).Assembly,
-                                                                      typeof(GetAllocatedMaterialsQuery).Assembly
+                                                                      typeof(GetAllocatedMaterialsQuery).Assembly,
+                                                                      typeof(GetGroupProgressQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
