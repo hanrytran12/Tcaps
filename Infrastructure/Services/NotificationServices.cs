@@ -301,11 +301,14 @@ namespace Infrastructure.Services
             if (lead is null || admin is null) return;
 
             var title = "Chấp nhận đơn hàng";
-            var message = "";
+            var message = $"Đã xác nhận đơn gửi {quantitySend} vật liệu và nhận {quantityReceive}.";
             var type = "ConfirmMaterialWorkshop";
 
-            var notification = Notification.Create(lead.Id, title, message, type);
-            await _notificationRepository.AddAsync(notification);
+            var notificationLead = Notification.Create(lead.Id, title, message, type);
+            await _notificationRepository.AddAsync(notificationLead);
+
+            var notificationAdmin = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notificationAdmin);
         }
     }
 }

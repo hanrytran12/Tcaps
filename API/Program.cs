@@ -60,6 +60,8 @@ using Application.Features.Incomes.Command.AddIncome;
 using Domain.Events;
 using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -208,6 +210,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(AddMaterialWorkshopCommand).Assembly,
                                                                       typeof(UpdateConfirmMaterialWorkshopCommand).Assembly,
+                                                                      typeof(GetAllMaterialWorkshopQuery).Assembly,
+                                                                      typeof(GetMaterialWorkshopByQCIdQuery).Assembly,
 
                                                                       typeof(GetReconciliationSummaryQuery).Assembly,
                                                                       typeof(GetAllocatedMaterialsQuery).Assembly
