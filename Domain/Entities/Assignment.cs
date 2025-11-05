@@ -12,10 +12,11 @@ namespace Domain.Entities
         public DateOnly StartDate { get; private set; }
         public DateOnly EndDate { get; private set; }
         public DateOnly? ExpectedDeliveryDate { get; private set; }
+        public bool RequiresMaterialDelivery { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
 
-        public Assignment(Guid id, Guid batchId, Guid workshopId, int stepOrder, int quantity, DateOnly startDate, DateOnly endDate, DateOnly? expectedDeliveryDate, decimal unitPrice)
+        public Assignment(Guid id, Guid batchId, Guid workshopId, int stepOrder, int quantity, DateOnly startDate, DateOnly endDate, DateOnly? expectedDeliveryDate, decimal unitPrice, bool requiresMaterialDelivery)
             : base(id)
         {
             BatchId = batchId;
@@ -28,13 +29,14 @@ namespace Domain.Entities
             CreatedAt = DateOnly.FromDateTime(DateTime.Now);
             ExpectedDeliveryDate = expectedDeliveryDate;
             UnitPrice = unitPrice;
+            RequiresMaterialDelivery = requiresMaterialDelivery;
         }
 
         private Assignment() : base(Guid.NewGuid()) { }
 
-        public static Assignment Create(Guid batchId, Guid workshopId, int stepOrder, int quantity, DateOnly startDate, DateOnly endDate, DateOnly? expectedDeliveryDate, decimal unitPrice)
+        public static Assignment Create(Guid batchId, Guid workshopId, int stepOrder, int quantity, DateOnly startDate, DateOnly endDate, DateOnly? expectedDeliveryDate, decimal unitPrice, bool requiresMaterialDelivery)
         {
-            return new Assignment(Guid.NewGuid(), batchId, workshopId, stepOrder, quantity, startDate, endDate, expectedDeliveryDate, unitPrice);
+            return new Assignment(Guid.NewGuid(), batchId, workshopId, stepOrder, quantity, startDate, endDate, expectedDeliveryDate, unitPrice, requiresMaterialDelivery);
         }
 
         public void UpdateStatus(string status)

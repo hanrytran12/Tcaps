@@ -22,16 +22,19 @@ namespace Application.Features.Productions.Command.AddProductionReport
             var production = Production.Create(request.AssignId, request.StaffId, request.Quantity);
             await _productionRepository.AddAsync(production);
 
-            foreach (var items in request.MaterialUsed)
+            if (request.MaterialUsed.Count() > 0)
             {
-                var materialUse = await _appDbContext.MaterialUse.FirstOrDefaultAsync(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId);
-
-                if (materialUse is null)
+                foreach (var items in request.MaterialUsed)
                 {
-                    return Result.Failure("Không tìm thấy MaterailUse");
-                }
+                    var materialUse = await _appDbContext.MaterialUse.FirstOrDefaultAsync(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId);
 
-                materialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
+                    if (materialUse is null)
+                    {
+                        return Result.Failure("Không tìm thấy MaterailUse");
+                    }
+
+                    materialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
+                }
             }
 
             return Result.Success();
