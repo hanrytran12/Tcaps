@@ -13,6 +13,5 @@ namespace Application.Features.Productions.Command.AddProduction
         public Guid AssignId { get; set; }
         public Guid UserId { get; set; }
         public int Quantity { get; set; }
-        public DateOnly Date { get; set; }
     }
 }

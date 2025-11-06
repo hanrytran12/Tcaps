@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
-using Application.DTOs;
 using Application.DTOs.Request;
+using Application.DTOs.Response;
 using MediatR;
 
 namespace Application.Features.Evaluates.Commands.UpdateEvaluate
