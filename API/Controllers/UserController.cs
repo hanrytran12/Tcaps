@@ -147,7 +147,7 @@ namespace API.Controllers
         }
 
         [HttpGet("group-progress")]
-        public async Task<IActionResult> GetGroupProgress()
+        public async Task<IActionResult> GetGroupProgress([FromQuery] Guid assignId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))
@@ -158,6 +158,7 @@ namespace API.Controllers
             var query = new GetGroupProgressQuery
             {
                 UserId = Guid.Parse(userIdString),
+                AssignId = assignId
             };
 
             var result = await _mediator.Send(query);

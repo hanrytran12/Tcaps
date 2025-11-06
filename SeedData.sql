@@ -170,4 +170,4 @@ select * from Incomes
 select * from Notifications
 select * from ComponentDefects
 select * from MaterialWorkshops
-update Assignments set Status = 'Pending' where Id = 'E5F6A7B8-C9D1-4E5F-3A4B-5C6D7E8F9A1B'
+update Productions set Date = '2025-11-06' where Id = 'A1B2C3D4-E5F6-4A5B-8C9D-3E3F3A3B3C3D'

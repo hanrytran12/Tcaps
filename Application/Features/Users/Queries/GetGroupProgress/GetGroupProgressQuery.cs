@@ -9,8 +9,9 @@ using MediatR;
 
 namespace Application.Features.Users.Queries.GetGroupProgress
 {
-    public class GetGroupProgressQuery : IRequest<Result<List<GroupProgressDTO>>>
+    public class GetGroupProgressQuery : IRequest<Result<GroupProgressDTO>>
     {
         public Guid UserId { get; set; }
+        public Guid AssignId { get; set; }
     }
 }
