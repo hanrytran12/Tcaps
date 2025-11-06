@@ -258,6 +258,9 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("CanCreateMaterialRequest", policy =>
         policy.RequireRole("Lead", "QC"));
+
+    options.AddPolicy("CanViewDashboard", policy =>
+        policy.RequireRole("Admin", "Lead"));
 });
 
 var app = builder.Build();
