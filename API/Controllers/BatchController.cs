@@ -2,6 +2,7 @@
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
@@ -28,6 +29,15 @@ namespace API.Controllers
             var listBatch = await _mediator.Send(new GetAllBatchQuery());
             return listBatch;
         }
+
+        [HttpGet("{batchId:guid}")]
+        public async Task<IActionResult> GetBatchById(Guid batchId)
+        {
+            var query = new GetBatchByIdQuery(batchId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
 
         [HttpGet("dashboard")]
         [Authorize(Policy = "Admin")]
