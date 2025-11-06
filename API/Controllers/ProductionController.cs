@@ -67,15 +67,37 @@ namespace API.Controllers
         }
 
         [HttpGet("for-staff")]
-        public async Task<IActionResult> GetByStaffIdAsync([FromQuery] GetAllProductionByStaffIdQuery query)
+        public async Task<IActionResult> GetByStaffIdAsync([FromQuery] string? status)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetAllProductionByStaffIdQuery
+            {
+                UserId = Guid.Parse(userIdString),
+                Status = status
+            };
             var result = await _mediator.Send(query);
             return Ok(result);
         }
 
         [HttpGet("for-qc")]
-        public async Task<IActionResult> GetProductionsWithStatusPendingQC([FromQuery] GetAllProductionByQCIdQuery query)
+        public async Task<IActionResult> GetProductionsWithStatusPendingQC([FromQuery] string? status)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetAllProductionByQCIdQuery
+            {
+                QC_Id = Guid.Parse(userIdString),
+                Status = status
+            };
             var result = await _mediator.Send(query);
             return Ok(result);
         }

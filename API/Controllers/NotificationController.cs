@@ -1,6 +1,7 @@
 ﻿using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -20,17 +21,32 @@ namespace API.Controllers
         }
 
 
-        [HttpGet("{userId:guid}")]
-        public async Task<IActionResult> GetNotificationByUserId(Guid userId,
-            [FromQuery] int pageNumber, [FromQuery] int pageSize)
+        [HttpGet("my-notifications")]
+        [Authorize]
+        public async Task<IActionResult> GetNotificationByUserId([FromQuery] int pageNumber, [FromQuery] int pageSize)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var userId = Guid.Parse(userIdString);
+
             var response = await _notificationService.GetNotificationByUserIdAsync(userId, pageNumber, pageSize);
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpGet("count/{userId:guid}")]
-        public async Task<IActionResult> CountNotification(Guid userId)
+        [HttpGet("count")]
+        public async Task<IActionResult> CountNotification()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var userId = Guid.Parse(userIdString);
             var response = await _notificationService.CountNotificationAsync(userId);
             return StatusCode(response.StatusCode, response);
         }

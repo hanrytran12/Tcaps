@@ -18,19 +18,19 @@ namespace API.Controllers
         }
 
         [HttpGet("by-staff")]
-        public async Task<IActionResult> GetIncomesByStaffId([FromQuery] GetIncomesByStaffIdQuery query)
+        public async Task<IActionResult> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
-            //var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //if (string.IsNullOrEmpty(userIdString))
-            //{
-            //    return Unauthorized();
-            //}
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
 
-            //var query = new GetIncomesByStaffIdQuery
-            //{
-            //    StaffId = Guid.Parse(userIdString),
-            //    Date = date
-            //};
+            var query = new GetIncomesByStaffIdQuery
+            {
+                StaffId = Guid.Parse(userIdString),
+                Date = date
+            };
 
             var result = await _mediator.Send(query);
             return Ok(result);

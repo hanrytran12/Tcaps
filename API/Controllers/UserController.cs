@@ -1,4 +1,4 @@
-using Application.DTOs;
+using Application.DTOs.Request;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.UpdateUser;
@@ -94,16 +94,28 @@ namespace API.Controllers
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPut("change-password/{userId:guid}")]
-        public async Task<IActionResult> ChangePassword(Guid userId, ChangePasswordDTO dto, CancellationToken cancellationToken)
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto, CancellationToken cancellationToken)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = Guid.Parse(userIdString);
             var response = await _staffService.ChangePasswordAsync(userId, dto.CurrentPassword, dto.NewPassword, cancellationToken);
             return StatusCode(response.StatusCode, response);
         }
 
-        [HttpPut("update-profile/{userId:guid}")]
-        public async Task<IActionResult> UpdateProfile(Guid userId, UpdateProfileUserDTO dto, CancellationToken cancellationToken)
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileUserDTO dto, CancellationToken cancellationToken)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = Guid.Parse(userIdString);
             var response = await _staffService.UpdateProfileAsync(userId, dto, cancellationToken);
             return StatusCode(response.StatusCode, response);
         }
@@ -150,6 +162,20 @@ namespace API.Controllers
 
             var result = await _mediator.Send(query);
             return Ok(result.Value);
+        }
+
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfileAsync()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var userId = Guid.Parse(userIdString);
+            var result = await _staffService.GetUserProfileAsync(userId);
+            return StatusCode(result.StatusCode, result);
         }
     }
 }

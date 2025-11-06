@@ -12,6 +12,7 @@ using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
@@ -50,7 +51,6 @@ using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Features.Workshop.Queries.GetWorkshopTemplate;
 using Application.Interfaces;
 using Application.Services;
-using Azure.Storage.Blobs;
 using Domain.Events;
 using Domain.Interfaces;
 using FluentValidation;
@@ -124,13 +124,10 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
 builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
-//builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
-builder.Services.AddScoped<IFileStorageService, AzureBlobStorageService>();
-builder.Services.AddSingleton(x =>
-    new BlobServiceClient(conf["BlobStorageSettings:ConnectionString"]));
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
@@ -167,6 +164,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(DeleteBatchCommand).Assembly,
                                                                       typeof(UpdateBatchCommand).Assembly,
                                                                       typeof(GetBatchByWorkshopIdQuery).Assembly,
+                                                                      typeof(GetBatchByIdQuery).Assembly,
 
                                                                       typeof(GetDashboardStatsQuery).Assembly,
                                                                       typeof(GetStaffPerformanceQuery).Assembly,

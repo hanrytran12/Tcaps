@@ -1,10 +1,12 @@
-﻿using Application.Features.Batches.Commands.UpdateBatch;
+﻿using System.Security.Claims;
+using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Evaluates.Commands.AddEvaluate;
 using Application.Features.Evaluates.Commands.UpdateEvaluate;
 using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
 using Application.Features.Evaluates.Queries.GetEvaluatesByStaffId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -28,22 +30,53 @@ namespace API.Controllers
         }
 
         [HttpGet("for-qc")]
-        public async Task<IActionResult> GetByQCId([FromQuery] GetEvaluatesByQCIdQuery query)
+        [Authorize(Policy = "QC")]
+        public async Task<IActionResult> GetByQCId([FromQuery] string? status)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetEvaluatesByQCIdQuery
+            {
+                QC_Id = Guid.Parse(userIdString),
+                Status = status
+            };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }
 
         [HttpGet("for-staff")]
-        public async Task<IActionResult> GetByStaffId([FromQuery] GetEvaluatesByStaffIdQuery query)
+        public async Task<IActionResult> GetByStaffId([FromQuery] Guid assignId)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetEvaluatesByStaffIdQuery
+            {
+                StaffId = Guid.Parse(userIdString),
+                AssignId = assignId
+            };
             var result = await _mediator.Send(query);
             return Ok(result);
         }
 
         [HttpPost]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> CreateEvaluate([FromBody] AddEvaluateCommand command)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            command.UserId = Guid.Parse(userIdString);
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {
@@ -53,6 +86,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{evaluateId:guid}")]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateEvaluate(Guid evaluateId, [FromBody] UpdateEvaluateCommand command)
         {
             command.Id = evaluateId;
