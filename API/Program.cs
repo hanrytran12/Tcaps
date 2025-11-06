@@ -12,6 +12,7 @@ using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
@@ -20,6 +21,8 @@ using Application.Features.Evaluates.Commands.AddEvaluate;
 using Application.Features.Evaluates.Commands.UpdateEvaluate;
 using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
+using Application.Features.Incomes.Command.AddIncome;
+using Application.Features.Incomes.Queries.GetIncomesByStaffId;
 using Application.Features.Inventories.Commands.AddInventory;
 using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
@@ -27,6 +30,10 @@ using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
+using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Features.Productions.Command.AddProductionReport;
@@ -39,10 +46,12 @@ using Application.Features.Products.Queries.GetAllProduct;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Queries.GetAllUser;
+using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Features.Workshop.Queries.GetWorkshopTemplate;
 using Application.Interfaces;
 using Application.Services;
+using Domain.Events;
 using Domain.Interfaces;
 using FluentValidation;
 using Infrastructure.BackgroundServices;
@@ -55,14 +64,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-using Application.Features.Incomes.Queries.GetIncomesByStaffId;
-using Application.Features.Incomes.Command.AddIncome;
-using Domain.Events;
-using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
-using Application.Features.Users.Queries.GetGroupProgress;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -163,6 +164,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(DeleteBatchCommand).Assembly,
                                                                       typeof(UpdateBatchCommand).Assembly,
                                                                       typeof(GetBatchByWorkshopIdQuery).Assembly,
+                                                                      typeof(GetBatchByIdQuery).Assembly,
 
                                                                       typeof(GetDashboardStatsQuery).Assembly,
                                                                       typeof(GetStaffPerformanceQuery).Assembly,
