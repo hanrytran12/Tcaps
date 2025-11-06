@@ -23,6 +23,11 @@ namespace Application.Features.Notifications.Queries.GetNotifications
                 query = query.Where(n => !n.IsRead);
             }
 
+            if (!string.IsNullOrEmpty(request.Type))
+            {
+                query = query.Where(n => n.Type == request.Type);
+            }
+
             var notifications = query
                 .OrderByDescending(n => n.CreatedAt)
                 .Skip((request.PageNumber - 1) * request.PageSize)

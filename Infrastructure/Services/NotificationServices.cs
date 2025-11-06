@@ -1,5 +1,5 @@
 ﻿using System.Data;
-using Application.DTOs;
+using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
