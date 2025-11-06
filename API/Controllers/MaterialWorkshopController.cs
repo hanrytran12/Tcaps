@@ -1,8 +1,10 @@
-﻿using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
+﻿using System.Security.Claims;
+using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -26,13 +28,27 @@ namespace API.Controllers
         }
 
         [HttpGet("for-qc")]
-        public async Task<IActionResult> GetByQCIdAsync([FromQuery] GetMaterialWorkshopByQCIdQuery query)
+        [Authorize(Policy = "QC")]
+        public async Task<IActionResult> GetByQCIdAsync([FromQuery] string? status)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetMaterialWorkshopByQCIdQuery
+            {
+                QC_Id = Guid.Parse(userIdString),
+                Status = status
+            };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }
 
         [HttpPost("for-lead")]
+        [Authorize(Policy = "Lead")]
         public async Task<IActionResult> CreateMaterialWorkshop(AddMaterialWorkshopCommand command)
         {
             var result = await _mediator.Send(command);
@@ -40,6 +56,7 @@ namespace API.Controllers
         }
 
         [HttpPut("update-confirm")]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateConfirmAsync([FromQuery] UpdateConfirmMaterialWorkshopCommand query)
         {
             var result = await _mediator.Send(query);
