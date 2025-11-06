@@ -26,9 +26,9 @@ namespace Application.Features.Products.Commands.AddProduct
             var nextIdex = (lastIndex ?? 0) + 1;
             var newCode = $"{ProductPrefix}{nextIdex}";
 
-            string imageUrl = await _fileStorageService.SaveFileAsync(request.ImageFile, "products", cancellationToken);
+            string realativePath = await _fileStorageService.SaveFileAsync(request.ImageFile, "products", cancellationToken);
 
-            var product = Product.Create(newCode, request.Name, imageUrl, request.Description);
+            var product = Product.Create(newCode, request.Name, realativePath, request.Description);
             await _repository.AddAsync(product);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<Guid>.Success(product.Id);
