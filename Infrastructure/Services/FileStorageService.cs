@@ -12,6 +12,11 @@ namespace Application.Services
             _webHostEnvironment = webHostEnvironment;
         }
 
+        public string GetFileUrl(string relativePath)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<string> SaveFileAsync(IFormFile file, string subFolder, CancellationToken cancellationToken)
         {
             if (file == null || file.Length == 0)
