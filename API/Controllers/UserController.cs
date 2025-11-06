@@ -163,5 +163,19 @@ namespace API.Controllers
             var result = await _mediator.Send(query);
             return Ok(result.Value);
         }
+
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfileAsync()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var userId = Guid.Parse(userIdString);
+            var result = await _staffService.GetUserProfileAsync(userId);
+            return StatusCode(result.StatusCode, result);
+        }
     }
 }
