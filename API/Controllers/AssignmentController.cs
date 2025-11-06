@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Request;
+﻿using System.Security.Claims;
+using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Assignments.Commands.PlanAssignments;
@@ -69,8 +70,18 @@ namespace API.Controllers
         }
 
         [HttpGet("for-staff")]
-        public async Task<IActionResult> GetAssignmentsForStaffById([FromQuery] GetAssignmentsByStaffIdQuery query)
+        public async Task<IActionResult> GetAssignmentsForStaffById()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetAssignmentsByStaffIdQuery
+            {
+                StaffId = Guid.Parse(userIdString)
+            };
             var result = await _mediator.Send(query);
             return Ok(result);
         }

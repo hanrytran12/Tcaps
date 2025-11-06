@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Application.DTOs;
 using Application.DTOs.Response;
 using AutoMapper;
 using Domain.Entities;
-using NotificationDTO = Application.DTOs.NotificationDTO;
 
 namespace Application.Mapping
 {

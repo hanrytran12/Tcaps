@@ -22,13 +22,13 @@ namespace Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop
         }
         public async Task<Result<Guid>> Handle(AddMaterialWorkshopCommand request, CancellationToken cancellationToken)
         {
-            if (request.QuantitySend < 0 || request.QuantityReceive < 0)
+            if (request.QuantitySend < 0)
                 return Result<Guid>.Failure("Số lượng không hợp lệ.");
 
             var materialWorkshop = MaterialWorkshop.Create(
                 request.WorkshopId,
                 request.QuantitySend,
-                request.QuantityReceive,
+                0,
                 request.Name,
                 request.Unit,
                 request.Image,

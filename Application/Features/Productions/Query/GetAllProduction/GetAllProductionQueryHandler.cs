@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
-using Application.DTOs;
+using Application.DTOs.Response;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
