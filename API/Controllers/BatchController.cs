@@ -40,7 +40,7 @@ namespace API.Controllers
 
 
         [HttpGet("dashboard")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Policy = "CanViewDashboard")]
         public async Task<IActionResult> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
         {
             var result = await _mediator.Send(query);
