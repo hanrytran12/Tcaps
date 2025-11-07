@@ -24,10 +24,10 @@ namespace Application.Features.Inventories.Commands.AddInventory
             string imageUrl = await _fileStorageService.SaveFileAsync(request.ImageURL, "inventories", cancellationToken);
 
             var materials = await _materialRepository.GetByNameAsync(request.MaterialName);
+
             if (materials is null)
             {
-                materials = Material.Create(request.MaterialName, request.NameMaterialDescription, request.UnitMaterial);
-                await _materialRepository.AddAsync(materials);
+                return Result<Guid>.Failure("Material is not exist");
             }
 
             var inventory = Inventory.Create(materials.Id, request.Quantity, imageUrl, request.Price);
