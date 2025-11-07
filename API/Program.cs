@@ -282,7 +282,24 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        var path = ctx.Context.Request.Path.Value?.ToLower() ?? "";
+        if (path.Contains("/images/products/") ||
+            path.Contains("/images/batches/") ||
+            path.Contains("/images/inventories/"))
+        {
+            // Set content type for files without extension
+            ctx.Context.Response.ContentType = "image/jpeg";
+
+            // Allow CORS for images
+            ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        }
+    },
+    ServeUnknownFileTypes = true // Allow serving files without extension
+});
 
 app.UseCors("AllowedFrontend");
 
