@@ -53,6 +53,7 @@ using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Features.Workshop.Queries.GetWorkshopTemplate;
 using Application.Interfaces;
 using Application.Services;
+using Azure.Storage.Blobs;
 using Domain.Events;
 using Domain.Interfaces;
 using FluentValidation;
@@ -99,6 +100,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddSingleton(x =>
+    new BlobServiceClient(conf["BlobStorageSettings:ConnectionString"]));
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -126,7 +130,7 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
 builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
-builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IFileStorageService, AzureBlobStorageService>();
 builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
