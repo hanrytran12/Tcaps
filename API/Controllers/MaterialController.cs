@@ -1,4 +1,5 @@
 ﻿using Application.Features.Materials.Queries;
+using Application.Features.Materials.Queries.GetAllMaterialToWatch;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,15 @@ namespace API.Controllers
         {
             _mediator = mediator;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllMaterialsAsync()
+        {
+            var query = new GetAllMaterialToWatchQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
 
         [HttpGet("all")]
         public async Task<IActionResult> GetAllAsync([FromQuery] GetAllMaterialQuery query)

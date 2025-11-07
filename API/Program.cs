@@ -30,6 +30,7 @@ using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
+using Application.Features.Materials.Queries.GetAllMaterialToWatch;
 using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
@@ -218,7 +219,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(GetReconciliationSummaryQuery).Assembly,
                                                                       typeof(GetAllocatedMaterialsQuery).Assembly,
-                                                                      typeof(GetGroupProgressQuery).Assembly
+                                                                      typeof(GetGroupProgressQuery).Assembly,
+
+                                                                      typeof(GetAllMaterialToWatchQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
