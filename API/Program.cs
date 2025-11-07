@@ -130,7 +130,7 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
 builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
-builder.Services.AddScoped<IFileStorageService, AzureBlobStorageService>();
+builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
