@@ -14,7 +14,7 @@ namespace Application.Services
 
         public string GetFileUrl(string relativePath)
         {
-            throw new NotImplementedException();
+            return relativePath;
         }
 
         public async Task<string> SaveFileAsync(IFormFile file, string subFolder, CancellationToken cancellationToken)
