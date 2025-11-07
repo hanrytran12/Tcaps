@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Batch>> GetAllAsync()
         {
-            return await _context.Batches.Where(b => !b.isDeleted).ToListAsync();
+            return await _context.Batches.Include(b => b.Assignments).Where(b => !b.isDeleted).ToListAsync();
         }
 
         public async Task<Batch?> GetByIdAsync(Guid Id)
