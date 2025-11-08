@@ -69,6 +69,20 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
+using Application.Features.Incomes.Queries.GetIncomesByStaffId;
+using Application.Features.Incomes.Command.AddIncome;
+using Domain.Events;
+using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
+using Application.Features.Users.Queries.GetGroupProgress;
+using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
+using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
+using Application.Features.Users.Queries.GetAllQCTransport;
+
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
 
@@ -135,7 +149,9 @@ builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
+builder.Services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRepository>();
 builder.Services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
+
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
@@ -228,6 +244,13 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllocatedMaterialsQuery).Assembly,
                                                                       typeof(GetGroupProgressQuery).Assembly,
 
+                                                                      typeof(CreateTaskTransferRequestCommand).Assembly,
+                                                                      typeof(UpdateApproveTaskTransferRequestCommand).Assembly,
+                                                                      typeof(GetAllTaskTransferRequestQuery).Assembly,
+                                                                      typeof(GetTaskTransferRequestByQCTransportIdQuery).Assembly,
+
+                                                                      typeof(GetAllQCTransportQuery).Assembly,
+
                                                                       typeof(GetAllMaterialToWatchQuery).Assembly,
                                                                       typeof(AddMaterialCommand).Assembly,
 
@@ -268,6 +291,9 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("QC", policy =>
         policy.RequireRole("QC"));
+
+    options.AddPolicy("QCTransport", policy =>
+        policy.RequireRole("QCTransport"));
 
     options.AddPolicy("CanCreateMaterialRequest", policy =>
         policy.RequireRole("Lead", "QC"));

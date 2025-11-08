@@ -13,7 +13,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
         {
             RuleFor(x => x.QuantityError)
                 .NotEmpty().WithMessage("QuantityError is required.")
-                .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
+                .GreaterThanOrEqualTo(0).WithMessage("Quantity must be greater than or equal zero.");
 
             RuleFor(x => x.Note)
                 .NotEmpty().WithMessage("Note is required.")

@@ -19,7 +19,7 @@ namespace Infrastructure.Services
 
         public AuthRepsponseDTO GenerateToken(User user)
         {
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role),
@@ -27,6 +27,11 @@ namespace Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.Iss, _configuration["JwtSettings:Issuer"]),
                 new Claim(JwtRegisteredClaimNames.Aud, _configuration["JwtSettings:Audience"])
             };
+
+            if (user.IsQcTransport)
+            {
+                claims.Add(new Claim("isQcTransport", "true"));
+            }
 
             var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
 
