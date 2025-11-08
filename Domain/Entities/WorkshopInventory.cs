@@ -31,5 +31,15 @@ namespace Domain.Entities
 
             Quantity += quantity;
         }
+
+        public void DecreaseQuantity(decimal quantity)
+        {
+            if (quantity < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(quantity));
+            }
+
+            Quantity -= quantity;
+        }
     }
 }
