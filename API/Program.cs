@@ -6,6 +6,7 @@ using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
+using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using Application.Features.Auth.Queries;
 using Application.Features.Batches.Commands.AddBatch;
@@ -247,7 +248,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddMaterialCommand).Assembly,
 
                                                                       typeof(GetUserByWorkshopIdQuery).Assembly,
-                                                                      typeof(GetAllMaterialRequestQuery).Assembly
+                                                                      typeof(GetAllMaterialRequestQuery).Assembly,
+                                                                      typeof(GetAllTransferRequestQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
