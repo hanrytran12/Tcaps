@@ -204,6 +204,20 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "WorkshopInventory",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_WorkshopInventory", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Assignments",
                 columns: table => new
                 {
@@ -405,6 +419,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Workshop");
+
+            migrationBuilder.DropTable(
+                name: "WorkshopInventory");
 
             migrationBuilder.DropTable(
                 name: "Evaluates");

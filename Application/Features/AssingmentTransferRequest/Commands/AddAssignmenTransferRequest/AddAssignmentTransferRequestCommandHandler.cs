@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 
@@ -53,6 +54,9 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
 
             var requestTransfer = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantity, request.Note);
             await _assignmentTransferRequestRepository.AddAsync(requestTransfer);
+
+            requestTransfer.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));
+
             return Result<Guid>.Success(requestTransfer.Id);
         }
     }
