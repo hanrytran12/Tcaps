@@ -7,6 +7,7 @@ using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffDashboard;
 using Application.Features.Users.Queries.GetStaffPerformance;
+using Application.Features.Users.Queries.GetUserByWorkshopId;
 using Application.Interfaces;
 using Domain.Entities;
 using MediatR;
@@ -34,6 +35,13 @@ namespace API.Controllers
         {
             var listUser = await _mediator.Send(new GetAllUserQuery());
             return listUser;
+        }
+
+        [HttpGet("{workshopId:guid}")]
+        public async Task<User> GetUserByWorkshopId(Guid workshopId)
+        {
+            var query = new GetUserByWorkshopIdQuery(workshopId);
+            return await _mediator.Send(query);
         }
 
         [HttpPost]
