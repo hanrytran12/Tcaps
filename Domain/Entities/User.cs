@@ -12,6 +12,7 @@ namespace Domain.Entities
         public string? PasswordHash { get; private set; } = string.Empty;
         public string Phone { get; private set; } = string.Empty;
         public string Status { get; private set; } = string.Empty;
+        public bool IsQcTransport { get; private set; } = false;
         public DateTime CreatedAt { get; private set; }
 
         public ICollection<Production> Productions { get; private set; } = new List<Production>();
@@ -73,9 +74,9 @@ namespace Domain.Entities
             PasswordHash = newPasswordHash;
         }
 
-        public void AddProduction(Production production)
+        public void MarkAsQcTransport()
         {
-            Productions.Add(production);
+            IsQcTransport = true;
         }
     }
 }

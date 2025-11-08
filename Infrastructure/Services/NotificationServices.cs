@@ -310,5 +310,32 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
         }
+
+        public async Task SendCreateTaskTransferRequestNotificationAsync(Guid batchId, Guid workshopId, Guid qcTransportId, string note)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            var qc = await _userRepository.GetByIdAsync(qcTransportId);
+            if (admin is null) return;
+
+            var title = "Yêu cầu chuyển giao công việc cho QC vận chuyển";
+            var message = $"Lead vừa tạo yêu cầu chuyển giao cho lô {batchId} tại xưởng {workshopId} cho QC tên {qc.FullName}. Ghi chú: {note}";
+            var type = "TaskTransfer";
+
+            var notification = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+        }
+
+        public async Task SendApproveTaskTransferRequestNotificationAsync(Guid taskTransferRequestId, Guid qcTransportId)
+        {
+            var qcTransport = await _userRepository.GetByIdAsync(qcTransportId);
+            if (qcTransport is null) return;
+
+            var title = "Yêu cầu chuyển giao đã được duyệt";
+            var message = $"Yêu cầu chuyển giao #{taskTransferRequestId} của bạn đã được duyệt. Vui lòng kiểm tra để tiến hành vận chuyển.";
+            var type = "ApproveTaskTransferRequest";
+
+            var notification = Notification.Create(qcTransport.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+        }
     }
 }
