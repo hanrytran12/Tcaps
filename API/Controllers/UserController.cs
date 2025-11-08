@@ -2,6 +2,7 @@ using Application.DTOs.Request;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.UpdateUser;
+using Application.Features.Users.Queries.GetAllQCTransport;
 using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffDashboard;
@@ -185,6 +186,15 @@ namespace API.Controllers
             var userId = Guid.Parse(userIdString);
             var result = await _staffService.GetUserProfileAsync(userId);
             return StatusCode(result.StatusCode, result);
+        }
+
+        [HttpGet("all-QCTransport")]
+        [Authorize(Roles = "Lead")]
+        public async Task<IActionResult> GetAllQCTransportAsync()
+        {
+            var query = new GetAllQCTransportQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
     }
 }
