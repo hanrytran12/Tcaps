@@ -20,5 +20,6 @@ namespace Application.Interfaces
         public DbSet<Production> Productions { get; }
         public DbSet<Evaluate> Evaluates { get; }
         public DbSet<AssignmentTransferRequest> AssignmentTransferRequests { get; }
+        public DbSet<WorkshopInventory> WorkshopInventory { get; }
     }
 }
