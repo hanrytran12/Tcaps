@@ -16,5 +16,20 @@ namespace Domain.Entities
         }
 
         private WorkshopInventory() : base(Guid.NewGuid()) { }
+
+        public static WorkshopInventory Create(Guid workshopId, Guid materialId, decimal quantity)
+        {
+            return new WorkshopInventory(Guid.NewGuid(), workshopId, materialId, quantity);
+        }
+
+        public void IncreaseQuantity(decimal quantity)
+        {
+            if (quantity < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(quantity));
+            }
+
+            Quantity += quantity;
+        }
     }
 }

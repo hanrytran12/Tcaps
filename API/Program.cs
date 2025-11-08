@@ -134,6 +134,7 @@ builder.Services.AddScoped<IFileStorageService, FileStorageService>();
 builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
+builder.Services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
