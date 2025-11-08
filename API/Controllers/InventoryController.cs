@@ -1,6 +1,5 @@
 ﻿using Application.Features.Inventories.Commands.AddInventory;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -28,7 +27,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "Lead")]
+        //[Authorize(Policy = "Lead")]
         public async Task<IActionResult> AddInventory([FromForm] AddInventoryCommand command)
         {
             var result = await _mediator.Send(command);

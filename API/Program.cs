@@ -12,6 +12,7 @@ using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
+using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
@@ -20,6 +21,8 @@ using Application.Features.Evaluates.Commands.AddEvaluate;
 using Application.Features.Evaluates.Commands.UpdateEvaluate;
 using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
+using Application.Features.Incomes.Command.AddIncome;
+using Application.Features.Incomes.Queries.GetIncomesByStaffId;
 using Application.Features.Inventories.Commands.AddInventory;
 using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
@@ -27,6 +30,12 @@ using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
+using Application.Features.Materials.Commands.AddMaterial;
+using Application.Features.Materials.Queries.GetAllMaterialToWatch;
+using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using Application.Features.Notifications.Commands.MarkNotificationAsRead;
 using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Features.Productions.Command.AddProductionReport;
@@ -39,10 +48,14 @@ using Application.Features.Products.Queries.GetAllProduct;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Queries.GetAllUser;
+using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffPerformance;
+using Application.Features.Users.Queries.GetUserByWorkshopId;
 using Application.Features.Workshop.Queries.GetWorkshopTemplate;
 using Application.Interfaces;
 using Application.Services;
+using Azure.Storage.Blobs;
+using Domain.Events;
 using Domain.Interfaces;
 using FluentValidation;
 using Infrastructure.BackgroundServices;
@@ -55,6 +68,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+
 using Application.Features.Incomes.Queries.GetIncomesByStaffId;
 using Application.Features.Incomes.Command.AddIncome;
 using Domain.Events;
@@ -101,6 +115,9 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+builder.Services.AddSingleton(x =>
+    new BlobServiceClient(conf["BlobStorageSettings:ConnectionString"]));
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -133,6 +150,8 @@ builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTran
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
 builder.Services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRepository>();
+builder.Services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
+
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
@@ -169,6 +188,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(DeleteBatchCommand).Assembly,
                                                                       typeof(UpdateBatchCommand).Assembly,
                                                                       typeof(GetBatchByWorkshopIdQuery).Assembly,
+                                                                      typeof(GetBatchByIdQuery).Assembly,
 
                                                                       typeof(GetDashboardStatsQuery).Assembly,
                                                                       typeof(GetStaffPerformanceQuery).Assembly,
@@ -229,7 +249,12 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllTaskTransferRequestQuery).Assembly,
                                                                       typeof(GetTaskTransferRequestByQCTransportIdQuery).Assembly,
 
-                                                                      typeof(GetAllQCTransportQuery).Assembly
+                                                                      typeof(GetAllQCTransportQuery).Assembly,
+
+                                                                      typeof(GetAllMaterialToWatchQuery).Assembly,
+                                                                      typeof(AddMaterialCommand).Assembly,
+
+                                                                      typeof(GetUserByWorkshopIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
@@ -272,6 +297,9 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("CanCreateMaterialRequest", policy =>
         policy.RequireRole("Lead", "QC"));
+
+    options.AddPolicy("CanViewDashboard", policy =>
+        policy.RequireRole("Admin", "Lead"));
 });
 
 var app = builder.Build();
@@ -284,7 +312,24 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = ctx =>
+    {
+        var path = ctx.Context.Request.Path.Value?.ToLower() ?? "";
+        if (path.Contains("/images/products/") ||
+            path.Contains("/images/batches/") ||
+            path.Contains("/images/inventories/"))
+        {
+            // Set content type for files without extension
+            ctx.Context.Response.ContentType = "image/jpeg";
+
+            // Allow CORS for images
+            ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
+        }
+    },
+    ServeUnknownFileTypes = true // Allow serving files without extension
+});
 
 app.UseCors("AllowedFrontend");
 
