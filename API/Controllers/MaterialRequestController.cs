@@ -3,6 +3,7 @@ using Application.DTOs.Response;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -19,6 +20,14 @@ namespace API.Controllers
         public MaterialRequestController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllRequest()
+        {
+            var query = new GetAllMaterialRequestQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("pending-confirmation")]

@@ -29,6 +29,7 @@ using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using Application.Features.Materials.Commands.AddMaterial;
 using Application.Features.Materials.Queries.GetAllMaterialToWatch;
@@ -45,8 +46,13 @@ using Application.Features.Productions.Query.GetAllProductionByStaffId;
 using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
+using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
+using Application.Features.Users.Queries.GetAllQCTransport;
 using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffPerformance;
@@ -68,20 +74,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-
-using Application.Features.Incomes.Queries.GetIncomesByStaffId;
-using Application.Features.Incomes.Command.AddIncome;
-using Domain.Events;
-using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
-using Application.Features.Users.Queries.GetGroupProgress;
-using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
-using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
-using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
-using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
-using Application.Features.Users.Queries.GetAllQCTransport;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -254,7 +246,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllMaterialToWatchQuery).Assembly,
                                                                       typeof(AddMaterialCommand).Assembly,
 
-                                                                      typeof(GetUserByWorkshopIdQuery).Assembly
+                                                                      typeof(GetUserByWorkshopIdQuery).Assembly,
+                                                                      typeof(GetAllMaterialRequestQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
