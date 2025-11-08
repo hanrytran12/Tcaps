@@ -50,6 +50,7 @@ using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffPerformance;
+using Application.Features.Users.Queries.GetUserByWorkshopId;
 using Application.Features.Workshop.Queries.GetWorkshopTemplate;
 using Application.Interfaces;
 using Application.Services;
@@ -228,7 +229,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetGroupProgressQuery).Assembly,
 
                                                                       typeof(GetAllMaterialToWatchQuery).Assembly,
-                                                                      typeof(AddMaterialCommand).Assembly
+                                                                      typeof(AddMaterialCommand).Assembly,
+
+                                                                      typeof(GetUserByWorkshopIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
