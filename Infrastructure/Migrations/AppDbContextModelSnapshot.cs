@@ -582,6 +582,26 @@ namespace Infrastructure.Migrations
                     b.ToTable("Workshop");
                 });
 
+            modelBuilder.Entity("Domain.Entities.WorkshopInventory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("MaterialId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("Quantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<Guid>("WorkshopId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("WorkshopInventory");
+                });
+
             modelBuilder.Entity("Domain.Entities.Assignment", b =>
                 {
                     b.HasOne("Domain.Entities.Batch", null)

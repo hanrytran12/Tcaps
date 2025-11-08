@@ -1,5 +1,4 @@
-﻿using Domain.Events;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -28,7 +27,7 @@ namespace Domain.Entities
         public static AssignmentTransferRequest Create(Guid assignmentId, Guid userId, decimal completedQuantity, string? note)
         {
             var transferRequest = new AssignmentTransferRequest(Guid.NewGuid(), assignmentId, userId, completedQuantity, note);
-            transferRequest.AddDomainEvent(new TransferRequestAddedEvent(userId));
+            //transferRequest.AddDomainEvent(new TransferRequestAddedEvent(userId));
             return transferRequest;
         }
 
