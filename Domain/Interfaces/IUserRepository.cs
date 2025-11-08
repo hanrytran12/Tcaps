@@ -18,5 +18,6 @@ namespace Domain.Interfaces
         Task<User?> FindByEmailOrPhoneAsync(string emailOrPhone);
         Task<Guid> GetWorkshopIdByQCIdAsync(Guid qc_id);
         Task<IEnumerable<User>> GetUsersByWorkshopIdAsync(Guid workshopId);
+        Task<IEnumerable<User>> GetAllQCTransportAsync();
     }
 }

@@ -8,6 +8,7 @@ namespace Application.DTOs.Response
 {
     public class UserDTO
     {
+        public Guid Id { get; set; }
         public Guid WorkshopId { get; set; }
         public string Role { get; set; } = string.Empty;
         public string FullName { get; set; } = string.Empty;
