@@ -22,6 +22,7 @@ namespace Application.Interfaces
         public DbSet<AssignmentTransferRequest> AssignmentTransferRequests { get; }
         public DbSet<TaskTransferRequest> TaskTransferRequests { get; }
         public DbSet<WorkshopInventory> WorkshopInventory { get; }
+        public DbSet<ReworkRequest> ReworkRequests { get; set; }
 
     }
 }

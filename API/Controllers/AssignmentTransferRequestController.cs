@@ -1,5 +1,7 @@
-﻿using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
+﻿using Application.DTOs.Response;
+using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
+using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -16,6 +18,14 @@ namespace API.Controllers
         public AssignmentTransferRequestController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<List<TrasnferRequestDTO>>> GetAllTrasnferRequest()
+        {
+            var query = new GetAllTransferRequestQuery();
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("{assignmentId:guid}/reconcilliation-summary")]

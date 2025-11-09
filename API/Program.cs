@@ -6,6 +6,7 @@ using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
+using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using Application.Features.Auth.Queries;
 using Application.Features.Batches.Commands.AddBatch;
@@ -29,6 +30,7 @@ using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using Application.Features.Materials.Commands.AddMaterial;
 using Application.Features.Materials.Queries.GetAllMaterialToWatch;
@@ -45,8 +47,15 @@ using Application.Features.Productions.Query.GetAllProductionByStaffId;
 using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
+using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
+using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
+using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
+using Application.Features.Users.Queries.GetAllQCTransport;
 using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffPerformance;
@@ -157,6 +166,7 @@ builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionSer
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
 builder.Services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRepository>();
 builder.Services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
+builder.Services.AddScoped<IReworkRequestRepository, ReworkRequestRepository>();
 
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
@@ -267,7 +277,12 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetMaterialRequestForQCQuery).Assembly,
                                                                       typeof(GetAllAssignmentByQCIdQuery).Assembly,
                                                                       typeof(GetBatchesByStaffIdQuery).Assembly,
-                                                                      typeof(GetBatchesByQCIdQuery).Assembly
+                                                                      typeof(GetBatchesByQCIdQuery).Assembly,
+                                                                      
+                                                                      typeof(GetAllMaterialRequestQuery).Assembly,
+                                                                      typeof(GetAllTransferRequestQuery).Assembly,
+                                                                      typeof(CreateReworkRequestCommand).Assembly,
+                                                                      typeof(RejectRequestReworkCommand).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
