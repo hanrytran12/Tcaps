@@ -1,8 +1,11 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.CreateMaterialRequestFromQC;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
+using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using MediatR;
@@ -40,6 +43,32 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("admin/all-request")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> GetAllAsync([FromQuery] GetAllMaterialRequestForAdminQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
+        [HttpGet("qc/request")]
+        public async Task<IActionResult> GetByQCIdAsync([FromQuery] string? status)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetMaterialRequestForQCQuery
+            {
+                QcId = Guid.Parse(userIdString),
+                Status = status
+            };
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
         [HttpPost("{assignmentId:guid}/dispatch-materials")]
         [Authorize(Policy = "Lead")]
         public async Task<IActionResult> DispatchMaterialsToAssignment(Guid assignmentId, [FromBody] List<MaterialRequestItemDTO> items)
@@ -56,6 +85,24 @@ namespace API.Controllers
             var result = await _mediator.Send(command);
 
             return result.IsSuccess ? Ok() : BadRequest(result.error);
+        }
+
+        [HttpPost("qc/material-requests")]
+        [Authorize(Policy = "QC")]
+        public async Task<IActionResult> CreateMaterailRequestAsync([FromBody] CreateMaterialRequestFromQCCommand command)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            command.UserId = Guid.Parse(userIdString);
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+                return BadRequest(result);
+
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }
 
         [HttpPut("approve/{id:guid}")]
