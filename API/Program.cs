@@ -47,6 +47,7 @@ using Application.Features.Productions.Query.GetAllProductionByStaffId;
 using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
+using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
 using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
@@ -144,6 +145,7 @@ builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionSer
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
 builder.Services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRepository>();
 builder.Services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
+builder.Services.AddScoped<IReworkRequestRepository, ReworkRequestRepository>();
 
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
@@ -249,7 +251,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(GetUserByWorkshopIdQuery).Assembly,
                                                                       typeof(GetAllMaterialRequestQuery).Assembly,
-                                                                      typeof(GetAllTransferRequestQuery).Assembly
+                                                                      typeof(GetAllTransferRequestQuery).Assembly,
+                                                                      typeof(CreateReworkRequestCommand).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
