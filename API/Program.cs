@@ -47,6 +47,7 @@ using Application.Features.Productions.Query.GetAllProductionByStaffId;
 using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.UpdateProduct;
 using Application.Features.Products.Queries.GetAllProduct;
+using Application.Features.ReworkRequest.Commands.ApproveReworkRequest;
 using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
 using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
 using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
@@ -282,7 +283,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllMaterialRequestQuery).Assembly,
                                                                       typeof(GetAllTransferRequestQuery).Assembly,
                                                                       typeof(CreateReworkRequestCommand).Assembly,
-                                                                      typeof(RejectRequestReworkCommand).Assembly
+                                                                      typeof(RejectRequestReworkCommand).Assembly,
+                                                                      typeof(ApproveReworkRequestCommand).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
