@@ -31,5 +31,10 @@ namespace Domain.Entities
             reworkRequest.AddDomainEvent(new ReworkRequestAddedEvent(assignmentId, qcId, defectiveQuantity, noteQc));
             return reworkRequest;
         }
+
+        public void RejecetedRequest()
+        {
+            Status = "Rejected";
+        }
     }
 }
