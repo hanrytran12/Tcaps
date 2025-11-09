@@ -42,7 +42,7 @@ namespace Domain.Entities
                 throw new InvalidOperationException("Only pending requests can be approved.");
 
             Status = "Approved";
-            AddDomainEvent(new MaterialRequestApprovedEvent(MaterialId, BatchId, QuantityRequest));
+            AddDomainEvent(new MaterialRequestApprovedEvent(MaterialId, UserId, BatchId, QuantityRequest));
         }
 
         public void MarkAsConfirmed(decimal actualReceivedQuantity, string noteFromQC)

@@ -14,7 +14,7 @@ namespace Application.Features.MaterialRequest.Events
 
         public async Task Handle(MaterialRequestApprovedEvent notification, CancellationToken cancellationToken)
         {
-            await _notificationService.SendMaterialRequestApprovalNotificationAsync(notification.MaterialId, notification.BatchId, notification.QuantityRequest);
+            await _notificationService.SendMaterialRequestApprovalNotificationAsync(notification.MaterialId, notification.Qc_Id, notification.BatchId, notification.QuantityRequest);
         }
     }
 }
