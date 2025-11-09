@@ -36,5 +36,10 @@ namespace Domain.Entities
         {
             Status = "Rejected";
         }
+
+        public void ApproveRequest()
+        {
+            Status = "Approved";
+        }
     }
 }
