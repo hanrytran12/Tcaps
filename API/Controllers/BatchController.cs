@@ -4,6 +4,8 @@ using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
+using Application.Features.Batches.Queries.GetBatchesByQCId;
+using Application.Features.Batches.Queries.GetBatchesByStaffId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
 using MediatR;
@@ -94,6 +96,45 @@ namespace API.Controllers
             var command = new DeleteBatchCommand(id);
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : BadRequest(result.error);
+        }
+
+        [HttpGet("staff/bactches")]
+        public async Task<IActionResult> GetBatchesByStaffIdAsync()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Không thể xác định người dùng từ token.");
+            }
+
+            var query = new GetBatchesByStaffIdQuery
+            {
+                StaffId = Guid.Parse(userIdString)
+            };
+
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
+        [HttpGet("qc/bactches")]
+        [Authorize(Policy = "QC")]
+        public async Task<IActionResult> GetBatchesByQCIdAsync()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized("Không thể xác định người dùng từ token.");
+            }
+
+            var query = new GetBatchesByQCIdQuery
+            {
+                QcId = Guid.Parse(userIdString)
+            };
+
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }
     }
 }

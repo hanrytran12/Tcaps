@@ -82,6 +82,12 @@ using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferReques
 using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
 using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
 using Application.Features.Users.Queries.GetAllQCTransport;
+using Application.Features.MaterialRequest.Commands.CreateMaterialRequestFromQC;
+using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
+using Application.Features.Batches.Queries.GetBatchesByStaffId;
+using Application.Features.Batches.Queries.GetBatchesByQCId;
+using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
+using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -254,7 +260,14 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllMaterialToWatchQuery).Assembly,
                                                                       typeof(AddMaterialCommand).Assembly,
 
-                                                                      typeof(GetUserByWorkshopIdQuery).Assembly
+                                                                      typeof(GetUserByWorkshopIdQuery).Assembly,
+
+                                                                      typeof(CreateMaterialRequestFromQCCommand).Assembly,
+                                                                      typeof(GetAllMaterialRequestForAdminQuery).Assembly,
+                                                                      typeof(GetMaterialRequestForQCQuery).Assembly,
+                                                                      typeof(GetAllAssignmentByQCIdQuery).Assembly,
+                                                                      typeof(GetBatchesByStaffIdQuery).Assembly,
+                                                                      typeof(GetBatchesByQCIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

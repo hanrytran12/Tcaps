@@ -174,4 +174,6 @@ select * from ComponentDefects
 select * from MaterialWorkshops
 select * from Batches
 select * from TaskTransferRequests
-update Productions set Date = '2025-11-06' where Id = 'A1B2C3D4-E5F6-4A5B-8C9D-3E3F3A3B3C3D'
+select * from MaterialRequests
+select * from Materials
+update Assignments set EndDate = '2025-11-10'  where Id = 'E2F3A4B5-C6D7-4E5F-9A1B-2C3D4E5F6A7B'
