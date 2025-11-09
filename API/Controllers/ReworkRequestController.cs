@@ -1,4 +1,5 @@
 ﻿using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
+using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -22,6 +23,14 @@ namespace API.Controllers
             var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
             command.QCId = userId;
             var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpPut("{requestId:guid}/rejected")]
+        public async Task<IActionResult> RejectReworkRequest(Guid requestId)
+        {
+            var query = new RejectRequestReworkCommand(requestId);
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }

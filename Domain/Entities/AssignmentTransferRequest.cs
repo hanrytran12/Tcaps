@@ -33,7 +33,7 @@ namespace Domain.Entities
 
         public void MarkAsApproved()
         {
-            this.Status = "Apprvoed";
+            this.Status = "Approved";
         }
     }
 }

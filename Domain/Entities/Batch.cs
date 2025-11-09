@@ -118,7 +118,7 @@ namespace Domain.Entities
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
-            currentAssignment.UpdateStatus("Completed");
+            //currentAssignment.UpdateStatus("Completed");
 
             var currentSteporder = currentAssignment.StepOrder;
             var nextAssignment = this.Assignments.Where(a => a.StepOrder > currentSteporder).OrderBy(a => a.StepOrder).FirstOrDefault();
