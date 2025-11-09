@@ -34,7 +34,7 @@ namespace Infrastructure.Persistence
         public DbSet<MaterialWorkshop> MaterialWorkshops { get; set; }
         public DbSet<TaskTransferRequest> TaskTransferRequests { get; set; }
         public DbSet<WorkshopInventory> WorkshopInventory { get; set; }
-
+        public DbSet<ReworkRequest> ReworkRequests { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
