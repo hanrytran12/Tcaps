@@ -1,8 +1,9 @@
-﻿using Domain.Primitives;
+﻿using Domain.Events;
+using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class ReworkRequest : Entity
+    public class ReworkRequest : AggregrateRoot
     {
         public Guid QcId { get; private set; }
         public Guid AssignmentId { get; private set; }
@@ -26,7 +27,9 @@ namespace Domain.Entities
 
         public static ReworkRequest Create(Guid qcId, Guid assignmentId, decimal defectiveQuantity, string noteQc)
         {
-            return new ReworkRequest(Guid.NewGuid(), qcId, assignmentId, defectiveQuantity, noteQc);
+            var reworkRequest = new ReworkRequest(Guid.NewGuid(), qcId, assignmentId, defectiveQuantity, noteQc);
+            reworkRequest.AddDomainEvent(new ReworkRequestAddedEvent(assignmentId, qcId, defectiveQuantity, noteQc));
+            return reworkRequest;
         }
     }
 }
