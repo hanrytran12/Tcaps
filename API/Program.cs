@@ -79,6 +79,26 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
 
+using Application.Features.Incomes.Queries.GetIncomesByStaffId;
+using Application.Features.Incomes.Command.AddIncome;
+using Domain.Events;
+using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
+using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
+using Application.Features.Users.Queries.GetGroupProgress;
+using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
+using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
+using Application.Features.Users.Queries.GetAllQCTransport;
+using Application.Features.MaterialRequest.Commands.CreateMaterialRequestFromQC;
+using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
+using Application.Features.Batches.Queries.GetBatchesByStaffId;
+using Application.Features.Batches.Queries.GetBatchesByQCId;
+using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
+using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
+
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
 
@@ -252,6 +272,14 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(AddMaterialCommand).Assembly,
 
                                                                       typeof(GetUserByWorkshopIdQuery).Assembly,
+
+                                                                      typeof(CreateMaterialRequestFromQCCommand).Assembly,
+                                                                      typeof(GetAllMaterialRequestForAdminQuery).Assembly,
+                                                                      typeof(GetMaterialRequestForQCQuery).Assembly,
+                                                                      typeof(GetAllAssignmentByQCIdQuery).Assembly,
+                                                                      typeof(GetBatchesByStaffIdQuery).Assembly,
+                                                                      typeof(GetBatchesByQCIdQuery).Assembly,
+                                                                      
                                                                       typeof(GetAllMaterialRequestQuery).Assembly,
                                                                       typeof(GetAllTransferRequestQuery).Assembly,
                                                                       typeof(CreateReworkRequestCommand).Assembly,

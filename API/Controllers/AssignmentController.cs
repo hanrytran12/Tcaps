@@ -3,6 +3,7 @@ using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Assignments.Commands.PlanAssignments;
+using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
 using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Interfaces;
@@ -81,6 +82,23 @@ namespace API.Controllers
             var query = new GetAssignmentsByStaffIdQuery
             {
                 StaffId = Guid.Parse(userIdString)
+            };
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("qc/assignments")]
+        public async Task<IActionResult> GetAssignmentForQCIdAsync()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetAllAssignmentByQCIdQuery
+            {
+                QcId = Guid.Parse(userIdString)
             };
             var result = await _mediator.Send(query);
             return Ok(result);
