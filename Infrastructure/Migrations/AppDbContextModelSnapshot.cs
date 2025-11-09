@@ -520,6 +520,37 @@ namespace Infrastructure.Migrations
                     b.ToTable("Productions");
                 });
 
+            modelBuilder.Entity("Domain.Entities.ReworkRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssignmentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateOnly>("CreatedAt")
+                        .HasColumnType("date");
+
+                    b.Property<decimal>("DefectiveQuantity")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("NoteQc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("QcId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ReworkRequests");
+                });
+
             modelBuilder.Entity("Domain.Entities.TaskTransferRequest", b =>
                 {
                     b.Property<Guid>("Id")

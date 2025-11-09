@@ -171,6 +171,23 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ReworkRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QcId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AssignmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DefectiveQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    NoteQc = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReworkRequests", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TaskTransferRequests",
                 columns: table => new
                 {
@@ -435,6 +452,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "ReworkRequests");
 
             migrationBuilder.DropTable(
                 name: "TaskTransferRequests");
