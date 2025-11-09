@@ -33,6 +33,13 @@ namespace Infrastructure.Repositories
             return await _context.MaterialRequests.FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<IEnumerable<MaterialRequest>> GetByQCIdAsync(Guid qcId)
+        {
+            return await _context.MaterialRequests
+                .Where(m => m.UserId == qcId)
+                .ToListAsync();
+        }
+
         public void Update(MaterialRequest materialRequest)
         {
             _context.MaterialRequests.Update(materialRequest);

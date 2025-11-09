@@ -66,9 +66,10 @@ namespace Infrastructure.Services
             return _responseDTO;
         }
 
-        public async Task SendMaterialRequestApprovalNotificationAsync(Guid materialId, Guid batchId, decimal quantityRequest)
+        public async Task SendMaterialRequestApprovalNotificationAsync(Guid materialId, Guid qcId, Guid batchId, decimal quantityRequest)
         {
             var user = await _userRepository.GetByRoleAsync("Lead");
+            var qc = await _userRepository.GetByIdAsync(qcId);
             var batch = await _batchRepository.GetByIdAsync(batchId);
             var material = await _materialRepository.GetByIdAsync(materialId);
             var admin = await _userRepository.GetByRoleAsync("Admin");
@@ -76,9 +77,13 @@ namespace Infrastructure.Services
             var title = "Material Request Approved";
             var message = $"Lead {user?.FullName} is approve request for {quantityRequest} of material {material?.Name} for batch {batch?.Code}.";
             var type = "MaterialRequestApproval";
-            var notification = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
+            var notificationAdmin = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
 
-            await _notificationRepository.AddAsync(notification);
+            await _notificationRepository.AddAsync(notificationAdmin);
+
+            var notificationQC = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
+
+            await _notificationRepository.AddAsync(notificationQC);
             await _unitOfWork.SaveChangesAsync();
         }
 
@@ -309,6 +314,7 @@ namespace Infrastructure.Services
 
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task SendCreateTaskTransferRequestNotificationAsync(Guid batchId, Guid workshopId, Guid qcTransportId, string note)
@@ -323,6 +329,7 @@ namespace Infrastructure.Services
 
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
         }
 
         public async Task SendApproveTaskTransferRequestNotificationAsync(Guid taskTransferRequestId, Guid qcTransportId)
@@ -336,6 +343,25 @@ namespace Infrastructure.Services
 
             var notification = Notification.Create(qcTransport.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendCreateMaterialRequestNotificationAsync(Guid qcId, Guid batchId, Guid assignId)
+        {
+            var lead = await _userRepository.GetByRoleAsync("Lead");
+            var qc = await _userRepository.GetByIdAsync(qcId);
+            if (lead is null || qc is null) return;
+
+            var batch = await _batchRepository.GetByIdAsync(batchId);
+            var workshop = await _workshopRepository.GetByIdAsync(qc.WorkshopId);
+            
+            var title = "Yêu cầu cung cấp thêm vật liệu";
+            var message = $"Yêu cầu cung cấp thêm vật liệu cho lô hàng {batch.Code} tại xưởng {workshop.Name}.";
+            var type = "MaterialRequest";
+
+            var notification = Notification.Create(lead.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
         }
     }
 }
