@@ -2,6 +2,7 @@
 {
     public class TrasnferRequestDTO
     {
+        public Guid TransferRequestId { get; set; }
         public string BatchCode { get; set; } = string.Empty;
         public string WorkshopName { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;

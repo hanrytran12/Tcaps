@@ -23,6 +23,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                         join u in _appDbContext.Users on tr.UserId equals u.Id
                         select new TrasnferRequestDTO
                         {
+                            TransferRequestId = tr.Id,
                             UserName = u.FullName,
                             BatchCode = b.Code,
                             WorkshopName = w.Name,
