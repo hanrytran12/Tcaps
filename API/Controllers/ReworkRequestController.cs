@@ -1,4 +1,5 @@
-﻿using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
+﻿using Application.Features.ReworkRequest.Commands.ApproveReworkRequest;
+using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
 using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,14 @@ namespace API.Controllers
         {
             var query = new RejectRequestReworkCommand(requestId);
             var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpPut("{requestId:guid}/approved")]
+        public async Task<IActionResult> ApproveReworkRequest(Guid requestId, [FromBody] ApproveReworkRequestCommand command)
+        {
+            command.RequestId = requestId;
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
     }

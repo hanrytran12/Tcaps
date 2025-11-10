@@ -9,8 +9,9 @@ namespace Domain.Entities
         public int Quantity { get; private set; }
         public DateOnly Date { get; private set; }
         public string Status { get; private set; } = string.Empty;
+        public Guid? ReworkRequestId { get; private set; }
 
-        public Production(Guid id, Guid assignId, Guid userId, int quantity)
+        public Production(Guid id, Guid assignId, Guid userId, int quantity, Guid? reworkRequestId)
             : base(id)
         {
             AssignId = assignId;
@@ -18,15 +19,16 @@ namespace Domain.Entities
             Quantity = quantity;
             Date = DateOnly.FromDateTime(DateTime.UtcNow);
             Status = "PendingQC";
+            ReworkRequestId = reworkRequestId;
 
             //AddDomainEvent(new ProductionCreatedEvent(assignId, userId, quantity));
         }
 
         private Production() : base(Guid.NewGuid()) { }
 
-        public static Production Create(Guid assignId, Guid userId, int quantity)
+        public static Production Create(Guid assignId, Guid userId, int quantity, Guid? reworkRequestId)
         {
-            return new Production(Guid.NewGuid(), assignId, userId, quantity);
+            return new Production(Guid.NewGuid(), assignId, userId, quantity, reworkRequestId);
         }
 
         public void IncreaseQuantity()
