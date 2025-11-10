@@ -180,7 +180,9 @@ namespace Infrastructure.Migrations
                     DefectiveQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     NoteQc = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
+                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    DeliveryDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    EndDate = table.Column<DateOnly>(type: "date", nullable: true)
                 },
                 constraints: table =>
                 {

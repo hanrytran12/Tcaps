@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251109144955_Init")]
-    partial class Init
+    [Migration("20251110092211_AddReworkRequestIDToProductions")]
+    partial class AddReworkRequestIDToProductions
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -507,6 +507,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<Guid?>("ReworkRequestId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -537,6 +540,12 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("DefectiveQuantity")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateOnly?>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("NoteQc")
                         .IsRequired()

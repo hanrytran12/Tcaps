@@ -11,6 +11,8 @@ namespace Domain.Entities
         public string NoteQc { get; private set; } = string.Empty;
         public string Status { get; private set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
+        public DateOnly? DeliveryDate { get; private set; }
+        public DateOnly? EndDate { get; private set; }
 
         public ReworkRequest(Guid id, Guid qcId, Guid assignmentId, decimal defectiveQuantity, string noteQc)
             : base(id)
@@ -35,6 +37,23 @@ namespace Domain.Entities
         public void RejecetedRequest()
         {
             Status = "Rejected";
+        }
+
+        public void ApproveRequest(DateOnly deliveryDate, DateOnly endDate)
+        {
+            Status = "Approved";
+            DeliveryDate = deliveryDate;
+            EndDate = endDate;
+        }
+
+        public void InProgressRequest()
+        {
+            Status = "InProgress";
+        }
+
+        public void Active()
+        {
+            Status = "ReadyForTransfer";
         }
     }
 }
