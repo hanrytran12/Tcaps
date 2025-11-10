@@ -57,6 +57,16 @@ namespace Infrastructure.BackgroundServices
                     }
                     await unitOfWork.SaveChangesAsync(cancellationToken);
                 }
+
+                var reworkRequestToUpdate = await context.ReworkRequests.Where(r => r.EndDate == today && r.Status == "InProgress").ToListAsync(cancellationToken);
+                if (reworkRequestToUpdate.Any())
+                {
+                    foreach (var reworkRequest in reworkRequestToUpdate)
+                    {
+                        reworkRequest.Active();
+                    }
+                    await unitOfWork.SaveChangesAsync();
+                }
             }
         }
     }
