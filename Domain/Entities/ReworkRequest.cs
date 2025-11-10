@@ -45,5 +45,10 @@ namespace Domain.Entities
             DeliveryDate = deliveryDate;
             EndDate = endDate;
         }
+
+        public void InProgressRequest()
+        {
+            Status = "InProgres";
+        }
     }
 }
