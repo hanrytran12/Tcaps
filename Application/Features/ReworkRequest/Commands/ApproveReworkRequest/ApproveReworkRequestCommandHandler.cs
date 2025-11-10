@@ -27,7 +27,7 @@ namespace Application.Features.ReworkRequest.Commands.ApproveReworkRequest
             assignment.UpdateStatus("Reworking");
 
             var reworkRequest = queryInfo.rr;
-            reworkRequest.ApproveRequest();
+            reworkRequest.ApproveRequest(request.DeliveryDate, request.EndDate);
 
             return Result.Success();
         }

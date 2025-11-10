@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251109144955_Init")]
+    [Migration("20251110043231_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -537,6 +537,12 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("DefectiveQuantity")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateOnly?>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("NoteQc")
                         .IsRequired()
