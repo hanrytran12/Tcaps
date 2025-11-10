@@ -36,10 +36,10 @@ namespace API.Controllers
         }
 
         [HttpPut("{requestId:guid}/approved")]
-        public async Task<IActionResult> ApproveReworkRequest(Guid requestId, [FromBody] DateOnly deliveryMaterial)
+        public async Task<IActionResult> ApproveReworkRequest(Guid requestId, [FromBody] ApproveReworkRequestCommand command)
         {
-            var query = new ApproveReworkRequestCommand(requestId, deliveryMaterial);
-            var result = await _mediator.Send(query);
+            command.RequestId = requestId;
+            var result = await _mediator.Send(command);
             return Ok(result);
         }
     }
