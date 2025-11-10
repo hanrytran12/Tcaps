@@ -9,6 +9,7 @@ namespace Domain.Entities
         public int Quantity { get; private set; }
         public DateOnly Date { get; private set; }
         public string Status { get; private set; } = string.Empty;
+        public Guid? ReworkRequestId { get; private set; }
 
         public Production(Guid id, Guid assignId, Guid userId, int quantity)
             : base(id)
