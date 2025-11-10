@@ -48,7 +48,12 @@ namespace Domain.Entities
 
         public void InProgressRequest()
         {
-            Status = "InProgres";
+            Status = "InProgress";
+        }
+
+        public void Active()
+        {
+            Status = "ReadyForTransfer";
         }
     }
 }
