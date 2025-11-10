@@ -535,6 +535,12 @@ namespace Infrastructure.Migrations
                     b.Property<decimal>("DefectiveQuantity")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<DateOnly?>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("EndDate")
+                        .HasColumnType("date");
+
                     b.Property<string>("NoteQc")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
