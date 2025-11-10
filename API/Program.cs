@@ -98,6 +98,7 @@ using Application.Features.Batches.Queries.GetBatchesByStaffId;
 using Application.Features.Batches.Queries.GetBatchesByQCId;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
 using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
+using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -284,7 +285,10 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllTransferRequestQuery).Assembly,
                                                                       typeof(CreateReworkRequestCommand).Assembly,
                                                                       typeof(RejectRequestReworkCommand).Assembly,
+
+                                                                      typeof(GetAssignmentByBatchIdQuery).Assembly,
                                                                       typeof(ApproveReworkRequestCommand).Assembly
+
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
