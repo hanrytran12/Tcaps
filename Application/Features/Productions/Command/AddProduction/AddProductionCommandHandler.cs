@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
@@ -26,7 +21,7 @@ namespace Application.Features.Productions.Command.AddProduction
 
         public async Task<Result<Guid>> Handle(AddProductionCommand request, CancellationToken cancellationToken)
         {
-            var production = new Production(Guid.NewGuid(), request.AssignId, request.UserId, request.Quantity);
+            var production = new Production(Guid.NewGuid(), request.AssignId, request.UserId, request.Quantity, null);
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user == null)
             {

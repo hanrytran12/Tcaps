@@ -19,8 +19,20 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
         public async Task<Result> Handle(AddProductionReportCommand request, CancellationToken cancellationToken)
         {
-            var production = Production.Create(request.AssignId, request.StaffId, request.Quantity);
-            await _productionRepository.AddAsync(production);
+            var assignment = await _appDbContext.Assignments.Where(a => a.Id == request.AssignId).FirstOrDefaultAsync(cancellationToken);
+
+            if (assignment.Status == "Reworking")
+            {
+                var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == assignment.Id && r.Status == "InProgress").FirstOrDefaultAsync(cancellationToken);
+                var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, reworkRequest?.Id);
+                await _productionRepository.AddAsync(production);
+            }
+            else
+            {
+                var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, null);
+                await _productionRepository.AddAsync(production);
+            }
+
 
             if (request.MaterialUsed.Count() > 0)
             {
