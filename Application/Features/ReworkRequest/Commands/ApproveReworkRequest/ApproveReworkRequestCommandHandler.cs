@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.Interfaces;
+using Domain.Events;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +29,8 @@ namespace Application.Features.ReworkRequest.Commands.ApproveReworkRequest
 
             var reworkRequest = queryInfo.rr;
             reworkRequest.ApproveRequest(request.DeliveryDate, request.EndDate);
+
+            reworkRequest.AddDomainEvent(new ReworkRequestApprovedEvent(reworkRequest.QcId, request.DeliveryDate, request.EndDate));
 
             return Result.Success();
         }
