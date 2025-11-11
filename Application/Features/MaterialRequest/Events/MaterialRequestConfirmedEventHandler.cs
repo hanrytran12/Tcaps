@@ -1,6 +1,8 @@
-﻿using Domain.Events;
+﻿using Application.Interfaces;
+using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.MaterialRequest.Events
 {
@@ -10,13 +12,15 @@ namespace Application.Features.MaterialRequest.Events
         private readonly IMaterialUseRepository _materialUseRepository;
         private readonly IWorkshopInventoryRepository _workshopInventoryRepository;
         private readonly IAssignmentRepository _assignmentRepository;
+        private readonly IAppDbContext _appDbContext;
 
-        public MaterialRequestConfirmedEventHandler(IMaterialUseRepository materialUseRepository, IMaterialRepository materialRepository, IWorkshopInventoryRepository workshopInventoryRepository, IAssignmentRepository assignmentRepository)
+        public MaterialRequestConfirmedEventHandler(IMaterialUseRepository materialUseRepository, IMaterialRepository materialRepository, IWorkshopInventoryRepository workshopInventoryRepository, IAssignmentRepository assignmentRepository, IAppDbContext appDbContext)
         {
             _materialRepository = materialRepository;
             _materialUseRepository = materialUseRepository;
             _workshopInventoryRepository = workshopInventoryRepository;
             _assignmentRepository = assignmentRepository;
+            _appDbContext = appDbContext;
         }
 
         public async Task Handle(MaterialRequestConfirmedEvent notification, CancellationToken cancellationToken)
@@ -31,8 +35,18 @@ namespace Application.Features.MaterialRequest.Events
                 workshopInventory.DecreaseQuantity(workshopInventory.Quantity);
             }
 
-            var materialUse = Domain.Entities.MaterialUse.Create(notification.MaterialId, notification.BatchId, notification.AssignId, notification.ActualReceivedQuantity);
-            await _materialUseRepository.AddAsync(materialUse);
+            if (assignment.Status != "Reworking")
+            {
+                var materialUse = Domain.Entities.MaterialUse.Create(notification.MaterialId, notification.BatchId, notification.AssignId, notification.ActualReceivedQuantity, null);
+                await _materialUseRepository.AddAsync(materialUse);
+
+            }
+            else
+            {
+                var reworkRequest = await _appDbContext.ReworkRequests.AsNoTracking().Where(r => r.AssignmentId == assignment.Id).SingleOrDefaultAsync();
+                var materialUse = Domain.Entities.MaterialUse.Create(notification.MaterialId, notification.BatchId, notification.AssignId, notification.ActualReceivedQuantity, reworkRequest.Id);
+                await _materialUseRepository.AddAsync(materialUse);
+            }
 
             var material = await _materialRepository.GetByIdAsync(notification.MaterialId);
             material?.DecreaseQuantity((int)notification.QuantityRequest);
