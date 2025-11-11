@@ -1,6 +1,7 @@
 ﻿using Application.Features.ReworkRequest.Commands.ApproveReworkRequest;
 using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
 using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
+using Application.Features.ReworkRequest.Queries.GetReworkReconciliationSummary;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -16,6 +17,14 @@ namespace API.Controllers
         public ReworkRequestController(IMediator mediator)
         {
             _mediator = mediator;
+        }
+
+        [HttpGet("{reworkRequestId:guid}/summary")]
+        public async Task<IActionResult> GetReworkReconciliationSummary(Guid reworkRequestId)
+        {
+            var query = new GetReworkReconciliationSummaryQuery(reworkRequestId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost]

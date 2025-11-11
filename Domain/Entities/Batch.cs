@@ -137,10 +137,21 @@ namespace Domain.Entities
 
         public void UpdateMaterialUsage(Guid assignmentId, Guid materialId, decimal reconciledQuantity, Guid userId)
         {
-            var currentMaterialUsage = this.MaterialUses.FirstOrDefault(m => m.AssignId == assignmentId && m.MaterialId == materialId);
-            currentMaterialUsage.UpdateReconciledQuantity(reconciledQuantity);
+            var assignmentCurrent = this.Assignments.FirstOrDefault(a => a.Id == assignmentId);
 
-            AddDomainEvent(new MaterialUsageReconciledEvent(Code, currentMaterialUsage.Id, userId, reconciledQuantity));
+            if (assignmentCurrent.Status == "Reworking")
+            {
+                var currentMaterialUsage = this.MaterialUses.FirstOrDefault(m => m.AssignId == assignmentId && m.MaterialId == materialId && m.ReworkRequestId != null);
+                currentMaterialUsage.UpdateReconciledQuantity(reconciledQuantity);
+                AddDomainEvent(new MaterialUsageReconciledEvent(Code, currentMaterialUsage.Id, userId, reconciledQuantity));
+            }
+
+            else
+            {
+                var currentMaterialUsage = this.MaterialUses.FirstOrDefault(m => m.AssignId == assignmentId && m.MaterialId == materialId);
+                currentMaterialUsage.UpdateReconciledQuantity(reconciledQuantity);
+                AddDomainEvent(new MaterialUsageReconciledEvent(Code, currentMaterialUsage.Id, userId, reconciledQuantity));
+            }
         }
     }
 }

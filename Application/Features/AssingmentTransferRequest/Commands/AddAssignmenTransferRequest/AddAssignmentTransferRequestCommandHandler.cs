@@ -30,10 +30,10 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 return Result<Guid>.Failure("Assignment is not exist");
             }
 
-            if (assignment.Status != "ReadyForTransfer")
-            {
-                return Result<Guid>.Failure("Công đoạn này chưa sẵn sàng để chuyển giao.");
-            }
+            //if (assignment.Status != "ReadyForTransfer")
+            //{
+            //    return Result<Guid>.Failure("Công đoạn này chưa sẵn sàng để chuyển giao.");
+            //}
 
             var batch = await _batchRepository.GetByIdAssignmentWithMaterialUse(request.AssignmentId);
 
@@ -50,7 +50,18 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 }
             }
 
-            var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
+            decimal completedQuantity = 0;
+
+            if (assignment.Status == "Reworking")
+            {
+                completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, request.ReworkRequestId);
+            }
+
+            else
+            {
+                completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, null);
+            }
+            //var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
 
             var requestTransfer = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantity, request.Note);
             await _assignmentTransferRequestRepository.AddAsync(requestTransfer);

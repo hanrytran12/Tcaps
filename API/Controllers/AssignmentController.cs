@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using Application.DTOs.Request;
+﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Assignments.Commands.PlanAssignments;
@@ -11,6 +10,7 @@ using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -25,14 +25,6 @@ namespace API.Controllers
         {
             _mediator = mediator;
             _assignmentCompletionService = assignmentCompletionService;
-        }
-
-        [HttpGet("{assignmentId:guid}/completion-stats")]
-        [Authorize(Policy = "QC")]
-        public async Task<IActionResult> CompletionStats(Guid assignmentId)
-        {
-            var totalQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assignmentId);
-            return Ok(totalQuantity);
         }
 
         [HttpGet("{assignmentId:guid}/allocated-materials")]
