@@ -33,6 +33,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
                 where a.WorkshopId == staff.WorkshopId
                 select new BatchDTO
                 {
+                    BatchId = b.Id,
                     ProductName = p.Name,
                     Code = b.Code,
                     Quantity = b.Quantity,
