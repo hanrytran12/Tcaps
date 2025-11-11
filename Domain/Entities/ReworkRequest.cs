@@ -55,5 +55,10 @@ namespace Domain.Entities
         {
             Status = "ReadyForTransfer";
         }
+
+        public void Completed()
+        {
+            Status = "Completed";
+        }
     }
 }
