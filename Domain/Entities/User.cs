@@ -78,5 +78,10 @@ namespace Domain.Entities
         {
             IsQcTransport = true;
         }
+
+        public void MarkAsNotQcTransport()
+        {
+            IsQcTransport = false;
+        }
     }
 }
