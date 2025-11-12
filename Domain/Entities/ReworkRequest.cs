@@ -13,6 +13,7 @@ namespace Domain.Entities
         public DateOnly CreatedAt { get; private set; }
         public DateOnly? DeliveryDate { get; private set; }
         public DateOnly? EndDate { get; private set; }
+        public DateOnly? NextStepDeliveryDate { get; private set; }
 
         public ReworkRequest(Guid id, Guid qcId, Guid assignmentId, decimal defectiveQuantity, string noteQc)
             : base(id)
@@ -39,11 +40,12 @@ namespace Domain.Entities
             Status = "Rejected";
         }
 
-        public void ApproveRequest(DateOnly deliveryDate, DateOnly endDate)
+        public void ApproveRequest(DateOnly deliveryDate, DateOnly endDate, DateOnly nextStepDeliveryDate)
         {
             Status = "Approved";
             DeliveryDate = deliveryDate;
             EndDate = endDate;
+            NextStepDeliveryDate = nextStepDeliveryDate;
         }
 
         public void InProgressRequest()
