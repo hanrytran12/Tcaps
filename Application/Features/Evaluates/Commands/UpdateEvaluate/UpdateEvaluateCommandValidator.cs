@@ -12,7 +12,6 @@ namespace Application.Features.Evaluates.Commands.UpdateEvaluate
         public UpdateEvaluateCommandValidator()
         {
             RuleFor(x => x.QuantityError)
-                .NotEmpty().WithMessage("QuantityError is required.")
                 .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
 
             RuleFor(x => x.Note)

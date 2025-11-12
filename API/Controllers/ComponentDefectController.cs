@@ -34,7 +34,14 @@ namespace API.Controllers
         }
 
         [HttpGet("for-staff")]
-        public async Task<IActionResult> GetAllByEvaluateIdAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
+        public async Task<IActionResult> GetAllByEvaluateIdForStaffAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("for-qc")]
+        public async Task<IActionResult> GetAllByEvaluateIdForQCAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
         {
             var result = await _mediator.Send(query);
             return Ok(result);

@@ -1,9 +1,11 @@
 ﻿using System.Data;
+using System.Net.WebSockets;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Infrastructure.Repositories;
 
 namespace Infrastructure.Services
 {
@@ -16,6 +18,7 @@ namespace Infrastructure.Services
         private readonly IBatchRepository _batchRepository;
         private readonly IWorkshopRepository _workshopRepository;
         private readonly IComponentDefectRepository _componentDefectRepository;
+        private readonly IMaterialRequestRepository _materialRequestRepository;
         private readonly IMapper _mapper;
         private readonly IProductionRepository _productionRepository;
         private readonly IIncomeRepository _incomeRepository;
@@ -24,7 +27,8 @@ namespace Infrastructure.Services
 
         public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
             , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository,
-            IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository, IComponentDefectRepository componentDefectRepository)
+            IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository, IComponentDefectRepository componentDefectRepository,
+            IMaterialRequestRepository materialRequestRepository)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -33,6 +37,7 @@ namespace Infrastructure.Services
             _batchRepository = batchRepository;
             _workshopRepository = workshopRepository;
             _componentDefectRepository = componentDefectRepository;
+            _materialRequestRepository = materialRequestRepository;
             _mapper = mapper;
             _productionRepository = productionRepository;
             _incomeRepository = incomeRepository;
@@ -358,6 +363,64 @@ namespace Infrastructure.Services
             var title = "Yêu cầu cung cấp thêm vật liệu";
             var message = $"Yêu cầu cung cấp thêm vật liệu cho lô hàng {batch.Code} tại xưởng {workshop.Name}.";
             var type = "MaterialRequest";
+
+            var notification = Notification.Create(lead.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendAddMaterialSupplyNotificationAsync(Guid qcTransportId, Guid requestId, Guid materialId, int quantity)
+        {
+            var qcTransport = await _userRepository.GetByIdAsync(qcTransportId);
+
+            var request = await _materialRequestRepository.GetByIdAsync(requestId);
+
+            var batch = await _batchRepository.GetByIdAsync(request.BatchId);
+
+            var qc = await _userRepository.GetByIdAsync(request.UserId);
+
+            var workshop = await _workshopRepository.GetByIdAsync(qc.WorkshopId);
+
+            var material = await _materialRepository.GetByIdAsync(materialId);
+
+            var title = "Yêu cầu cung cấp thêm vật liệu";
+            var message = $"Kho cung cấp thêm {quantity} {material.Unit} vật liệu **{material.Name}** cho lô hàng **{batch.Code}** tại xưởng **{workshop.Name}**.";
+            var type = "MaterialSupply";
+
+            var notification = Notification.Create(qcTransport.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendAddMaterialSupplyForQcWorkshopNotification(Guid qcworkshopId, Guid requestId, Guid materialId, int quantity)
+        {
+            var qc = await _userRepository.GetByIdAsync(qcworkshopId);
+
+            var request = await _materialRequestRepository.GetByIdAsync(requestId);
+
+            var batch = await _batchRepository.GetByIdAsync(request.BatchId);
+
+            var workshop = await _workshopRepository.GetByIdAsync(qc.WorkshopId);
+
+            var material = await _materialRepository.GetByIdAsync(materialId);
+
+            var title = "Yêu cầu cung cấp thêm vật liệu";
+            var message = $"Kho cung cấp thêm {quantity} {material.Unit} vật liệu **{material.Name}** cho lô hàng **{batch.Code}** tại xưởng **{workshop.Name}**.";
+            var type = "MaterialSupply";
+
+            var notification = Notification.Create(qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendCompletedMaterialSupplyNotificationAsync(Guid supplyId, Guid materialId, int quantity)
+        {
+            var material = await _materialRepository.GetByIdAsync(materialId);
+            var lead = await _userRepository.GetByRoleAsync("Lead");
+
+            var title = "Hoàn tất cung cấp vật liệu";
+            var message = $"QC đã nhận đủ {quantity} {material.Unit} vật liệu **{material.Name}** của đơn cung cấp {supplyId}.";
+            var type = "MaterialSupply";
 
             var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
