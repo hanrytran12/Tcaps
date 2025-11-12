@@ -8,8 +8,11 @@
 
   <ItemGroup>
     <Compile Remove="Features\Evaluate\**" />
+    <Compile Remove="Features\MaterialUse\**" />
     <EmbeddedResource Remove="Features\Evaluate\**" />
+    <EmbeddedResource Remove="Features\MaterialUse\**" />
     <None Remove="Features\Evaluate\**" />
+    <None Remove="Features\MaterialUse\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,11 +33,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\MaterialUse\Commands\" />
-    <Folder Include="Features\MaterialUse\Queries\" />
   </ItemGroup>
 
 </Project>
