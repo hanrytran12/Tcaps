@@ -43,8 +43,8 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("admin/all-request")]
-        [Authorize(Policy = "Admin")]
+        [HttpGet("lead/admin/all-request")]
+        [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> GetAllAsync([FromQuery] GetAllMaterialRequestForAdminQuery query)
         {
             var result = await _mediator.Send(query);
