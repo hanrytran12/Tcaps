@@ -38,6 +38,11 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     return Result.Failure("Không tìm thấy công đoạn");
                 }
 
+                if (assigment.Quantity == transferRequest.CompletedQuantity)
+                {
+                    assigment.UpdateStatus("Completed");
+                }
+
                 var batch = await _batchRepository.GetByAssignmentIdAsync(assigment.Id);
                 if (batch is null)
                 {
