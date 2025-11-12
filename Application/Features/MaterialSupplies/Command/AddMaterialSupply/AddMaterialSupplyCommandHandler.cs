@@ -1,0 +1,81 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading.Tasks;
+using Application.Common;
+using Application.Interfaces;
+using Domain.Entities;
+using Domain.Events;
+using Domain.Interfaces;
+using MediatR;
+
+namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
+{
+    public class AddMaterialSupplyCommandHandler : IRequestHandler<AddMaterialSupplyCommand, Result>
+    {
+        private readonly IAppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMediator _mediator;
+
+        public AddMaterialSupplyCommandHandler(IAppDbContext context, IUnitOfWork unitOfWork, IMediator mediator)
+        {
+            _context = context;
+            _unitOfWork = unitOfWork;
+            _mediator = mediator;
+        }
+        public async Task<Result> Handle(AddMaterialSupplyCommand request, CancellationToken cancellationToken)
+        {
+            var lead = await _context.Users.FindAsync(request.LeadId);
+            if (lead == null)
+                return Result.Failure("Lead không tồn tại.");
+
+            var materialRequest = await _context.MaterialRequests.FindAsync(request.RequestId);
+            if (materialRequest == null)
+                return Result.Failure("MaterialRequest không tồn tại.");
+
+            var supplierId = request.SupplierId == Guid.Empty ? request.LeadId : request.SupplierId;
+
+            var qcTransport = await _context.Users.FindAsync(supplierId);
+            if (qcTransport == null)
+                return Result.Failure("Không tìm thấy người phụ trách vận chuyển (QC Transport).");
+
+            if (!qcTransport.IsQcTransport)
+            {
+                qcTransport.MarkAsQcTransport();
+                _context.Users.Update(qcTransport);
+            }
+
+            var supply = MaterialSupply.Create(
+                request.RequestId,
+                request.MaterialId,
+                supplierId,
+                request.Quantity,
+                request.Unit,
+                request.DateShip,
+                request.LeadId // để xác định ai là lead duyệt
+            );
+
+            await _context.MaterialSupplies.AddAsync(supply, cancellationToken);
+
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            if (qcTransport != null && qcTransport.Id != request.LeadId)
+            {
+                await _mediator.Publish(new AddMaterialSupplyForQcTransportEvent(
+                    qcTransport.Id,
+                    request.RequestId,
+                    request.MaterialId,
+                    request.Quantity));
+            }
+
+            await _mediator.Publish(new AddMaterialSupplyForQcWorkshopEvent(
+                materialRequest.UserId,
+                request.RequestId,
+                request.MaterialId,
+                request.Quantity));
+            return Result.Success();
+        }
+    }
+}
