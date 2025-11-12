@@ -16,15 +16,13 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
         private readonly ITaskTransferRequestRepository _taskTransferRequestRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
-        private readonly IUserRepository _userRepository;
 
         public CreateTaskTransferRequestCommandHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IUnitOfWork unitOfWork, 
-            IMediator mediator, IUserRepository userRepository)
+            IMediator mediator)
         {
             _taskTransferRequestRepository = taskTransferRequestRepository;
             _unitOfWork = unitOfWork;
             _mediator = mediator;
-            _userRepository = userRepository;
         }
         public async Task<Result<Guid>> Handle(CreateTaskTransferRequestCommand request, CancellationToken cancellationToken)
         {
@@ -34,14 +32,6 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
                 request.QcTransportId,
                 request.Note);
             await _taskTransferRequestRepository.AddAsync(taskTranfer);
-            
-            //Bật cờ IsQcTransport = true cho user được phân công
-            var qcTransportUser = await _userRepository.GetByIdAsync(request.QcTransportId);
-            if (qcTransportUser != null)
-            {
-                qcTransportUser.MarkAsQcTransport();
-                _userRepository.Update(qcTransportUser);
-            }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 

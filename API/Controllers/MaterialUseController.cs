@@ -15,7 +15,7 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet("for-staff")]
+        [HttpGet("qc/materials/request")]
         public async Task<IActionResult> GetByAssignIdAsync([FromQuery] GetMaterialUseByAssignIdQuery query)
         {
             var result = await _mediator.Send(query);

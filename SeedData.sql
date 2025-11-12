@@ -53,7 +53,9 @@ VALUES
 -- QC
 ('A0000000-0000-0000-0000-000000000005', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QC', N'Hoàng Văn Em', 'qc@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0905678901', 'Active', 0, GETDATE()),
 -- QC Transport
-('A0000000-0000-0000-0000-000000000006', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QCTransport', N'Nguyễn Thị Hạnh', 'qctransport@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0906789012', 'Active', 1, GETDATE());
+('A0000000-0000-0000-0000-000000000006', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QCTransport', N'Nguyễn Thị Hạnh', 'qctransport@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0906789012', 'Active', 0, GETDATE()),
+-- QC Transport
+('A0000000-0000-0000-0000-000000000007', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'QCTransport', N'Nguyễn Văn Bình', 'qctransport2@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0901234568', 'Active', 0, GETDATE());
 
 select * from Materials
 INSERT INTO [Materials] (Id, Name, Description, Quantity, Price, Unit)
@@ -208,3 +210,8 @@ select * from MaterialUse
 select * from Materials
 select * from Incomes
 select * from ComponentDefects
+select * from Workshop
+select * from Notifications
+select * from TaskTransferRequests
+select * from MaterialSupplies
+update Assignments set EndDate = '2025-11-18' where Id = 'E0000000-0000-0000-0000-000000000007'
