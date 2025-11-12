@@ -114,7 +114,7 @@ namespace Domain.Entities
             assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
         }
 
-        public void CompleteAndActiveNextAssignment(Guid completedAssignmentId)
+        public void ActiveNextAssignment(Guid completedAssignmentId)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
