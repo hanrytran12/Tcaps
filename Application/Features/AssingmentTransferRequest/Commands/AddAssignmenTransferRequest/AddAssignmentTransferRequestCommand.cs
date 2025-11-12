@@ -11,6 +11,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
         public Guid UserId { get; set; }
 
         public Guid AssignmentId { get; set; }
+        public Guid? ReworkRequestId { get; set; }
         public string? Note { get; set; }
         public List<MaterialReconciliationDTO>? ReconciliationMaterials { get; set; } = new();
     }

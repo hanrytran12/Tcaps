@@ -38,14 +38,24 @@ namespace Application.Features.Productions.Command.AddProductionReport
             {
                 foreach (var items in request.MaterialUsed)
                 {
-                    var materialUse = await _appDbContext.MaterialUse.FirstOrDefaultAsync(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId);
+                    var listMaterialUse = await _appDbContext.MaterialUse.Where(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId).ToListAsync();
 
-                    if (materialUse is null)
+                    if (listMaterialUse is null)
                     {
                         return Result.Failure("Không tìm thấy MaterailUse");
                     }
 
-                    materialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
+                    if (assignment.Status == "Reworking")
+                    {
+                        var materialUseRework = listMaterialUse.Where(m => m.ReworkRequestId != null).FirstOrDefault();
+                        materialUseRework.IncreaseQuantityStaffUse(items.QuantityUsed);
+                    }
+
+                    else
+                    {
+                        var materialUse = listMaterialUse.Where(m => m.ReworkRequestId == null).FirstOrDefault();
+                        materialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
+                    }
                 }
             }
 

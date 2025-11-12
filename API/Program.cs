@@ -2,7 +2,9 @@
 using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Assignments.Commands.PlanAssignments;
+using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
 using Application.Features.Assignments.Queries.GetAllocatedMaterials;
+using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
 using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
@@ -15,6 +17,8 @@ using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
+using Application.Features.Batches.Queries.GetBatchesByQCId;
+using Application.Features.Batches.Queries.GetBatchesByStaffId;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
 using Application.Features.ComponentDefects.Query.GetComponentDefects;
@@ -28,9 +32,12 @@ using Application.Features.Inventories.Commands.AddInventory;
 using Application.Features.Inventories.Queries.GetInventoryById;
 using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
+using Application.Features.MaterialRequest.Commands.CreateMaterialRequestFromQC;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
+using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using Application.Features.Materials.Commands.AddMaterial;
 using Application.Features.Materials.Queries.GetAllMaterialToWatch;
@@ -50,6 +57,7 @@ using Application.Features.Products.Queries.GetAllProduct;
 using Application.Features.ReworkRequest.Commands.ApproveReworkRequest;
 using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
 using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
+using Application.Features.ReworkRequest.Queries.GetReworkReconciliationSummary;
 using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
@@ -285,7 +293,7 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllAssignmentByQCIdQuery).Assembly,
                                                                       typeof(GetBatchesByStaffIdQuery).Assembly,
                                                                       typeof(GetBatchesByQCIdQuery).Assembly,
-                                                                      
+
                                                                       typeof(GetAllMaterialRequestQuery).Assembly,
                                                                       typeof(GetAllTransferRequestQuery).Assembly,
                                                                       typeof(CreateReworkRequestCommand).Assembly,
@@ -294,10 +302,13 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAssignmentByBatchIdQuery).Assembly,
                                                                       typeof(ApproveReworkRequestCommand).Assembly,
 
+
                                                                       typeof(AddMaterialSupplyCommand).Assembly,
                                                                       typeof(CompletedMaterialSupplyCommand).Assembly,
                                                                       typeof(UpdateInProgressByQcTransportCommand).Assembly,
-                                                                      typeof(GetAllMaterialSuppliesQuery).Assembly
+                                                                      typeof(GetAllMaterialSuppliesQuery).Assembly,
+                                                                      
+                                                                      typeof(GetReworkReconciliationSummaryQuery).Assembly
 
                                                                       ));
 
