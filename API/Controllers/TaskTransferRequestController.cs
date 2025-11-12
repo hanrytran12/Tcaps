@@ -57,7 +57,7 @@ namespace API.Controllers
 
         [HttpPut("approved")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ApproveRequestAsync([FromBody] UpdateApproveTaskTransferRequestCommand command)
+        public async Task<IActionResult> ApproveRequestAsync([FromQuery] UpdateApproveTaskTransferRequestCommand command)
         {
             var result = await _mediator.Send(command);
             return Ok(result);

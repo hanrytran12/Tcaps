@@ -99,6 +99,10 @@ using Application.Features.Batches.Queries.GetBatchesByQCId;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
 using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
 using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
+using Application.Features.MaterialSupplies.Command.AddMaterialSupply;
+using Application.Features.MaterialSupplies.Command.CompletedMaterialSupply;
+using Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTransport;
+using Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -169,6 +173,7 @@ builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopReposito
 builder.Services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRepository>();
 builder.Services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
 builder.Services.AddScoped<IReworkRequestRepository, ReworkRequestRepository>();
+builder.Services.AddScoped<IMaterialSupplyRepository, MaterialSupplyRepository>();
 
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
@@ -287,7 +292,12 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(RejectRequestReworkCommand).Assembly,
 
                                                                       typeof(GetAssignmentByBatchIdQuery).Assembly,
-                                                                      typeof(ApproveReworkRequestCommand).Assembly
+                                                                      typeof(ApproveReworkRequestCommand).Assembly,
+
+                                                                      typeof(AddMaterialSupplyCommand).Assembly,
+                                                                      typeof(CompletedMaterialSupplyCommand).Assembly,
+                                                                      typeof(UpdateInProgressByQcTransportCommand).Assembly,
+                                                                      typeof(GetAllMaterialSuppliesQuery).Assembly
 
                                                                       ));
 

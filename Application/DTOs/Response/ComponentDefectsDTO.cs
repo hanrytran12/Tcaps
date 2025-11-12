@@ -2,6 +2,7 @@
 {
     public class ComponentDefectsDTO
     {
+        public Guid Id { get; set; }
         public string DefectType { get; set; } = string.Empty;
         public string Serverity { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
