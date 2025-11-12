@@ -36,6 +36,10 @@ namespace Domain.Entities
         }
 
         public void MarkAsInProgress() => Status = "InProgress";
-        public void MarkAsCompleted() => Status = "Completed";
+        public void MarkAsCompleted()
+        {
+            Status = "Completed";
+            DateReceive = DateOnly.FromDateTime(DateTime.Now);
+        }
     }
 }

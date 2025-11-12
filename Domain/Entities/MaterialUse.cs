@@ -47,5 +47,13 @@ namespace Domain.Entities
 
             ReconciledQuantity += quantity;
         }
+
+        public void IncreaseQuantityRequest(int quantityProduction)
+        {
+            if (quantityProduction < 0)
+                throw new InvalidOperationException("Quantity cannot be negative.");
+
+            QuantityRequest += quantityProduction;
+        }
     }
 }

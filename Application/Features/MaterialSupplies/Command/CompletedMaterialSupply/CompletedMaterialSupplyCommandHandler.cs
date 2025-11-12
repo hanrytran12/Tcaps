@@ -53,7 +53,7 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             if (materialUse == null)
                 return Result<Guid>.Failure("Không tìm thấy bản ghi sử dụng vật liệu cho lô hàng này.");
 
-            materialUse.IncreaseQuantityStaffUse(materialSupply.Quantity);
+            materialUse.IncreaseQuantityRequest(materialSupply.Quantity);
             _context.MaterialUse.Update(materialUse);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
