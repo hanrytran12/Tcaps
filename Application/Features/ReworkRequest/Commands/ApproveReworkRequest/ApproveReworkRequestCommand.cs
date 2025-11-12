@@ -10,5 +10,6 @@ namespace Application.Features.ReworkRequest.Commands.ApproveReworkRequest
         public Guid RequestId { get; set; }
         public DateOnly DeliveryDate { get; set; }
         public DateOnly EndDate { get; set; }
+        public DateOnly NextStepDeliveryDate { get; set; }
     }
 }

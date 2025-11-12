@@ -2,6 +2,6 @@
 {
     public interface IAssignmentCompletionService
     {
-        Task<decimal> CalculateCompetedQuantityAsync(Guid assignmentId);
+        Task<decimal> CalculateCompetedQuantityAsync(Guid assignmentId, Guid? reworkRequestId);
     }
 }
