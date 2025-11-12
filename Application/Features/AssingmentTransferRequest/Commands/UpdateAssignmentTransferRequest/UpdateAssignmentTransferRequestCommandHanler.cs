@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.Interfaces;
+using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +44,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     return Result.Failure("Không tìm thấy lô hàng");
                 }
 
-                batch.CompleteAndActiveNextAssignment(assigment.Id);
+                batch.ActiveNextAssignment(assigment.Id);
             }
             else
             {
@@ -52,6 +53,8 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
 
                 var assignment = await _assignmentRepository.GetByIdAsync(reworkRequest.AssignmentId);
                 assignment.UpdateStatus("Completed");
+
+                reworkRequest.AddDomainEvent(new ReworkRequestCompletedEvent(reworkRequest.Id));
             }
 
             transferRequest.MarkAsApproved();
