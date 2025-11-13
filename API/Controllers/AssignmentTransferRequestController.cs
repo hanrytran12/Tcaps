@@ -21,10 +21,27 @@ namespace API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Lead,QCTransport")]
         public async Task<ActionResult<List<TrasnferRequestDTO>>> GetAllTrasnferRequest()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var isQcTransport = User.FindFirstValue("isQcTransport");
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            // Chỉ cho phép nếu có claim isQcTransport = true
+            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            {
+                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
+            }
+
             var query = new GetAllTransferRequestQuery();
             var result = await _mediator.Send(query);
+
             return Ok(result);
         }
 
@@ -54,9 +71,25 @@ namespace API.Controllers
         }
 
         [HttpPut("approved/{transferRequestId:guid}")]
+        [Authorize(Roles = "Lead,QCTransport")]
         public async Task<IActionResult> ApproveTrasnferRequest(Guid transferRequestId)
         {
-            var command = new UpdateAssignmentTransferRequestCommand(transferRequestId);
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var isQcTransport = User.FindFirstValue("isQcTransport");
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            // Chỉ cho phép nếu có claim isQcTransport = true
+            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            {
+                return Forbid("Chỉ người có quyền QCTransport mới được phép truy cập.");
+            }
+
+            var command = new UpdateAssignmentTransferRequestCommand(transferRequestId, Guid.Parse(userIdString));
             var result = await _mediator.Send(command);
             return (result.IsSuccess) ? NoContent() : BadRequest(result.error);
         }
