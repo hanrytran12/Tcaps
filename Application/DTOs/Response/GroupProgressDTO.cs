@@ -11,7 +11,7 @@ namespace Application.DTOs.Response
         public string WorkshopName { get; set; } = string.Empty;
         public int Target { get; set; }
         public int CurrentProduction { get; set; }
-        public double ProgressPercent { get; set; }
+        public int TotalUnfixable { get; set; }
         public int RemainingProducts { get; set; }
         public int DaysLeft { get; set; }
         public List<string> Members { get; set; } = new();

@@ -26,7 +26,7 @@ namespace Application.Features.Users.Queries.GetStaffDashboard
                 return Result<StaffDashboardDTO>.Success(new StaffDashboardDTO());
             }
 
-            var currentAssignment = await _appDbContext.Assignments.AsNoTracking().FirstOrDefaultAsync(a => a.WorkshopId == user.WorkshopId && a.Status == "InProgress");
+            var currentAssignment = await _appDbContext.Assignments.AsNoTracking().FirstOrDefaultAsync(a => a.Id == request.AssignId && a.Status == "InProgress");
 
             if (currentAssignment is null)
             {
