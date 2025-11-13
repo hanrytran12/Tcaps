@@ -1,11 +1,9 @@
-﻿using System.Data;
-using System.Net.WebSockets;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
-using Infrastructure.Repositories;
+using System.Data;
 
 namespace Infrastructure.Services
 {
@@ -306,7 +304,7 @@ namespace Infrastructure.Services
 
             var title = "Cập nhật Tồn kho Nguyên vật liệu";
             var message = $"Tồn kho của '{materialName}' đã thay đổi. Số lượng mới: {newStock} (thay đổi: {change}).";
-            var type = "MaterialStockUpdate";
+            var type = "MATERIAL_STOCK_UPDATE";
 
             var notification = Notification.Create(users.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
