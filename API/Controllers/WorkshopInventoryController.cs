@@ -1,5 +1,7 @@
-﻿using Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory;
+﻿using System.Security.Claims;
+using Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByWorkshopId;
+using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryForQC;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,6 +30,24 @@ namespace API.Controllers
         public async Task<IActionResult> GetWorkshopInvenntoryByWorkshopId(Guid workshopId)
         {
             var query = new GetWorkshopInventoryByWorkshopIdQuery(workshopId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("for-qc")]
+        public async Task<IActionResult> GetWorkshopInventoryForQC()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetWorkshopInventoryForQCQuery
+            {
+                UserId = Guid.Parse(userIdString),
+            };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }

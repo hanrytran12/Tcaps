@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.DTOs.Response;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -17,13 +18,15 @@ namespace Application.Features.Productions.Query.GetAllProductionByQCId
         private readonly IProductionRepository _productionRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IAppDbContext _context;
 
         public GetAllProductionByQCIdQueryHandler(IProductionRepository productionRepository,
-            IUserRepository userRepository, IMapper mapper)
+            IUserRepository userRepository, IMapper mapper, IAppDbContext context)
         {
             _productionRepository = productionRepository;
             _userRepository = userRepository;
             _mapper = mapper;
+            _context = context;
         }
         public async Task<List<ProductionDTO>> Handle(GetAllProductionByQCIdQuery request, CancellationToken cancellationToken)
         {
@@ -48,25 +51,33 @@ namespace Application.Features.Productions.Query.GetAllProductionByQCId
             }
 
             var productions = await query.ToListAsync(cancellationToken);
-            //var dto = _mapper.Map<List<ProductionDTO>>(productions);
-            var dtos = productions.Select(p =>
+
+            var productionDTOs = new List<ProductionDTO>();
+
+            foreach (var p in productions)
             {
+                var assignment = await _context.Assignments.FindAsync(p.AssignId);
+                if (assignment == null) continue;
+
+                var batch = await _context.Batches.FindAsync(assignment.BatchId);
                 var user = users.FirstOrDefault(u => u.Id == p.UserId);
-                return new ProductionDTO
+
+                productionDTOs.Add(new ProductionDTO
                 {
                     Id = p.Id,
                     AssignId = p.AssignId,
+                    BatchCode = batch?.Code ?? string.Empty,
                     UserId = p.UserId,
-                    FullName = user.FullName,
+                    FullName = user?.FullName ?? string.Empty,
                     Quantity = p.Quantity,
                     Date = p.Date,
                     Status = p.Status
-                };
-            })
-            .OrderByDescending(p => p.Date)
-            .ToList();
+                });
+            }
 
-            return dtos;
+            return productionDTOs
+                .OrderByDescending(p => p.Date)
+                .ToList();
         }
     }
 }
