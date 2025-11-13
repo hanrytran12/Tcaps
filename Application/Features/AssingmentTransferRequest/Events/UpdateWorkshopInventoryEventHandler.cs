@@ -1,5 +1,4 @@
 ﻿using Application.Interfaces;
-using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -38,7 +37,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
                     else if (workshopInventory is null)
                     {
-                        workshopInventory = WorkshopInventory.Create(assignment.WorkshopId, itemMaterialUse.MaterialId, surplusQuantity);
+                        workshopInventory = Domain.Entities.WorkshopInventory.Create(assignment.WorkshopId, itemMaterialUse.MaterialId, surplusQuantity);
                         await _workshopInventoryRepository.AddAsync(workshopInventory);
                     }
                 }

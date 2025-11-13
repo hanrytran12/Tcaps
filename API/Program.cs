@@ -76,6 +76,8 @@ using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Features.Users.Queries.GetUserByWorkshopId;
 using Application.Features.Workshop.Queries.GetWorkshopTemplate;
+using Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory;
+using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByWorkshopId;
 using Application.Interfaces;
 using Application.Services;
 using Azure.Storage.Blobs;
@@ -291,7 +293,10 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
 
                                                                       typeof(GetReworkReconciliationSummaryQuery).Assembly,
                                                                       typeof(GetAllReworkRequestQuery).Assembly,
-                                                                      typeof(GetRequestByIdQuery).Assembly
+                                                                      typeof(GetRequestByIdQuery).Assembly,
+
+                                                                      typeof(GetAllWorkshopInventoryQuery).Assembly,
+                                                                      typeof(GetWorkshopInventoryByWorkshopIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
