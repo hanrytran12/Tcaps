@@ -37,7 +37,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetTransferRequ
                             TransferRequestId = tq.Id,
                             AssignmentId = a.Id,
                             Status = tq.Status,
-                            Note = tq.Status,
+                            Note = tq.Note,
                             CreatedAt = tq.CreatedAt,
                             CreatedBy = new CreatedBy
                             {
