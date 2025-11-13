@@ -10,6 +10,7 @@ using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransf
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
+using Application.Features.AssingmentTransferRequest.Queries.GetTransferRequestByAssignmentId;
 using Application.Features.Auth.Queries;
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
@@ -296,7 +297,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetRequestByIdQuery).Assembly,
 
                                                                       typeof(GetAllWorkshopInventoryQuery).Assembly,
-                                                                      typeof(GetWorkshopInventoryByWorkshopIdQuery).Assembly
+                                                                      typeof(GetWorkshopInventoryByWorkshopIdQuery).Assembly,
+
+                                                                      typeof(GetTransferRequestByAssignmentIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
