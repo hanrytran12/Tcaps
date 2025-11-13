@@ -137,8 +137,8 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("staff-dashboard")]
-        public async Task<IActionResult> GetStaffDashboard()
+        [HttpGet("staff-dashboard/{assignId}")]
+        public async Task<IActionResult> GetStaffDashboard(Guid assignId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))
@@ -149,6 +149,7 @@ namespace API.Controllers
             var query = new GetStaffDashboardQuery
             {
                 StaffId = Guid.Parse(userIdString),
+                AssignId = assignId
             };
 
             var result = await _mediator.Send(query);
