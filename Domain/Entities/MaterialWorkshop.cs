@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 
 namespace Domain.Entities
 {
     public class MaterialWorkshop : Entity
     {
         public Guid WorkshopId { get; private set; }
+        public Guid AssignId { get; private set; }
         public int QuantitySend { get; private set; }
         public int QuantityReceive { get; private set; }
         public string Name { get; private set; }
@@ -19,9 +15,10 @@ namespace Domain.Entities
         public DateOnly CreatedAt { get; private set; }
         public string Status { get; private set; }
 
-        public MaterialWorkshop(Guid id, Guid workshopId, int quantitySend, int quantityReceive, string name, string unit, string image, string status) : base(id)
+        public MaterialWorkshop(Guid id, Guid workshopId, Guid assignId, int quantitySend, int quantityReceive, string name, string unit, string image, string status) : base(id)
         {
             WorkshopId = workshopId;
+            AssignId = assignId;
             QuantitySend = quantitySend;
             QuantityReceive = quantityReceive;
             Name = name;
@@ -31,9 +28,9 @@ namespace Domain.Entities
             Status = status;
         }
 
-        public static MaterialWorkshop Create(Guid workshopId, int quantitySend, int quantityReceive, string name, string unit, string image, string status)
+        public static MaterialWorkshop Create(Guid workshopId, Guid assignId, int quantitySend, int quantityReceive, string name, string unit, string image, string status)
         {
-            return new MaterialWorkshop(Guid.NewGuid(), workshopId, quantitySend, quantityReceive, name, unit, image, status);
+            return new MaterialWorkshop(Guid.NewGuid(), workshopId, assignId, quantitySend, quantityReceive, name, unit, image, status);
         }
 
         public void Confirmed() => Status = "Confirmed";

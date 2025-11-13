@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
@@ -27,6 +22,7 @@ namespace Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop
 
             var materialWorkshop = MaterialWorkshop.Create(
                 request.WorkshopId,
+                request.AssignId,
                 request.QuantitySend,
                 0,
                 request.Name,

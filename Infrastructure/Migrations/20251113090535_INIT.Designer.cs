@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251113071834_INIT")]
+    [Migration("20251113090535_INIT")]
     partial class INIT
     {
         /// <inheritdoc />
@@ -432,6 +432,9 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssignId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("CreatedAt")
