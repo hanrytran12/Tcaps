@@ -79,6 +79,7 @@ using Application.Features.Users.Queries.GetUserByWorkshopId;
 using Application.Features.Workshop.Queries.GetWorkshopTemplate;
 using Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByWorkshopId;
+using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryForQC;
 using Application.Interfaces;
 using Application.Services;
 using Azure.Storage.Blobs;
@@ -299,7 +300,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetAllWorkshopInventoryQuery).Assembly,
                                                                       typeof(GetWorkshopInventoryByWorkshopIdQuery).Assembly,
 
-                                                                      typeof(GetTransferRequestByAssignmentIdQuery).Assembly
+                                                                      typeof(GetTransferRequestByAssignmentIdQuery).Assembly,
+                                                                      typeof(GetWorkshopInventoryForQCQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
