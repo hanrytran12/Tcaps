@@ -13,18 +13,27 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
         private readonly IAssignmentTransferRequestRepository _assignmentTransferRequestRepository;
         private readonly IBatchRepository _batchRepository;
         private readonly IAppDbContext _appDbContext;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateAssignmentTransferRequestCommandHanler(IAssignmentRepository assignmentRepository, IAssignmentTransferRequestRepository assignmentTransferRequestRepository, IBatchRepository batchRepository, IAppDbContext appDbContext)
+        public UpdateAssignmentTransferRequestCommandHanler(IAssignmentRepository assignmentRepository, IAssignmentTransferRequestRepository assignmentTransferRequestRepository, IBatchRepository batchRepository, IAppDbContext appDbContext,
+            IUnitOfWork unitOfWork)
         {
             _assignmentRepository = assignmentRepository;
             _assignmentTransferRequestRepository = assignmentTransferRequestRepository;
             _batchRepository = batchRepository;
             _appDbContext = appDbContext;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(UpdateAssignmentTransferRequestCommand request, CancellationToken cancellationToken)
         {
             var transferRequest = await _assignmentTransferRequestRepository.GetByIdAsync(request.TransferRequestId);
+            var qcTransport = await _appDbContext.Users.FindAsync(request.QcTransportId);
+            if (qcTransport is null)
+            {
+                return Result.Failure("Không tìm thấy người QCTransport.");
+            }
+
             if (transferRequest.ReworkRequestId == null)
             {
                 if (transferRequest is null || transferRequest.Status != "PendingApproval")
@@ -63,6 +72,10 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
             }
 
             transferRequest.MarkAsApproved();
+
+            qcTransport.MarkAsNotQcTransport();
+            _appDbContext.Users.Update(qcTransport);
+            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
     }
