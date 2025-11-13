@@ -3,6 +3,7 @@ using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransf
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
+using Application.Features.AssingmentTransferRequest.Queries.GetTransferRequestByAssignmentId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,6 +53,15 @@ namespace API.Controllers
             var result = await _mediator.Send(query);
             return Ok(result);
         }
+
+        [HttpGet("by-assignment/{assignmentId:guid}")]
+        public async Task<IActionResult> GetTransferRequestByAssignmentId(Guid assignmentId)
+        {
+            var query = new GetTransferRequestByAssignmentIdQuery(assignmentId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
 
         [HttpPost]
         [Authorize(Policy = "QC")]
