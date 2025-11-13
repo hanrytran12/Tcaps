@@ -201,6 +201,13 @@ VALUES
 ('80000000-0000-0000-0000-000000000004', 'A0000000-0000-0000-0000-000000000005', N'Yêu cầu kiểm tra', N'Có sản phẩm mới cần kiểm tra chất lượng', N'QC', 1, GETDATE()),
 ('80000000-0000-0000-0000-000000000005', 'A0000000-0000-0000-0000-000000000002', N'Báo cáo tuần', N'Vui lòng nộp báo cáo sản xuất tuần này', N'Report', 1, GETDATE());
 
+select * from AssignmentTransferRequests
+INSERT INTO [TcapsDB].[dbo].[AssignmentTransferRequests]
+    ([Id], [AssignmentId], [ReworkRequestId], [UserId], [CompletedQuantity], [Status], [Note], [CreatedAt])
+VALUES
+    ('a1b2c3d4-e5f6-7890-1234-56789abcdef0', 'E0000000-0000-0000-0000-000000000001', NULL, 'A0000000-0000-0000-0000-000000000005', 50, 'PendingApproval', N'Yêu cầu chuyển giao lần 1', GETDATE()),
+    ('b2c3d4e5-f6a1-8901-2345-6789abcdef01', 'E0000000-0000-0000-0000-000000000002', null, 'A0000000-0000-0000-0000-000000000005', 75, 'PendingApproval', N'Hoàn tất chuyển giao', GETDATE());
+
 select * from Users
 select * from Evaluates
 select * from Assignments
