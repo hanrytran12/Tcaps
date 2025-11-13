@@ -49,7 +49,8 @@ namespace Application.Features.Assignments.Queries.GetAllAsignmentByQCId
                     StartDate = a.StartDate,
                     EndDate = a.EndDate,
                     ExpectedDeliveryDate = a.ExpectedDeliveryDate,
-                    UnitPrice = a.UnitPrice
+                    UnitPrice = a.UnitPrice,
+                    Status = a.Status
                 };
             })
             .OrderByDescending(a => a.StartDate)

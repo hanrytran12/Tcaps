@@ -35,9 +35,6 @@ namespace Application.Features.Incomes.Command.AddIncome
         }
         public async Task<Result<Guid>> Handle(AddIncomeCommand request, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"AddIncome Handler Context: {_unitOfWork.GetHashCode()}");
-            Console.WriteLine($"🔥 Running AddIncomeCommand for Production {request.ProductionId}");
-
             var staff = await _userRepository.GetByIdAsync(request.UserId);
             if (staff == null)
                 return Result<Guid>.Failure("Không tìm thấy nhân viên.");
@@ -54,14 +51,27 @@ namespace Application.Features.Incomes.Command.AddIncome
             if (evaluate == null)
                 return Result<Guid>.Failure("Không tìm thấy đánh giá.");
 
+            //lấy ds componentDefect
+            var componentDefects = await _componentDefectRepository.GetAllByEvaluateIdAsync(evaluate.Id);
+            int unfixableSum = componentDefects
+                .Where(cd => cd.Status.Equals("Unfixable", StringComparison.OrdinalIgnoreCase))
+                .Sum(cd => cd.Quantity);
+
             int quantity = 0;
-            if (evaluate.Status == "Passed" || evaluate.Status == "Failed")
+            if (evaluate.Status == "Passed")
             {
                 quantity = production.Quantity;
             }
             else if (evaluate.Status == "Rejected")
             {
                 quantity = production.Quantity - evaluate.QuantityError;
+            }
+            else if (evaluate.Status == "Failed")
+            {
+                if (unfixableSum > 0)
+                    quantity = production.Quantity - unfixableSum;
+                else
+                    quantity = production.Quantity;
             }
 
             var income = Income.Create
@@ -72,7 +82,6 @@ namespace Application.Features.Incomes.Command.AddIncome
                 quantity,
                 quantity * assign.UnitPrice
             );
-            Console.WriteLine($"✅ Saving Income: Batch={income.BatchId}, TotalPrice={income.TotalPrice}");
 
             await _incomeRepository.AddAsync(income);
             await _unitOfWork.SaveChangesAsync(cancellationToken);

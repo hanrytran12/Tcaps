@@ -42,21 +42,28 @@ namespace Application.Features.ComponentDefect.Events
         {
             await _notificationService.SendComponentConfirmNotification(notification.Id, notification.EvaluateId, notification.Quantity, notification.Status);
 
-            if (notification.Status == "Confirmed")
-            {
-                var evaluate = await _evaluateRepository.GetByIdAsync(notification.EvaluateId);
-                var componentDefects = await _componentDefectRepository.GetAllByEvaluateIdAsync(evaluate.Id);
-                var production = await _productionRepository.GetByIdAsync(evaluate.ProductionId);
-                var staff = await _userRepository.GetByIdAsync(production.UserId);
+            var evaluate = await _evaluateRepository.GetByIdAsync(notification.EvaluateId);
+            var componentDefects = await _componentDefectRepository.GetAllByEvaluateIdAsync(evaluate.Id);
+            var production = await _productionRepository.GetByIdAsync(evaluate.ProductionId);
+            var staff = await _userRepository.GetByIdAsync(production.UserId);
 
-                if (componentDefects.All(c => c.Status == "Confirmed"))
+            var hasUnfixable = componentDefects.Any(c => c.Status == "Unfixable");
+
+            if (componentDefects.All(c => c.Status == "Confirmed"))
+            {
+                await _mediator.Send(new AddIncomeCommand
                 {
-                    await _mediator.Send(new AddIncomeCommand
-                    {
-                        ProductionId = production.Id,
-                        UserId = staff.Id
-                    });
-                }
+                    ProductionId = production.Id,
+                    UserId = staff.Id
+                }, cancellationToken);
+            }
+            else if (hasUnfixable && componentDefects.All(c => c.Status == "Confirmed" || c.Status == "Unfixable"))
+            {
+                await _mediator.Send(new AddIncomeCommand
+                {
+                    ProductionId = production.Id,
+                    UserId = staff.Id
+                }, cancellationToken);
             }
         }
     }
