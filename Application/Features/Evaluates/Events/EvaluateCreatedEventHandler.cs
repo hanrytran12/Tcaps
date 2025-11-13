@@ -30,10 +30,8 @@ namespace Application.Features.Evaluates.Events
         }
         public async Task Handle(EvaluateCreatedEvent notification, CancellationToken cancellationToken)
         {
-            Console.WriteLine($"Evaluate Handler Context: {_unitOfWork.GetHashCode()}");
             var production = await _productionRepository.GetByIdAsync(notification.ProductionId);
             var staff = await _userRepository.GetByIdAsync(production.UserId);
-            Console.WriteLine($"🔔 EvaluateCreatedEvent triggered with Status = {notification.Status}");
 
             if (notification.Status == "Passed" || notification.Status == "Rejected")
             {
