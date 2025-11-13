@@ -9,5 +9,6 @@ namespace Application.Features.Users.Queries.GetStaffDashboard
     {
         [JsonIgnore]
         public Guid StaffId { get; set; }
+        public Guid AssignId { get; set; }
     }
 }
