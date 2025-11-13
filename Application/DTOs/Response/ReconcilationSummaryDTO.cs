@@ -2,6 +2,7 @@
 {
     public class ReconcilationSummaryDTO
     {
+        public Guid ReworkRequestId { get; set; }
         public int QuantityTarget { get; set; }
         public decimal TotalSumbimttedQuantity { get; set; }
         public decimal TotalRejectedQuantity { get; set; }
