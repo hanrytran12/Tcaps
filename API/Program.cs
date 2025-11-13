@@ -41,6 +41,10 @@ using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using Application.Features.Materials.Commands.AddMaterial;
 using Application.Features.Materials.Queries.GetAllMaterialToWatch;
+using Application.Features.MaterialSupplies.Command.AddMaterialSupply;
+using Application.Features.MaterialSupplies.Command.CompletedMaterialSupply;
+using Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTransport;
+using Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies;
 using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
@@ -57,6 +61,8 @@ using Application.Features.Products.Queries.GetAllProduct;
 using Application.Features.ReworkRequest.Commands.ApproveReworkRequest;
 using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
 using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
+using Application.Features.ReworkRequest.Queries.GetAllReworkRequest;
+using Application.Features.ReworkRequest.Queries.GetRequestById;
 using Application.Features.ReworkRequest.Queries.GetReworkReconciliationSummary;
 using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
@@ -86,31 +92,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
-
-using Application.Features.Incomes.Queries.GetIncomesByStaffId;
-using Application.Features.Incomes.Command.AddIncome;
-using Domain.Events;
-using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
-using Application.Features.Users.Queries.GetGroupProgress;
-using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
-using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
-using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
-using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
-using Application.Features.Users.Queries.GetAllQCTransport;
-using Application.Features.MaterialRequest.Commands.CreateMaterialRequestFromQC;
-using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
-using Application.Features.Batches.Queries.GetBatchesByStaffId;
-using Application.Features.Batches.Queries.GetBatchesByQCId;
-using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
-using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
-using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
-using Application.Features.MaterialSupplies.Command.AddMaterialSupply;
-using Application.Features.MaterialSupplies.Command.CompletedMaterialSupply;
-using Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTransport;
-using Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -307,9 +288,10 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(CompletedMaterialSupplyCommand).Assembly,
                                                                       typeof(UpdateInProgressByQcTransportCommand).Assembly,
                                                                       typeof(GetAllMaterialSuppliesQuery).Assembly,
-                                                                      
-                                                                      typeof(GetReworkReconciliationSummaryQuery).Assembly
 
+                                                                      typeof(GetReworkReconciliationSummaryQuery).Assembly,
+                                                                      typeof(GetAllReworkRequestQuery).Assembly,
+                                                                      typeof(GetRequestByIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
