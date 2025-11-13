@@ -16,12 +16,12 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
 
         public async Task<ReconcilationSummaryDTO> Handle(GetReworkReconciliationSummaryQuery request, CancellationToken cancellationToken)
         {
-            var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.Id == request.ReworkRequestId).FirstOrDefaultAsync(cancellationToken);
+            var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == request.AssignmentId).FirstOrDefaultAsync(cancellationToken);
 
-            var totalSubmitted = await _appDbContext.Productions.AsNoTracking().Where(p => p.AssignId == reworkRequest.AssignmentId && p.ReworkRequestId == request.ReworkRequestId).SumAsync(p => p.Quantity);
+            var totalSubmitted = await _appDbContext.Productions.AsNoTracking().Where(p => p.AssignId == reworkRequest.AssignmentId && p.ReworkRequestId == reworkRequest.Id).SumAsync(p => p.Quantity);
 
             var query = from p in _appDbContext.Productions
-                        where p.AssignId == reworkRequest.AssignmentId && p.ReworkRequestId == request.ReworkRequestId
+                        where p.AssignId == reworkRequest.AssignmentId && p.ReworkRequestId == reworkRequest.Id
                         join e in _appDbContext.Evaluates on p.Id equals e.ProductionId
                         where e.Status == "Rejected"
                         select e.QuantityError;
@@ -29,7 +29,7 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
             var totalRejected = await query.SumAsync();
             var finalCompletedQuantity = totalSubmitted - totalRejected;
 
-            var materialSummaries = await _appDbContext.MaterialUse.AsNoTracking().Where(m => m.ReworkRequestId == request.ReworkRequestId)
+            var materialSummaries = await _appDbContext.MaterialUse.AsNoTracking().Where(m => m.ReworkRequestId == reworkRequest.Id)
                                                   .Join(_appDbContext.Materials,
                                                   mu => mu.MaterialId,
                                                   ma => ma.Id,
@@ -43,6 +43,7 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
 
             var summary = new ReconcilationSummaryDTO
             {
+                ReworkRequestId = reworkRequest.Id,
                 QuantityTarget = (int)reworkRequest.DefectiveQuantity,
                 TotalSumbimttedQuantity = totalSubmitted,
                 TotalRejectedQuantity = totalRejected,
