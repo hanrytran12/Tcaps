@@ -266,11 +266,19 @@ namespace Infrastructure.Services
             var user = await _userRepository.GetByIdAsync(production.UserId);
 
             var componentDefects = await _componentDefectRepository.GetAllByEvaluateIdAsync(evaluateId);
-            if (componentDefects.All(a => a.Status == "Confirmed"))
+            bool allConfirmed = componentDefects.All(x => x.Status == "Confirmed" || x.Status == "Unfixable");
+            bool hasUnfixable = componentDefects.Any(x => x.Status == "Unfixable");
+
+            if (allConfirmed)
             {
-                production.MarkAsCompleted();
+                if (hasUnfixable)
+                    production.CompleteWithLoss();
+                else
+                    production.MarkAsCompleted();
+
                 _productionRepository.Update(production);
             }
+
             var title = "Chấp nhận sản phẩm đã sửa lỗi thành công.";
             var message = $"QC {qc.FullName} chấp nhận {quantity} sản phẩm đã sửa chữa thành công.";
             var type = "ConfirmProduction";
