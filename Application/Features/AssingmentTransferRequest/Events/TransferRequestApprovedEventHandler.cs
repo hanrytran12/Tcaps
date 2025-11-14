@@ -27,14 +27,8 @@ namespace Application.Features.AssingmentTransferRequest.Events
                 notification.QuantitySend = reworkRequest.DefectiveQuantity;
             }
 
-            var query = from a in _appDbContext.Assignments
-                        where a.Id != notification.AssignmentId
-                        join b in _appDbContext.Batches on a.BatchId equals b.Id
-                        select a;
-
-            var queryInfo = await query.ToListAsync();
             var currentStepOrder = assignment.StepOrder;
-            var nextAssigment = queryInfo.Where(a => a.StepOrder > currentStepOrder).OrderBy(a => a.StepOrder).FirstOrDefault();
+            var nextAssigment = await _appDbContext.Assignments.Where(a => a.StepOrder > currentStepOrder && a.BatchId == assignment.BatchId).OrderBy(a => a.StepOrder).FirstOrDefaultAsync();
 
             if (nextAssigment is not null)
             {
