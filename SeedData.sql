@@ -141,15 +141,16 @@ VALUES
 ('20000000-0000-0000-0000-000000000003', 'B0000000-0000-0000-0000-000000000001', 'D0000000-0000-0000-0000-000000000002', 'E0000000-0000-0000-0000-000000000005', 100, 95, 92, 100, '2025-11-06'),
 -- Lô 5, Assignment 3: 
 ('20000000-0000-0000-0000-000000000004', 'B0000000-0000-0000-0000-000000000003', 'D0000000-0000-0000-0000-000000000005', 'E0000000-0000-0000-0000-000000000007', 200, 0, 0, 0, '2025-11-02')
+
 select * from MaterialWorkshops
-INSERT INTO [MaterialWorkshops] (Id, WorkshopId, QuantitySend, QuantityReceive, Name, Unit, ShipDate, Image, CreatedAt, Status)
+INSERT INTO [MaterialWorkshops] (Id, WorkshopId, AssignId, QuantitySend, QuantityReceive, Name, Unit, ShipDate, Image, CreatedAt, Status)
 VALUES
 -- Giao vải cotton cho xưởng 1
-('30000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 200, 190, N'Vải cotton loại A', N'Mét', '2025-11-01', N'https://example.com/image1.jpg', GETDATE(), N'Confirmed'),
+('30000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 'E0000000-0000-0000-0000-000000000001', 200, 190, N'Vải cotton loại A', N'Mét', '2025-11-01', N'https://example.com/image1.jpg', GETDATE(), N'Confirmed'),
 -- Giao keo dán cho xưởng 2
-('30000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 50, 45, N'Keo dán vải', N'Lít', '2025-11-04', N'https://example.com/image2.jpg', GETDATE(), N'Confirmed'),
+('30000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'E0000000-0000-0000-0000-000000000002', 50, 45, N'Keo dán vải', N'Lít', '2025-11-04', N'https://example.com/image2.jpg', GETDATE(), N'Confirmed'),
 -- Giao sợi nylon cho xưởng 1
-('30000000-0000-0000-0000-000000000003', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 100, 95, N'Sợi nylon 210D', N'Kg', '2025-11-05', N'https://example.com/image3.jpg', GETDATE(), N'Confirmed');
+('30000000-0000-0000-0000-000000000003', 'A1C9B3A0-4F12-4E81-B17B-000000000004', 'E0000000-0000-0000-0000-000000000003', 100, 95, N'Sợi nylon 210D', N'Kg', '2025-11-05', N'https://example.com/image3.jpg', GETDATE(), N'Confirmed');
 
 select * from Productions
 INSERT INTO [Productions] (Id, AssignId, UserId, Quantity, Date, Status)
@@ -164,14 +165,14 @@ VALUES
 ('40000000-0000-0000-0000-000000000004', 'E0000000-0000-0000-0000-000000000005', 'A0000000-0000-0000-0000-000000000004', 120, '2025-11-08', N'Đã kiểm tra');
 
 select * from Evaluates
-INSERT INTO [Evaluates] (Id, ProductionId, UserId, Status, Note, QuantityError, Image, CreatedAt)
+INSERT INTO [Evaluates] (Id, ProductionId, UserId, Status, Note, QuantityError, QuantitySuccess, Image, CreatedAt)
 VALUES 
 -- QC kiểm tra Production 1 - Đạt
-('50000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000005', N'Đạt', N'Chất lượng tốt, không có lỗi', 0, N'/images/qc/qc_001.jpg', GETDATE()),
+('50000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000005', N'Đạt', N'Chất lượng tốt, không có lỗi', 0, 100, N'/images/qc/qc_001.jpg', GETDATE()),
 -- QC kiểm tra Production 3 - Đạt
-('50000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000003', 'A0000000-0000-0000-0000-000000000005', N'Đạt', N'Fullface đạt tiêu chuẩn', 0, N'/images/qc/qc_002.jpg', GETDATE()),
+('50000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000003', 'A0000000-0000-0000-0000-000000000005', N'Đạt', N'Fullface đạt tiêu chuẩn', 0, 50, N'/images/qc/qc_002.jpg', GETDATE()),
 -- QC kiểm tra Production 4 - Có lỗi nhỏ
-('50000000-0000-0000-0000-000000000003', '40000000-0000-0000-0000-000000000004', 'A0000000-0000-0000-0000-000000000005', N'Có lỗi', N'Phát hiện một số lỗi nhỏ', 5, N'/images/qc/qc_003.jpg', GETDATE());
+('50000000-0000-0000-0000-000000000003', '40000000-0000-0000-0000-000000000004', 'A0000000-0000-0000-0000-000000000005', N'Có lỗi', N'Phát hiện một số lỗi nhỏ', 5, 115, N'/images/qc/qc_003.jpg', GETDATE());
 
 
 INSERT INTO [ComponentDefects] (Id, EvaluateId, DefectType, Serverity, Description, Solution, Quantity, CreatedAt, Status)

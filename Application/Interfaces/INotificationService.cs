@@ -11,7 +11,7 @@ namespace Application.Interfaces
         Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate);
         Task<ResponseDTO> MarkAsReadAsync(Guid notificationId);
         Task<ResponseDTO> CountNotificationAsync(Guid userId);
-        Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note, string status);
+        Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, int quantitySucess, string note, string status);
         Task SendSubmitProductionNotification(Guid assignId, Guid userId, int quantity);
         Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status);
         Task SendComponentConfirmNotification(Guid componentId, Guid evaluateId, int quantity, string status);
