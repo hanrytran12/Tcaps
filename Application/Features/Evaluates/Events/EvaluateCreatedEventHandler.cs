@@ -41,7 +41,7 @@ namespace Application.Features.Evaluates.Events
                     UserId = staff.Id
                 });
             }
-            await _notificationService.SendEvaluateFixErrorNotificationAsync(notification.EvaluateId, notification.ProductionId, notification.UserId.Value, notification.QuantityError, notification.Note, notification.Status);
+            await _notificationService.SendEvaluateFixErrorNotificationAsync(notification.EvaluateId, notification.ProductionId, notification.UserId.Value, notification.QuantityError, notification.QuantitySuccess, notification.Note, notification.Status);
             //await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
     }
