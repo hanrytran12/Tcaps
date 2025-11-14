@@ -6,6 +6,8 @@ using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
 using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
 using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
+using Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId;
+using Application.Features.Assignments.Queries.NewFolder;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
@@ -301,7 +303,9 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetWorkshopInventoryByWorkshopIdQuery).Assembly,
 
                                                                       typeof(GetTransferRequestByAssignmentIdQuery).Assembly,
-                                                                      typeof(GetWorkshopInventoryForQCQuery).Assembly
+                                                                      typeof(GetWorkshopInventoryForQCQuery).Assembly,
+                                                                      typeof(GetAssignmentForHistoryByBatchIdQuery).Assembly,
+                                                                      typeof(GetDetailAssignmentByBatchIdQuery).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
