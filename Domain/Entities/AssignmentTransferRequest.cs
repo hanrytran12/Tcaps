@@ -1,4 +1,5 @@
-﻿using Domain.Primitives;
+﻿using Domain.Events;
+using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -36,6 +37,8 @@ namespace Domain.Entities
         public void MarkAsApproved()
         {
             this.Status = "Approved";
+
+            AddDomainEvent(new TransferRequestApprovedEvent(AssignmentId, ReworkRequestId, CompletedQuantity));
         }
     }
 }
