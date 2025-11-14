@@ -174,7 +174,7 @@ namespace Infrastructure.Services
         }
 
 
-        public async Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, string note, string status)
+        public async Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, int quantitySuccess, string note, string status)
         {
             var staff = await _productionRepository.GetStaffByProductionIdAsync(productionId);
             var production = await _productionRepository.GetByIdAsync(productionId);
@@ -193,7 +193,7 @@ namespace Infrastructure.Services
             else if (status == "Failed")
             {
                 title = "Báo lỗi sản phẩm";
-                message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
+                message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm đạt và {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
                 type = "EvaluateFail";
                 production?.Rework();
                 _productionRepository.Update(production);
@@ -201,7 +201,7 @@ namespace Infrastructure.Services
             else
             {
                 title = "Báo lỗi sản phẩm";
-                message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm lỗi và không thể sữa chữa. Ghi chú: {note}.";
+                message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm đạt và {quantityError} sản phẩm lỗi và không thể sữa chữa. Ghi chú: {note}.";
                 type = "EvaluateReject";
                 production?.CompleteWithLoss();
                 _productionRepository.Update(production);

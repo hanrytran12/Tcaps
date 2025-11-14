@@ -10,19 +10,21 @@ namespace Domain.Entities
         public string Status { get; private set; } = string.Empty;
         public string Note { get; private set; } = string.Empty;
         public int QuantityError { get; private set; }
+        public int QuantitySuccess { get; private set; }
         public string Image { get; private set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
 
         private readonly List<ComponentDefect> _componentDefects = new();
         public IReadOnlyCollection<ComponentDefect> ComponentDefects => _componentDefects.AsReadOnly();
 
-        public Evaluate(Guid id, Guid productionId, Guid? userId, string note, int quantityError, string image, string status)
+        public Evaluate(Guid id, Guid productionId, Guid? userId, string note, int quantityError, int quantitySucess, string image, string status)
             : base(id)
         {
             ProductionId = productionId;
             UserId = userId;
             Note = note;
             QuantityError = quantityError;
+            QuantitySuccess = quantitySucess;
             Image = image;
             CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
             Status = status;
@@ -32,9 +34,9 @@ namespace Domain.Entities
 
         private Evaluate() : base(Guid.NewGuid()) { }
 
-        public static Evaluate Create(Guid productionId, Guid userId, int quantityError, string note, string image, string status)
+        public static Evaluate Create(Guid productionId, Guid userId, int quantityError, int quantitySuccess, string note, string image, string status)
         {
-            return new Evaluate(Guid.NewGuid(), productionId, userId, note, quantityError, image, status);
+            return new Evaluate(Guid.NewGuid(), productionId, userId, note, quantityError, quantitySuccess, image, status);
         }
 
         public void Update(string note, int quantityError, string image)

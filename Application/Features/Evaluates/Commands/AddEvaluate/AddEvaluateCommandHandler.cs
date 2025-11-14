@@ -40,6 +40,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
                 request.ProductionId,
                 request.UserId.Value,
                 request.QuantityError,
+                request.QuantitySucess,
                 request.Note,
                 request.Image,
                 request.Status);
@@ -69,6 +70,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
                 evaluate.ProductionId,
                 evaluate.UserId.Value,
                 evaluate.QuantityError,
+                evaluate.QuantitySuccess,
                 evaluate.Note,
                 evaluate.Status
             ));
