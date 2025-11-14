@@ -59,6 +59,10 @@ namespace Infrastructure.Persistence
             modelBuilder.Entity<Income>()
                 .Property(x => x.TotalPrice)
                 .HasPrecision(18, 2);
+
+            modelBuilder.Entity<AssignmentTransferRequest>()
+                .Property(a => a.ReworkRequestId)
+                .IsRequired(false);
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
