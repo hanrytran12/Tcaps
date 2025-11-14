@@ -33,7 +33,8 @@ namespace Application.Features.MaterialUses.Query.GetMaterialUseByAssignId
                             QuantityDivide = mu.QuantityDivide,
                             QuantityStaffUse = mu.QuantityStaffUse,
                             ReconciledQuantity = mu.ReconciledQuantity,
-                            QuantityRequest = mu.QuantityRequest
+                            QuantityRequest = mu.QuantityRequest,
+                            Date = mu.Date
                         };
 
             // 🔹 Nếu có filter theo tên vật liệu

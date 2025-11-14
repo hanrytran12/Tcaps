@@ -47,7 +47,8 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryFor
                             MaterialId = w.MaterialId,
                             MaterialName = m.Name,
                             BatchCode = b.Code,
-                            Quantity = (int)w.Quantity
+                            Quantity = (int)w.Quantity,
+                            //Unit = w.Unit
                         };
 
             var result = await query
