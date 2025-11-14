@@ -6,6 +6,8 @@ using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
 using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
 using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
+using Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId;
+using Application.Features.Assignments.Queries.NewFolder;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -109,6 +111,35 @@ namespace API.Controllers
             var query = new GetAssignmentByBatchIdQuery
             {
                 StaffId = Guid.Parse(userIdString),
+                BatchId = batchId
+            };
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("for-qc/assign-history/{batchId}")]
+        public async Task<IActionResult> GetAssignmentHistoryForQCAsync(Guid batchId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetAssignmentForHistoryByBatchIdQuery
+            {
+                QcId = Guid.Parse(userIdString),
+                BatchId = batchId
+            };
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("qc/detail-assignment/{batchId}")]
+        public async Task<IActionResult> GetDetailAssignmentForQCAsync(Guid batchId)
+        {
+            var query = new GetDetailAssignmentByBatchIdQuery
+            {
                 BatchId = batchId
             };
             var result = await _mediator.Send(query);
