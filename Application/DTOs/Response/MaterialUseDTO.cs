@@ -15,5 +15,6 @@ namespace Application.DTOs.Response
         public decimal QuantityStaffUse { get; set; }
         public decimal ReconciledQuantity { get; set; }
         public decimal QuantityRequest { get; set; }
+        public DateOnly Date { get; set; }
     }
 }
