@@ -13,10 +13,11 @@ namespace Domain.Entities
         public string Status { get; private set; } = string.Empty;
         public string Note { get; private set; } = string.Empty;
         public DateOnly Date { get; private set; }
+        public string Type { get; private set; }
         public string? NoteFromQC { get; private set; } = null;
         public decimal? ActualReceivedQuantity { get; private set; }
 
-        public MaterialRequest(Guid id, Guid materialId, Guid userId, Guid batchId, Guid assignId, decimal quantityRequest, string note)
+        public MaterialRequest(Guid id, Guid materialId, Guid userId, Guid batchId, Guid assignId, decimal quantityRequest, string note, string type)
             : base(id)
         {
             MaterialId = materialId;
@@ -27,13 +28,12 @@ namespace Domain.Entities
             Status = "Pending";
             Note = note;
             Date = DateOnly.FromDateTime(DateTime.Now);
+            Type = type;
         }
 
-        private MaterialRequest() : base(Guid.NewGuid()) { }
-
-        public static MaterialRequest Create(Guid materialId, Guid userId, Guid batchId, Guid assignId, decimal quantityRequest, string note)
+        public static MaterialRequest Create(Guid materialId, Guid userId, Guid batchId, Guid assignId, decimal quantityRequest, string note, string type)
         {
-            return new MaterialRequest(Guid.NewGuid(), materialId, userId, batchId, assignId, quantityRequest, note);
+            return new MaterialRequest(Guid.NewGuid(), materialId, userId, batchId, assignId, quantityRequest, note, type);
         }
 
         public void MarkAsApproved()
