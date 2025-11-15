@@ -71,6 +71,7 @@ namespace Application.Features.Productions.Query.GetAllProductionByQCId
                     FullName = user?.FullName ?? string.Empty,
                     Quantity = p.Quantity,
                     Date = p.Date,
+                    Time = p.Time,
                     Status = p.Status
                 });
             }

@@ -15,6 +15,7 @@ namespace Application.DTOs.Response
         public string? FullName { get; set; }
         public int Quantity { get; set; }
         public DateOnly Date { get; set; }
+        public TimeOnly Time { get; set; }
         public string Status { get; set; } = string.Empty;
     }
 }

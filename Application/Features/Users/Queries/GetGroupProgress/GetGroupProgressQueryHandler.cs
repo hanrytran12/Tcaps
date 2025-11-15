@@ -48,8 +48,8 @@ namespace Application.Features.Users.Queries.GetGroupProgress
 
             // Tiến độ
             var target = assignment.Quantity; // 100
-            var effectiveProduction = totalProduction - totalUnfixable; //105 - 5 = 100
-            var remaining = Math.Max(target - effectiveProduction, 0); // 100 - 100
+            //var effectiveProduction = totalProduction - totalUnfixable; //105 - 5 = 100
+            var remaining = Math.Max(target - totalProduction, 0); // 100 - 100
 
             // Số ngày còn lại (dùng DateOnly)
             var daysLeft = 0;
@@ -63,6 +63,7 @@ namespace Application.Features.Users.Queries.GetGroupProgress
                                join u in _context.Users on p.UserId equals u.Id
                                where p.AssignId == assignment.Id
                                select u.FullName)
+                               .Distinct()
                                .ToListAsync(cancellationToken);
 
             var results = new GroupProgressDTO

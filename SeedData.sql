@@ -153,17 +153,16 @@ VALUES
 ('30000000-0000-0000-0000-000000000003', 'A1C9B3A0-4F12-4E81-B17B-000000000004', 'E0000000-0000-0000-0000-000000000003', 100, 95, N'Sợi nylon 210D', N'Kg', '2025-11-05', N'https://example.com/image3.jpg', GETDATE(), N'Confirmed');
 
 select * from Productions
-INSERT INTO [Productions] (Id, AssignId, UserId, Quantity, Date, Status)
+INSERT INTO [Productions] (Id, AssignId, UserId, Quantity, Date, Time, Status)
 VALUES 
 -- Worker1 hoàn thành 100 sản phẩm ở Assignment 1 (Lô 1)
-('40000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000003', 100, '2025-11-03', N'Đã kiểm tra'),
+('40000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000003', 100, '2025-11-03', '08:30:00', N'Passed'),
 -- Worker1 hoàn thành 50 sản phẩm ở Assignment 2 (Lô 1) - chưa kiểm tra
-('40000000-0000-0000-0000-000000000002', 'E0000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000003', 50, '2025-11-06', N'Chờ kiểm tra'),
+('40000000-0000-0000-0000-000000000002', 'E0000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000003', 50, '2025-11-06', '10:15:00', N'Passed'),
 -- Worker2 hoàn thành 50 sản phẩm ở Assignment 5 (Lô 2)
-('40000000-0000-0000-0000-000000000003', 'E0000000-0000-0000-0000-000000000005', 'A0000000-0000-0000-0000-000000000004', 50, '2025-11-07', N'Đã kiểm tra'),
+('40000000-0000-0000-0000-000000000003', 'E0000000-0000-0000-0000-000000000005', 'A0000000-0000-0000-0000-000000000004', 50, '2025-11-07', '09:45:00', N'Passed'),
 -- Worker2 hoàn thành 120 sản phẩm ở Assignment 7 (Lô 5 - Hoàn thành)
-('40000000-0000-0000-0000-000000000004', 'E0000000-0000-0000-0000-000000000005', 'A0000000-0000-0000-0000-000000000004', 120, '2025-11-08', N'Đã kiểm tra');
-
+('40000000-0000-0000-0000-000000000004', 'E0000000-0000-0000-0000-000000000005', 'A0000000-0000-0000-0000-000000000004', 120, '2025-11-08', '14:00:00', N'Rework');
 select * from Evaluates
 INSERT INTO [Evaluates] (Id, ProductionId, UserId, Status, Note, QuantityError, QuantitySuccess, Image, CreatedAt)
 VALUES 
@@ -221,6 +220,7 @@ select * from Users
 select * from Evaluates
 select * from Assignments
 select * from Productions
+select * from Products
 select * from Batches
 select * from MaterialUse
 select * from Materials
@@ -230,4 +230,6 @@ select * from Workshop
 select * from Notifications
 select * from TaskTransferRequests
 select * from MaterialSupplies
+select * from MaterialWorkshops
+select * from MaterialRequests
 update Assignments set EndDate = '2025-11-18' where Id = 'E0000000-0000-0000-0000-000000000007'
