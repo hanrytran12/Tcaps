@@ -27,6 +27,11 @@ namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQC
                 throw new Exception($"Không tìm thấy QC có Id = {request.QC_Id}");
             }
 
+            if (qc.WorkshopId != request.WorkshopId)
+            {
+                throw new Exception($"QC không thuộc xưởng có Id = {request.WorkshopId}");
+            }
+
             var materialWorkshops = await _materialWorkshopRepository.GetAllByWorkshopIdAsync(qc.WorkshopId);
             if (materialWorkshops == null || !materialWorkshops.Any())
                 return new List<MaterialWorkshop>();

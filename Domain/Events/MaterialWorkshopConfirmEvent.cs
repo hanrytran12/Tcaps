@@ -12,15 +12,13 @@ namespace Domain.Events
         public Guid WorkshopId { get; set; }
         public int QuantitySend { get; set; }
         public int QuantityReceive { get; set; }
-        public string? Name { get; set; }
         public DateOnly ShipDate { get; set; }
 
-        public MaterialWorkshopConfirmEvent(Guid workshopId, int quantitySend, int quantityReceive, string name, DateOnly shipDate)
+        public MaterialWorkshopConfirmEvent(Guid workshopId, int quantitySend, int quantityReceive, DateOnly shipDate)
         {
             WorkshopId = workshopId;
             QuantitySend = quantitySend;
             QuantityReceive = quantityReceive;
-            Name = name;
             ShipDate = shipDate;
         }
     }

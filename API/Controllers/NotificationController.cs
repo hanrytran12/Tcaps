@@ -77,11 +77,18 @@ namespace API.Controllers
         [HttpPut("mark-as-read/{notificationId}")]
         public async Task<IActionResult> MarkAsRead(Guid notificationId)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
             var command = new Application.Features.Notifications.Commands.MarkNotificationAsRead.MarkNotificationAsReadCommand
             {
                 NotificationId = notificationId,
-                UserId = Guid.Parse("A1B2C3D4-E5F6-4A5B-8C9D-1E2F3A4B5C6D")
+                UserId = Guid.Parse(userIdString)
             };
+
             var result = await _mediator.Send(command);
             if (!result.IsSuccess)
             {
