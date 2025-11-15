@@ -16,6 +16,8 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
         public Guid UserId { get; set; }
         public Guid AssignId { get; set; }
         public string Note { get; set; } = string.Empty;
+        [JsonIgnore]
+        public string Type { get; set; } = "QcAddMaterial";
         public List<MaterialRequestItemDTO> Items { get; set; } = new();
     }
 }
