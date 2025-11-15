@@ -21,6 +21,11 @@ namespace Application.Mapping
             CreateMap<EvaluateDTO, Evaluate>().ReverseMap();
             CreateMap<ComponentDefectsDTO, ComponentDefect>().ReverseMap();
             CreateMap<Material, MaterialDTO>().ReverseMap();
+
+            CreateMap<Evaluate, EvaluateDTO>()
+                .ForMember(dest => dest.Created_At,
+                    opt => opt.MapFrom(src => src.CreatedAt));
+
         }
     }
 }
