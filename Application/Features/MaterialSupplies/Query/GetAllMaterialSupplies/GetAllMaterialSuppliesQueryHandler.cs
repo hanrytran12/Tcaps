@@ -29,19 +29,26 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                         join w in _context.Workshop on u.WorkshopId equals w.Id
                         select new { s, m, r, b, u, w };
 
-            switch (request.Role)
+            // Normalize role
+            string role = request.Role?.Trim() ?? "";
+
+            // Filter by role
+            if (role.Equals("QcTransport", StringComparison.OrdinalIgnoreCase))
             {
-                case "QcTransport":
-                    query = query.Where(x => x.s.SupplierId == request.UserId);
-                    break;
-                case "QC":
-                    query = query.Where(x => x.r.UserId == request.UserId);
-                    break;
-                case "Lead":
-                    // Lead xem toàn bộ
-                    break;
-                default:
-                    return Result<List<MaterialSupplyDTO>>.Failure("Vai trò người dùng không hợp lệ.");
+                query = query.Where(x => x.s.SupplierId == request.UserId);
+            }
+            else if (role.Equals("QC", StringComparison.OrdinalIgnoreCase))
+            {
+                query = query.Where(x => x.r.UserId == request.UserId);
+            }
+            else if (role.Equals("Lead", StringComparison.OrdinalIgnoreCase) ||
+                     role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                // Lead/Admin xem toàn bộ → không filter
+            }
+            else
+            {
+                return Result<List<MaterialSupplyDTO>>.Failure("Vai trò người dùng không hợp lệ.");
             }
 
             if (request.Status != null)

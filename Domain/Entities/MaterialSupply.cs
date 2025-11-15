@@ -41,5 +41,7 @@ namespace Domain.Entities
             Status = "Completed";
             DateReceive = DateOnly.FromDateTime(DateTime.Now);
         }
+
+        public void MarkAsApprovedByAdmin() => Status = "ApprovedByAdmin";
     }
 }

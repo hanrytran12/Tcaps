@@ -310,7 +310,7 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
         }
 
-        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive, string name)
+        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive)
         {
             var lead = await _userRepository.GetByRoleAsync("Lead");
             var admin = await _userRepository.GetByRoleAsync("Admin");

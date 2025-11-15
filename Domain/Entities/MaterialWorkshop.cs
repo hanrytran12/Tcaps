@@ -8,10 +8,7 @@ namespace Domain.Entities
         public Guid AssignId { get; private set; }
         public int QuantitySend { get; private set; }
         public int QuantityReceive { get; private set; }
-        public string Name { get; private set; } = string.Empty;
-        public string Unit { get; private set; } = string.Empty;
         public DateOnly ShipDate { get; private set; }
-        public string Image { get; private set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
 
