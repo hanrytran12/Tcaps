@@ -59,6 +59,8 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                 }
 
                 batch.ActiveNextAssignment(assigment.Id);
+
+                transferRequest.MarkAsApproved();
             }
             else
             {
@@ -69,9 +71,10 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                 assignment.UpdateStatus("Completed");
 
                 reworkRequest.AddDomainEvent(new ReworkRequestCompletedEvent(reworkRequest.Id));
+
+                transferRequest.MarkAsApproved();
             }
 
-            transferRequest.MarkAsApproved();
 
             qcTransport.MarkAsNotQcTransport();
             _appDbContext.Users.Update(qcTransport);

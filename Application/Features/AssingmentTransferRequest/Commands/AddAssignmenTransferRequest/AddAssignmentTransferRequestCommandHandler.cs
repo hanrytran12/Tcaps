@@ -63,7 +63,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
             }
             //var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
 
-            var requestTransfer = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantity, request.Note, request.ReworkRequestId);
+            var requestTransfer = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantity, request.Note, (assignment.Status == "Reworking" ? request.ReworkRequestId : null));
             await _assignmentTransferRequestRepository.AddAsync(requestTransfer);
 
             requestTransfer.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));

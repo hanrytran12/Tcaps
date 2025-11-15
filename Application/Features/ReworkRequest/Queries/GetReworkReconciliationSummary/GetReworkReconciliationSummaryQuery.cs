@@ -5,11 +5,11 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
 {
     public class GetReworkReconciliationSummaryQuery : IRequest<ReconcilationSummaryDTO>
     {
-        public Guid ReworkRequestId { get; set; }
+        public Guid AssignmentId { get; set; }
 
-        public GetReworkReconciliationSummaryQuery(Guid ReworkRequestId)
+        public GetReworkReconciliationSummaryQuery(Guid assignmentId)
         {
-            this.ReworkRequestId = ReworkRequestId;
+            AssignmentId = assignmentId;
         }
     }
 }

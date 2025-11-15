@@ -82,6 +82,11 @@ namespace Infrastructure.Persistence
                     .HasColumnType("time");
             });
 
+
+            modelBuilder.Entity<AssignmentTransferRequest>()
+                .Property(a => a.ReworkRequestId)
+                .IsRequired(false);
+
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)

@@ -37,10 +37,10 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("{reworkRequestId:guid}/summary")]
-        public async Task<IActionResult> GetReworkReconciliationSummary(Guid reworkRequestId)
+        [HttpGet("{assignmentId:guid}/summary")]
+        public async Task<IActionResult> GetReworkReconciliationSummary(Guid assignmentId)
         {
-            var query = new GetReworkReconciliationSummaryQuery(reworkRequestId);
+            var query = new GetReworkReconciliationSummaryQuery(assignmentId);
             var result = await _mediator.Send(query);
             return Ok(result);
         }
