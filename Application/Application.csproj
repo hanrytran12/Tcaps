@@ -35,8 +35,4 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Features\MaterialSupplies\Command\UpdateApproveByAdmin\" />
-  </ItemGroup>
-
 </Project>

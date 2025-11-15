@@ -389,7 +389,7 @@ namespace Infrastructure.Services
 
             var material = await _materialRepository.GetByIdAsync(materialId);
 
-            var title = "Yêu cầu cung cấp thêm vật liệu";
+            var title = "Yêu cầu duyệt từ Lead";
             var message = $"Kho cung cấp thêm {quantity} {material.Unit} vật liệu **{material.Name}** cho lô hàng **{batch.Code}** tại xưởng **{workshop.Name}**.";
             var type = "MaterialSupply";
 
@@ -410,8 +410,8 @@ namespace Infrastructure.Services
 
             var material = await _materialRepository.GetByIdAsync(materialId);
 
-            var title = "Yêu cầu cung cấp thêm vật liệu";
-            var message = $"Kho cung cấp thêm {quantity} {material.Unit} vật liệu **{material.Name}** cho lô hàng **{batch.Code}** tại xưởng **{workshop.Name}**.";
+            var title = "Lead gửi NVL";
+            var message = $"Lead sẽ cung cấp thêm {quantity} {material.Unit} vật liệu **{material.Name}** cho lô hàng **{batch.Code}** tại xưởng **{workshop.Name}**.";
             var type = "MaterialSupply";
 
             var notification = Notification.Create(qc.Id, title, message, type);
