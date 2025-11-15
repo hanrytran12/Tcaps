@@ -9,17 +9,17 @@ using MediatR;
 
 namespace Application.Features.MaterialSupplies.Events
 {
-    public class AddMaterialSupplyForQcTransportEventHandler : INotificationHandler<AddMaterialSupplyForQcTransportEvent>
+    public class AdminAssignForQcTransportEventHandler : INotificationHandler<AddMaterialSupplyForQcTransportEvent>
     {
         private readonly INotificationService _notificationService;
 
-        public AddMaterialSupplyForQcTransportEventHandler(INotificationService notificationService)
+        public AdminAssignForQcTransportEventHandler(INotificationService notificationService)
         {
             _notificationService = notificationService;
         }
         public async Task Handle(AddMaterialSupplyForQcTransportEvent notification, CancellationToken cancellationToken)
         {
-            await _notificationService.SendAddMaterialSupplyNotificationAsync(notification.QcId, notification.RequestId, notification.MaterialId, notification.Quantity);
+            await _notificationService.AdminAssignForQCTransportToTransferMaterialSupplyNotificationAsync(notification.QcId, notification.RequestId, notification.MaterialId, notification.Quantity);
         }
     }
 }
