@@ -375,7 +375,7 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task SendAddMaterialSupplyNotificationAsync(Guid qcTransportId, Guid requestId, Guid materialId, int quantity)
+        public async Task AdminAssignForQCTransportToTransferMaterialSupplyNotificationAsync(Guid qcTransportId, Guid requestId, Guid materialId, int quantity)
         {
             var qcTransport = await _userRepository.GetByIdAsync(qcTransportId);
 
@@ -389,8 +389,8 @@ namespace Infrastructure.Services
 
             var material = await _materialRepository.GetByIdAsync(materialId);
 
-            var title = "Yêu cầu duyệt từ Lead";
-            var message = $"Kho cung cấp thêm {quantity} {material.Unit} vật liệu **{material.Name}** cho lô hàng **{batch.Code}** tại xưởng **{workshop.Name}**.";
+            var title = "Admin phân công đi giao NVL";
+            var message = $"Admin phân công cho {qcTransport.FullName} cung cấp thêm {quantity} {material.Unit} vật liệu **{material.Name}** cho lô hàng **{batch.Code}** tại xưởng **{workshop.Name}**.";
             var type = "MaterialSupply";
 
             var notification = Notification.Create(qcTransport.Id, title, message, type);

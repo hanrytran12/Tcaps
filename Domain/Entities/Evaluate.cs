@@ -26,7 +26,7 @@ namespace Domain.Entities
             QuantityError = quantityError;
             QuantitySuccess = quantitySucess;
             Image = image;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
             Status = status;
 
             //AddDomainEvent(new EvaluateCreatedEvent(Id, productionId, userId.Value, quantityError, note, status));
