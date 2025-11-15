@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Application.Features.MaterialSupplies.Command.AddMaterialSupply;
 using Application.Features.MaterialSupplies.Command.CompletedMaterialSupply;
+using Application.Features.MaterialSupplies.Command.UpdateApproveByAdmin;
 using Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTransport;
 using Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies;
 using MediatR;
@@ -97,6 +98,27 @@ namespace API.Controllers
             {
                 QcId = Guid.Parse(userIdString),
                 SupplyId = supplyId
+            };
+            var result = await _mediator.Send(command);
+            if (!result.IsSuccess)
+                return BadRequest(result.IsFailure);
+
+            return Ok(result);
+        }
+
+        [HttpPut("admin/Approve/{supplyId}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> ApproveByAdminAsync(Guid supplyId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var command = new UpdateApproveByAdminCommand
+            {
+                MaterialSupplyId = supplyId
             };
             var result = await _mediator.Send(command);
             if (!result.IsSuccess)

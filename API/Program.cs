@@ -305,7 +305,8 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetTransferRequestByAssignmentIdQuery).Assembly,
                                                                       typeof(GetWorkshopInventoryForQCQuery).Assembly,
                                                                       typeof(GetAssignmentForHistoryByBatchIdQuery).Assembly,
-                                                                      typeof(GetDetailAssignmentByBatchIdQuery).Assembly
+                                                                      typeof(GetDetailAssignmentByBatchIdQuery).Assembly,
+                                                                      typeof(UpdateApproveTaskTransferRequestCommand).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

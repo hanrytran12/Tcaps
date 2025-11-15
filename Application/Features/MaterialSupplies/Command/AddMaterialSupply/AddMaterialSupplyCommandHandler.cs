@@ -41,12 +41,6 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
             if (qcTransport == null)
                 return Result.Failure("Không tìm thấy người phụ trách vận chuyển (QC Transport).");
 
-            if (!qcTransport.IsQcTransport)
-            {
-                qcTransport.MarkAsQcTransport();
-                _context.Users.Update(qcTransport);
-            }
-
             var supply = MaterialSupply.Create(
                 request.RequestId,
                 request.MaterialId,
@@ -61,20 +55,12 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-            if (qcTransport != null && qcTransport.Id != request.LeadId)
-            {
-                await _mediator.Publish(new AddMaterialSupplyForQcTransportEvent(
-                    qcTransport.Id,
-                    request.RequestId,
-                    request.MaterialId,
-                    request.Quantity));
-            }
-
             await _mediator.Publish(new AddMaterialSupplyForQcWorkshopEvent(
                 materialRequest.UserId,
                 request.RequestId,
                 request.MaterialId,
                 request.Quantity));
+
             return Result.Success();
         }
     }

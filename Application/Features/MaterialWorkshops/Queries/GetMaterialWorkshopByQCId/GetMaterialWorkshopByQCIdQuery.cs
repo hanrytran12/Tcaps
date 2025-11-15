@@ -11,6 +11,7 @@ namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQC
     public class GetMaterialWorkshopByQCIdQuery : IRequest<List<MaterialWorkshop>>
     {
         public Guid QC_Id { get; set; }
+        public Guid WorkshopId { get; set; }
         public string? Status { get; set; }
     }
 }
