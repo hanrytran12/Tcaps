@@ -49,9 +49,24 @@ namespace API.Controllers
         }
 
         [HttpPost("for-lead")]
-        [Authorize(Policy = "Lead")]
+        [Authorize(Roles = "Lead,QCTransport")]
         public async Task<IActionResult> CreateMaterialWorkshop(AddMaterialWorkshopCommand command)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var isQcTransport = User.FindFirstValue("isQcTransport");
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            // Chỉ cho phép nếu có claim isQcTransport = true
+            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            {
+                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
+            }
+
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }

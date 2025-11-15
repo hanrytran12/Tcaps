@@ -52,7 +52,8 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
                     assignment.BatchId,
                     request.AssignId,
                     item.Quantity,
-                    request.Note);
+                    request.Note,
+                    request.Type);
 
                 if (materialRequest == null)
                     return Result.Failure("Failed to create material request");
