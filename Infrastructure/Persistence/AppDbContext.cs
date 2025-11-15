@@ -4,6 +4,7 @@ using Domain.Interfaces;
 using Domain.Primitives;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Infrastructure.Persistence
 {
@@ -60,9 +61,32 @@ namespace Infrastructure.Persistence
                 .Property(x => x.TotalPrice)
                 .HasPrecision(18, 2);
 
+            var dateOnlyConverter = new ValueConverter<DateOnly, DateTime>(
+                d => d.ToDateTime(TimeOnly.MinValue, DateTimeKind.Unspecified),
+                d => DateOnly.FromDateTime(DateTime.SpecifyKind(d, DateTimeKind.Unspecified))
+            );
+
+            var timeOnlyConverter = new ValueConverter<TimeOnly, TimeSpan>(
+                t => t.ToTimeSpan(),
+                t => TimeOnly.FromTimeSpan(t)
+            );
+
+            modelBuilder.Entity<Production>(entity =>
+            {
+                entity.Property(p => p.Date)
+                    .HasConversion(dateOnlyConverter)
+                    .HasColumnType("date");
+
+                entity.Property(p => p.Time)
+                    .HasConversion(timeOnlyConverter)
+                    .HasColumnType("time");
+            });
+
+
             modelBuilder.Entity<AssignmentTransferRequest>()
                 .Property(a => a.ReworkRequestId)
                 .IsRequired(false);
+
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
