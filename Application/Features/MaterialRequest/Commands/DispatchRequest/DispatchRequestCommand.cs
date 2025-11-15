@@ -12,6 +12,7 @@ namespace Application.Features.MaterialRequest.Commands.DispatchRequest
 
         [JsonIgnore]
         public Guid AssignmentId { get; set; }
+        public string Type { get; set; } = "LeadExport";
 
         public List<MaterialRequestItemDTO> Items { get; set; } = new();
     }
