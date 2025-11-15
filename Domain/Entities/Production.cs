@@ -8,6 +8,7 @@ namespace Domain.Entities
         public Guid UserId { get; private set; }
         public int Quantity { get; private set; }
         public DateOnly Date { get; private set; }
+        public TimeOnly Time { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public Guid? ReworkRequestId { get; private set; }
 
@@ -17,7 +18,8 @@ namespace Domain.Entities
             AssignId = assignId;
             UserId = userId;
             Quantity = quantity;
-            Date = DateOnly.FromDateTime(DateTime.UtcNow);
+            Date = DateOnly.FromDateTime(DateTime.Now);
+            Time = TimeOnly.FromDateTime(DateTime.Now);
             Status = "PendingQC";
             ReworkRequestId = reworkRequestId;
 

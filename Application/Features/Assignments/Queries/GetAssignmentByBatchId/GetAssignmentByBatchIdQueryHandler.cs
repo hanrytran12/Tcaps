@@ -29,6 +29,7 @@ namespace Application.Features.Assignments.Queries.GetAssignmentByBatchId
                 return Result<AssignForStaffDTO>.Failure("Staff not found.");
             var batch = await _context.Batches.FindAsync(request.BatchId);
 
+            var product = await _context.Products.FindAsync(batch.ProductId);
             var assignment = await _context.Assignments
                 .FirstOrDefaultAsync(a => a.BatchId == batch.Id
                          && a.WorkshopId == staff.WorkshopId);
@@ -40,13 +41,15 @@ namespace Application.Features.Assignments.Queries.GetAssignmentByBatchId
                 AssignId = assignment.Id,
                 BatchId = assignment.BatchId,
                 BatchesCode = batch.Code,
+                ProductCode = product.Code,
                 WorkshopId = assignment.WorkshopId,
                 StepOrder = assignment.StepOrder,
                 Quantity = assignment.Quantity,
                 UnitPrice = assignment.UnitPrice,
                 StartDate = assignment.StartDate,
                 EndDate = assignment.EndDate,
-                ExpectedDeliveryDate = assignment.ExpectedDeliveryDate
+                ExpectedDeliveryDate = assignment.ExpectedDeliveryDate,
+                Status = assignment.Status
             };
             return Result<AssignForStaffDTO>.Success(dto);
         }
