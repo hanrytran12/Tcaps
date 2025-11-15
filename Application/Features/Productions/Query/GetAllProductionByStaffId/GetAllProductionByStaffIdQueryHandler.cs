@@ -62,6 +62,7 @@ namespace Application.Features.Productions.Query.GetAllProductionByStaffId
                     FullName = user?.FullName ?? string.Empty,
                     Quantity = p.Quantity,
                     Date = p.Date,
+                    Time = p.Time,
                     Status = p.Status
                 });
             }
