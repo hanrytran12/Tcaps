@@ -39,7 +39,6 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
                 materialWorkshop.WorkshopId,
                 materialWorkshop.QuantitySend,
                 materialWorkshop.QuantityReceive,
-                materialWorkshop.Name,
                 materialWorkshop.ShipDate), cancellationToken);
 
             return Result<Guid>.Success(materialWorkshop.Id);
