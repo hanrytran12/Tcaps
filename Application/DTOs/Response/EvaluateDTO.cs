@@ -15,6 +15,7 @@ namespace Application.DTOs.Response
         public string Note { get; set; } = string.Empty;
         public string? Image { get; set; }
         public string Status { get; set; }
+        public DateOnly Created_At { get; set; }
 
         public List<ComponentDefectsDTO> Defects { get; set; } = new();
     }
