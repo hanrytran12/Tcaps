@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using AutoMapper;
+﻿using Application.Common;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Http.Metadata;
 
 namespace Application.Features.Evaluates.Commands.AddEvaluate
 {
@@ -19,25 +13,29 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
         private readonly IEvaluateRepository _evaluateRepository;
         private readonly IComponentDefectRepository _componentDefectRepository;
         private readonly IMediator _mediator;
+        private readonly IFileStorageService _fileStorageService;
 
         public AddEvaluateCommandHandler(IUnitOfWork unitOfWork, IEvaluateRepository evaluateRepository,
-            IComponentDefectRepository componentDefectRepository, IMediator mediator)
+            IComponentDefectRepository componentDefectRepository, IMediator mediator, IFileStorageService fileStorageService)
         {
             _unitOfWork = unitOfWork;
             _evaluateRepository = evaluateRepository;
             _componentDefectRepository = componentDefectRepository;
             _mediator = mediator;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<Result<Guid>> Handle(AddEvaluateCommand request, CancellationToken cancellationToken)
         {
+            var image = await _fileStorageService.SaveFileAsync(request.Image, "evaluates", cancellationToken);
+
             var evaluate = Evaluate.Create(
                 request.ProductionId,
                 request.UserId.Value,
                 request.QuantityError,
                 request.QuantitySucess,
                 request.Note,
-                request.Image,
+                image,
                 request.Status);
 
             if (request.Status != "Passed")

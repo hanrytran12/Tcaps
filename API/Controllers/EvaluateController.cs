@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using Application.Features.Batches.Commands.UpdateBatch;
-using Application.Features.Evaluates.Commands.AddEvaluate;
+﻿using Application.Features.Evaluates.Commands.AddEvaluate;
 using Application.Features.Evaluates.Commands.UpdateEvaluate;
 using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
@@ -8,6 +6,7 @@ using Application.Features.Evaluates.Queries.GetEvaluatesByStaffId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -69,7 +68,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "QC")]
-        public async Task<IActionResult> CreateEvaluate([FromBody] AddEvaluateCommand command)
+        public async Task<IActionResult> CreateEvaluate([FromForm] AddEvaluateCommand command)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))
@@ -91,7 +90,7 @@ namespace API.Controllers
         {
             command.Id = evaluateId;
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(new {success = false, message = result.Error ?? "Update evaluate failed" });
+            return result.IsSuccess ? NoContent() : BadRequest(new { success = false, message = result.Error ?? "Update evaluate failed" });
         }
     }
 }
