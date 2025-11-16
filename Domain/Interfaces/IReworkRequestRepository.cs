@@ -5,5 +5,6 @@ namespace Domain.Interfaces
     public interface IReworkRequestRepository
     {
         Task AddReworkRequestAsync(ReworkRequest reworkRequest);
+        Task<ReworkRequest?> GetByAssignIdAsync(Guid assignmentId);
     }
 }

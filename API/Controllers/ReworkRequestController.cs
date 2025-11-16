@@ -3,6 +3,7 @@ using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
 using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
 using Application.Features.ReworkRequest.Queries.GetAllReworkRequest;
 using Application.Features.ReworkRequest.Queries.GetRequestById;
+using Application.Features.ReworkRequest.Queries.GetReworkByAssignId;
 using Application.Features.ReworkRequest.Queries.GetReworkReconciliationSummary;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -67,6 +68,13 @@ namespace API.Controllers
         {
             command.RequestId = requestId;
             var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("by-assignId")]
+        public async Task<IActionResult> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
+        {
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }
