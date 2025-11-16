@@ -4,32 +4,82 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.DTOs.Response;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest
 {
-    public class GetAllTaskTransferRequestQueryHandler : IRequestHandler<GetAllTaskTransferRequestQuery, Result<List<TaskTransferRequest>>>
+    public class GetAllTaskTransferRequestQueryHandler : IRequestHandler<GetAllTaskTransferRequestQuery, Result<List<TaskTransferRequestDTO>>>
     {
         private readonly ITaskTransferRequestRepository _taskTransferRequestRepository;
+        private readonly IAppDbContext _context;
 
-        public GetAllTaskTransferRequestQueryHandler(ITaskTransferRequestRepository taskTransferRequestRepository)
+        public GetAllTaskTransferRequestQueryHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IAppDbContext context)
         {
             _taskTransferRequestRepository = taskTransferRequestRepository;
+            _context = context;
         }
-        public async Task<Result<List<TaskTransferRequest>>> Handle(GetAllTaskTransferRequestQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<TaskTransferRequestDTO>>> Handle(GetAllTaskTransferRequestQuery request, CancellationToken cancellationToken)
         {
             var taskTransfers = await _taskTransferRequestRepository.GetAllAsync();
             if (taskTransfers == null || !taskTransfers.Any())
-                return Result<List<TaskTransferRequest>>.Failure("Không tìm thấy yêu cầu chuyển giao nào cho QC này.");
+                return Result<List<TaskTransferRequestDTO>>.Failure("Không tìm thấy yêu cầu chuyển giao nào.");
+
+            var batchIds = taskTransfers.Select(x => x.BatchId).Distinct().ToList();
+            var workshopIds = taskTransfers.Select(x => x.WorkshopId).Distinct().ToList();
+            var userIds = taskTransfers.Select(x => x.QcTransportId).Distinct().ToList();
+
+            var batches = await _context.Batches
+                .Where(x => batchIds.Contains(x.Id))
+                .ToListAsync(cancellationToken);
+
+            var workshops = await _context.Workshop
+                .Where(x => workshopIds.Contains(x.Id))
+                .ToListAsync(cancellationToken);
+
+            var users = await _context.Users
+                .Where(x => userIds.Contains(x.Id))
+                .ToListAsync(cancellationToken);
+
+            // ⭐ CHUYỂN LIST THÀNH DICTIONARY – tìm nhanh O(1)
+            var batchDict = batches.ToDictionary(x => x.Id, x => x);
+            var workshopDict = workshops.ToDictionary(x => x.Id, x => x);
+            var userDict = users.ToDictionary(x => x.Id, x => x);
+
+            // ⭐ Tạo DTO (không còn await trong vòng lặp)
+            var dtos = new List<TaskTransferRequestDTO>();
+            foreach (var item in taskTransfers)
+            {
+                batchDict.TryGetValue(item.BatchId, out var batch);
+                workshopDict.TryGetValue(item.WorkshopId, out var workshop);
+                userDict.TryGetValue(item.QcTransportId, out var qcTransport);
+
+                var dto = new TaskTransferRequestDTO
+                {
+                    BatchId = item.BatchId,
+                    BatchCode = batch?.Code ?? string.Empty,
+                    WorkshopId = item.WorkshopId,
+                    WorkshopName = workshop?.Name ?? string.Empty,
+                    QcTransportId = item.QcTransportId,
+                    QcTransportName = qcTransport?.FullName ?? string.Empty,
+                    Status = item.Status,
+                    Note = item.Note,
+                    CreatedAt = item.CreatedAt,
+                    ApprovedAt = item.ApprovedAt
+                };
+                dtos.Add(dto);
+            }
 
             if (!string.IsNullOrEmpty(request.Status))
             {
-                taskTransfers = taskTransfers.Where(t => t.Status == request.Status).ToList();
+                dtos = dtos.Where(t => t.Status == request.Status).ToList();
             }
 
-            return Result<List<TaskTransferRequest>>.Success(taskTransfers.ToList());
+            return Result<List<TaskTransferRequestDTO>>.Success(dtos.ToList());
         }
     }
 }

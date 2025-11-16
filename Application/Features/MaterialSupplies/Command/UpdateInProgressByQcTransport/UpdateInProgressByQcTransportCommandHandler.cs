@@ -49,6 +49,10 @@ namespace Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTran
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            await _mediator.Publish(new QCTransportApproveMaterialSupplyEvent(
+                qcTransport.Id,
+                materialSupply.Id));
+
             return Result<Guid>.Success(materialSupply.Id);
         }
     }
