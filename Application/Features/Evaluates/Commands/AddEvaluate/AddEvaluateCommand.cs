@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Application.DTOs.Response;
 using MediatR;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json.Serialization;
 
 namespace Application.Features.Evaluates.Commands.AddEvaluate
 {
@@ -19,7 +15,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
         public string Status { get; set; } = string.Empty;
         public int QuantityError { get; set; }
         public int QuantitySucess { get; set; }
-        public string Image { get; set; } = string.Empty;
+        public IFormFile Image { get; set; }
 
         public List<ComponentDefectsDTO> Defects { get; set; } = new();
     }
