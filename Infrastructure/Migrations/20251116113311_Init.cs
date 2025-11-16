@@ -94,6 +94,7 @@ namespace Infrastructure.Migrations
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NoteFromQC = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ActualReceivedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
                 },
@@ -146,10 +147,7 @@ namespace Infrastructure.Migrations
                     AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuantitySend = table.Column<int>(type: "int", nullable: false),
                     QuantityReceive = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Unit = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ShipDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
