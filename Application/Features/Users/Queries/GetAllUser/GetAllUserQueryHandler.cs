@@ -1,21 +1,38 @@
-﻿using Domain.Entities;
-using Domain.Interfaces;
+﻿using Application.DTOs.Response;
+using Application.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Queries.GetAllUser
 {
-    public class GetAllUserQueryHandler : IRequestHandler<GetAllUserQuery, List<User>>
+    public class GetAllUserQueryHandler : IRequestHandler<GetAllUserQuery, List<UsersDTO>>
     {
-        private readonly IUserRepository _repository;
-        public GetAllUserQueryHandler(IUserRepository repository)
+        //private readonly IUserRepository _repository;
+        private readonly IAppDbContext _appDbContext;
+
+        public GetAllUserQueryHandler(IAppDbContext appDbContext)
         {
-            _repository = repository;
+            _appDbContext = appDbContext;
         }
 
-        public async Task<List<User>> Handle(GetAllUserQuery request, CancellationToken cancellationToken)
+        public async Task<List<UsersDTO>> Handle(GetAllUserQuery request, CancellationToken cancellationToken)
         {
-            var listUser = await _repository.GetAllAsync();
-            return listUser.ToList();
+            var users = from u in _appDbContext.Users
+                        join w in _appDbContext.Workshop on u.WorkshopId equals w.Id
+                        select new UsersDTO
+                        {
+                            Id = u.Id,
+                            Role = u.Role,
+                            FullName = u.FullName,
+                            Email = u.Email,
+                            Phone = u.Phone,
+                            Status = u.Status,
+                            CreatedAt = u.CreatedAt,
+                            WorkshopName = (u.Role == "Lead") ? "" : w.Name,
+                        };
+
+            var usersList = await users.ToListAsync();
+            return usersList;
         }
     }
 }
