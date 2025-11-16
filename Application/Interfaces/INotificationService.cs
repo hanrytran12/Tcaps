@@ -23,5 +23,6 @@ namespace Application.Interfaces
         Task AdminAssignForQCTransportToTransferMaterialSupplyNotificationAsync(Guid qcTransportId, Guid requestId, Guid materialId, int quantity);
         Task SendAddMaterialSupplyForQcWorkshopNotification(Guid qcworkshopId, Guid requestId, Guid materialId, int quantity);
         Task SendCompletedMaterialSupplyNotificationAsync(Guid supplyId, Guid materialId, int quantity);
+        Task SendQCTransportApproveMaterialSupplyNotificationAsync(Guid qcTransportId, Guid materialSupplyId);
     }
 }
