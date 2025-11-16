@@ -17,20 +17,15 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEvaluateRepository _evaluateRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IComponentDefectRepository _componentDefectRepository;
-        private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
         public AddEvaluateCommandHandler(IUnitOfWork unitOfWork, IEvaluateRepository evaluateRepository,
-            IUserRepository userRepository, IComponentDefectRepository componentDefectRepository
-            ,IMapper mapper, IMediator mediator)
+            IComponentDefectRepository componentDefectRepository, IMediator mediator)
         {
             _unitOfWork = unitOfWork;
             _evaluateRepository = evaluateRepository;
-            _userRepository = userRepository;
             _componentDefectRepository = componentDefectRepository;
-            _mapper = mapper;
             _mediator = mediator;
         }
 
