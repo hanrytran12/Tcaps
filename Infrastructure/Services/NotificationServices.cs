@@ -79,7 +79,7 @@ namespace Infrastructure.Services
 
             var title = "Material Request Approved";
             var message = $"Lead {user?.FullName} is approve request for {quantityRequest} of material {material?.Name} for batch {batch?.Code}.";
-            var type = "MaterialRequestApproval";
+            var type = "MaterialRequest";
             var notificationAdmin = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
 
             await _notificationRepository.AddAsync(notificationAdmin);
@@ -186,7 +186,7 @@ namespace Infrastructure.Services
             {
                 title = "Không có sản phẩm lỗi.";
                 message = $"Sản phẩm của {staff?.FullName} không có sản phẩm lỗi. Ghi chú: {note}.";
-                type = "EvaluatePass";
+                type = "Evaluate";
                 production?.MarkAsCompleted();
                 _productionRepository.Update(production);
             }
@@ -194,7 +194,7 @@ namespace Infrastructure.Services
             {
                 title = "Báo lỗi sản phẩm";
                 message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm đạt và {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
-                type = "EvaluateFail";
+                type = "Evaluate";
                 production?.Rework();
                 _productionRepository.Update(production);
             }
@@ -202,7 +202,7 @@ namespace Infrastructure.Services
             {
                 title = "Báo lỗi sản phẩm";
                 message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm đạt và {quantityError} sản phẩm lỗi và không thể sữa chữa. Ghi chú: {note}.";
-                type = "EvaluateReject";
+                type = "Evaluate";
                 production?.CompleteWithLoss();
                 _productionRepository.Update(production);
             }
@@ -219,7 +219,7 @@ namespace Infrastructure.Services
 
             var title = "Nộp sản phẩm";
             var message = $"Nhân viên {user.FullName} nộp {quantity} sản phẩm để QC kiểm tra.";
-            var type = "SubmitProduction";
+            var type = "Production";
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
@@ -249,7 +249,7 @@ namespace Infrastructure.Services
 
             var title = "Nộp sản phẩm đã sửa lỗi.";
             var message = $"Nhân viên {user.FullName} nộp {quantity} sản phẩm đã sửa chữa để QC kiểm tra.";
-            var type = "ResolveProduction";
+            var type = "Production";
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
@@ -281,7 +281,7 @@ namespace Infrastructure.Services
 
             var title = "Chấp nhận sản phẩm đã sửa lỗi thành công.";
             var message = $"QC {qc.FullName} chấp nhận {quantity} sản phẩm đã sửa chữa thành công.";
-            var type = "ConfirmProduction";
+            var type = "Production";
             var notification = new Notification(Guid.NewGuid(), user.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
@@ -318,7 +318,7 @@ namespace Infrastructure.Services
 
             var title = "Chấp nhận đơn hàng";
             var message = $"Đã xác nhận đơn gửi {quantitySend} vật liệu và nhận {quantityReceive}.";
-            var type = "ConfirmMaterialWorkshop";
+            var type = "MaterialWorkshop";
 
             var notificationLead = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationLead);
@@ -336,7 +336,7 @@ namespace Infrastructure.Services
 
             var title = "Yêu cầu chuyển giao công việc cho QC vận chuyển";
             var message = $"Lead vừa tạo yêu cầu chuyển giao cho lô {batchId} tại xưởng {workshopId} cho QC tên {qc.FullName}. Ghi chú: {note}";
-            var type = "TaskTransfer";
+            var type = "TaskTransferRequest";
 
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
@@ -350,7 +350,7 @@ namespace Infrastructure.Services
 
             var title = "Yêu cầu chuyển giao đã được duyệt";
             var message = $"Yêu cầu chuyển giao #{taskTransferRequestId} của bạn đã được duyệt. Vui lòng kiểm tra để tiến hành vận chuyển.";
-            var type = "ApproveTaskTransferRequest";
+            var type = "TaskTransferRequest";
 
             var notification = Notification.Create(qcTransport.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
@@ -430,6 +430,25 @@ namespace Infrastructure.Services
 
             var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendQCTransportApproveMaterialSupplyNotificationAsync(Guid qcTransportId, Guid materialSupplyId)
+        {
+            var qcTransport = await _userRepository.GetByIdAsync(qcTransportId);
+
+            var lead = await _userRepository.GetByRoleAsync("Lead");
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+
+            var title = "QC vận chuyển tiếp nhận";
+            var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn {materialSupplyId} cung cấp NVL.";
+            var type = "MaterialSupply";
+
+            var notificationLead = Notification.Create(lead.Id, title, message, type);
+            await _notificationRepository.AddAsync(notificationLead);
+
+            var notificationAdmin = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
         }
     }

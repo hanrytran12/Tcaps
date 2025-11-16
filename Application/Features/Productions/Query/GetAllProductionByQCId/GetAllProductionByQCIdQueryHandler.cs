@@ -17,15 +17,13 @@ namespace Application.Features.Productions.Query.GetAllProductionByQCId
     {
         private readonly IProductionRepository _productionRepository;
         private readonly IUserRepository _userRepository;
-        private readonly IMapper _mapper;
         private readonly IAppDbContext _context;
 
         public GetAllProductionByQCIdQueryHandler(IProductionRepository productionRepository,
-            IUserRepository userRepository, IMapper mapper, IAppDbContext context)
+            IUserRepository userRepository, IAppDbContext context)
         {
             _productionRepository = productionRepository;
             _userRepository = userRepository;
-            _mapper = mapper;
             _context = context;
         }
         public async Task<List<ProductionDTO>> Handle(GetAllProductionByQCIdQuery request, CancellationToken cancellationToken)
