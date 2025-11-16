@@ -24,7 +24,7 @@ namespace Application.Features.ReworkRequest.Events
 
             var type = "REWORK_REQUEST_APPROVED";
             var title = "Yêu cầu làm lại sản phẩm lỗi";
-            var message = $"Xưởng bạn sẽ làm lại sản phẩm lỗi. Nhận nguyên vật liệu vào ngày {notification.DeliveryDate} và hoàn thành trước ngày {notification.EndDate}";
+            var message = $"Xưởng bạn sẽ làm lại sản phẩm lỗi. Nhận nguyên vật liệu vào ngày {notification.DeliveryDate.ToString("dd/MM/yyyy")} và hoàn thành trước ngày {notification.EndDate.ToString("dd/MM/yyyy")}";
 
             var noti = Notification.Create(qcUser.Id, title, message, type);
             await _notificationRepository.AddAsync(noti);

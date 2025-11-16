@@ -24,7 +24,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
             var workshop = await _workshopRepository.GetByIdAsync(notification.WorkshopId);
 
             var type = "ASSIGNMENT_ACTIVED";
-            var meesage = $"Xưởng {workshop.Name} của lô hàng {notification.CodeBatch} đã làm xong lô sản phẩm và sẽ chuyển tới xưởng của bạn trước hoặc ngay ngày {notification.NextStartDate}.";
+            var meesage = $"Xưởng {workshop.Name} của lô hàng {notification.CodeBatch} đã làm xong lô sản phẩm và sẽ chuyển tới xưởng của bạn trước hoặc ngay ngày {notification.NextStartDate.ToString("dd/MM/yyyy")}.";
             var title = "Lô hàng được chuyển giao";
 
             var noti = Notification.Create(user.Id, title, meesage, type);

@@ -37,7 +37,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
             var type = "REWORK_DELIVERY_INCOMING";
             var title = "Lô hàng làm lại được chuyển giao";
-            var message = $"Bạn sẽ nhận thêm {(int)queryInfo.r.DefectiveQuantity} sản phẩm làm lại cho lô {batchCode}. Lô sản phẩm từ xưởng {workshopName} sẽ giao tới vào ngày {queryInfo.r.NextStepDeliveryDate}";
+            var message = $"Bạn sẽ nhận thêm {(int)queryInfo.r.DefectiveQuantity} sản phẩm làm lại cho lô {batchCode}. Lô sản phẩm từ xưởng {workshopName} sẽ giao tới vào ngày {queryInfo.r.NextStepDeliveryDate.Value.ToString("dd/MM/yyyy")}";
 
             var noti = Notification.Create(qcUser.Id, title, message, type);
             await _notificationRepository.AddAsync(noti);

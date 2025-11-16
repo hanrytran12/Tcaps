@@ -26,10 +26,11 @@ namespace Application.Features.Assignments.Events
             var title = "Công việc mới được giao";
             var message = string.Empty;
             var type = "NEW_ASSIGNMENT";
+            string formattedDate = notificationEvent.ExpectedDeliveryDate.Value.ToString("dd/MM/yyyy");
 
             if (notificationEvent.ExpectedDeliveryDate != null)
             {
-                message = $"Một lô hàng mới, mã lô {notificationEvent.BatchCode}, vừa được phân công cho xưởng của bạn ({workshop?.Name}). Dự kiến giao nguyên liệu vào ngày {notificationEvent.ExpectedDeliveryDate}.";
+                message = $"Một lô hàng mới, mã lô {notificationEvent.BatchCode}, vừa được phân công cho xưởng của bạn ({workshop?.Name}). Dự kiến giao nguyên liệu vào ngày {formattedDate}";
 
             }
             else

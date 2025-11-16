@@ -43,7 +43,7 @@ namespace Application.Features.MaterialRequest.Events
 
             var type = "MATERIAL_DELIVERY_INCOMING";
             var title = "Thông báo nhận nguyên vật liệu";
-            var message = $"Nguyên vật liệu {notification.MaterialName} với số lượng {notification.Quantity} {notification.UnitMaterial} sẽ được giao tới xưởng bạn vào ngày {expectedDeliveryDate} để làm sản phẩm cho lô hàng {queryInfo.Code}.";
+            var message = $"Nguyên vật liệu {notification.MaterialName} với số lượng {notification.Quantity} {notification.UnitMaterial} sẽ được giao tới xưởng bạn vào ngày {expectedDeliveryDate.Value.ToString("dd/MM/yyyy")} để làm sản phẩm cho lô hàng {queryInfo.Code}.";
 
             var noti = Notification.Create(queryInfo.Id, title, message, type);
             await _notificationRepository.AddAsync(noti);
