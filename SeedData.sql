@@ -241,4 +241,5 @@ select * from MaterialSupplies
 select * from MaterialWorkshops
 select * from MaterialRequests
 select * from TaskTransferRequests
-update Assignments set EndDate = '2025-11-18' where Id = 'E0000000-0000-0000-0000-000000000007'
+select * from ReworkRequests
+update Assignments set Status = 'Reworking' where Id = 'E0000000-0000-0000-0000-000000000001'

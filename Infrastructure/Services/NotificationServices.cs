@@ -113,7 +113,7 @@ namespace Infrastructure.Services
 
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
-                _responseDTO.Data = new
+                _responseDTO.Data = new 
                 {
                     Items = dto,
                     notifications.TotalCount,
@@ -178,6 +178,7 @@ namespace Infrastructure.Services
         {
             var staff = await _productionRepository.GetStaffByProductionIdAsync(productionId);
             var production = await _productionRepository.GetByIdAsync(productionId);
+            var evaluate = await _evaluateRepository.GetByIdAsync(evaluateId);
             var title = "";
             var message = "";
             var type = "";
@@ -193,7 +194,7 @@ namespace Infrastructure.Services
             else if (status == "Failed")
             {
                 title = "Báo lỗi sản phẩm";
-                message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm đạt và {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
+                message = $"Sản phẩm của {staff?.FullName} có {quantitySuccess} sản phẩm đạt và {quantityError} sản phẩm lỗi. Ghi chú: {note}.";
                 type = "Evaluate";
                 production?.Rework();
                 _productionRepository.Update(production);
@@ -201,7 +202,7 @@ namespace Infrastructure.Services
             else
             {
                 title = "Báo lỗi sản phẩm";
-                message = $"Sản phẩm của {staff?.FullName} có {quantityError} sản phẩm đạt và {quantityError} sản phẩm lỗi và không thể sữa chữa. Ghi chú: {note}.";
+                message = $"Sản phẩm của {staff?.FullName} có {quantitySuccess} sản phẩm đạt và {quantityError} sản phẩm lỗi và không thể sữa chữa. Ghi chú: {note}.";
                 type = "Evaluate";
                 production?.CompleteWithLoss();
                 _productionRepository.Update(production);
