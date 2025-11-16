@@ -1,4 +1,5 @@
 using Application.DTOs.Request;
+using Application.DTOs.Response;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.UpdateUser;
@@ -31,7 +32,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<User>> GetAllUser()
+        public async Task<List<UsersDTO>> GetAllUser()
         {
             var listUser = await _mediator.Send(new GetAllUserQuery());
             return listUser;
