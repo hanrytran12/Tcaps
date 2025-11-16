@@ -25,13 +25,25 @@ namespace Application.Features.MaterialRequest.Events
                         join u in _appDbContext.Users on a.WorkshopId equals u.WorkshopId
                         where u.Role == "QC"
                         join b in _appDbContext.Batches on a.BatchId equals b.Id
-                        select new { a.ExpectedDeliveryDate, b.Code, u.Id };
+                        select new { a, b.Code, u.Id };
 
             var queryInfo = await query.FirstOrDefaultAsync();
 
+            var assignment = queryInfo.a;
+            DateOnly? expectedDeliveryDate;
+            if (assignment.Status != "Reworking")
+            {
+                expectedDeliveryDate = assignment.ExpectedDeliveryDate;
+            }
+            else
+            {
+                var reworkRequest = await _appDbContext.ReworkRequests.Where(rr => rr.AssignmentId == assignment.Id).FirstOrDefaultAsync();
+                expectedDeliveryDate = reworkRequest?.DeliveryDate;
+            }
+
             var type = "MATERIAL_DELIVERY_INCOMING";
             var title = "Thông báo nhận nguyên vật liệu";
-            var message = $"Nguyên vật liệu {notification.MaterialName} với số lượng {notification.Quantity} {notification.UnitMaterial} sẽ được giao tới xưởng bạn vào ngày {queryInfo.ExpectedDeliveryDate} để làm sản phẩm cho lô hàng {queryInfo.Code}.";
+            var message = $"Nguyên vật liệu {notification.MaterialName} với số lượng {notification.Quantity} {notification.UnitMaterial} sẽ được giao tới xưởng bạn vào ngày {expectedDeliveryDate} để làm sản phẩm cho lô hàng {queryInfo.Code}.";
 
             var noti = Notification.Create(queryInfo.Id, title, message, type);
             await _notificationRepository.AddAsync(noti);
