@@ -26,7 +26,7 @@ namespace Application.Features.Assignments.Events
             var title = "Công việc mới được giao";
             var message = string.Empty;
             var type = "NEW_ASSIGNMENT";
-            string formattedDate = notificationEvent.ExpectedDeliveryDate.Value.ToString("dd/MM/yyyy");
+            string formattedDate = (notificationEvent.ExpectedDeliveryDate is not null) ? notificationEvent.ExpectedDeliveryDate.Value.ToString("dd/MM/yyyy") : "";
 
             if (notificationEvent.ExpectedDeliveryDate != null)
             {
