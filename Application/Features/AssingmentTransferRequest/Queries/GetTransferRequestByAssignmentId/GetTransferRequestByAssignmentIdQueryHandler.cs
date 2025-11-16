@@ -16,38 +16,71 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetTransferRequ
 
         public async Task<TransferRequestDTO> Handle(GetTransferRequestByAssignmentIdQuery request, CancellationToken cancellationToken)
         {
-            var materialUse = from mu in _appDbContext.MaterialUse
-                              where mu.AssignId == request.AssignmentId
-                              join ma in _appDbContext.Materials on mu.MaterialId equals ma.Id
-                              select new ReconciliationMaterials
-                              {
-                                  MaterialId = ma.Id,
-                                  MaterialName = ma.Name,
-                                  ReconciliationQuantity = mu.ReconciledQuantity,
-                              };
-
-            var listMaterial = await materialUse.ToListAsync();
-
             var query = from tq in _appDbContext.AssignmentTransferRequests
-                        where tq.AssignmentId == request.AssignmentId
-                        join a in _appDbContext.Assignments on tq.AssignmentId equals a.Id
-                        join u in _appDbContext.Users on a.WorkshopId equals u.WorkshopId
-                        select new TransferRequestDTO
+                        where tq.AssignmentId == request.AssignmentId && tq.Status == "PendingApproval"
+                        join u in _appDbContext.Users on tq.UserId equals u.Id
+
+                        select new
                         {
-                            TransferRequestId = tq.Id,
-                            AssignmentId = a.Id,
-                            Status = tq.Status,
-                            Note = tq.Note,
-                            CreatedAt = tq.CreatedAt,
-                            CreatedBy = new CreatedBy
-                            {
-                                QcId = u.Id,
-                                QcName = u.FullName,
-                            },
-                            ReconciliationMaterials = listMaterial
+                            TransferRequest = tq,
+                            QcUser = u
                         };
 
-            return await query.FirstOrDefaultAsync();
+            var resultInfo = await query.AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+            if (resultInfo == null)
+            {
+                return null;
+            }
+
+            var transferRequest = resultInfo.TransferRequest;
+            var qcUser = resultInfo.QcUser;
+            var listMaterial = new List<ReconciliationMaterials>();
+
+            var materialQuery = from mu in _appDbContext.MaterialUse
+                                join ma in _appDbContext.Materials on mu.MaterialId equals ma.Id
+                                select new { mu, ma };
+
+            if (transferRequest.ReworkRequestId.HasValue)
+            {
+                listMaterial = await materialQuery
+                    .Where(x => x.mu.ReworkRequestId == transferRequest.ReworkRequestId.Value)
+                    .Select(x => new ReconciliationMaterials
+                    {
+                        MaterialId = x.ma.Id,
+                        MaterialName = x.ma.Name,
+                        ReconciliationQuantity = x.mu.ReconciledQuantity
+                    })
+                    .ToListAsync(cancellationToken);
+            }
+            else
+            {
+                listMaterial = await materialQuery
+                    .Where(x => x.mu.AssignId == request.AssignmentId && x.mu.ReworkRequestId == null)
+                    .Select(x => new ReconciliationMaterials
+                    {
+                        MaterialId = x.ma.Id,
+                        MaterialName = x.ma.Name,
+                        ReconciliationQuantity = x.mu.ReconciledQuantity
+                    })
+                    .ToListAsync(cancellationToken);
+            }
+
+            var dto = new TransferRequestDTO
+            {
+                TransferRequestId = transferRequest.Id,
+                AssignmentId = transferRequest.AssignmentId,
+                Status = transferRequest.Status,
+                Note = transferRequest.Note,
+                CreatedAt = transferRequest.CreatedAt,
+                CreatedBy = new CreatedBy
+                {
+                    QcId = qcUser.Id,
+                    QcName = qcUser.FullName,
+                },
+                ReconciliationMaterials = listMaterial
+            };
+
+            return dto;
         }
     }
 }
