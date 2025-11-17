@@ -72,5 +72,10 @@ namespace Infrastructure.Services
             await bobClient.UploadAsync(file.OpenReadStream(), cancellationToken);
             return $"{containerName}/{uniqueFileName}";
         }
+
+        public Task<List<string>> SaveFileAsync(List<IFormFile> files, string subFolder, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
