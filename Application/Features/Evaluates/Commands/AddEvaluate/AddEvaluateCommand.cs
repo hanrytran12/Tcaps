@@ -15,7 +15,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
         public string Status { get; set; } = string.Empty;
         public int QuantityError { get; set; }
         public int QuantitySucess { get; set; }
-        public IFormFile Image { get; set; }
+        public List<IFormFile> Image { get; set; }
 
         public List<ComponentDefectsDTO> Defects { get; set; } = new();
     }
