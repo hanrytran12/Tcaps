@@ -26,10 +26,10 @@ namespace Domain.Entities
             return new Product(Guid.NewGuid(), code, name, image, description);
         }
 
-        public void UpdateDetails(string? name, string? description)
+        public void UpdateDetails(string name, string description)
         {
-            this.Name = !string.IsNullOrWhiteSpace(name) ? name : this.Name;
-            this.Description = !string.IsNullOrWhiteSpace(description) ? description : this.Description;
+            this.Name = name;
+            this.Description = description;
         }
 
         public void MarkAsDeleted()

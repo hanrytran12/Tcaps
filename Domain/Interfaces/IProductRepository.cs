@@ -13,5 +13,6 @@ namespace Domain.Interfaces
         Task<Product?> GetByCodeAsync(string code);
         Task<int?> GetLastCodeIndexAsync(string prefix);
         Task<bool> IsNameUniqueAsync(string name);
+        Task<Product?> GetByNameAsync(string name);
     }
 }
