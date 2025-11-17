@@ -161,7 +161,7 @@ builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
 builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
 builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
-builder.Services.AddScoped<IFileStorageService, FileStorageService>();
+builder.Services.AddScoped<IFileStorageService, AzureBlobStorageService>();
 builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
 builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
 builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
@@ -371,7 +371,8 @@ app.UseStaticFiles(new StaticFileOptions
         var path = ctx.Context.Request.Path.Value?.ToLower() ?? "";
         if (path.Contains("/images/products/") ||
             path.Contains("/images/batches/") ||
-            path.Contains("/images/inventories/"))
+            path.Contains("/images/inventories/") ||
+            path.Contains("/images/evaluates/"))
         {
             // Set content type for files without extension
             ctx.Context.Response.ContentType = "image/jpeg";
