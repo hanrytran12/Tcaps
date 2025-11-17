@@ -2,18 +2,15 @@
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Services
 {
     public class AzureBlobStorageService : IFileStorageService
     {
-        private readonly string _connectionString;
         private readonly BlobServiceClient _blobServiceClient;
 
-        public AzureBlobStorageService(IConfiguration configuration, BlobServiceClient blobServiceClient)
+        public AzureBlobStorageService(BlobServiceClient blobServiceClient)
         {
-            _connectionString = configuration["BlobStorageSettings:ConnectionString"];
             _blobServiceClient = blobServiceClient;
         }
 
@@ -73,9 +70,21 @@ namespace Infrastructure.Services
             return $"{containerName}/{uniqueFileName}";
         }
 
-        public Task<List<string>> SaveFileAsync(List<IFormFile> files, string subFolder, CancellationToken cancellationToken)
+        public async Task<List<string>> SaveFileAsync(List<IFormFile> files, string subFolder, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            if (files == null || files.Count == 0)
+            {
+                return new List<string>();
+            }
+
+            var uploadTasks = new List<Task<string>>();
+            foreach (var file in files)
+            {
+                uploadTasks.Add(SaveFileAsync(file, subFolder, cancellationToken));
+            }
+
+            var urls = await Task.WhenAll(uploadTasks);
+            return urls.ToList();
         }
     }
 }
