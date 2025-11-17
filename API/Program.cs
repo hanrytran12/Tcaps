@@ -1,4 +1,5 @@
-﻿using API.Middlewares;
+﻿using API.Hubs;
+using API.Middlewares;
 using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Assignments.Commands.PlanAssignments;
@@ -169,7 +170,7 @@ builder.Services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRe
 builder.Services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
 builder.Services.AddScoped<IReworkRequestRepository, ReworkRequestRepository>();
 builder.Services.AddScoped<IMaterialSupplyRepository, MaterialSupplyRepository>();
-
+builder.Services.AddScoped<INotificationRealtimeService, SignalRNotificationService>();
 
 builder.Services.AddScoped<IAppDbContext>(provider =>
     provider.GetRequiredService<AppDbContext>());
@@ -354,6 +355,8 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin", "Lead"));
 });
 
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -394,5 +397,7 @@ app.UseExceptionHandler();
 //app.UseDeveloperExceptionPage();
 
 app.MapControllers();
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();
