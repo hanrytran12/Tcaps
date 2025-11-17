@@ -31,8 +31,7 @@ namespace API.Controllers
         public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? CreatedAtAction(nameof(GetAllProduct), new { id = result.Value }, new { id = result.Value })
-            : BadRequest(result.Error);
+            return result.IsSuccess ? CreatedAtAction(nameof(GetAllProduct), new { id = result.Value }) : BadRequest(result.Error);
         }
 
         [HttpPut("{id:guid}")]

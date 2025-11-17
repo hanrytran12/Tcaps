@@ -70,6 +70,11 @@ namespace Infrastructure.Repositories
             return (product is null);
         }
 
+        public async Task<bool> IsNameUniqueAsync(string name)
+        {
+            return !await _context.Products.AsNoTracking().AnyAsync(p => p.Name == name && !p.IsDeleted);
+        }
+
         public void Update(Product product)
         {
             _context.Products.Update(product);
