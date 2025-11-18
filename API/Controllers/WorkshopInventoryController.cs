@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory;
+using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByMaterialId;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByWorkshopId;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryForQC;
 using MediatR;
@@ -50,6 +51,13 @@ namespace API.Controllers
 
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+
+        [HttpGet("by-material")]
+        public async Task<IActionResult> GetByMaterialId([FromQuery] GetWorkshopInventoryByMaterialIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result.Value);
         }
     }
 }

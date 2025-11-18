@@ -6,5 +6,6 @@ namespace Domain.Interfaces
     {
         Task<WorkshopInventory?> GetByMaterialIdAndWorkshopIdAsync(Guid materialId, Guid workshopId);
         Task AddAsync(WorkshopInventory workshopInventory);
+        Task<WorkshopInventory> GetByMaterialIdAsync(Guid materialId);
     }
 }

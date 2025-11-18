@@ -242,4 +242,5 @@ select * from MaterialWorkshops
 select * from MaterialRequests
 select * from TaskTransferRequests
 select * from ReworkRequests
+select * from WorkshopInventory
 update Assignments set Status = 'Reworking' where Id = 'E0000000-0000-0000-0000-000000000001'
