@@ -8,12 +8,10 @@ namespace Application.Features.Products.Commands.DeleteProduct
     {
         private readonly IProductRepository _repository;
         private readonly IBatchRepository _batchRepository;
-        private readonly IUnitOfWork _unitOfWork;
 
-        public DeleteProductCommandHandler(IProductRepository repository, IUnitOfWork unitOfWork, IBatchRepository batchRepository)
+        public DeleteProductCommandHandler(IProductRepository repository, IBatchRepository batchRepository)
         {
             _repository = repository;
-            _unitOfWork = unitOfWork;
             _batchRepository = batchRepository;
         }
 
@@ -29,11 +27,10 @@ namespace Application.Features.Products.Commands.DeleteProduct
             var isProductInUse = await _batchRepository.IsProductInUseAsync(request.Id);
             if (isProductInUse)
             {
-                return Result.Failure("Không thể xóa Product vì nó đang được sử dụng trong các Batch.");
+                return Result.Failure("Không thể xóa Product vì đang có lô đang hoặc đã sản xuất cho mã nón này.");
             }
 
             product.MarkAsDeleted();
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }
