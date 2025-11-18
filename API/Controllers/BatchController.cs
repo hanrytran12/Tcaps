@@ -1,4 +1,5 @@
-﻿using Application.Features.Batches.Commands.AddBatch;
+﻿using Application.DTOs.Response;
+using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
@@ -6,6 +7,7 @@ using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetBatchesByQCId;
 using Application.Features.Batches.Queries.GetBatchesByStaffId;
+using Application.Features.Batches.Queries.GetBatchForManagement;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
 using MediatR;
@@ -30,6 +32,14 @@ namespace API.Controllers
         {
             var listBatch = await _mediator.Send(new GetAllBatchQuery());
             return listBatch;
+        }
+
+        [HttpGet("management")]
+        public async Task<List<BatchDTO>> GetBatchForManagement()
+        {
+            var query = new GetBatchForManagementQuery();
+            var result = await _mediator.Send(query);
+            return result;
         }
 
         [HttpGet("{batchId:guid}")]
