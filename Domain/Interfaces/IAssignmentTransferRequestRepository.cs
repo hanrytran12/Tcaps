@@ -6,5 +6,6 @@ namespace Domain.Interfaces
     {
         Task<AssignmentTransferRequest?> GetByIdAsync(Guid transferRequestId);
         Task AddAsync(AssignmentTransferRequest assignmentTransferRequest);
+        void Update(AssignmentTransferRequest assignmentTransferRequest);
     }
 }

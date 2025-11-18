@@ -12,6 +12,8 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTransport;
+using Application.Features.MaterialRequest.Commands.QcTransportReceptionMaterialRequest;
 
 namespace API.Controllers
 {
@@ -142,6 +144,57 @@ namespace API.Controllers
                 return NoContent();
             }
             return BadRequest(result.error);
+        }
+
+        [HttpGet("qc-transport")]
+        [Authorize(Roles = "QCTransport")]
+        public async Task<IActionResult> GetRequestsForQcTransport([FromQuery] GetMaterialRequestForQcTransportQuery query)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var isQcTransport = User.FindFirstValue("isQcTransport");
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            // Chỉ cho phép nếu có claim isQcTransport = true
+            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            {
+                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
+            }
+
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
+        [HttpPut("qc-transport-reception")]
+        [Authorize(Roles = "QCTransport")]
+        public async Task<IActionResult> QcTransportReceptionMaterialRequest([FromQuery] Guid materialRequestId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var isQcTransport = User.FindFirstValue("isQcTransport");
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            // Chỉ cho phép nếu có claim isQcTransport = true
+            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            {
+                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
+            }
+
+            var command = new QcTransportReceptionMaterialRequestCommand
+            {
+                QcTransportId = Guid.Parse(userIdString),
+                MaterialRequestId = materialRequestId
+            };
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }
     }
 }

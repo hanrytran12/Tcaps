@@ -40,5 +40,7 @@ namespace Domain.Entities
 
             AddDomainEvent(new TransferRequestApprovedEvent(AssignmentId, ReworkRequestId, CompletedQuantity));
         }
+
+        public void MarkAsReception() => Status = "QCTransportReception";
     }
 }
