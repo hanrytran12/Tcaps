@@ -16,11 +16,11 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
 
         public async Task<List<TrasnferRequestDTO>> Handle(GetAllTransferRequestQuery request, CancellationToken cancellationToken)
         {
-            var query = from tr in _appDbContext.AssignmentTransferRequests
-                        join a in _appDbContext.Assignments on tr.AssignmentId equals a.Id
-                        join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
-                        join b in _appDbContext.Batches on a.BatchId equals b.Id
-                        join u in _appDbContext.Users on tr.UserId equals u.Id
+            var query = from tr in _appDbContext.AssignmentTransferRequests.AsNoTracking()
+                        join a in _appDbContext.Assignments.AsNoTracking() on tr.AssignmentId equals a.Id
+                        join w in _appDbContext.Workshop.AsNoTracking() on a.WorkshopId equals w.Id
+                        join b in _appDbContext.Batches.AsNoTracking() on a.BatchId equals b.Id
+                        join u in _appDbContext.Users.AsNoTracking() on tr.UserId equals u.Id
                         select new TrasnferRequestDTO
                         {
                             TransferRequestId = tr.Id,
