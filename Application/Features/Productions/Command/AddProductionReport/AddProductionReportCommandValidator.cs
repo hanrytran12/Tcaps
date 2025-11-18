@@ -12,7 +12,7 @@ namespace Application.Features.Productions.Command.AddProductionReport
         public AddProductionReportCommandValidator()
         {
             RuleFor(x => x.Quantity)
-                .NotEmpty().WithMessage("Quantity is required.")
+                //.NotEmpty().WithMessage("Quantity is required.")
                 .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
         }
     }
