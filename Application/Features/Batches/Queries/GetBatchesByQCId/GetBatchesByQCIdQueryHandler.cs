@@ -22,26 +22,41 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
         }
         public async Task<Result<List<BatchDTO>>> Handle(GetBatchesByQCIdQuery request, CancellationToken cancellationToken)
         {
-            var qc = await _context.Users.FindAsync(request.QcId);
-            if (qc == null)
-                return Result<List<BatchDTO>>.Failure("Staff not found");
+            var batches = await (from user in _context.Users.AsNoTracking()
+                                 where user.Id == request.QcId
 
-            var batches = await (
-                from b in _context.Batches
-                join a in _context.Assignments on b.Id equals a.BatchId
-                join p in _context.Products on b.ProductId equals p.Id
-                where a.WorkshopId == qc.WorkshopId
-                select new BatchDTO
+                                 join a in _context.Assignments.AsNoTracking()
+                                     on user.WorkshopId equals a.WorkshopId
+
+                                 join b in _context.Batches.AsNoTracking()
+                                     on a.BatchId equals b.Id
+
+                                 join p in _context.Products.AsNoTracking()
+                                     on b.ProductId equals p.Id
+
+                                 // 5. Projection ra DTO
+                                 select new BatchDTO
+                                 {
+                                     BatchId = b.Id,
+                                     ProductName = p.Name,
+                                     Code = b.Code,
+                                     Quantity = b.Quantity,
+                                     StartDate = b.StartDate,
+                                     EndDate = b.EndDate,
+                                     Status = b.Status
+                                 })
+                                 // Dùng Distinct() để loại bỏ các Batch trùng lặp (nếu 1 Batch có nhiều Assignment trong cùng Workshop)
+                                 .Distinct()
+                                 .ToListAsync(cancellationToken);
+
+            if (!batches.Any())
+            {
+                var qcExists = await _context.Users.AnyAsync(u => u.Id == request.QcId, cancellationToken);
+                if (!qcExists)
                 {
-                    BatchId = b.Id,
-                    ProductName = p.Name,
-                    Code = b.Code,
-                    Quantity = b.Quantity,
-                    StartDate = b.StartDate,
-                    EndDate = b.EndDate,
-                    Status = b.Status
+                    return Result<List<BatchDTO>>.Failure("QC not found");
                 }
-            ).Distinct().ToListAsync(cancellationToken);
+            }
 
             return Result<List<BatchDTO>>.Success(batches);
         }
