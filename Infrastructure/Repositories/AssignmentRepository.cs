@@ -53,6 +53,11 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<bool> HasActiveAssignmentByWorkshopIdAsync(Guid workshopId)
+        {
+            return await _context.Assignments.AsNoTracking().AnyAsync(a => a.WorkshopId == workshopId && a.Status == "InProgress");
+        }
+
         public void Update(Assignment assignment)
         {
             _context.Assignments.Update(assignment);

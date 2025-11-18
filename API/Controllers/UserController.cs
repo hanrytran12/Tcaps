@@ -50,7 +50,13 @@ namespace API.Controllers
         public async Task<IActionResult> AddUser(AddUserCommand command)
         {
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return CreatedAtAction(nameof(GetAllUser), new { id = result.Value }, result.Value);
         }
 
         [HttpPut("{id:guid}")]
