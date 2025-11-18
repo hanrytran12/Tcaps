@@ -39,10 +39,10 @@ namespace Domain.Entities
 
         public void UpdateDetails(string? role, string? fullName, string? email, string? phone)
         {
-            this.Role = !string.IsNullOrEmpty(role) ? role : this.Role;
-            this.FullName = !string.IsNullOrEmpty(fullName) ? fullName : this.FullName;
-            this.Email = !string.IsNullOrEmpty(email) ? email : this.Email;
-            this.Phone = !string.IsNullOrEmpty(phone) ? phone : this.Phone;
+            if (!string.IsNullOrWhiteSpace(role)) Role = role;
+            if (!string.IsNullOrWhiteSpace(fullName)) FullName = fullName;
+            if (!string.IsNullOrWhiteSpace(email)) Email = email;
+            if (!string.IsNullOrWhiteSpace(phone)) Phone = phone;
         }
 
         public void MarkAsDeleted()

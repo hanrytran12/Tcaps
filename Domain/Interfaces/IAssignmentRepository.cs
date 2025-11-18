@@ -12,5 +12,6 @@ namespace Domain.Interfaces
         void Update(Assignment assignment);
         Task<bool> ExistsAndBelongsToBatchAsync(Guid assignmentId, Guid batchId);
         Task<Assignment?> FindByBatchAndStepOrderAsync(Guid batchId, int stepOrder);
+        Task<bool> HasActiveAssignmentByWorkshopIdAsync(Guid workshopId);
     }
 }

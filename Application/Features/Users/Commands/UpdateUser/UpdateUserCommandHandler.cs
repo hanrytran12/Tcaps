@@ -7,11 +7,9 @@ namespace Application.Features.Users.Commands.UpdateUser
     public class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        public UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork)
+        public UpdateUserCommandHandler(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
@@ -40,7 +38,6 @@ namespace Application.Features.Users.Commands.UpdateUser
             }
 
             user.UpdateDetails(request.Role, request.FullName, request.Email, request.Phone);
-            await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
     }
