@@ -4,7 +4,7 @@ namespace Domain.Interfaces
 {
     public interface IAssignmentRepository
     {
-        Task<IEnumerable<Assignment>> GetAssignmentsByWorkshopIdAsync(Guid workshopId);
+        Task<IEnumerable<Assignment>> GetAssignmentsByWorkshopIdAsync(Guid? workshopId);
         Task<Assignment> GetByIdAsync(Guid id);
         Task<IEnumerable<Assignment>> GetByIdsAsync(List<Guid> ids);
         Task<IEnumerable<Assignment>> GetAllAssignmentsAsync();
@@ -12,6 +12,6 @@ namespace Domain.Interfaces
         void Update(Assignment assignment);
         Task<bool> ExistsAndBelongsToBatchAsync(Guid assignmentId, Guid batchId);
         Task<Assignment?> FindByBatchAndStepOrderAsync(Guid batchId, int stepOrder);
-        Task<bool> HasActiveAssignmentByWorkshopIdAsync(Guid workshopId);
+        Task<bool> HasActiveAssignmentByWorkshopIdAsync(Guid? workshopId);
     }
 }

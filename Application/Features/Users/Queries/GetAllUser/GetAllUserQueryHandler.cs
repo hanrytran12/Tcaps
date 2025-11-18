@@ -27,7 +27,6 @@ namespace Application.Features.Users.Queries.GetAllUser
                             FullName = u.FullName,
                             Email = u.Email,
                             Phone = u.Phone,
-                            Status = u.Status,
                             CreatedAt = u.CreatedAt,
                             WorkshopName = (u.Role == "Lead") ? "" : w.Name,
                         };

@@ -39,7 +39,7 @@ namespace Infrastructure.Repositories
             return await _context.Workshop.ToListAsync();
         }
 
-        public async Task<Workshop?> GetByIdAsync(Guid id)
+        public async Task<Workshop?> GetByIdAsync(Guid? id)
         {
             return await _context.Workshop.FindAsync(id);
         }

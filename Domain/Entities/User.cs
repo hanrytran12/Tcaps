@@ -5,7 +5,7 @@ namespace Domain.Entities
 {
     public class User : AggregrateRoot
     {
-        public Guid WorkshopId { get; private set; }
+        public Guid? WorkshopId { get; private set; }
         public string Role { get; private set; } = string.Empty;
         public string FullName { get; private set; } = string.Empty;
         public string Email { get; private set; } = string.Empty;
@@ -17,7 +17,7 @@ namespace Domain.Entities
 
         public ICollection<Production> Productions { get; private set; } = new List<Production>();
 
-        public User(Guid id, Guid workshopId, string role, string fullName, string email, string passwordHash, string phone)
+        public User(Guid id, Guid? workshopId, string role, string fullName, string email, string passwordHash, string phone)
             : base(id)
         {
             WorkshopId = workshopId;
@@ -32,7 +32,7 @@ namespace Domain.Entities
 
         private User() : base(Guid.NewGuid()) { }
 
-        public static User Create(Guid workshopId, string role, string fullName, string email, string passwordHash, string phone)
+        public static User Create(Guid? workshopId, string role, string fullName, string email, string passwordHash, string phone)
         {
             return new User(Guid.NewGuid(), workshopId, role, fullName, email, passwordHash, phone);
         }

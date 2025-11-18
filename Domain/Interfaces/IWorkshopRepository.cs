@@ -4,7 +4,7 @@ namespace Domain.Interfaces
 {
     public interface IWorkshopRepository
     {
-        Task<Workshop?> GetByIdAsync(Guid id);
+        Task<Workshop?> GetByIdAsync(Guid? id);
         Task<IEnumerable<Workshop>> GetAllAsync();
         Task<IEnumerable<Workshop>> FindByNameAsync(string name);
         Task AddAsync(Workshop workshop);

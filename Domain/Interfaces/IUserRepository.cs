@@ -14,7 +14,7 @@ namespace Domain.Interfaces
         Task<bool> IsEmailTakenByAnotherUserAsync(string email, Guid userId);
         Task<bool> IsPhoneTakenByAnotherUserAsync(string phone, Guid userId);
         Task<User?> GetByRoleAsync(string role);
-        Task<User?> GetQCByWorkshopIdAsync(Guid workshopId);
+        Task<User?> GetQCByWorkshopIdAsync(Guid? workshopId);
         Task<User?> FindByEmailOrPhoneAsync(string emailOrPhone);
         Task<Guid> GetWorkshopIdByQCIdAsync(Guid qc_id);
         Task<IEnumerable<User>> GetUsersByWorkshopIdAsync(Guid workshopId);
