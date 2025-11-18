@@ -1,4 +1,5 @@
-﻿using API.Middlewares;
+
+using API.Middlewares;
 using Application.Common.Behaviors;
 using Application.Features.Assignments.Commands.CompleteAssignment;
 using Application.Features.Assignments.Commands.PlanAssignments;
@@ -93,12 +94,12 @@ using Domain.Events;
 using Domain.Interfaces;
 using FluentValidation;
 using Infrastructure.BackgroundServices;
+using API.Hubs;
+using API.Middlewares;
+using Application;
+using Infrastructure;
 using Infrastructure.Persistence;
-using Infrastructure.Repositories;
-using Infrastructure.Services;
-using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -135,50 +136,8 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
-builder.Services.AddSingleton(x =>
-    new BlobServiceClient(conf["BlobStorageSettings:ConnectionString"]));
-
-builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IBatchRepository, BatchRepository>();
-builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-builder.Services.AddScoped<INotificationService, NotificationServices>();
-builder.Services.AddScoped<IAssignmentRepository, AssignmentRepository>();
-builder.Services.AddScoped<IIncomeRepository, IncomeRepository>();
-builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-builder.Services.AddScoped<IWorkshopRepository, WorkshopRepository>();
-builder.Services.AddScoped<IProductionRepository, ProductionRepository>();
-builder.Services.AddScoped<IEvaluateRepository, EvaluateRepository>();
-builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
-builder.Services.AddScoped<IStaffService, StaffService>();
-builder.Services.AddScoped<IProductionService, ProductionService>();
-builder.Services.AddScoped<IMaterialRequestRepository, MaterialRequestRepository>();
-builder.Services.AddScoped<IMaterialRepository, MaterialRepository>();
-builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
-builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
-builder.Services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
-builder.Services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
-builder.Services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
-builder.Services.AddScoped<IFileStorageService, FileStorageService>();
-builder.Services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
-builder.Services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
-builder.Services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
-builder.Services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRepository>();
-builder.Services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
-builder.Services.AddScoped<IReworkRequestRepository, ReworkRequestRepository>();
-builder.Services.AddScoped<IMaterialSupplyRepository, MaterialSupplyRepository>();
-
-
-builder.Services.AddScoped<IAppDbContext>(provider =>
-    provider.GetRequiredService<AppDbContext>());
-builder.Services.AddScoped<IUnitOfWork>(provider =>
-    provider.GetRequiredService<AppDbContext>());
+builder.Services.AddApplicationServices(typeof(Program).Assembly, typeof(AppDbContext).Assembly);
+builder.Services.AddInfrastructureServices(conf);
 
 builder.Services.AddCors(options =>
 {
@@ -362,6 +321,10 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin", "Lead"));
 });
 
+builder.Services.AddSignalR();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -379,27 +342,21 @@ app.UseStaticFiles(new StaticFileOptions
         var path = ctx.Context.Request.Path.Value?.ToLower() ?? "";
         if (path.Contains("/images/products/") ||
             path.Contains("/images/batches/") ||
-            path.Contains("/images/inventories/"))
+            path.Contains("/images/inventories/") ||
+            path.Contains("/images/evaluates/"))
         {
-            // Set content type for files without extension
             ctx.Context.Response.ContentType = "image/jpeg";
-
-            // Allow CORS for images
             ctx.Context.Response.Headers.Append("Access-Control-Allow-Origin", "*");
         }
     },
-    ServeUnknownFileTypes = true // Allow serving files without extension
+    ServeUnknownFileTypes = true
 });
 
 app.UseCors("AllowedFrontend");
-
 app.UseAuthentication();
-
 app.UseAuthorization();
-
 app.UseExceptionHandler();
-//app.UseDeveloperExceptionPage();
-
 app.MapControllers();
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.Run();

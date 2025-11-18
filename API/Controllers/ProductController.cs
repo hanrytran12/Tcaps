@@ -31,13 +31,12 @@ namespace API.Controllers
         public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
             var result = await _mediator.Send(command);
-            return result.IsSuccess ? CreatedAtAction(nameof(GetAllProduct), new { id = result.Value }, new { id = result.Value })
-            : BadRequest(result.Error);
+            return result.IsSuccess ? CreatedAtAction(nameof(GetAllProduct), new { id = result.Value }) : BadRequest(result.Error);
         }
 
         [HttpPut("{id:guid}")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> UpdateProduct(Guid id, UpdateProductCommand command)
+        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductCommand command)
         {
             command.Id = id;
             var result = await _mediator.Send(command);

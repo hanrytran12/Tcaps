@@ -1,4 +1,5 @@
-﻿using Domain.Entities;
+﻿using Application.Interfaces;
+using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -10,12 +11,14 @@ namespace Application.Features.Assignments.Events
         private readonly INotificationRepository _notificationRepository;
         private readonly IWorkshopRepository _workshopRepository;
         private readonly IUserRepository _userRepository;
+        private readonly INotificationRealtimeService _notificationService;
 
-        public AssignmentAddedEventHandler(IWorkshopRepository workshopRepository, INotificationRepository notificationRepository, IUserRepository userRepository)
+        public AssignmentAddedEventHandler(IWorkshopRepository workshopRepository, INotificationRepository notificationRepository, IUserRepository userRepository, INotificationRealtimeService notificationRealtimeService)
         {
             _workshopRepository = workshopRepository;
             _userRepository = userRepository;
             _notificationRepository = notificationRepository;
+            _notificationService = notificationRealtimeService;
         }
 
         public async Task Handle(AssignmentAddedEvent notificationEvent, CancellationToken cancellationToken)
@@ -39,6 +42,16 @@ namespace Application.Features.Assignments.Events
             }
             var notification = Notification.Create(user.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _notificationService.SendNotificationToGroupAsync(user.Id.ToString(), "ReceiveNotification", new
+            {
+                notification.Id,
+                notification.Title,
+                notification.Type,
+                notification.Message,
+                notification.CreatedAt,
+                notification.IsRead
+            });
         }
     }
 }
