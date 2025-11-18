@@ -39,7 +39,6 @@ namespace Application.Features.Batches.Commands.AddBatch
                 request.EndDate
             );
             await _batchRepository.AddAsync(result);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<Guid>.Success(result.Id);
         }
     }
