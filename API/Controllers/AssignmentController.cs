@@ -86,14 +86,14 @@ namespace API.Controllers
         public async Task<IActionResult> GetAssignmentForQCIdAsync()
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
             {
                 return Unauthorized();
             }
 
             var query = new GetAllAssignmentByQCIdQuery
             {
-                QcId = Guid.Parse(userIdString)
+                QcId = qcId
             };
             var result = await _mediator.Send(query);
             return Ok(result);
@@ -121,14 +121,14 @@ namespace API.Controllers
         public async Task<IActionResult> GetAssignmentHistoryForQCAsync(Guid batchId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
             {
                 return Unauthorized();
             }
 
             var query = new GetAssignmentForHistoryByBatchIdQuery
             {
-                QcId = Guid.Parse(userIdString),
+                QcId = qcId,
                 BatchId = batchId
             };
             var result = await _mediator.Send(query);
