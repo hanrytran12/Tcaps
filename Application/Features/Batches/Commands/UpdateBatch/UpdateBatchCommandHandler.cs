@@ -30,7 +30,6 @@ namespace Application.Features.Batches.Commands.UpdateBatch
             {
                 return Result.Failure(ex.Message);
             }
-            await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
     }

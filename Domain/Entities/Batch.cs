@@ -73,7 +73,7 @@ namespace Domain.Entities
 
         public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
         {
-            if (Status != "Planned" && Status != "InProgress")
+            if (Status != "Planned")
             {
                 throw new InvalidOperationException($"Cannot update batch in status: {Status}.");
             }

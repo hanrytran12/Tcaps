@@ -81,7 +81,7 @@ namespace API.Controllers
 
         [HttpPut("{id:guid}")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> UpdateBatch(Guid id, UpdateBatchCommand command)
+        public async Task<IActionResult> UpdateBatch(Guid id, [FromBody] UpdateBatchCommand command)
         {
             command.Id = id;
             var result = await _mediator.Send(command);
