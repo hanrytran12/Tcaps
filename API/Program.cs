@@ -9,8 +9,10 @@ using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId;
 using Application.Features.Assignments.Queries.NewFolder;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
+using Application.Features.AssingmentTransferRequest.Commands.QcTransportReception;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
+using Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTransferForQcTransport;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using Application.Features.AssingmentTransferRequest.Queries.GetTransferRequestByAssignmentId;
 using Application.Features.Auth.Queries;
@@ -37,10 +39,12 @@ using Application.Features.MaterialRequest.Commands.ApproveRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.CreateMaterialRequestFromQC;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
+using Application.Features.MaterialRequest.Commands.QcTransportReceptionMaterialRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
 using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
+using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTransport;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using Application.Features.Materials.Commands.AddMaterial;
 using Application.Features.Materials.Queries.GetAllMaterialToWatch;
@@ -306,7 +310,11 @@ builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(typeof(Pro
                                                                       typeof(GetWorkshopInventoryForQCQuery).Assembly,
                                                                       typeof(GetAssignmentForHistoryByBatchIdQuery).Assembly,
                                                                       typeof(GetDetailAssignmentByBatchIdQuery).Assembly,
-                                                                      typeof(UpdateApproveTaskTransferRequestCommand).Assembly
+                                                                      typeof(UpdateApproveTaskTransferRequestCommand).Assembly,
+                                                                      typeof(GetMaterialRequestForQcTransportQuery).Assembly,
+                                                                      typeof(GetAssignmentTransferForQcTransportQuery).Assembly,
+                                                                      typeof(QcTransportReceptionCommand).Assembly,
+                                                                      typeof(QcTransportReceptionMaterialRequestCommand).Assembly
                                                                       ));
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();

@@ -23,5 +23,10 @@ namespace Infrastructure.Repositories
         {
             return await _appDbContext.AssignmentTransferRequests.FirstOrDefaultAsync(x => x.Id == transferRequestId);
         }
+
+        public void Update(AssignmentTransferRequest assignmentTransferRequest)
+        {
+            _appDbContext.AssignmentTransferRequests.Update(assignmentTransferRequest);
+        }
     }
 }

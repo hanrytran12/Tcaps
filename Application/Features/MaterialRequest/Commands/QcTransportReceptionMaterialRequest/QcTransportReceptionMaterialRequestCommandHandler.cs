@@ -1,0 +1,56 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Application.Common;
+using Domain.Events;
+using Domain.Interfaces;
+using MediatR;
+
+namespace Application.Features.MaterialRequest.Commands.QcTransportReceptionMaterialRequest
+{
+    public class QcTransportReceptionMaterialRequestCommandHandler : IRequestHandler<QcTransportReceptionMaterialRequestCommand, Result<Guid>>
+    {
+        private readonly IMaterialRequestRepository _repository;
+        private readonly IUnitOfWork _unitOfWorks;
+        private readonly IMediator _mediator;
+        private readonly IUserRepository _userRepository;
+
+        public QcTransportReceptionMaterialRequestCommandHandler(IMaterialRequestRepository repository, IUnitOfWork unitOfWorks, IMediator mediator, IUserRepository userRepository)
+        {
+            _repository = repository;
+            _unitOfWorks = unitOfWorks;
+            _mediator = mediator;
+            _userRepository = userRepository;
+        }
+        public async Task<Result<Guid>> Handle(QcTransportReceptionMaterialRequestCommand request, CancellationToken cancellationToken)
+        {
+            var materialRequest = await _repository.GetByIdAsync(request.MaterialRequestId);
+
+            if (materialRequest == null)
+            {
+                return Result<Guid>.Failure("Material request not found.");
+            }
+
+            materialRequest.MarkAsReception();
+            _repository.Update(materialRequest);
+
+            var qcTransport = await _userRepository.GetByIdAsync(request.QcTransportId);
+            if (qcTransport == null)
+                return Result<Guid>.Failure("Không tìm thấy người vận chuyển (QC Transport).");
+
+            qcTransport.MarkAsNotQcTransport();
+            _userRepository.Update(qcTransport);
+
+            await _unitOfWorks.SaveChangesAsync(cancellationToken);
+
+            await _mediator.Publish(new QcTransportReceptionMaterialRequestEvent(
+                request.QcTransportId,
+                request.MaterialRequestId,
+                materialRequest.AssignId));
+
+            return Result<Guid>.Success(materialRequest.Id);
+        }
+    }
+}
