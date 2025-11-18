@@ -75,5 +75,7 @@ namespace Domain.Entities
             Status = "Rejected";
             NoteFromQC = rejectedReason;
         }
+
+        public void MarkAsReception() => Status = "QCTransportReception";
     }
 }

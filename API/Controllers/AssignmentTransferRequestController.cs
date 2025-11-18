@@ -1,7 +1,9 @@
 ﻿using Application.DTOs.Response;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
+using Application.Features.AssingmentTransferRequest.Commands.QcTransportReception;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
+using Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTransferForQcTransport;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using Application.Features.AssingmentTransferRequest.Queries.GetTransferRequestByAssignmentId;
 using MediatR;
@@ -22,7 +24,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Lead,QCTransport")]
+        [Authorize(Roles = "Lead")]
         public async Task<ActionResult<List<TrasnferRequestDTO>>> GetAllTrasnferRequest()
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -102,6 +104,52 @@ namespace API.Controllers
             var command = new UpdateAssignmentTransferRequestCommand(transferRequestId, Guid.Parse(userIdString));
             var result = await _mediator.Send(command);
             return (result.IsSuccess) ? NoContent() : BadRequest(result.error);
+        }
+
+        [HttpGet("qc-transport")]
+        [Authorize(Roles = "QCTransport")]
+        public async Task<IActionResult> GetForQCTransport([FromQuery] GetAssignmentTransferForQcTransportQuery query)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var isQcTransport = User.FindFirstValue("isQcTransport");
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            // Chỉ cho phép nếu có claim isQcTransport = true
+            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            {
+                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
+            }
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
+        [HttpPut("qc-transport-reception")]
+        [Authorize(Roles = "QCTransport")]
+        public async Task<IActionResult> QCTransportReception([FromQuery] Guid assignmentTransferId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var isQcTransport = User.FindFirstValue("isQcTransport");
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            // Chỉ cho phép nếu có claim isQcTransport = true
+            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            {
+                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
+            }
+
+            var command = new QcTransportReceptionCommand
+            {
+                QCTransportId = Guid.Parse(userIdString),
+                AssignmentTransferRequestId = assignmentTransferId
+            };
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
     }
 }
