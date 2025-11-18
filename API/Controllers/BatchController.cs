@@ -40,7 +40,6 @@ namespace API.Controllers
             return Ok(result);
         }
 
-
         [HttpGet("dashboard")]
         [Authorize(Policy = "CanViewDashboard")]
         public async Task<IActionResult> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
