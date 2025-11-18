@@ -19,7 +19,8 @@ namespace Application.Features.Users.Queries.GetAllUser
         {
             var users = from u in _appDbContext.Users
                         where u.Role != "Admin" && u.Status == "Active"
-                        join w in _appDbContext.Workshop on u.WorkshopId equals w.Id
+                        join w in _appDbContext.Workshop on u.WorkshopId equals w.Id into userWorkshops
+                        from subW in userWorkshops.DefaultIfEmpty()
                         select new UsersDTO
                         {
                             Id = u.Id,
@@ -28,11 +29,10 @@ namespace Application.Features.Users.Queries.GetAllUser
                             Email = u.Email,
                             Phone = u.Phone,
                             CreatedAt = u.CreatedAt,
-                            WorkshopName = (u.Role == "Lead") ? "" : w.Name,
+                            WorkshopName = subW != null ? subW.Name : string.Empty
                         };
 
-            var usersList = await users.ToListAsync();
-            return usersList;
+            return await users.AsNoTracking().ToListAsync();
         }
     }
 }

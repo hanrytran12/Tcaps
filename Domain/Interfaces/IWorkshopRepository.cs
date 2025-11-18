@@ -10,6 +10,6 @@ namespace Domain.Interfaces
         Task AddAsync(Workshop workshop);
         void Update(Workshop workshop);
         void Delete(Workshop workshop);
-        Task<bool> ExistsAsync(Guid id);
+        Task<bool> ExistsAsync(Guid? id);
     }
 }

@@ -31,7 +31,7 @@ namespace Application.Features.Users.Commands.AddUser
                 return Result<Guid>.Failure("Số điện thoại này đã được sử dụng.");
             }
 
-            if (!await _workshopRepository.ExistsAsync(request.WorkshopId))
+            if (request.WorkshopId.HasValue && !await _workshopRepository.ExistsAsync(request.WorkshopId))
             {
                 return Result<Guid>.Failure("Xưởng không tồn tại");
             }
