@@ -27,7 +27,8 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
 
         public async Task<Result<Guid>> Handle(AddEvaluateCommand request, CancellationToken cancellationToken)
         {
-            var image = await _fileStorageService.SaveFileAsync(request.Image, "evaluates", cancellationToken);
+            List<string> imageUrls = await _fileStorageService.SaveFileAsync(request.Image, "evaluates", cancellationToken);
+            string combineUrls = string.Join(",", imageUrls);
 
             var evaluate = Evaluate.Create(
                 request.ProductionId,
@@ -35,7 +36,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
                 request.QuantityError,
                 request.QuantitySucess,
                 request.Note,
-                image,
+                combineUrls,
                 request.Status);
 
             if (request.Status != "Passed")

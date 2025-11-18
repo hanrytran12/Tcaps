@@ -7,11 +7,9 @@ namespace Application.Features.Products.Commands.UpdateProduct
     public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Result>
     {
         private readonly IProductRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
-        public UpdateProductCommandHandler(IProductRepository repository, IUnitOfWork unitOfWork)
+        public UpdateProductCommandHandler(IProductRepository repository)
         {
             _repository = repository;
-            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -23,8 +21,16 @@ namespace Application.Features.Products.Commands.UpdateProduct
                 return Result.Failure($"Không tìm thấy Product với Id: {request.Id}.");
             }
 
+            if (request.Name != product.Name)
+            {
+                var existingProduct = await _repository.GetByNameAsync(request.Name);
+                if (existingProduct is not null)
+                {
+                    return Result.Failure("Tên sản phẩm này đã tồn tại");
+                }
+            }
+
             product.UpdateDetails(request.Name, request.Description);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             return Result.Success();
         }

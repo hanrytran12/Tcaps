@@ -38,6 +38,11 @@ namespace Infrastructure.Repositories
             return await _context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
+        public async Task<Product?> GetByNameAsync(string name)
+        {
+            return await _context.Products.FirstOrDefaultAsync(p => p.Name == name && !p.IsDeleted);
+        }
+
         public async Task<int?> GetLastCodeIndexAsync(string prefix)
         {
             var query = _context.Products
@@ -68,6 +73,11 @@ namespace Infrastructure.Repositories
         {
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Code == code);
             return (product is null);
+        }
+
+        public async Task<bool> IsNameUniqueAsync(string name)
+        {
+            return !await _context.Products.AsNoTracking().AnyAsync(p => p.Name == name && !p.IsDeleted);
         }
 
         public void Update(Product product)

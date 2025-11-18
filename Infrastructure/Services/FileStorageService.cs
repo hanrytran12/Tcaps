@@ -40,5 +40,34 @@ namespace Application.Services
 
             return $"/images/{subFolder}/{uniqueFileName}";
         }
+
+        public async Task<List<string>> SaveFileAsync(List<IFormFile> files, string subFolder, CancellationToken cancellationToken)
+        {
+            var uploadedUrls = new List<string>();
+            var uploadedPath = Path.Combine(_webHostEnvironment.WebRootPath, "images", subFolder);
+            if (!Directory.Exists(uploadedPath))
+            {
+                Directory.CreateDirectory(uploadedPath);
+            }
+
+            foreach (var file in files)
+            {
+                if (file == null || file.Length == 0)
+                {
+                    continue;
+                }
+
+                string uniqueFileName = Guid.NewGuid() + "_" + file.FileName;
+                string filePath = Path.Combine(uploadedPath, uniqueFileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream, cancellationToken);
+                }
+
+                uploadedUrls.Add($"/images/{subFolder}/{uniqueFileName}");
+            }
+            return uploadedUrls;
+        }
     }
 }
