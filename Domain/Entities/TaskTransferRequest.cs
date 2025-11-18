@@ -18,12 +18,12 @@ namespace Domain.Entities
         public string? Note { get; private set; }
         public DateOnly CreatedAt { get; private set; }
         public DateOnly? ApprovedAt { get; private set; }
-        public TaskTransferRequest(Guid id, Guid batchId, Guid workshopId, Guid qcTransportId, Guid requestId, Guid assignmentTransferId, string? note) : base(id)
+        public TaskTransferRequest(Guid id, Guid batchId, Guid workshopId, Guid qcTransportId, Guid? materialRequestId, Guid? assignmentTransferId, string? note) : base(id)
         {
             BatchId = batchId;
             WorkshopId = workshopId;
             QcTransportId = qcTransportId;
-            MaterialRequestId = requestId;
+            MaterialRequestId = materialRequestId;
             AssignmentTransferId = assignmentTransferId;
             Status = "Pending";
             Note = note;
