@@ -26,6 +26,7 @@ namespace Application.Mapping
                 .ForMember(dest => dest.Created_At,
                     opt => opt.MapFrom(src => src.CreatedAt));
 
+            CreateMap<TaskTransferRequest, TaskTransferRequestDTO>();
         }
     }
 }
