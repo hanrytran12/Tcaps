@@ -22,51 +22,44 @@ namespace Application.Features.Assignments.Queries.GetAllAsignmentByQCId
         }
         public async Task<List<AssignForStaffDTO>> Handle(GetAllAssignmentByQCIdQuery request, CancellationToken cancellationToken)
         {
-            var qc = await _context.Users.FindAsync(request.QcId);
-            if (qc == null)
-                return new List<AssignForStaffDTO>();
+            var query = from user in _context.Users.AsNoTracking() // Không tracking để đọc nhanh hơn
+                        where user.Id == request.QcId
 
-            var assignments = await _context.Assignments
-                .Where(a => a.WorkshopId == qc.WorkshopId)
-                .ToListAsync();
+                        // 1. Join User -> Assignment (qua WorkshopId)
+                        join assign in _context.Assignments.AsNoTracking()
+                            on user.WorkshopId equals assign.WorkshopId
 
-            if (!assignments.Any())
-                return new List<AssignForStaffDTO>();
+                        // 2. Join Assignment -> Batch
+                        join batch in _context.Batches.AsNoTracking()
+                            on assign.BatchId equals batch.Id
 
-            var batchIds = assignments.Select(a => a.BatchId).ToList();
-            var batches = await _context.Batches
-                .Where(b => batchIds.Contains(b.Id))
-                .ToListAsync();
+                        // 3. Join Batch -> Product
+                        join product in _context.Products.AsNoTracking()
+                            on batch.ProductId equals product.Id
 
-            // 4. Lấy toàn bộ sản phẩm liên quan (tránh query trong vòng lặp)
-            var productIds = batches.Select(b => b.ProductId).Distinct().ToList();
-            var products = await _context.Products
-            .Where(p => productIds.Contains(p.Id))
-            .ToListAsync(cancellationToken);
+                        // 4. Sắp xếp ngay tại SQL Server (Tối ưu Index nếu có)
+                        orderby assign.StartDate descending
 
-            // 5. Map nhanh bằng LINQ (KHÔNG ASYNC)
-            var dtos = (from a in assignments
-                        join b in batches on a.BatchId equals b.Id
-                        join p in products on b.ProductId equals p.Id
+                        // 5. Projection: Chỉ SELECT các cột cần thiết ra DTO
                         select new AssignForStaffDTO
                         {
-                            AssignId = a.Id,
-                            BatchId = a.BatchId,
-                            BatchesCode = b.Code,
-                            ProductCode = p.Code,
-                            WorkshopId = a.WorkshopId,
-                            StepOrder = a.StepOrder,
-                            Quantity = a.Quantity,
-                            StartDate = a.StartDate,
-                            EndDate = a.EndDate,
-                            ExpectedDeliveryDate = a.ExpectedDeliveryDate,
-                            UnitPrice = a.UnitPrice,
-                            Status = a.Status
-                        })
-                        .OrderByDescending(x => x.StartDate)
-                        .ToList();
+                            AssignId = assign.Id,
+                            BatchId = assign.BatchId,
+                            BatchesCode = batch.Code,
+                            ProductCode = product.Code,
+                            WorkshopId = assign.WorkshopId,
+                            StepOrder = assign.StepOrder,
+                            Quantity = assign.Quantity,
+                            StartDate = assign.StartDate,
+                            EndDate = assign.EndDate,
+                            ExpectedDeliveryDate = assign.ExpectedDeliveryDate,
+                            UnitPrice = assign.UnitPrice,
+                            Status = assign.Status
+                        };
 
-            return dtos;
+            var result = await query.ToListAsync(cancellationToken);
+
+            return result;
         }
     }
 }
