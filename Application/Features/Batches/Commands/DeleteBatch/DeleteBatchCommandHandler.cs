@@ -6,11 +6,9 @@ namespace Application.Features.Batches.Commands.DeleteBatch
 {
     public class DeleteBatchCommandHandler : IRequestHandler<DeleteBatchCommand, Result>
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IBatchRepository _batchRepository;
-        public DeleteBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository)
+        public DeleteBatchCommandHandler(IBatchRepository batchRepository)
         {
-            _unitOfWork = unitOfWork;
             _batchRepository = batchRepository;
         }
 
@@ -30,7 +28,6 @@ namespace Application.Features.Batches.Commands.DeleteBatch
             {
                 return Result.Failure(ex.Message);
             }
-            await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
     }
