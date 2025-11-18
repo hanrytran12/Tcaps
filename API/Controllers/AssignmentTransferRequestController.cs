@@ -87,6 +87,11 @@ namespace API.Controllers
         public async Task<IActionResult> ApproveTrasnferRequest(Guid transferRequestId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+            {
+                return Unauthorized();
+            }
+
             var role = User.FindFirstValue(ClaimTypes.Role);
             var isQcTransport = User.FindFirstValue("isQcTransport");
 
@@ -96,12 +101,13 @@ namespace API.Controllers
             }
 
             // Chỉ cho phép nếu có claim isQcTransport = true
-            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            if (string.Equals(role, "QCTransport", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(isQcTransport, "true", StringComparison.OrdinalIgnoreCase))
             {
-                return Forbid("Chỉ người có quyền QCTransport mới được phép truy cập.");
+                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
             }
 
-            var command = new UpdateAssignmentTransferRequestCommand(transferRequestId, Guid.Parse(userIdString));
+            var command = new UpdateAssignmentTransferRequestCommand(transferRequestId, userId);
             var result = await _mediator.Send(command);
             return (result.IsSuccess) ? NoContent() : BadRequest(result.error);
         }
@@ -111,14 +117,15 @@ namespace API.Controllers
         public async Task<IActionResult> GetForQCTransport([FromQuery] GetAssignmentTransferForQcTransportQuery query)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = User.FindFirstValue(ClaimTypes.Role);
+
+            //var role = User.FindFirstValue(ClaimTypes.Role);
             var isQcTransport = User.FindFirstValue("isQcTransport");
             if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized();
             }
             // Chỉ cho phép nếu có claim isQcTransport = true
-            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            if (!string.Equals(isQcTransport, "true", StringComparison.OrdinalIgnoreCase))
             {
                 return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
             }
@@ -131,21 +138,28 @@ namespace API.Controllers
         public async Task<IActionResult> QCTransportReception([FromQuery] Guid assignmentTransferId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = User.FindFirstValue(ClaimTypes.Role);
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            //var role = User.FindFirstValue(ClaimTypes.Role);
+
             var isQcTransport = User.FindFirstValue("isQcTransport");
+
             if (string.IsNullOrEmpty(userIdString))
             {
                 return Unauthorized();
             }
             // Chỉ cho phép nếu có claim isQcTransport = true
-            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            if (!string.Equals(isQcTransport, "true", StringComparison.OrdinalIgnoreCase))
             {
                 return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
             }
 
             var command = new QcTransportReceptionCommand
             {
-                QCTransportId = Guid.Parse(userIdString),
+                QCTransportId = userId,
                 AssignmentTransferRequestId = assignmentTransferId
             };
             var result = await _mediator.Send(command);

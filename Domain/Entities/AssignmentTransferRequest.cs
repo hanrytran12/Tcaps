@@ -29,6 +29,10 @@ namespace Domain.Entities
 
         public static AssignmentTransferRequest Create(Guid assignmentId, Guid userId, decimal completedQuantity, string? note, Guid? reworkRequestId)
         {
+            if (assignmentId == Guid.Empty) throw new ArgumentException("AssignmentId không được để trống.");
+            if (userId == Guid.Empty) throw new ArgumentException("UserId không được để trống.");
+            if (completedQuantity < 0) throw new ArgumentException("Quantity không được là số âm.");
+
             var transferRequest = new AssignmentTransferRequest(Guid.NewGuid(), assignmentId, userId, completedQuantity, note, reworkRequestId);
             //transferRequest.AddDomainEvent(new TransferRequestAddedEvent(userId));
             return transferRequest;
@@ -36,6 +40,7 @@ namespace Domain.Entities
 
         public void MarkAsApproved()
         {
+            if (Status == "Approved") return;
             this.Status = "Approved";
 
             AddDomainEvent(new TransferRequestApprovedEvent(AssignmentId, ReworkRequestId, CompletedQuantity));
