@@ -7,14 +7,12 @@ namespace Application.Features.Batches.Commands.AddBatch
 {
     public class AddBatchCommandHandler : IRequestHandler<AddBatchCommand, Result<Guid>>
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IBatchRepository _batchRepository;
         private readonly IProductRepository _productRepository;
         private const string CodeBatch = "LO_";
 
-        public AddBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository, IProductRepository productRepository)
+        public AddBatchCommandHandler(IBatchRepository batchRepository, IProductRepository productRepository)
         {
-            _unitOfWork = unitOfWork;
             _batchRepository = batchRepository;
             _productRepository = productRepository;
         }
@@ -39,7 +37,6 @@ namespace Application.Features.Batches.Commands.AddBatch
                 request.EndDate
             );
             await _batchRepository.AddAsync(result);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result<Guid>.Success(result.Id);
         }
     }

@@ -6,11 +6,9 @@ namespace Application.Features.Batches.Commands.UpdateBatch
 {
     public class UpdateBatchCommandHandler : IRequestHandler<UpdateBatchCommand, Result>
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IBatchRepository _batchRepository;
-        public UpdateBatchCommandHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository)
+        public UpdateBatchCommandHandler(IBatchRepository batchRepository)
         {
-            _unitOfWork = unitOfWork;
             _batchRepository = batchRepository;
         }
 
@@ -30,7 +28,6 @@ namespace Application.Features.Batches.Commands.UpdateBatch
             {
                 return Result.Failure(ex.Message);
             }
-            await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }
     }
