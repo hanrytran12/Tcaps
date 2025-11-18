@@ -69,14 +69,14 @@ namespace API.Controllers
         public async Task<IActionResult> GetAssignmentsForStaffById()
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
             {
                 return Unauthorized();
             }
 
             var query = new GetAssignmentsByStaffIdQuery
             {
-                StaffId = Guid.Parse(userIdString)
+                StaffId = staffId
             };
             var result = await _mediator.Send(query);
             return Ok(result);
@@ -103,14 +103,14 @@ namespace API.Controllers
         public async Task<IActionResult> GetAssignmentByBatchIdAsync(Guid batchId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
             {
                 return Unauthorized();
             }
 
             var query = new GetAssignmentByBatchIdQuery
             {
-                StaffId = Guid.Parse(userIdString),
+                StaffId = staffId,
                 BatchId = batchId
             };
             var result = await _mediator.Send(query);

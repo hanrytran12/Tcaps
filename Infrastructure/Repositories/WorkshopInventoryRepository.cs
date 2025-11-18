@@ -24,5 +24,11 @@ namespace Infrastructure.Repositories
             return await _appDbContext.WorkshopInventory.FirstOrDefaultAsync(x => x.MaterialId == materialId && x.WorkshopId == workshopId);
 
         }
+
+        public async Task<WorkshopInventory> GetByMaterialIdAsync(Guid materialId)
+        {
+            return await _appDbContext.WorkshopInventory
+                .FirstOrDefaultAsync(x => x.MaterialId == materialId);
+        }
     }
 }
