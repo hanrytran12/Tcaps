@@ -40,7 +40,6 @@ namespace API.Controllers
             return Ok(result);
         }
 
-
         [HttpGet("dashboard")]
         [Authorize(Policy = "CanViewDashboard")]
         public async Task<IActionResult> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
@@ -82,7 +81,7 @@ namespace API.Controllers
 
         [HttpPut("{id:guid}")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> UpdateBatch(Guid id, UpdateBatchCommand command)
+        public async Task<IActionResult> UpdateBatch(Guid id, [FromBody] UpdateBatchCommand command)
         {
             command.Id = id;
             var result = await _mediator.Send(command);
