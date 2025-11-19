@@ -8,6 +8,7 @@ using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
 using Application.Features.Users.Queries.GetStaffDashboard;
 using Application.Features.Users.Queries.GetStaffPerformance;
+using Application.Features.Users.Queries.GetUserById;
 using Application.Features.Users.Queries.GetUserByWorkshopId;
 using Application.Interfaces;
 using Domain.Entities;
@@ -192,8 +193,9 @@ namespace API.Controllers
             }
 
             var userId = Guid.Parse(userIdString);
-            var result = await _staffService.GetUserProfileAsync(userId);
-            return StatusCode(result.StatusCode, result);
+            var query = new GetUserByIdQuery(userId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("all-QCTransport")]
