@@ -23,7 +23,7 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByM
         }
         public async Task<Result<Domain.Entities.WorkshopInventory>> Handle(GetWorkshopInventoryByMaterialIdQuery request, CancellationToken cancellationToken)
         {
-            var workshopInventory = await _repository.GetByMaterialIdAsync(request.WorkshopInventoryId);
+            var workshopInventory = await _repository.GetByMaterialIdAsync(request.MaterialId);
             if (workshopInventory == null)
             {
                 return Result<Domain.Entities.WorkshopInventory>.Failure("Workshop inventory not found.");
