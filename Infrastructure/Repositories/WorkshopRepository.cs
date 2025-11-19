@@ -24,7 +24,7 @@ namespace Infrastructure.Repositories
             _context.Workshop.Remove(workshop);
         }
 
-        public Task<bool> ExistsAsync(Guid id)
+        public Task<bool> ExistsAsync(Guid? id)
         {
             return _context.Workshop.AnyAsync(ws => ws.Id == id);
         }
@@ -39,7 +39,7 @@ namespace Infrastructure.Repositories
             return await _context.Workshop.ToListAsync();
         }
 
-        public async Task<Workshop?> GetByIdAsync(Guid id)
+        public async Task<Workshop?> GetByIdAsync(Guid? id)
         {
             return await _context.Workshop.FindAsync(id);
         }

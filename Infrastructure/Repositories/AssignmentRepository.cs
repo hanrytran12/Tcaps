@@ -34,7 +34,7 @@ namespace Infrastructure.Repositories
             return await _context.Assignments.ToListAsync();
         }
 
-        public async Task<IEnumerable<Assignment>> GetAssignmentsByWorkshopIdAsync(Guid workshopId)
+        public async Task<IEnumerable<Assignment>> GetAssignmentsByWorkshopIdAsync(Guid? workshopId)
         {
             return await _context.Assignments
                 .Where(a => a.WorkshopId == workshopId)
@@ -53,7 +53,7 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<bool> HasActiveAssignmentByWorkshopIdAsync(Guid workshopId)
+        public async Task<bool> HasActiveAssignmentByWorkshopIdAsync(Guid? workshopId)
         {
             return await _context.Assignments.AsNoTracking().AnyAsync(a => a.WorkshopId == workshopId && a.Status == "InProgress");
         }
