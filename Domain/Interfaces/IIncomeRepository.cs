@@ -16,5 +16,7 @@ namespace Domain.Interfaces
         Task<IEnumerable<Income>> GetIncomeHistoryAsync(Guid userId);
         Task AddAsync(Income income);
         void Update(Income income);
+
+        Task<List<Income>> GetIncomeByUserAndMonth(Guid userId, int month, int year);
     }
 }
