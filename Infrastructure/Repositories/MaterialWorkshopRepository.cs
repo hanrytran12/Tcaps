@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -34,7 +29,7 @@ namespace Infrastructure.Repositories
             return await _context.MaterialWorkshops.ToListAsync();
         }
 
-        public async Task<IEnumerable<MaterialWorkshop>> GetAllByWorkshopIdAsync(Guid workshopId)
+        public async Task<IEnumerable<MaterialWorkshop>> GetAllByWorkshopIdAsync(Guid? workshopId)
         {
             return await _context.MaterialWorkshops
                 .Where(m => m.WorkshopId == workshopId)

@@ -62,7 +62,7 @@ namespace Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(p => p.Role == role);
         }
 
-        public async Task<User?> GetQCByWorkshopIdAsync(Guid workshopId)
+        public async Task<User?> GetQCByWorkshopIdAsync(Guid? workshopId)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.WorkshopId == workshopId && u.Role == "QC");
         }
@@ -76,7 +76,7 @@ namespace Infrastructure.Repositories
 
         public async Task<Guid> GetWorkshopIdByQCIdAsync(Guid qc_id)
         {
-            return await _context.Users
+            return (Guid)await _context.Users
                 .Where(u => u.Id == qc_id)
                 .Select(u => u.WorkshopId).FirstOrDefaultAsync();
         }
