@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Application.Features.Incomes.Command.AddIncome;
 using Application.Features.Incomes.Queries.GetIncomesByStaffId;
+using Application.Features.Incomes.Queries.GetMonthlyIncome;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,24 @@ namespace API.Controllers
                 Date = date
             };
 
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("total-monthly")]
+        public async Task<IActionResult> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
+            {
+                return Unauthorized("Không thể xác định người dùng từ token.");
+            }
+            var query = new GetMonthlyIncomeQuery
+            {
+                StaffId = staffId,
+                Month = month,
+                Year = year
+            };
             var result = await _mediator.Send(query);
             return Ok(result);
         }
