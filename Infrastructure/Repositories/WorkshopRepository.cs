@@ -44,6 +44,14 @@ namespace Infrastructure.Repositories
             return await _context.Workshop.FindAsync(id);
         }
 
+        public async Task<List<Workshop>> GetByIdsAsync(List<Guid> ids)
+        {
+            return await _context.Workshop
+                .AsNoTracking()
+                .Where(w => ids.Contains(w.Id))
+                .ToListAsync();
+        }
+
         public void Update(Workshop workshop)
         {
             _context.Workshop.Update(workshop);
