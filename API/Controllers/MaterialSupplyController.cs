@@ -26,14 +26,14 @@ namespace API.Controllers
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var role = User.FindFirstValue(ClaimTypes.Role);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var query = new GetAllMaterialSuppliesQuery
             {
-                UserId = Guid.Parse(userIdString),
+                UserId = userId,
                 Role = role,
                 Status = status
             };
@@ -50,11 +50,11 @@ namespace API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] AddMaterialSupplyCommand command)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var leadId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
-            command.LeadId = Guid.Parse(userIdString);
+            command.LeadId = leadId;
             var result = await _mediator.Send(command);
             if (!result.IsSuccess)
                 return BadRequest(result.IsFailure);
@@ -67,14 +67,14 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateInProgressAsync(Guid supplyId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcTransportId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var command = new UpdateInProgressByQcTransportCommand
             {
-                QcTransportId = Guid.Parse(userIdString),
+                QcTransportId = qcTransportId,
                 SupplyId = supplyId
             };
             var result = await _mediator.Send(command);
@@ -89,14 +89,14 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateCompletedAsync(Guid supplyId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var command = new CompletedMaterialSupplyCommand
             {
-                QcId = Guid.Parse(userIdString),
+                QcId = qcId,
                 SupplyId = supplyId
             };
             var result = await _mediator.Send(command);

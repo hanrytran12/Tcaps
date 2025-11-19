@@ -3,45 +3,63 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common;
 using Application.DTOs.Response;
+using Application.Interfaces;
 using AutoMapper;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
 {
-    public class GetEvaluatesByQCIdQueryHandler : IRequestHandler<GetEvaluatesByQCIdQuery, List<EvaluateDTO>>
+    public class GetEvaluatesByQCIdQueryHandler : IRequestHandler<GetEvaluatesByQCIdQuery, Result<List<EvaluateDTO>>>
     {
-        private readonly IEvaluateRepository _evaluateRepository;
-        private readonly IComponentDefectRepository _componentDefectRepository;
-        private readonly IMapper _mapper;
+        private readonly IAppDbContext _context;
 
-        public GetEvaluatesByQCIdQueryHandler(IEvaluateRepository evaluateRepository, IComponentDefectRepository componentDefectRepository,
-            IMapper mapper)
+        public GetEvaluatesByQCIdQueryHandler(IAppDbContext context)
         {
-            _evaluateRepository = evaluateRepository;
-            _componentDefectRepository = componentDefectRepository;
-            _mapper = mapper;
+            _context = context;
         }
 
-        public async Task<List<EvaluateDTO>> Handle(GetEvaluatesByQCIdQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<EvaluateDTO>>> Handle(GetEvaluatesByQCIdQuery request, CancellationToken cancellationToken)
         {
-            var evaluates = await _evaluateRepository.GetByQCIdAsync(request.QC_Id);
+            var query = _context.Evaluates
+                .AsNoTracking()
+                .Where(e => e.UserId == request.QC_Id);
 
-            if (!string.IsNullOrEmpty(request.Status))
-                evaluates = evaluates
-                    .Where(e => e.Status.Equals(request.Status, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-
-            var dto = _mapper.Map<List<EvaluateDTO>>(evaluates);
-
-            foreach ( var item in dto )
+            if (!string.IsNullOrWhiteSpace(request.Status))
             {
-                var components = await _componentDefectRepository.GetAllByEvaluateIdAsync(item.Id);
-                var componentDtos = _mapper.Map<List<ComponentDefectsDTO>>(components);
-                item.Defects = componentDtos;
+                query = query.Where(e => e.Status.ToLower() == request.Status.ToLower());
             }
-            return dto; 
+
+            var resultDtos = await query
+                .Select(e => new EvaluateDTO
+                {
+                    Id = e.Id,
+                    ProductionId = e.ProductionId,
+                    QuantityError = e.QuantityError,
+                    QuantitySuccess = e.QuantitySuccess,
+                    Note = e.Note,
+                    Image = e.Image,
+                    Status = e.Status,
+                    Created_At = e.CreatedAt,
+
+                    Defects = e.ComponentDefects
+                        .Select(cd => new ComponentDefectsDTO
+                        {
+                            Id = cd.Id,
+                            DefectType = cd.DefectType,
+                            Serverity = cd.Serverity,
+                            Description = cd.Description,
+                            Solution = cd.Solution,
+                            Quantity = cd.Quantity,
+                            Status = cd.Status,
+                        }).ToList()
+                })
+                .ToListAsync(cancellationToken);
+            return Result<List<EvaluateDTO>>.Success(resultDtos);
         }
     }
 }
