@@ -21,14 +21,14 @@ namespace API.Controllers
         public async Task<IActionResult> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var query = new GetIncomesByStaffIdQuery
             {
-                StaffId = Guid.Parse(userIdString),
+                StaffId = staffId,
                 Date = date
             };
 

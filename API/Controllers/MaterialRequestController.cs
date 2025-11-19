@@ -57,14 +57,14 @@ namespace API.Controllers
         public async Task<IActionResult> GetByQCIdAsync([FromQuery] string? status)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var query = new GetMaterialRequestForQCQuery
             {
-                QcId = Guid.Parse(userIdString),
+                QcId = qcId,
                 Status = status
             };
             var result = await _mediator.Send(query);
@@ -94,11 +94,11 @@ namespace API.Controllers
         public async Task<IActionResult> CreateMaterailRequestAsync([FromBody] CreateMaterialRequestFromQCCommand command)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
-            command.UserId = Guid.Parse(userIdString);
+            command.UserId = qcId;
             var result = await _mediator.Send(command);
 
             if (result.IsFailure)
