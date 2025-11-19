@@ -11,16 +11,14 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IEvaluateRepository _evaluateRepository;
-        private readonly IComponentDefectRepository _componentDefectRepository;
         private readonly IMediator _mediator;
         private readonly IFileStorageService _fileStorageService;
 
         public AddEvaluateCommandHandler(IUnitOfWork unitOfWork, IEvaluateRepository evaluateRepository,
-            IComponentDefectRepository componentDefectRepository, IMediator mediator, IFileStorageService fileStorageService)
+            IMediator mediator, IFileStorageService fileStorageService)
         {
             _unitOfWork = unitOfWork;
             _evaluateRepository = evaluateRepository;
-            _componentDefectRepository = componentDefectRepository;
             _mediator = mediator;
             _fileStorageService = fileStorageService;
         }
@@ -39,20 +37,19 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
                 combineUrls,
                 request.Status);
 
-            if (request.Status != "Passed")
+            if (request.Status != "Passed" && request.Defects?.Any() == true)
             {
-                foreach (var item in request.Defects)
-                {
-                    var component = Domain.Entities.ComponentDefect.Create(
+                var componentDefects = request.Defects
+                    .Select(item => Domain.Entities.ComponentDefect.Create(
                         evaluate.Id,
                         item.DefectType,
                         item.Serverity,
                         item.Description,
                         item.Solution,
                         item.Quantity,
-                        item.Status);
-                    await _componentDefectRepository.AddAsync(component);
-                }
+                        item.Status))
+                    .ToList();
+                evaluate.AddDefects(componentDefects);
             }
 
             await _evaluateRepository.AddAsync(evaluate);

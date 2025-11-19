@@ -33,37 +33,37 @@ namespace API.Controllers
         public async Task<IActionResult> GetByQCId([FromQuery] string? status)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var query = new GetEvaluatesByQCIdQuery
             {
-                QC_Id = Guid.Parse(userIdString),
+                QC_Id = qcId,
                 Status = status
             };
 
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
 
         [HttpGet("for-staff")]
         public async Task<IActionResult> GetByStaffId([FromQuery] Guid assignId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var query = new GetEvaluatesByStaffIdQuery
             {
-                StaffId = Guid.Parse(userIdString),
+                StaffId = staffId,
                 AssignId = assignId
             };
             var result = await _mediator.Send(query);
-            return Ok(result);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
 
         [HttpPost]
@@ -71,11 +71,11 @@ namespace API.Controllers
         public async Task<IActionResult> CreateEvaluate([FromForm] AddEvaluateCommand command)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
             {
-                return Unauthorized();
+                return Unauthorized("Không thể xác định người dùng từ token.");
             }
-            command.UserId = Guid.Parse(userIdString);
+            command.UserId = qcId;
             var result = await _mediator.Send(command);
             if (result.IsSuccess)
             {

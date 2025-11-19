@@ -71,5 +71,15 @@ namespace Domain.Entities
             component.Confirmed(status);
             AddDomainEvent(new ComponentConfirmEvent(componentId, component.EvaluateId, component.Quantity, status));
         }
+
+        public void AddDefects(List<ComponentDefect> componentDefects)
+        {
+            if (componentDefects == null || !componentDefects.Any())
+            {
+                return;
+            }
+
+            _componentDefects.AddRange(componentDefects);
+        }
     }
 }
