@@ -27,21 +27,6 @@ namespace API.Controllers
         [Authorize(Roles = "Lead")]
         public async Task<ActionResult<List<TrasnferRequestDTO>>> GetAllTrasnferRequest()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            var isQcTransport = User.FindFirstValue("isQcTransport");
-
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            // Chỉ cho phép nếu có claim isQcTransport = true
-            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
-            {
-                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
-            }
-
             var query = new GetAllTransferRequestQuery();
             var result = await _mediator.Send(query);
 
@@ -120,7 +105,7 @@ namespace API.Controllers
 
             //var role = User.FindFirstValue(ClaimTypes.Role);
             var isQcTransport = User.FindFirstValue("isQcTransport");
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out _))
             {
                 return Unauthorized();
             }

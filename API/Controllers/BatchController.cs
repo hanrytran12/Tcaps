@@ -112,14 +112,14 @@ namespace API.Controllers
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
             {
                 return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var query = new GetBatchesByStaffIdQuery
             {
-                StaffId = Guid.Parse(userIdString)
+                StaffId = staffId
             };
 
             var result = await _mediator.Send(query);
@@ -132,14 +132,14 @@ namespace API.Controllers
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (string.IsNullOrEmpty(userIdString))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
             {
                 return Unauthorized("Không thể xác định người dùng từ token.");
             }
 
             var query = new GetBatchesByQCIdQuery
             {
-                QcId = Guid.Parse(userIdString)
+                QcId = qcId
             };
 
             var result = await _mediator.Send(query);

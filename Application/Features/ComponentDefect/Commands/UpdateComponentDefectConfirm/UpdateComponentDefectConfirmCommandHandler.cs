@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,16 +27,19 @@ namespace Application.Features.ComponentDefect.Commands.UpdateComponentDefectCon
         {
             var evaluate = await _evaluateRepository.GetByIdAsync(request.EvaluateId);
             if (evaluate == null)
-                throw new Exception("Không tìm thấy đánh giá.");
+                return Result.Failure("Không tìm thấy đánh giá (Evaluate) theo ID cung cấp.");
 
-            var component = await _componentDefectRepository.GetByIdAsync(request.ComponentId);
-            if (component == null)
-                throw new Exception("Không tìm thấy thành phần lỗi");
-
-            evaluate.UpdateConfirmComponent(component.Id, request.Status);
-            _evaluateRepository.Update(evaluate);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+            try
+            {
+                evaluate.UpdateConfirmComponent(request.ComponentId, request.Status);
+                _evaluateRepository.Update(evaluate);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                return Result.Failure(ex.Message);
+            }
         }
     }
 }

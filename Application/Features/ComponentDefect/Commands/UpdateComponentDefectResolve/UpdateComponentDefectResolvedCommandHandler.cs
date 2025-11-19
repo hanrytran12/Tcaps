@@ -12,31 +12,31 @@ namespace Application.Features.ComponentDefect.Commands.UpdateComponentDefectRes
     public class UpdateComponentDefectResolvedCommandHandler : IRequestHandler<UpdateComponentDefectResolvedCommand, Result>
     {
         private readonly IEvaluateRepository _evaluateRepository;
-        private readonly IComponentDefectRepository _componentDefectRepository;
         private readonly IUnitOfWork _unitOfWork;
 
-        public UpdateComponentDefectResolvedCommandHandler(IEvaluateRepository evaluateRepository, IComponentDefectRepository componentDefectRepository,
-            IUnitOfWork unitOfWork)
+        public UpdateComponentDefectResolvedCommandHandler(IEvaluateRepository evaluateRepository, IUnitOfWork unitOfWork)
         {
             _evaluateRepository = evaluateRepository;
-            _componentDefectRepository = componentDefectRepository;
             _unitOfWork = unitOfWork;
         }
         public async Task<Result> Handle(UpdateComponentDefectResolvedCommand request, CancellationToken cancellationToken)
         {
             var evaluate = await _evaluateRepository.GetByIdAsync(request.EvaluateId);
             if (evaluate == null)
-                throw new Exception("Không tìm thấy đánh giá.");
+                return Result.Failure("Không tìm thấy đánh giá (Evaluate).");
 
-            var component = await _componentDefectRepository.GetByIdAsync(request.Id);
-            if (component == null)
-                throw new Exception("Không tìm thấy thành phần lỗi");
-
-            evaluate.UpdateResolveComponent(component.Id, request.Status);
-            //gọi update sẽ update mấy th chill luôn
-            _evaluateRepository.Update(evaluate);
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
-            return Result.Success();
+            try
+            {
+                evaluate.UpdateResolveComponent(request.Id, request.Status);
+                //gọi update sẽ update mấy th chill luôn
+                _evaluateRepository.Update(evaluate);
+                await _unitOfWork.SaveChangesAsync(cancellationToken);
+                return Result.Success();
+            }
+            catch(Exception ex)
+            {
+                return Result.Failure(ex.Message);
+            }
         }
     }
 }
