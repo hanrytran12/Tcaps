@@ -30,8 +30,8 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
                 request.BatchId,
                 request.WorkshopId,
                 request.QcTransportId,
-                request.MaterialRequestId ?? Guid.Empty,
-                request.AssignmentTransferId ?? Guid.Empty,
+                request.MaterialRequestId,
+                request.AssignmentTransferId,
                 request.Note);
             await _taskTransferRequestRepository.AddAsync(taskTranfer);
 

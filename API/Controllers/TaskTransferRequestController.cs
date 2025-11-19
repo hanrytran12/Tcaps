@@ -1,6 +1,7 @@
 ﻿using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
+using Application.Features.TaskTransferRequests.Queries.GetByMaterialRequestIdOrAssignTransferId;
 using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -60,6 +61,13 @@ namespace API.Controllers
         public async Task<IActionResult> ApproveRequestAsync([FromQuery] UpdateApproveTaskTransferRequestCommand command)
         {
             var result = await _mediator.Send(command);
+            return Ok(result);
+        }
+
+        [HttpGet("materialRequestId-assignmentTransferId")]
+        public async Task<IActionResult> GetById([FromQuery] GetByMaterialRequestIdOrAssignTransferIdQuery query)
+        {
+            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }
