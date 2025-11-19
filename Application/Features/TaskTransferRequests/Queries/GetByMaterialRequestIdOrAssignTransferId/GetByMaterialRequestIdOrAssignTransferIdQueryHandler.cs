@@ -6,24 +6,21 @@ using System.Threading.Tasks;
 using Application.Common;
 using Application.DTOs.Response;
 using Application.Interfaces;
-using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest
+namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequestIdOrAssignTransferId
 {
-    public class GetAllTaskTransferRequestQueryHandler : IRequestHandler<GetAllTaskTransferRequestQuery, Result<List<TaskTransferRequestDTO>>>
+    public class GetByMaterialRequestIdOrAssignTransferIdQueryHandler : IRequestHandler<GetByMaterialRequestIdOrAssignTransferIdQuery, Result<TaskTransferRequestDTO>>
     {
-        private readonly ITaskTransferRequestRepository _taskTransferRequestRepository;
         private readonly IAppDbContext _context;
 
-        public GetAllTaskTransferRequestQueryHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IAppDbContext context)
+        public GetByMaterialRequestIdOrAssignTransferIdQueryHandler(IAppDbContext context)
         {
-            _taskTransferRequestRepository = taskTransferRequestRepository;
             _context = context;
         }
-        public async Task<Result<List<TaskTransferRequestDTO>>> Handle(GetAllTaskTransferRequestQuery request, CancellationToken cancellationToken)
+        public async Task<Result<TaskTransferRequestDTO>> Handle(GetByMaterialRequestIdOrAssignTransferIdQuery request, CancellationToken cancellationToken)
         {
             var query = from ttr in _context.TaskTransferRequests.AsNoTracking()
 
@@ -42,7 +39,9 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             on ttr.QcTransportId equals user.Id into userGroup
                         from qcTransportUser in userGroup.DefaultIfEmpty()
 
-                            // Ánh xạ trực tiếp sang DTO (Projection)
+                        where ttr.MaterialRequestId == request.RequestId || ttr.AssignmentTransferId == request.RequestId
+
+                        // Ánh xạ trực tiếp sang DTO (Projection)
                         select new TaskTransferRequestDTO
                         {
                             Id = ttr.Id, // FIX LỖI MAPPING Ở ĐÂY
@@ -60,19 +59,14 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             ApprovedAt = ttr.ApprovedAt
                         };
 
-            // Áp dụng bộ lọc Status (nếu có)
-            if (!string.IsNullOrEmpty(request.Status))
+            var dto = await query.FirstOrDefaultAsync(cancellationToken);
+
+            if (dto == null)
             {
-                query = query.Where(t => t.Status == request.Status);
+                return Result<TaskTransferRequestDTO>.Failure("Task Transfer Request not found.");
             }
 
-            // Thực thi truy vấn
-            var dtos = await query.ToListAsync(cancellationToken);
-
-            if (!dtos.Any())
-                return Result<List<TaskTransferRequestDTO>>.Failure("Không tìm thấy yêu cầu chuyển giao nào.");
-
-            return Result<List<TaskTransferRequestDTO>>.Success(dtos);
+            return Result<TaskTransferRequestDTO>.Success(dto);
         }
     }
 }

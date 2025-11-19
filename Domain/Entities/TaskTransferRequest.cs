@@ -30,7 +30,7 @@ namespace Domain.Entities
             CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
         }
 
-        public static TaskTransferRequest Create(Guid batchId, Guid workshopId, Guid qcTransportId, Guid requestId, Guid assignmentTransferId, string? note)
+        public static TaskTransferRequest Create(Guid batchId, Guid workshopId, Guid qcTransportId, Guid? requestId, Guid? assignmentTransferId, string? note)
         {
             return new TaskTransferRequest(Guid.NewGuid(), batchId, workshopId, qcTransportId, requestId, assignmentTransferId, note);
         }

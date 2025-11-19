@@ -16,7 +16,7 @@ namespace Application.DTOs.Response
         public Guid QcTransportId { get; set; }
         public string QcTransportName { get; set; }
         public Guid? MaterialRequestId { get; set; }
-        public Guid AssignmentTransferId { get; set; }
+        public Guid? AssignmentTransferId { get; set; }
         public string Status { get; set; }
         public string? Note { get; set; }
         public DateOnly CreatedAt { get; set; }
