@@ -11,6 +11,6 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByM
 {
     public class GetWorkshopInventoryByMaterialIdQuery : IRequest<Result<Domain.Entities.WorkshopInventory>>
     {
-        public Guid WorkshopInventoryId { get; set; }
+        public Guid MaterialId { get; set; }
     }
 }
