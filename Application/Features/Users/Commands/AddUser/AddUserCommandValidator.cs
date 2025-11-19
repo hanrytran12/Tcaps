@@ -30,13 +30,10 @@ namespace Application.Features.Users.Commands.AddUser
             RuleFor(x => x.PasswordConfirmed)
                 .Equal(x => x.Password).WithMessage("Mật khẩu xác nhận không khớp.");
 
-            RuleFor(x => x.WorkshopId)
-                .NotEmpty().WithMessage("Xưởng làm việc là bắt buộc.");
-
             RuleFor(x => x.Role)
                 .NotEmpty().WithMessage("Vai trò là bắt buộc.")
-                .Must(role => new[] { "Staff", "QC", "Lead" }.Contains(role))
-                .WithMessage("Vai trò không hợp lệ. Chỉ chấp nhận: Staff, QC, Lead.");
+                .Must(role => new[] { "Staff", "QC", "Lead", "QCTransport" }.Contains(role))
+                .WithMessage("Vai trò không hợp lệ. Chỉ chấp nhận: Staff, QC, Lead, QCTransport.");
         }
     }
 }
