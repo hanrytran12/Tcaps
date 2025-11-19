@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Domain.Entities;
+﻿using Application.Common;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -18,7 +12,7 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
         private readonly IMediator _mediator;
         private readonly IAssignmentRepository _assignmentRepository;
 
-        public CreateMaterialRequestFromQCCommandHandler(IMaterialRequestRepository materialRequestRepository, IUnitOfWork unitOfWork, IMediator mediator, 
+        public CreateMaterialRequestFromQCCommandHandler(IMaterialRequestRepository materialRequestRepository, IUnitOfWork unitOfWork, IMediator mediator,
             IAssignmentRepository assignmentRepository)
         {
             _materialRequestRepository = materialRequestRepository;
@@ -53,7 +47,7 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
                     request.AssignId,
                     item.Quantity,
                     request.Note,
-                    request.Type);
+                    "QcAddMaterial");
 
                 if (materialRequest == null)
                     return Result.Failure("Failed to create material request");

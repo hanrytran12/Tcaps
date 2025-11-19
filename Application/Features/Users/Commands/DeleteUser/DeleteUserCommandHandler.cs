@@ -1,22 +1,18 @@
 ﻿using Application.Common;
-using Application.Interfaces;
 using Domain.Interfaces;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Commands.DeleteUser
 {
     public class DeleteUserCommandHandler : IRequestHandler<DeleteUserCommand, Result>
     {
         private readonly IUserRepository _repository;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IAppDbContext _context;
+        private readonly IAssignmentRepository _assignmentRepository;
 
-        public DeleteUserCommandHandler(IUnitOfWork unitOfWork, IUserRepository repository, IAppDbContext context)
+        public DeleteUserCommandHandler(IUserRepository repository, IAssignmentRepository assignmentRepository)
         {
-            _unitOfWork = unitOfWork;
             _repository = repository;
-            _context = context;
+            _assignmentRepository = assignmentRepository;
         }
 
         public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
@@ -28,23 +24,14 @@ namespace Application.Features.Users.Commands.DeleteUser
                 return Result.Failure($"Không tìm thấy User với Id: {request.Id}.");
             }
 
-            var query = _context.Users.AsNoTracking().Where(u => u.Id == request.Id && u.Status != "Inactive");
-            query = from u in query
-                    join w in _context.Workshop on u.WorkshopId equals w.Id
-                    select u;
+            var isWorkshopBusy = await _assignmentRepository.HasActiveAssignmentByWorkshopIdAsync(user.WorkshopId);
 
-            query = from u in query
-                    join a in _context.Assignments on u.WorkshopId equals a.WorkshopId
-                    where a.Status == "InProgress"
-                    select u;
-
-            if (query.Any())
+            if (isWorkshopBusy)
             {
-                return Result.Failure("Cant delete user are doing their work.");
+                return Result.Failure("Không thể xóa nhân viên này vì xưởng của họ đang có công đoạn sản xuất.");
             }
 
             user.MarkAsDeleted();
-            await _unitOfWork.SaveChangesAsync();
 
             return Result.Success();
         }

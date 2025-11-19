@@ -18,6 +18,7 @@ namespace Application.Features.Users.Queries.GetAllUser
         public async Task<List<UsersDTO>> Handle(GetAllUserQuery request, CancellationToken cancellationToken)
         {
             var users = from u in _appDbContext.Users
+                        where u.Role != "Admin" && u.Status == "Active"
                         join w in _appDbContext.Workshop on u.WorkshopId equals w.Id
                         select new UsersDTO
                         {
