@@ -3,6 +3,7 @@ using Application.DTOs.Response;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.UpdateUser;
+using Application.Features.Users.Commands.UpdateUserProfile;
 using Application.Features.Users.Queries.GetAllQCTransport;
 using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
@@ -125,7 +126,7 @@ namespace API.Controllers
         }
 
         [HttpPut("update-profile")]
-        public async Task<IActionResult> UpdateProfile(UpdateProfileUserDTO dto, CancellationToken cancellationToken)
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileCommand command)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))
@@ -133,8 +134,9 @@ namespace API.Controllers
                 return Unauthorized();
             }
             var userId = Guid.Parse(userIdString);
-            var response = await _staffService.UpdateProfileAsync(userId, dto, cancellationToken);
-            return StatusCode(response.StatusCode, response);
+            command.Id = userId;
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
         }
 
         [HttpGet("staff-performance")]
