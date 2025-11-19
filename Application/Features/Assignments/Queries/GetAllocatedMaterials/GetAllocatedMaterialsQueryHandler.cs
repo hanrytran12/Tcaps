@@ -15,16 +15,44 @@ namespace Application.Features.Assignments.Queries.GetAllocatedMaterials
 
         public async Task<List<AllocatedMaterialDto>> Handle(GetAllocatedMaterialsQuery request, CancellationToken cancellationToken)
         {
+            var assignment = await _context.Assignments.AsNoTracking()
+                                .FirstOrDefaultAsync(a => a.Id == request.AssignmentId);
+
+            if (assignment == null)
+            {
+                // Xử lý trường hợp không tìm thấy Assignment
+                return new List<AllocatedMaterialDto>();
+            }
             var materialUse = from mu in _context.MaterialUse
                               join ma in _context.Materials on mu.MaterialId equals ma.Id
                               where mu.AssignId == request.AssignmentId
-                              select new AllocatedMaterialDto
+                              select new
                               {
-                                  MaterialId = mu.MaterialId,
+                                  mu.MaterialId,
                                   MaterialName = ma.Name,
+                                  mu.ReworkRequestId
                               };
 
-            return await materialUse.AsNoTracking().ToListAsync();
+            var filteredQuery = materialUse;
+
+            if (assignment.Status == "InProgress")
+            {
+                filteredQuery = filteredQuery.Where(x => x.ReworkRequestId == null);
+            }
+            else if (assignment.Status == "Reworking")
+            {
+                filteredQuery = filteredQuery.Where(x => x.ReworkRequestId != null);
+            }
+
+            var result = await filteredQuery
+                .Select(x => new AllocatedMaterialDto
+                {
+                    MaterialId = x.MaterialId,
+                    MaterialName = x.MaterialName,
+                })
+                .ToListAsync();
+
+            return result;
         }
     }
 }
