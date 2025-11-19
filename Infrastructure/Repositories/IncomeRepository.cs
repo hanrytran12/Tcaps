@@ -34,6 +34,15 @@ namespace Infrastructure.Repositories
             return await _context.Incomes.FirstOrDefaultAsync(i => i.ProductionId == productionId);
         }
 
+        public async Task<List<Income>> GetIncomeByUserAndMonth(Guid userId, int month, int year)
+        {
+            return await _context.Incomes
+                .Where(i => i.UserId == userId &&
+                            i.CreatedAt.Month == month &&
+                            i.CreatedAt.Year == year)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Income>> GetIncomeHistoryAsync(Guid userId)
         {
             return await _context.Incomes
