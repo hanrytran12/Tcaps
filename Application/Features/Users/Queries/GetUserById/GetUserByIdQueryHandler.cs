@@ -25,6 +25,7 @@ namespace Application.Features.Users.Queries.GetUserById
                            Id = u.Id,
                            Role = u.Role,
                            FullName = u.FullName,
+                           WorkshopId = subW != null ? subW.Id : Guid.Empty,
                            WorkshopName = subW != null ? subW.Name : string.Empty,
                            Email = u.Email,
                            Phone = u.Phone,
