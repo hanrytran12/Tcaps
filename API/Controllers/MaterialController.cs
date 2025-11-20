@@ -42,7 +42,7 @@ namespace API.Controllers
                 return BadRequest(result.Error);
             }
 
-            return CreatedAtAction(nameof(GetAllMaterialsAsync), new { id = result.Value });
+            return Ok(result.Value);
         }
     }
 }
