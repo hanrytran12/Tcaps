@@ -44,6 +44,7 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
             var supply = MaterialSupply.Create(
                 request.RequestId,
                 request.MaterialId,
+                request.WorkshopId,
                 supplierId,
                 request.Quantity,
                 request.Unit,
