@@ -13,8 +13,10 @@ namespace Application.DTOs.Response
         public Guid MaterialId { get; set; }
         public string? MaterialName { get; set; }
         public string? BatchCode { get; set; }
+        public Guid WorkshopId { get; set; }
         public string? WorkshopName { get; set; }
         public Guid SupplierId { get; set; }
+        public string? SupplierName { get; set; }
         public int Quantity { get; set; }
         public string Unit { get; set; }
         public DateOnly DateShip { get; set; }

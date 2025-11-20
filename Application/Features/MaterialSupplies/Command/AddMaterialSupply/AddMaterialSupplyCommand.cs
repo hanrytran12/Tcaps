@@ -16,6 +16,7 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
         public Guid LeadId { get; set; }
         public Guid RequestId { get; set; }
         public Guid SupplierId { get; set; }
+        public Guid WorkshopId { get; set; }
         public DateOnly DateShip { get; set; }
         public Guid MaterialId { get; set; }
         public int Quantity { get; set; }
