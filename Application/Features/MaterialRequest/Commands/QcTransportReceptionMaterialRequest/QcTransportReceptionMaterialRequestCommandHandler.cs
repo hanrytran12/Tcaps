@@ -33,6 +33,11 @@ namespace Application.Features.MaterialRequest.Commands.QcTransportReceptionMate
                 return Result<Guid>.Failure("Material request not found.");
             }
 
+            if (materialRequest.Status == "QCTransportInProgress")
+            {
+                return Result<Guid>.Failure("Yêu cầu đã được tiếp nhận");
+            }
+
             materialRequest.MarkAsReception();
             _repository.Update(materialRequest);
 

@@ -47,7 +47,7 @@ namespace Domain.Entities
 
         public void MarkAsConfirmed(decimal actualReceivedQuantity, string noteFromQC)
         {
-            if (Status != "Pending")
+            if (Status != "Pending" && Status != "QCTransportReception")
                 throw new InvalidOperationException("Only pending requests can be confirmed.");
 
             Status = "Confirmed";
