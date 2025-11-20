@@ -121,7 +121,7 @@ namespace API.Controllers
         }
 
         [HttpPut("confirmed/{id:guid}")]
-        [Authorize(Policy = ("QC"))]
+        [Authorize(Roles = "QC,Lead")]
         public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id, [FromBody] ConfirmRequestFromQcCommand command)
         {
             command.Id = id;
