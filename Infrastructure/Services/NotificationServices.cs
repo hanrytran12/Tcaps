@@ -500,5 +500,20 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task SendConfirmRequestFromLeadNotificationAsync(Guid materialRequestId, Guid qcId)
+        {
+            var qc = await _userRepository.GetByIdAsync(qcId);
+
+            var workshop = await _workshopRepository.GetByIdAsync(qc.WorkshopId);
+
+            var title = "Lead chấp nhận cung cấp NVL";
+            var message = $"Lead đã chấp nhận yêu cầu {materialRequestId} cung cấp NVL cho {qc.FullName} tại xưởng {workshop.Name}.";
+            var type = "MaterialSupply";
+
+            var notification = Notification.Create(qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }

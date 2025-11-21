@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTransport;
 using Application.Features.MaterialRequest.Commands.QcTransportReceptionMaterialRequest;
+using Application.Features.MaterialRequest.Commands.ConfirmRequestFromLead;
 
 namespace API.Controllers
 {
@@ -193,6 +194,14 @@ namespace API.Controllers
                 QcTransportId = Guid.Parse(userIdString),
                 MaterialRequestId = materialRequestId
             };
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
+        [HttpPut("lead-confirm")]
+        [Authorize(Roles = "Lead")]
+        public async Task<IActionResult> LeadConfirm([FromBody] ConfirmRequestFromLeadCommand command)
+        {
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }

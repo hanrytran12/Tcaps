@@ -77,5 +77,6 @@ namespace Domain.Entities
         }
 
         public void MarkAsReception() => Status = "QCTransportReception";
+        public void MarkAsConfirmFromLead() => Status = "Confirmed";
     }
 }
