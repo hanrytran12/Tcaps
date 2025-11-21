@@ -4,35 +4,72 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.DTOs.Response;
+using Application.Interfaces;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin
 {
-    public class GetAllMaterialRequestForAdminQueryHandler : IRequestHandler<GetAllMaterialRequestForAdminQuery, Result<List<Domain.Entities.MaterialRequest>>>
+    public class GetAllMaterialRequestForAdminQueryHandler : IRequestHandler<GetAllMaterialRequestForAdminQuery, Result<List<MaterialRequestDTO>>>
     {
         private readonly IMaterialRequestRepository _materialRequestRepository;
+        private readonly IAppDbContext _context;
 
-        public GetAllMaterialRequestForAdminQueryHandler(IMaterialRequestRepository materialRequestRepository)
+        public GetAllMaterialRequestForAdminQueryHandler(IMaterialRequestRepository materialRequestRepository, IAppDbContext context)
         {
             _materialRequestRepository = materialRequestRepository;
+            _context = context;
         }
-        public async Task<Result<List<Domain.Entities.MaterialRequest>>> Handle(GetAllMaterialRequestForAdminQuery request, CancellationToken cancellationToken)
+        public async Task<Result<List<MaterialRequestDTO>>> Handle(GetAllMaterialRequestForAdminQuery request, CancellationToken cancellationToken)
         {
-            var materialRequests = await _materialRequestRepository.GetAllAsync();
-            if (materialRequests == null || !materialRequests.Any())
-            {
-                return Result<List<Domain.Entities.MaterialRequest>>.Failure("Không có yêu cầu thêm vật liệu.");
-            }
+            //var materialRequests = await _materialRequestRepository.GetAllAsync();
+            //if (materialRequests == null || !materialRequests.Any())
+            //{
+            //    return Result<List<Domain.Entities.MaterialRequest>>.Failure("Không có yêu cầu thêm vật liệu.");
+            //}
+
+            //if (!string.IsNullOrEmpty(request.Status))
+            //{
+            //    materialRequests = materialRequests
+            //        .Where(m => string.Equals(m.Status, request.Status, StringComparison.OrdinalIgnoreCase))
+            //        .ToList();
+            //}
+
+            var materialRequestsQuery = from mr in _context.MaterialRequests.AsNoTracking()
+
+                                        join u in _context.Users.AsNoTracking()
+                                            on mr.UserId equals u.Id
+
+                                        join w in _context.Workshop.AsNoTracking()
+                                            on u.WorkshopId equals w.Id into workshopGroup
+                                        from wItem in workshopGroup.DefaultIfEmpty()
+                                        select new MaterialRequestDTO
+                                        {
+                                            Id = mr.Id,
+                                            MaterialId = mr.MaterialId,
+                                            UserId = mr.UserId,
+                                            WorkshopId = u.WorkshopId ?? Guid.Empty,
+                                            WorkshopName = wItem.Name ?? string.Empty,
+                                            BatchId = mr.BatchId,
+                                            AssignId = mr.AssignId,
+                                            QuantityRequest = mr.QuantityRequest,
+                                            Status = mr.Status,
+                                            Note = mr.Note,
+                                            Date = mr.Date,
+                                            Type = mr.Type,
+                                            NoteFromQC = mr.NoteFromQC,
+                                            ActualReceivedQuantity = mr.ActualReceivedQuantity
+                                        };
 
             if (!string.IsNullOrEmpty(request.Status))
             {
-                materialRequests = materialRequests
-                    .Where(m => string.Equals(m.Status, request.Status, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
+                materialRequestsQuery = materialRequestsQuery
+                    .Where(m => string.Equals(m.Status, request.Status, StringComparison.OrdinalIgnoreCase));
             }
 
-            return Result<List<Domain.Entities.MaterialRequest>>.Success(materialRequests.ToList());
+            return Result<List<MaterialRequestDTO>>.Success(materialRequestsQuery.ToList());
         }
     }
 }

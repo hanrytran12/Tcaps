@@ -122,7 +122,7 @@ namespace API.Controllers
             };
             var result = await _mediator.Send(command);
             if (!result.IsSuccess)
-                return BadRequest(result.IsFailure);
+                return BadRequest(result.Error);
 
             return Ok(result);
         }
