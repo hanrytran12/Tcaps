@@ -1,4 +1,6 @@
-﻿using Application.Common;
+﻿using System.Text.Json;
+using Application.Common;
+using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Events;
@@ -25,6 +27,52 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
 
         public async Task<Result<Guid>> Handle(AddEvaluateCommand request, CancellationToken cancellationToken)
         {
+            // Deserialize Defects from JSON string
+            if (!string.IsNullOrEmpty(request.DefectsJson))
+            {
+                try
+                {
+                    var json = request.DefectsJson.Trim();
+
+                    // Bỏ dấu ngoặc kép ngoài nếu cần
+                    if (json.StartsWith("\"") && json.EndsWith("\""))
+                    {
+                        json = System.Text.RegularExpressions.Regex.Unescape(json.Substring(1, json.Length - 2));
+                    }
+
+                    // Kiểm tra xem có phải array hay không
+                    json = json.Trim();
+                    if (!json.StartsWith("["))
+                    {
+                        json = $"[{json}]"; // Wrap single object trong array nếu cần
+                    }
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        WriteIndented = true // Giúp debug dễ hơn
+                    };
+
+                    request.Defects = JsonSerializer.Deserialize<List<ComponentDefectsDTO>>(
+                        json,
+                        options
+                    );
+
+                    if (request.Defects == null || request.Defects.Count == 0)
+                    {
+                        return Result<Guid>.Failure("Defects list trống sau khi deserialize");
+                    }
+                }
+                catch (JsonException ex)
+                {
+                    return Result<Guid>.Failure($"DefectsJson không hợp lệ: {ex.Message}. Path: {ex.Path}");
+                }
+                catch (Exception ex)
+                {
+                    return Result<Guid>.Failure($"Lỗi deserialize: {ex.Message}");
+                }
+            }
+
             List<string> imageUrls = await _fileStorageService.SaveFileAsync(request.Image, "evaluates", cancellationToken);
             string combineUrls = string.Join(",", imageUrls);
 
@@ -43,7 +91,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
                     .Select(item => Domain.Entities.ComponentDefect.Create(
                         evaluate.Id,
                         item.DefectType,
-                        item.Serverity,
+                        item.Severity,
                         item.Description,
                         item.Solution,
                         item.Quantity,

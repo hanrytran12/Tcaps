@@ -31,7 +31,7 @@ namespace Application.Features.ComponentDefects.Query.GetComponentDefects
             var finalQuery = query.Select(q => new ComponentDefectsDTO
             {
                 DefectType = q.defect.DefectType,
-                Serverity = q.defect.Serverity,
+                Severity = q.defect.Serverity,
                 Description = q.defect.Description,
                 Solution = q.defect.Solution,
                 Quantity = q.defect.Quantity,
