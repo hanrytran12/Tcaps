@@ -96,7 +96,8 @@ namespace Infrastructure.Migrations
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NoteFromQC = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ActualReceivedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: true)
+                    ActualReceivedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    QuantityFromStock = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -271,7 +272,8 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     MaterialId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    HoldingQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
                 },
                 constraints: table =>
                 {

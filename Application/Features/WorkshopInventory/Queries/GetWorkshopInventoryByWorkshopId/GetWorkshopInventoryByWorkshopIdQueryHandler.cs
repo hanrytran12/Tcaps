@@ -25,7 +25,10 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByW
                         {
                             MaterialName = m.Name,
                             Quantity = subWi != null ? subWi.Quantity : 0,
-                            Unit = m.Unit
+                            Unit = m.Unit,
+                            MaterialId = m.Id,
+                            AvailableQuantity = subWi != null ? subWi.AvailableQuantity : 0,
+                            HoldingQuantity = subWi != null ? subWi.HoldingQuantity : 0
                         };
 
             return await query.AsNoTracking().ToListAsync(cancellationToken);

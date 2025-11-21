@@ -337,6 +337,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("NoteFromQC")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<decimal>("QuantityFromStock")
+                        .HasColumnType("decimal(18,2)");
+
                     b.Property<decimal>("QuantityRequest")
                         .HasColumnType("decimal(18,2)");
 
@@ -719,6 +722,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<decimal>("HoldingQuantity")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
