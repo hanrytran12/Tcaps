@@ -45,6 +45,8 @@ namespace Application.Features.Assignments.Queries.GetAllocatedMaterials
             }
 
             var result = await filteredQuery
+                .GroupBy(x => x.MaterialId)
+                .Select(g => g.First())
                 .Select(x => new AllocatedMaterialDto
                 {
                     MaterialId = x.MaterialId,
