@@ -7,6 +7,8 @@ namespace Domain.Entities
         public Guid WorkshopId { get; private set; }
         public Guid MaterialId { get; private set; }
         public decimal Quantity { get; private set; }
+        public decimal HoldingQuantity { get; private set; }
+        public decimal AvailableQuantity => Quantity - HoldingQuantity;
 
         public WorkshopInventory(Guid Id, Guid workshopId, Guid materialId, decimal quantity) : base(Id)
         {
@@ -20,6 +22,14 @@ namespace Domain.Entities
         public static WorkshopInventory Create(Guid workshopId, Guid materialId, decimal quantity)
         {
             return new WorkshopInventory(Guid.NewGuid(), workshopId, materialId, quantity);
+        }
+
+        public void HoldStock()
+        {
+            if (AvailableQuantity > 0)
+            {
+                HoldingQuantity += Quantity;
+            }
         }
 
         public void IncreaseQuantity(decimal quantity)
@@ -40,6 +50,7 @@ namespace Domain.Entities
             }
 
             Quantity -= quantity;
+            HoldingQuantity = 0;
         }
     }
 }
