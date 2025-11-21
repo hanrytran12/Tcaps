@@ -103,6 +103,11 @@ namespace Infrastructure.Persistence
                        );
             });
 
+            modelBuilder.Entity<Evaluate>()
+                .HasMany(e => e.ComponentDefects) // Tên thuộc tính trong Evaluate Entity (ví dụ: public ICollection<ComponentDefect> ComponentDefects)
+                .WithOne() // Hoặc WithOne(cd => cd.Evaluate) nếu có navigation property ngược
+                .HasForeignKey(cd => cd.EvaluateId);
+
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)

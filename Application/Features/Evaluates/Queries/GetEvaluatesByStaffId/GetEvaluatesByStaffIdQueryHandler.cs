@@ -69,7 +69,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
                                             {
                                                 Id = cd.Id,
                                                 DefectType = cd.DefectType,
-                                                Serverity = cd.Serverity,
+                                                Severity = cd.Serverity,
                                                 Description = cd.Description,
                                                 Solution = cd.Solution,
                                                 Quantity = cd.Quantity,

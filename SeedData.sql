@@ -233,7 +233,6 @@ select * from Batches
 select * from MaterialUse
 select * from Materials
 select * from Incomes
-select * from ComponentDefects
 select * from Workshop
 select * from Notifications where UserId = 'A0000000-0000-0000-0000-000000000005'
 select * from TaskTransferRequests
