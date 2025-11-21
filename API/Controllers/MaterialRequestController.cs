@@ -200,7 +200,7 @@ namespace API.Controllers
 
         [HttpPut("lead-confirm")]
         [Authorize(Roles = "Lead")]
-        public async Task<IActionResult> LeadConfirm([FromBody] ConfirmRequestFromLeadCommand command)
+        public async Task<IActionResult> LeadConfirm([FromQuery] ConfirmRequestFromLeadCommand command)
         {
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
