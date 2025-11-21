@@ -67,6 +67,11 @@ namespace Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(u => u.WorkshopId == workshopId && u.Role == "QC");
         }
 
+        public async Task<List<User>> GetQcsByWorkshopIdsAsync(List<Guid> workshopId)
+        {
+            return await _context.Users.AsNoTracking().Where(u => u.WorkshopId.HasValue && workshopId.Contains(u.WorkshopId.Value) && u.Role == "QC").ToListAsync();
+        }
+
         public async Task<IEnumerable<User>> GetUsersByWorkshopIdAsync(Guid workshopId)
         {
             return await _context.Users

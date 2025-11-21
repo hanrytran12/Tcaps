@@ -24,22 +24,27 @@ namespace Application.Features.Assignments.Events
         public async Task Handle(AssignmentAddedEvent notificationEvent, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetQCByWorkshopIdAsync(notificationEvent.WorkshopId);
+            if (user is null) return;
+
             var workshop = await _workshopRepository.GetByIdAsync(notificationEvent.WorkshopId);
 
-            var title = "Công việc mới được giao";
+            var title = "Kế hoạch sản xuất mới";
             var message = string.Empty;
             var type = "NEW_ASSIGNMENT";
-            string formattedDate = (notificationEvent.ExpectedDeliveryDate is not null) ? notificationEvent.ExpectedDeliveryDate.Value.ToString("dd/MM/yyyy") : "";
 
-            if (notificationEvent.ExpectedDeliveryDate != null)
+            if (notificationEvent.ExpectedDeliveryDate.HasValue)
             {
-                message = $"Một lô hàng mới, mã lô {notificationEvent.BatchCode}, vừa được phân công cho xưởng của bạn ({workshop?.Name}). Dự kiến giao nguyên liệu vào ngày {formattedDate}";
+                string formattedDate = notificationEvent.ExpectedDeliveryDate.Value.ToString("dd/MM/yyyy");
 
+                message = $"Xưởng của bạn ({workshop?.Name}) vừa được phân công cho lô hàng {notificationEvent.BatchCode}. " +
+                          $"Dự kiến nguyên vật liệu sẽ được giao vào ngày {formattedDate}.";
             }
             else
             {
-                message = $"Một lô hàng mới, mã lô {notificationEvent.BatchCode}, vừa được phân công cho xưởng của bạn ({workshop?.Name}).";
+                message = $"Xưởng của bạn ({workshop?.Name}) vừa được phân công cho lô hàng {notificationEvent.BatchCode}. " +
+                          $"Vui lòng kiểm tra kế hoạch và chuẩn bị nhân lực.";
             }
+
             var notification = Notification.Create(user.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
 
