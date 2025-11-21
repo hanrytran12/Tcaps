@@ -91,8 +91,17 @@ namespace Domain.Entities
             }
 
             Assignments.Add(assignment);
+        }
 
-            AddDomainEvent(new AssignmentAddedEvent(Code, assignment.WorkshopId, assignment.ExpectedDeliveryDate));
+        public void NotifyPlanCreated()
+        {
+            var assignmentInfos = this.Assignments.Select(a => new AssignmentsInfo
+            {
+                WorkshopId = a.WorkshopId,
+                ExpectedDeliveryDate = a.ExpectedDeliveryDate,
+            }).ToList();
+
+            AddDomainEvent(new AssignmentsPlannedEvent(this.Code, assignmentInfos));
         }
 
         public void ConfirmMaterialReceiptForAssignment(Guid assignmentId)

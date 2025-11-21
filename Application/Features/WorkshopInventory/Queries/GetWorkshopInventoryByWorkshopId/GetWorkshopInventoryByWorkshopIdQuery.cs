@@ -1,8 +1,9 @@
-﻿using MediatR;
+﻿using Application.DTOs.Response;
+using MediatR;
 
 namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByWorkshopId
 {
-    public class GetWorkshopInventoryByWorkshopIdQuery : IRequest<List<Domain.Entities.WorkshopInventory>>
+    public class GetWorkshopInventoryByWorkshopIdQuery : IRequest<List<WorkshopInventoryForExportDTO>>
     {
         public Guid WorkshopId { get; set; }
 

@@ -37,7 +37,12 @@ namespace API.Controllers
         public async Task<IActionResult> CreateMaterial([FromBody] AddMaterialCommand command)
         {
             var result = await _mediator.Send(command);
-            return (result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error));
+            if (result.IsFailure)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return Ok(result.Value);
         }
     }
 }

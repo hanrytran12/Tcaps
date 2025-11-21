@@ -11,5 +11,6 @@ namespace Domain.Interfaces
         void Update(Workshop workshop);
         void Delete(Workshop workshop);
         Task<bool> ExistsAsync(Guid? id);
+        Task<List<Workshop>> GetByIdsAsync(List<Guid> ids);
     }
 }

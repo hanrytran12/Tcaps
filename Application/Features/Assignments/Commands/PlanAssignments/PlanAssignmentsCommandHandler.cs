@@ -34,11 +34,7 @@ namespace Application.Features.Assignments.Commands.PlanAssignments
             }
 
             var sortedPlan = request.PlanItems.OrderBy(p => p.StepOrder).ToList();
-            //foreach (var plan in sortedPlan)
-            //{
-            //    var assignment = Assignment.Create(request.BatchId, plan.WorkshopId, plan.StepOrder, plan.Quantity, plan.StartDate, plan.EndDate, plan.ExpectedDeliveryDate, plan.UnitPrice);
-            //    batch.AddAssignment(assignment);
-            //}
+
             for (int i = 0; i < sortedPlan.Count; i++)
             {
                 var item = sortedPlan[i];
@@ -54,6 +50,8 @@ namespace Application.Features.Assignments.Commands.PlanAssignments
 
                 batch.AddAssignment(assignment);
             }
+
+            batch.NotifyPlanCreated();
 
             return Result.Success();
         }

@@ -19,5 +19,6 @@ namespace Domain.Interfaces
         Task<Guid> GetWorkshopIdByQCIdAsync(Guid qc_id);
         Task<IEnumerable<User>> GetUsersByWorkshopIdAsync(Guid workshopId);
         Task<IEnumerable<User>> GetAllQCTransportAsync();
+        Task<List<User>> GetQcsByWorkshopIdsAsync(List<Guid> workshopId);
     }
 }
