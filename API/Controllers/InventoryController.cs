@@ -1,4 +1,5 @@
-﻿using Application.Features.Inventories.Commands.AddInventory;
+﻿using Application.DTOs.Response;
+using Application.Features.Inventories.Commands.AddInventory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,14 @@ namespace API.Controllers
             _mediator = mediator;
 
         }
+
+        [HttpGet("from-{materialId:guid}")]
+        public async Task<InventoryHistoryDTO> GetInventoryByMaterialId(Guid materialId, [FromQuery] int month, [FromQuery] int year)
+        {
+            var result = await _mediator.Send(new Application.Features.Inventories.Queries.GetInventoryByMaterialId.GetInventoryByMaterialIdQuery(materialId, month, year));
+            return result;
+        }
+
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetInventoryById(Guid id)
