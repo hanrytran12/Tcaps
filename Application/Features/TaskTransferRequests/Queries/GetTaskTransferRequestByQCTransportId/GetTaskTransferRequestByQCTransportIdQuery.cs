@@ -14,5 +14,11 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
     {
         public Guid QcTransportId { get; set; }
         public string? Status { get; set; }
+
+        public GetTaskTransferRequestByQCTransportIdQuery(Guid qcTransportId, string? status)
+        {
+            QcTransportId = qcTransportId;
+            Status = status;
+        }
     }
 }
