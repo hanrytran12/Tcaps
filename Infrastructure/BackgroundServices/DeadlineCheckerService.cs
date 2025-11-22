@@ -33,7 +33,7 @@ namespace Infrastructure.BackgroundServices
                     _logger.LogError(ex, "An error occured while checking assignment deadlines.");
                 }
 
-                await Task.Delay(TimeSpan.FromHours(1), cancellationToken);
+                await Task.Delay(TimeSpan.FromSeconds(1), cancellationToken);
             }
         }
 
@@ -46,7 +46,7 @@ namespace Infrastructure.BackgroundServices
                 var context = scope.ServiceProvider.GetRequiredService<IAppDbContext>();
                 var unitOfWork = scope.ServiceProvider.GetRequiredService<IUnitOfWork>();
 
-                var today = DateOnly.FromDateTime(DateTime.UtcNow);
+                var today = DateOnly.FromDateTime(DateTime.Now);
 
                 var assingmentsToUpdate = await context.Assignments.Where(a => a.EndDate == today && a.Status == "InProgress").ToListAsync(cancellationToken);
                 if (assingmentsToUpdate.Any())
