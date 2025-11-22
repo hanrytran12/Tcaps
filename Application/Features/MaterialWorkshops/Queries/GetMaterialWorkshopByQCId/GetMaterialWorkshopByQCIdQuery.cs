@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
+﻿using Application.DTOs.Response;
 using MediatR;
 
 namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId
 {
-    public class GetMaterialWorkshopByQCIdQuery : IRequest<List<MaterialWorkshop>>
+    public class GetMaterialWorkshopByQCIdQuery : IRequest<List<MaterialWorkshopDTO>>
     {
         public Guid QC_Id { get; set; }
         public Guid WorkshopId { get; set; }
-        public string? Status { get; set; }
     }
 }
