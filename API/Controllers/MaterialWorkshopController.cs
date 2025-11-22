@@ -2,6 +2,7 @@
 using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
+using Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -75,6 +76,26 @@ namespace API.Controllers
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateConfirmAsync([FromQuery] UpdateConfirmMaterialWorkshopCommand query)
         {
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
+        [HttpGet("total-quantity-receive")]
+        [Authorize(Roles = "QC")]
+        public async Task<IActionResult> GetTotalQuantityReceive([FromQuery] Guid batchId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            var query = new TotalQuantityReceiveQuery
+            {
+                BatchId = batchId,
+                QcId = Guid.Parse(userIdString)
+            };
             var result = await _mediator.Send(query);
             return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }
