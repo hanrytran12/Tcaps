@@ -17,7 +17,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
         public int QuantitySucess { get; set; }
         public List<IFormFile> Image { get; set; }
 
-        public string DefectsJson { get; set; }
+        public string? DefectsJson { get; set; }
 
         [JsonIgnore]
         public List<ComponentDefectsDTO> Defects { get; set; } = new();
