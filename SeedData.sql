@@ -43,19 +43,49 @@ select * from Users
 INSERT INTO [Users] (Id, WorkshopId, Role, FullName, Email, PasswordHash, Phone, Status, IsQcTransport, CreatedAt)
 VALUES 
 -- Admin
-('A0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'Admin', N'Nguyễn Văn An', 'admin@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0901234567', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'Admin', N'Nguyễn Văn An', 'admin@company.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901234567', 'Active', 0, GETDATE()),
 -- Lead
-('A0000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 'Lead', N'Trần Thị Bình', 'manager@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0902345678', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 'Lead', N'Trần Thị Bình', 'manager@company.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0902345678', 'Active', 0, GETDATE()),
 -- Staff xưởng 3 (Dán vải)
-('A0000000-0000-0000-0000-000000000003', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Lê Văn Cường', 'worker1@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0903456789', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000003', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Lê Văn Cường', 'worker1@company.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0903456789', 'Active', 0, GETDATE()),
 -- Staff xưởng 3 (Dán vải)
-('A0000000-0000-0000-0000-000000000004', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Phạm Thị Dung', 'worker2@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0904567890', 'Active', 0, GETDATE()),
--- QC
-('A0000000-0000-0000-0000-000000000005', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QC', N'Hoàng Văn Em', 'qc@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0905678901', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000004', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'Staff', N'Phạm Thị Dung', 'worker2@company.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0904567890', 'Active', 0, GETDATE()),
 -- QC Transport
-('A0000000-0000-0000-0000-000000000006', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QCTransport', N'Nguyễn Thị Hạnh', 'qctransport@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0906789012', 'Active', 0, GETDATE()),
--- QC Transport
-('A0000000-0000-0000-0000-000000000007', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'QCTransport', N'Nguyễn Văn Bình', 'qctransport2@company.com', '$2a$12$OeyDys0yr8QhSKhfPbzm5u8wQ9cg3lOjS5y2ICxSYXC4PsK4AbjEi', '0901234568', 'Active', 0, GETDATE());
+('A0000000-0000-0000-0000-000000000005', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QCTransport', N'Nguyễn Thị Hạnh', 'qctransport@company.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0906789012', 'Active', 0, GETDATE()),
+
+-- QC cho 16 xưởng
+-- Step 1: Cắt laser
+('A0000000-0000-0000-0000-000000000006', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'QC', N'QC Xưởng Cắt Laser', 'qc.laser@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000101', 'Active', 0, GETDATE()),
+-- Step 2: Cắt vải ép keo
+('A0000000-0000-0000-0000-000000000007', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 'QC', N'Hoàng Văn Em', 'qc.catkeo@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000102', 'Active', 0, GETDATE()),
+-- Step 3: Dán vải
+('A0000000-0000-0000-0000-000000000008', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QC', N'Khánh Nguyệt', 'qc.danvai@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000103', 'Active', 0, GETDATE()),
+-- Step 4: Cắt vải ra đủ bộ
+('A0000000-0000-0000-0000-000000000009', 'A1C9B3A0-4F12-4E81-B17B-000000000004', 'QC', N'QC Xưởng Cắt Đủ Bộ', 'qc.catdubo@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000104', 'Active', 0, GETDATE()),
+-- Step 5: In + thêu
+('A0000000-0000-0000-0000-000000000010', 'A1C9B3A0-4F12-4E81-B17B-000000000005', 'QC', N'Anh Dũng', 'qc.intheu@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000105', 'Active', 0, GETDATE()),
+-- Step 6: Làm chỏm
+('A0000000-0000-0000-0000-000000000011', 'A1C9B3A0-4F12-4E81-B17B-000000000006', 'QC', N'QC Xưởng Làm Chỏm', 'qc.lamchom@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000106', 'Active', 0, GETDATE()),
+-- Step 7: Làm kết
+('A0000000-0000-0000-0000-000000000012', 'A1C9B3A0-4F12-4E81-B17B-000000000007', 'QC', N'QC Xưởng Làm Kết', 'qc.lamket@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000107', 'Active', 0, GETDATE()),
+-- Step 8: Đóng nút bấm đuôi
+('A0000000-0000-0000-0000-000000000013', 'A1C9B3A0-4F12-4E81-B17B-000000000008', 'QC', N'QC Xưởng Đóng Nút', 'qc.dongnut@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000108', 'Active', 0, GETDATE()),
+-- Step 9: Xỏ cây dựng + vắt sổ
+('A0000000-0000-0000-0000-000000000014', 'A1C9B3A0-4F12-4E81-B17B-000000000009', 'QC', N'QC Xưởng Vắt Sổ', 'qc.vatso@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000109', 'Active', 0, GETDATE()),
+-- Step 10: Vào nón + vào đai
+('A0000000-0000-0000-0000-000000000015', 'A1C9B3A0-4F12-4E81-B17B-000000000010', 'QC', N'QC Xưởng Vào Đai', 'qc.vaodai@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000110', 'Active', 0, GETDATE()),
+-- Step 11: Trần đầu nón
+('A0000000-0000-0000-0000-000000000016', 'A1C9B3A0-4F12-4E81-B17B-000000000011', 'QC', N'QC Xưởng Trần Đầu', 'qc.trandau@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000111', 'Active', 0, GETDATE()),
+-- Step 12: May đuôi khóa vào nón
+('A0000000-0000-0000-0000-000000000017', 'A1C9B3A0-4F12-4E81-B17B-000000000012', 'QC', N'QC Xưởng May Khóa', 'qc.maykhoa@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000112', 'Active', 0, GETDATE()),
+-- Step 13: May tem
+('A0000000-0000-0000-0000-000000000018', 'A1C9B3A0-4F12-4E81-B17B-000000000013', 'QC', N'QC Xưởng May Tem', 'qc.maytem@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000113', 'Active', 0, GETDATE()),
+-- Step 14: Cắt chỉ dư + xỏ tem thẻ bài
+('A0000000-0000-0000-0000-000000000019', 'A1C9B3A0-4F12-4E81-B17B-000000000014', 'QC', N'QC Xưởng Cắt Chỉ', 'qc.catchi@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000114', 'Active', 0, GETDATE()),
+-- Step 15: Ủi nón
+('A0000000-0000-0000-0000-000000000020', 'A1C9B3A0-4F12-4E81-B17B-000000000015', 'QC', N'QC Xưởng Ủi Nón', 'qc.uinon@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000115', 'Active', 0, GETDATE()),
+-- Step 16: Gấp cây + đóng bịch
+('A0000000-0000-0000-0000-000000000021', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'QC', N'QC Xưởng Đóng Bịch', 'qc.dongbich@tcaps.com', '$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/X4.G1L8lK1P2xWGGy', '0901000116', 'Active', 0, GETDATE());
 
 select * from Materials
 INSERT INTO [Materials] (Id, Name, Description, Quantity, Price, Unit)
