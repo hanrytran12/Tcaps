@@ -1,48 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Entities;
-using Domain.Interfaces;
+﻿using Application.DTOs.Response;
+using Application.Interfaces;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId
 {
-    public class GetMaterialWorkshopByQCIdQueryHandler : IRequestHandler<GetMaterialWorkshopByQCIdQuery, List<MaterialWorkshop>>
+    public class GetMaterialWorkshopByQCIdQueryHandler : IRequestHandler<GetMaterialWorkshopByQCIdQuery, List<MaterialWorkshopDTO>>
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IMaterialWorkshopRepository _materialWorkshopRepository;
+        private readonly IAppDbContext _appDbContext;
 
-        public GetMaterialWorkshopByQCIdQueryHandler(IUserRepository userRepository, IMaterialWorkshopRepository materialWorkshopRepository)
+        public GetMaterialWorkshopByQCIdQueryHandler(IAppDbContext appDbContext)
         {
-            _userRepository = userRepository;
-            _materialWorkshopRepository = materialWorkshopRepository;
+            _appDbContext = appDbContext;
         }
-        public async Task<List<MaterialWorkshop>> Handle(GetMaterialWorkshopByQCIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<MaterialWorkshopDTO>> Handle(GetMaterialWorkshopByQCIdQuery request, CancellationToken cancellationToken)
         {
-            var qc = await _userRepository.GetByIdAsync(request.QC_Id);
-            if (qc == null)
-            {
-                throw new Exception($"Không tìm thấy QC có Id = {request.QC_Id}");
-            }
-
-            if (qc.WorkshopId != request.WorkshopId)
-            {
-                throw new Exception($"QC không thuộc xưởng có Id = {request.WorkshopId}");
-            }
-
-            var materialWorkshops = await _materialWorkshopRepository.GetAllByWorkshopIdAsync(qc.WorkshopId);
-            if (materialWorkshops == null || !materialWorkshops.Any())
-                return new List<MaterialWorkshop>();
-
-            if (!string.IsNullOrEmpty(request.Status))
-            {
-                materialWorkshops = materialWorkshops.Where(m => m.Status == request.Status).ToList();
-            }
-
-            materialWorkshops = materialWorkshops.OrderByDescending(m => m.CreatedAt).ToList();
-            return materialWorkshops.ToList();
+            var query = from mw in _appDbContext.MaterialWorkshops
+                        where mw.WorkshopId == request.WorkshopId && mw.Status == "Pending"
+                        join a in _appDbContext.Assignments on mw.AssignId equals a.Id
+                        join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
+                        join b in _appDbContext.Batches on a.BatchId equals b.Id
+                        join p in _appDbContext.Products on b.ProductId equals p.Id
+                        select new MaterialWorkshopDTO
+                        {
+                            Id = mw.Id,
+                            WorkshopId = mw.WorkshopId,
+                            WorkshopName = w.Name,
+                            BatchCode = b.Code,
+                            ProductCode = p.Code,
+                            AssignId = a.Id,
+                            QuantitySend = mw.QuantitySend,
+                            QuantityReceive = mw.QuantityReceive,
+                            ShipDate = mw.ShipDate,
+                            CreatedAt = mw.CreatedAt,
+                        };
+            return await query.ToListAsync(cancellationToken);
         }
     }
 }

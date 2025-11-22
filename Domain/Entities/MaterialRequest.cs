@@ -12,7 +12,7 @@ namespace Domain.Entities
         public decimal QuantityRequest { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public string Note { get; private set; } = string.Empty;
-        public DateOnly Date { get; private set; }
+        public DateTime Date { get; private set; }
         public string Type { get; private set; }
         public string? NoteFromQC { get; private set; } = null;
         public decimal? ActualReceivedQuantity { get; private set; }
@@ -28,7 +28,7 @@ namespace Domain.Entities
             QuantityRequest = quantityRequest;
             Status = "Pending";
             Note = note;
-            Date = DateOnly.FromDateTime(DateTime.Now);
+            Date = DateTime.Now;
             Type = type;
         }
 
