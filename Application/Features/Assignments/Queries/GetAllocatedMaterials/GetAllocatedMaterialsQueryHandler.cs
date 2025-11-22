@@ -45,12 +45,11 @@ namespace Application.Features.Assignments.Queries.GetAllocatedMaterials
             }
 
             var result = await filteredQuery
-                .GroupBy(x => x.MaterialId)
-                .Select(g => g.First())
-                .Select(x => new AllocatedMaterialDto
+                .GroupBy(x => new { x.MaterialId, x.MaterialName })
+                .Select(g => new AllocatedMaterialDto
                 {
-                    MaterialId = x.MaterialId,
-                    MaterialName = x.MaterialName,
+                    MaterialId = g.Key.MaterialId,
+                    MaterialName = g.Key.MaterialName,
                 })
                 .ToListAsync();
 
