@@ -93,7 +93,7 @@ namespace Infrastructure.Migrations
                     QuantityRequest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     NoteFromQC = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ActualReceivedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
