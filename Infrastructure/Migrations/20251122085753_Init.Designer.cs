@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251121162606_Init")]
+    [Migration("20251122085753_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -327,8 +327,8 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("BatchId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");

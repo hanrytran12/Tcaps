@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.Response
+﻿namespace Application.DTOs.Response
 {
     public class MaterialRequestDTO
     {
@@ -18,7 +12,7 @@ namespace Application.DTOs.Response
         public decimal QuantityRequest { get; set; }
         public string Status { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
         public string Type { get; set; }
         public string? NoteFromQC { get; set; } = null;
         public decimal? ActualReceivedQuantity { get; set; }
