@@ -29,7 +29,7 @@ namespace API.Controllers
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<IActionResult> GetByQCIdAsync([FromQuery] string? status, [FromQuery] Guid workshopId)
+        public async Task<IActionResult> GetByQCIdAsync([FromQuery] Guid workshopId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString))
@@ -40,7 +40,6 @@ namespace API.Controllers
             var query = new GetMaterialWorkshopByQCIdQuery
             {
                 QC_Id = Guid.Parse(userIdString),
-                Status = status,
                 WorkshopId = workshopId
             };
 
