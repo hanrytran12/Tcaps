@@ -24,5 +24,6 @@ namespace Application.Interfaces
         public DbSet<WorkshopInventory> WorkshopInventory { get; }
         public DbSet<ReworkRequest> ReworkRequests { get; set; }
         public DbSet<MaterialSupply> MaterialSupplies { get; }
+        public DbSet<MaterialWorkshop> MaterialWorkshops { get; }
     }
 }
