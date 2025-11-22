@@ -33,16 +33,12 @@ namespace API.Controllers
         public async Task<IActionResult> GetByQcTransportAsync([FromQuery] string? status)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
+            if (!Guid.TryParse(userIdString, out var qcTransportId))
             {
-                return Unauthorized();
+                return Unauthorized("Định dạng ID người dùng không hợp lệ.");
             }
 
-            var query = new GetTaskTransferRequestByQCTransportIdQuery
-            {
-                QcTransportId = Guid.Parse(userIdString),
-                Status = status
-            };
+            var query = new GetTaskTransferRequestByQCTransportIdQuery(qcTransportId, status);
 
             var result = await _mediator.Send(query);
             return Ok(result);
