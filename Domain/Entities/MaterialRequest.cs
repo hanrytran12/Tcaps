@@ -16,6 +16,7 @@ namespace Domain.Entities
         public string Type { get; private set; }
         public string? NoteFromQC { get; private set; } = null;
         public decimal? ActualReceivedQuantity { get; private set; }
+        public decimal QuantityFromStock { get; private set; }
 
         public MaterialRequest(Guid id, Guid materialId, Guid userId, Guid batchId, Guid assignId, decimal quantityRequest, string note, string type)
             : base(id)
@@ -78,5 +79,12 @@ namespace Domain.Entities
 
         public void MarkAsReception() => Status = "QCTransportReception";
         public void MarkAsConfirmFromLead() => Status = "Confirmed";
+
+        public void IncreaseQuantityFromStock(decimal quantity)
+        {
+            if (quantity < 0)
+                throw new ArgumentException("Quantity to increase must be non-negative.", nameof(quantity));
+            QuantityFromStock += quantity;
+        }
     }
 }
