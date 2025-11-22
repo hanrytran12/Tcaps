@@ -19,9 +19,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
 
 
             RuleFor(x => x.Note)
-                .NotEmpty().WithMessage("Note is required.")
-                .MinimumLength(10).WithMessage("Note must be at least 10 characters long.")
-                .MaximumLength(500).WithMessage("Note cannot exceed 500 characters.");
+                .NotEmpty().WithMessage("Note is required.");
         }
     }
 }
