@@ -20,6 +20,6 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
         public string? DefectsJson { get; set; }
 
         [JsonIgnore]
-        public List<ComponentDefectsDTO> Defects { get; set; } = new();
+        public List<ComponentDefectsDTO>? Defects { get; set; }
     }
 }
