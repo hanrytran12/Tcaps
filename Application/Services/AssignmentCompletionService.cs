@@ -5,39 +5,83 @@ namespace Application.Services
 {
     public class AssignmentCompletionService : IAssignmentCompletionService
     {
-        private readonly IAppDbContext _appDbContext;
+        private readonly IAppDbContext _context;
         public AssignmentCompletionService(IAppDbContext appDbContext)
         {
-            _appDbContext = appDbContext;
+            _context = appDbContext;
         }
 
         public async Task<decimal> CalculateCompetedQuantityAsync(Guid assignmentId, Guid? reworkRequestId)
         {
             if (reworkRequestId == null)
             {
-                var totalQuantity = await _appDbContext.Productions.Where(p => p.AssignId == assignmentId).SumAsync(p => p.Quantity);
+                var summaryData = await _context.Assignments
+                .AsNoTracking()
+                .Where(a => a.Id == assignmentId)
+                .Select(a => new
+                {
+                    TotalSubmitted = _context.Productions
+                    .Where(p => p.AssignId == a.Id)
+                    .Sum(p => p.Quantity),
 
-                var query = from p in _appDbContext.Productions
-                            where p.AssignId == assignmentId
-                            join e in _appDbContext.Evaluates on p.Id equals e.ProductionId
-                            where e.Status == "Rejected"
-                            select e.QuantityError;
+                    TotalRejected = _context.Productions
+                    .Where(p => p.AssignId == a.Id)
+                    .SelectMany(p => _context.Evaluates.Where(e => e.ProductionId == p.Id))
+                    .Where(e => e.Status == "Rejected")
+                    .Sum(e => e.QuantityError),
 
-                var totalReject = await query.SumAsync();
-                return totalQuantity - totalReject;
+                    TotalUnfixable = _context.Productions
+                    .Where(p => p.AssignId == a.Id)
+                    .SelectMany(p => _context.Evaluates.Where(e => e.ProductionId == p.Id))
+                    .Where(e => e.Status == "Failed")
+                    .SelectMany(e => _context.ComponentDefects.Where(cd => cd.EvaluateId == e.Id))
+                    .Where(cd => cd.Status == "Unfixable")
+                    .Sum(cd => cd.Quantity)
+
+                }).FirstOrDefaultAsync();
+
+                if (summaryData == null)
+                {
+                    throw new Exception("Không tìm thấy công đoạn");
+                }
+
+                var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;
+                return summaryData.TotalSubmitted - totalLoss;
             }
             else
             {
-                var totalSubmitted = await _appDbContext.Productions.AsNoTracking().Where(p => p.AssignId == assignmentId && p.ReworkRequestId == reworkRequestId).SumAsync(p => p.Quantity);
+                var summaryData = await _context.Assignments
+                .AsNoTracking()
+                .Where(a => a.Id == assignmentId)
+                .Select(a => new
+                {
+                    TotalSubmitted = _context.Productions
+                    .Where(p => p.AssignId == a.Id && p.ReworkRequestId == reworkRequestId)
+                    .Sum(p => p.Quantity),
 
-                var query = from p in _appDbContext.Productions
-                            where p.AssignId == assignmentId && p.ReworkRequestId == reworkRequestId
-                            join e in _appDbContext.Evaluates on p.Id equals e.ProductionId
-                            where e.Status == "Rejected"
-                            select e.QuantityError;
+                    TotalRejected = _context.Productions
+                    .Where(p => p.AssignId == a.Id && p.ReworkRequestId == reworkRequestId)
+                    .SelectMany(p => _context.Evaluates.Where(e => e.ProductionId == p.Id))
+                    .Where(e => e.Status == "Rejected")
+                    .Sum(e => e.QuantityError),
 
-                var totalRejected = await query.SumAsync();
-                return totalSubmitted - totalRejected;
+                    TotalUnfixable = _context.Productions
+                    .Where(p => p.AssignId == a.Id && p.ReworkRequestId == reworkRequestId)
+                    .SelectMany(p => _context.Evaluates.Where(e => e.ProductionId == p.Id))
+                    .Where(e => e.Status == "Failed")
+                    .SelectMany(e => _context.ComponentDefects.Where(cd => cd.EvaluateId == e.Id))
+                    .Where(cd => cd.Status == "Unfixable")
+                    .Sum(cd => cd.Quantity)
+
+                }).FirstOrDefaultAsync();
+
+                if (summaryData == null)
+                {
+                    throw new Exception("Không tìm thấy công đoạn");
+                }
+
+                var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;
+                return summaryData.TotalSubmitted - totalLoss;
             }
         }
     }

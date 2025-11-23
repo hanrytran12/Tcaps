@@ -16,37 +16,63 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
 
         public async Task<ReconcilationSummaryDTO> Handle(GetReworkReconciliationSummaryQuery request, CancellationToken cancellationToken)
         {
-            var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == request.AssignmentId).FirstOrDefaultAsync(cancellationToken);
+            var summaryData = await _appDbContext.ReworkRequests
+                .AsNoTracking()
+                .Where(r => r.AssignmentId == request.AssignmentId)
+                .Select(r => new
+                {
+                    ReworkRequestId = r.Id,
+                    QuantityTarget = r.DefectiveQuantity,
 
-            var totalSubmitted = await _appDbContext.Productions.AsNoTracking().Where(p => p.AssignId == reworkRequest.AssignmentId && p.ReworkRequestId == reworkRequest.Id).SumAsync(p => p.Quantity);
+                    TotalSubmitted = _appDbContext.Productions
+                        .Where(p => p.ReworkRequestId == r.Id)
+                        .Sum(p => p.Quantity),
 
-            var query = from p in _appDbContext.Productions
-                        where p.AssignId == reworkRequest.AssignmentId && p.ReworkRequestId == reworkRequest.Id
-                        join e in _appDbContext.Evaluates on p.Id equals e.ProductionId
-                        where e.Status == "Rejected"
-                        select e.QuantityError;
+                    TotalRejected = _appDbContext.Productions
+                        .Where(p => p.ReworkRequestId == r.Id)
+                        .SelectMany(p => _appDbContext.Evaluates.Where(e => e.ProductionId == p.Id))
+                        .Where(e => e.Status == "Rejected")
+                        .Sum(e => (int?)e.QuantityError) ?? 0,
 
-            var totalRejected = await query.SumAsync();
-            var finalCompletedQuantity = totalSubmitted - totalRejected;
+                    TotalUnfixable = _appDbContext.Productions
+                        .Where(p => p.ReworkRequestId == r.Id)
+                        .SelectMany(p => _appDbContext.Evaluates.Where(e => e.ProductionId == p.Id))
+                        .Where(e => e.Status == "Failed")
+                        .SelectMany(e => _appDbContext.ComponentDefects.Where(cd => cd.EvaluateId == e.Id))
+                        .Where(cd => cd.Status == "Unfixable")
+                        .Sum(cd => (int?)cd.Quantity) ?? 0
 
-            var materialSummaries = await _appDbContext.MaterialUse.AsNoTracking().Where(m => m.ReworkRequestId == reworkRequest.Id)
-                                                  .Join(_appDbContext.Materials,
-                                                  mu => mu.MaterialId,
-                                                  ma => ma.Id,
-                                                  (mu, ma) => new MaterialUsageSummaryDTO
-                                                  {
-                                                      MaterialId = ma.Id,
-                                                      MaterialName = ma.Name,
-                                                      QuantityDivided = mu.QuantityDivide,
-                                                      QuantityStaffUsed = mu.QuantityStaffUse
-                                                  }).ToListAsync();
+                }).FirstOrDefaultAsync();
+
+            if (summaryData == null)
+            {
+                throw new Exception("Không tìm thấy yêu cầu làm lại cho công đoạn này.");
+            }
+
+            var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;
+            var finalCompletedQuantity = summaryData.TotalSubmitted - totalLoss;
+
+            var materialSummaries = await _appDbContext.MaterialUse
+                .AsNoTracking()
+                .Where(m => m.ReworkRequestId == summaryData.ReworkRequestId)
+                .Join(_appDbContext.Materials,
+                      mu => mu.MaterialId,
+                      ma => ma.Id,
+                      (mu, ma) => new MaterialUsageSummaryDTO
+                      {
+                          MaterialId = ma.Id,
+                          MaterialName = ma.Name,
+                          QuantityDivided = mu.QuantityDivide,
+                          QuantityStaffUsed = mu.QuantityStaffUse
+                      })
+                .ToListAsync(cancellationToken);
 
             var summary = new ReconcilationSummaryDTO
             {
-                ReworkRequestId = reworkRequest.Id,
-                QuantityTarget = (int)reworkRequest.DefectiveQuantity,
-                TotalSumbimttedQuantity = totalSubmitted,
-                TotalRejectedQuantity = totalRejected,
+                ReworkRequestId = summaryData.ReworkRequestId,
+                QuantityTarget = (int)summaryData.QuantityTarget,
+                TotalSumbimttedQuantity = summaryData.TotalSubmitted,
+                TotalRejectedQuantity = totalLoss,
                 FinalCompletedQuantity = finalCompletedQuantity,
                 MaterialUsageSummary = materialSummaries
             };
