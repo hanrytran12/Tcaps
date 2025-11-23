@@ -147,6 +147,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SupplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuantitySend = table.Column<int>(type: "int", nullable: false),
                     QuantityReceive = table.Column<int>(type: "int", nullable: false),
                     ShipDate = table.Column<DateOnly>(type: "date", nullable: false),
@@ -168,7 +169,7 @@ namespace Infrastructure.Migrations
                     Message = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
