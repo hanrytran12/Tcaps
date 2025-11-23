@@ -1,4 +1,5 @@
 ﻿using Application.Features.Productions.Command.AddProductionReport;
+using Application.Features.Productions.Command.UpdateProduction;
 using Application.Features.Productions.Query.GetAllProduction;
 using Application.Features.Productions.Query.GetAllProductionByQCId;
 using Application.Features.Productions.Query.GetAllProductionByStaffId;
@@ -104,9 +105,9 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("reduce-quantity")]
+        [HttpPut("for-qc/reduce-quantity")]
         [Authorize(Roles = "QC")]
-        public async Task<IActionResult> UpdateQuantity([FromQuery] UpdateProductCommand command)
+        public async Task<IActionResult> UpdateQuantity([FromQuery] UpdateProductionCommand command)
         {
             var result = await _mediator.Send(command);
             return (result.IsSuccess) ? Ok(result) : BadRequest(result);
