@@ -1,5 +1,4 @@
-﻿using Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop;
-using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
+﻿using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive;
@@ -46,29 +45,6 @@ namespace API.Controllers
 
             var result = await _mediator.Send(query);
             return Ok(result);
-        }
-
-        [HttpPost("for-lead")]
-        [Authorize(Roles = "Lead,QCTransport")]
-        public async Task<IActionResult> CreateMaterialWorkshop(AddMaterialWorkshopCommand command)
-        {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            var isQcTransport = User.FindFirstValue("isQcTransport");
-
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            // Chỉ cho phép nếu có claim isQcTransport = true
-            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
-            {
-                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
-            }
-
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }
 
         [HttpPut("update-confirm")]
