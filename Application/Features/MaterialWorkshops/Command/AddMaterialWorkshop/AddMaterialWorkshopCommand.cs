@@ -7,6 +7,7 @@ namespace Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop
     {
         public Guid WorkshopId { get; set; }
         public Guid AssignId { get; set; }
+        public Guid SupplierId { get; set; }
         public int QuantitySend { get; set; }
     }
 }
