@@ -2,8 +2,10 @@
 using Application.Features.Productions.Query.GetAllProduction;
 using Application.Features.Productions.Query.GetAllProductionByQCId;
 using Application.Features.Productions.Query.GetAllProductionByStaffId;
+using Application.Features.Products.Commands.UpdateProduct;
 using Application.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -100,6 +102,14 @@ namespace API.Controllers
             };
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+
+        [HttpPut("reduce-quantity")]
+        [Authorize(Roles = "QC")]
+        public async Task<IActionResult> UpdateQuantity([FromQuery] UpdateProductCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return (result.IsSuccess) ? Ok(result) : BadRequest(result);
         }
     }
 }
