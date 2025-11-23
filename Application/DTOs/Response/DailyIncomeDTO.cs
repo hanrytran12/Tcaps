@@ -10,5 +10,6 @@ namespace Application.DTOs.Response
     {
         public int Day { get; set; }
         public decimal Total { get; set; }
+        public int QuantityErrors { get; set; }
     }
 }

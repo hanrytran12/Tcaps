@@ -23,6 +23,7 @@ namespace Application.Features.MaterialWorkshops.Command.AddMaterialWorkshop
             var materialWorkshop = MaterialWorkshop.Create(
                 request.WorkshopId,
                 request.AssignId,
+                request.SupplierId,
                 request.QuantitySend);
             await _materialWorkshopRepository.AddAsync(materialWorkshop);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
