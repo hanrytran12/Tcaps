@@ -4,6 +4,7 @@ using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
 using Application.Features.ReworkRequest.Queries.GetAllReworkRequest;
 using Application.Features.ReworkRequest.Queries.GetRequestById;
 using Application.Features.ReworkRequest.Queries.GetReworkByAssignId;
+using Application.Features.ReworkRequest.Queries.GetReworkForDashboard;
 using Application.Features.ReworkRequest.Queries.GetReworkReconciliationSummary;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -74,6 +75,14 @@ namespace API.Controllers
         [HttpGet("by-assignId")]
         public async Task<IActionResult> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
         {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("{assignId:guid}/for-dashboard")]
+        public async Task<IActionResult> GetReworkForDashboard(Guid assignId)
+        {
+            var query = new GetReworkForDashboardQuery(assignId);
             var result = await _mediator.Send(query);
             return Ok(result);
         }

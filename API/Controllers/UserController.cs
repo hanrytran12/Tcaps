@@ -7,6 +7,7 @@ using Application.Features.Users.Commands.UpdateUserProfile;
 using Application.Features.Users.Queries.GetAllQCTransport;
 using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
+using Application.Features.Users.Queries.GetStaffByWorkshopId;
 using Application.Features.Users.Queries.GetStaffDashboard;
 using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Features.Users.Queries.GetUserById;
@@ -45,6 +46,14 @@ namespace API.Controllers
         {
             var query = new GetUserByWorkshopIdQuery(workshopId);
             return await _mediator.Send(query);
+        }
+
+        [HttpGet("{workshopId:guid}/users-in-workshop")]
+        public async Task<List<UsersDTO>> GetStaffByWorkshopId(Guid workshopId)
+        {
+            var query = new GetStaffByWorkshopIdQuery(workshopId);
+            var result = await _mediator.Send(query);
+            return result;
         }
 
         [HttpPost]
