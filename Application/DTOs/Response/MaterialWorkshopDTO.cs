@@ -8,6 +8,8 @@
         public string BatchCode { get; set; }
         public string ProductCode { get; set; }
         public Guid AssignId { get; set; }
+        public Guid SupplierId { get; set; }
+        public string? SupplierName { get; set; }
         public int QuantitySend { get; set; }
         public int QuantityReceive { get; set; }
         public DateOnly ShipDate { get; set; }
