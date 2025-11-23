@@ -463,6 +463,9 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("SupplierId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("WorkshopId")
                         .HasColumnType("uniqueidentifier");
 
