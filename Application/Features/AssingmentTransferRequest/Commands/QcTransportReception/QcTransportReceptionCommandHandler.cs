@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -28,7 +29,12 @@ namespace Application.Features.AssingmentTransferRequest.Commands.QcTransportRec
                 return Result<Guid>.Failure("Assignment Transfer Request không tìm thấy.");
             }
 
-            assignmentTransferRequest.MarkAsApproved();
+            if (assignmentTransferRequest.Status == "QCTransportReception")
+            {
+                return Result<Guid>.Failure("Yêu cầu đã được tiếp nhận");
+            }
+
+            assignmentTransferRequest.MarkAsReception();
             _repository.Update(assignmentTransferRequest);
 
             await _mediator.Publish(new QCTransportReceptionAssignmentTransferEvent(

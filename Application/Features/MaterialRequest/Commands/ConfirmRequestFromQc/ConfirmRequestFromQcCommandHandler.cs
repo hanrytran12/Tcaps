@@ -28,10 +28,14 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
                 return Result.Failure("Material request not found.");
             }
 
+            var taskTransferRequest = await _appDbContext.TaskTransferRequests
+                .FindAsync(materialRequest.Id);
+
+            var qcTransport = await _appDbContext.Users.FindAsync(taskTransferRequest.QcTransportId);
+
             if (materialRequest.QuantityRequest - request.ActualReceivedQuantity == 0)
             {
                 materialRequest.MarkAsConfirmed(request.ActualReceivedQuantity, request.NoteFromQC);
-
             }
             else
             {
@@ -49,6 +53,9 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
                 var batch = await _batchRepository.GetByIdWithAssignmentsAsync(materialRequest.BatchId);
                 batch.ConfirmMaterialReceiptForAssignment(materialRequest.AssignId);
             }
+
+            qcTransport.MarkAsQcTransport();
+            _appDbContext.Users.Update(qcTransport);
 
             return Result.Success();
         }

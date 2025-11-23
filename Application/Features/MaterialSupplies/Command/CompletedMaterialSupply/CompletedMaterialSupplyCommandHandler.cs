@@ -56,6 +56,16 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             materialUse.IncreaseQuantityRequest(materialSupply.Quantity);
             _context.MaterialUse.Update(materialUse);
 
+            var supplier = await _context.Users.FindAsync(materialSupply.SupplierId);
+            if (supplier == null)
+                return Result<Guid>.Failure("Không tìm thấy người vận chuyển (QC Transport).");
+
+            if (supplier.Role == "QCTransport")
+            {
+                supplier.MarkAsNotQcTransport();
+                _context.Users.Update(supplier);
+            }
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             await _mediator.Publish(new CompletedMaterialSupplyEvent(

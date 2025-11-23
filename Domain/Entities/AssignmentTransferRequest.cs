@@ -38,12 +38,12 @@ namespace Domain.Entities
             return transferRequest;
         }
 
-        public void MarkAsApproved()
+        public void MarkAsApproved(Guid supplierId)
         {
             if (Status == "Approved") return;
             this.Status = "Approved";
 
-            AddDomainEvent(new TransferRequestApprovedEvent(AssignmentId, ReworkRequestId, CompletedQuantity));
+            AddDomainEvent(new TransferRequestApprovedEvent(AssignmentId, ReworkRequestId, CompletedQuantity, supplierId));
         }
 
         public void MarkAsReception() => Status = "QCTransportReception";

@@ -37,15 +37,15 @@ namespace Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTran
             if (materialRequest == null)
                 return Result<Guid>.Failure("Không tìm thấy yêu cầu vật liệu tương ứng.");
 
-            materialSupply.MarkAsInProgress();
-            _materialSupplyRepository.Update(materialSupply);
-
             var qcTransport = await _userRepository.GetByIdAsync(request.QcTransportId);
-            if (qcTransport == null)
+            if (qcTransport == null || qcTransport.IsQcTransport == false)
                 return Result<Guid>.Failure("Không tìm thấy người vận chuyển (QC Transport).");
 
-            qcTransport.MarkAsNotQcTransport();
-            _userRepository.Update(qcTransport);
+            if (materialSupply.Status == "InProgress")
+                return Result<Guid>.Failure("Phiếu đã ở trạng thái InProgress.");
+
+            materialSupply.MarkAsInProgress();
+            _materialSupplyRepository.Update(materialSupply);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
