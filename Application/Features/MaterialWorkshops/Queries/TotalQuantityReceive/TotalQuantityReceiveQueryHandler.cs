@@ -20,23 +20,21 @@ namespace Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive
         }
         public async Task<Result<int>> Handle(TotalQuantityReceiveQuery request, CancellationToken cancellationToken)
         {
-            var query = from batch in _context.Batches
+            var qc = await _context.Users.FindAsync(request.QcId);
+            if (qc == null)
+                return Result<int>.Failure("QC không tồn tại");
 
-                        join assign in _context.Assignments
-                        on batch.Id equals assign.BatchId
+            var assignments = await _context.Assignments
+                .Where(a => a.BatchId == request.BatchId && a.WorkshopId == qc.WorkshopId)
+                .Select(a => a.Id)
+                .ToListAsync();
 
-                        join user in _context.Users
-                        on assign.WorkshopId equals user.WorkshopId
+            if (!assignments.Any())
+                return Result<int>.Success(0);
 
-                        join mw in _context.MaterialWorkshops
-                        on user.WorkshopId equals mw.WorkshopId
-
-                        where batch.Id == request.BatchId
-                              && user.Id == request.QcId
-                              && mw.AssignId == assign.Id
-                        select mw.QuantityReceive;
-
-            var totalQuantity = await query.SumAsync(cancellationToken);
+            var totalQuantity = await _context.MaterialWorkshops
+                .Where(mw => assignments.Contains(mw.AssignId))
+                .SumAsync(mw => mw.QuantityReceive, cancellationToken);
 
             return Result<int>.Success(totalQuantity);
         }
