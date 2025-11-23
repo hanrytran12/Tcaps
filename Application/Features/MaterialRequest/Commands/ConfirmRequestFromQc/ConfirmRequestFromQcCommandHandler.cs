@@ -31,7 +31,9 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
             var taskTransferRequest = await _appDbContext.TaskTransferRequests
                 .FindAsync(materialRequest.Id);
 
-            var qcTransport = await _appDbContext.Users.FindAsync(taskTransferRequest.QcTransportId);
+            var qcTransport = taskTransferRequest != null
+                ? await _appDbContext.Users.FindAsync(taskTransferRequest.QcTransportId)
+                : null;
 
             if (materialRequest.QuantityRequest - request.ActualReceivedQuantity == 0)
             {
@@ -54,8 +56,11 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
                 batch.ConfirmMaterialReceiptForAssignment(materialRequest.AssignId);
             }
 
-            qcTransport.MarkAsQcTransport();
-            _appDbContext.Users.Update(qcTransport);
+            if (qcTransport != null)
+            {
+                qcTransport.MarkAsQcTransport();
+                _appDbContext.Users.Update(qcTransport);
+            }
 
             return Result.Success();
         }
