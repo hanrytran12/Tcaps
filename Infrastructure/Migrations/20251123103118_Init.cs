@@ -147,6 +147,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SupplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuantitySend = table.Column<int>(type: "int", nullable: false),
                     QuantityReceive = table.Column<int>(type: "int", nullable: false),
                     ShipDate = table.Column<DateOnly>(type: "date", nullable: false),
