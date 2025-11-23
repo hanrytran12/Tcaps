@@ -34,7 +34,6 @@ namespace Application.Features.Assignments.Commands.CompleteAssignment
             if (isBatchCompleted)
             {
                 var batch = await _batchRepository.GetByIdAsync(assignments.BatchId);
-                batch.CompleteBatch();
             }
 
             await _unitOfWork.SaveChangesAsync();

@@ -8,6 +8,8 @@ namespace Domain.Entities
         public Guid ProductId { get; private set; }
         public string Code { get; private set; } = string.Empty;
         public decimal Quantity { get; private set; }
+        public decimal ActualQuantity { get; private set; }
+        public decimal LostQuantity { get; private set; }
         public DateOnly StartDate { get; private set; }
         public DateOnly EndDate { get; private set; }
         public DateOnly CreatedAt { get; private set; }
@@ -65,9 +67,12 @@ namespace Domain.Entities
             Status = status;
         }
 
-        public void CompleteBatch()
+        public void CompleteBatch(decimal completedQuantity)
         {
+            this.ActualQuantity = completedQuantity;
+            this.LostQuantity = Quantity - completedQuantity;
             UpdateStatus("Completed");
+
             AddDomainEvent(new BatchCompletedEvent(Id, Code));
         }
 
@@ -123,7 +128,7 @@ namespace Domain.Entities
             assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
         }
 
-        public void ActiveNextAssignment(Guid completedAssignmentId)
+        public void ActiveNextAssignment(Guid completedAssignmentId, decimal quantityCompleted)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
@@ -140,7 +145,8 @@ namespace Domain.Entities
 
             else
             {
-                this.CompleteBatch();
+                this.CompleteBatch(quantityCompleted);
+                currentAssignment.UpdateStatus("Completed");
             }
         }
 
