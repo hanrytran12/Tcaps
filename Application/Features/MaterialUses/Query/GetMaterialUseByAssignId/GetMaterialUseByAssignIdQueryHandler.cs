@@ -29,6 +29,7 @@ namespace Application.Features.MaterialUses.Query.GetMaterialUseByAssignId
                         {
                             Id = mu.Id,
                             MaterialId = mu.MaterialId,
+                            ReworkRequestId = mu.ReworkRequestId,
                             MaterialName = m.Name,
                             QuantityDivide = mu.QuantityDivide,
                             QuantityStaffUse = mu.QuantityStaffUse,
