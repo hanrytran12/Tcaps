@@ -32,7 +32,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
             if (nextAssigment is not null)
             {
-                var materialWorkshop = MaterialWorkshop.Create(nextAssigment.WorkshopId, notification.AssignmentId, (int)notification.QuantitySend);
+                var materialWorkshop = MaterialWorkshop.Create(nextAssigment.WorkshopId, notification.AssignmentId, notification.SupplierId, (int)notification.QuantitySend);
                 await _materialWorkshopRepository.AddAsync(materialWorkshop);
             }
         }

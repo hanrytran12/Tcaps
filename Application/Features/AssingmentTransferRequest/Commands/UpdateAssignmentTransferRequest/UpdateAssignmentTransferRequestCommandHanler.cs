@@ -28,15 +28,15 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
         public async Task<Result> Handle(UpdateAssignmentTransferRequestCommand request, CancellationToken cancellationToken)
         {
             var transferRequest = await _assignmentTransferRequestRepository.GetByIdAsync(request.TransferRequestId);
-            var qcTransport = await _appDbContext.Users.FindAsync(request.QcTransportId);
-            if (qcTransport is null)
+            var supplier = await _appDbContext.Users.FindAsync(request.SupplierId);
+            if (supplier is null)
             {
-                return Result.Failure("Không tìm thấy người QCTransport.");
+                return Result.Failure("Không tìm thấy người vận chuyển.");
             }
 
             if (transferRequest.ReworkRequestId == null)
             {
-                if (transferRequest is null || transferRequest.Status != "PendingApproval")
+                if (transferRequest is null || (transferRequest.Status != "PendingApproval" && transferRequest.Status == "QCTransportReception"))
                 {
                     return Result.Failure("Yêu cầu không hợp lệ hoặc đã được duyệt");
                 }
@@ -60,7 +60,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
 
                 batch.ActiveNextAssignment(assigment.Id);
 
-                transferRequest.MarkAsApproved();
+                transferRequest.MarkAsApproved(request.SupplierId);
             }
             else
             {
@@ -72,12 +72,9 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
 
                 reworkRequest.AddDomainEvent(new ReworkRequestCompletedEvent(reworkRequest.Id));
 
-                transferRequest.MarkAsApproved();
+                transferRequest.MarkAsApproved(request.SupplierId);
             }
 
-
-            qcTransport.MarkAsNotQcTransport();
-            _appDbContext.Users.Update(qcTransport);
             await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
