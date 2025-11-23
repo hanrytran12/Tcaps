@@ -24,9 +24,19 @@ namespace Infrastructure.Repositories
             _context.Workshop.Remove(workshop);
         }
 
+        public async Task<bool> ExistNameAsync(string name)
+        {
+            return await _context.Workshop.AnyAsync(ws => ws.Name == name);
+        }
+
         public Task<bool> ExistsAsync(Guid? id)
         {
             return _context.Workshop.AnyAsync(ws => ws.Id == id);
+        }
+
+        public async Task<bool> ExistsStepOrderAsync(int stepOrder)
+        {
+            return await _context.Workshop.AnyAsync(ws => ws.StepOrder == stepOrder);
         }
 
         public async Task<IEnumerable<Workshop>> FindByNameAsync(string name)

@@ -12,5 +12,7 @@ namespace Domain.Interfaces
         void Delete(Workshop workshop);
         Task<bool> ExistsAsync(Guid? id);
         Task<List<Workshop>> GetByIdsAsync(List<Guid> ids);
+        Task<bool> ExistNameAsync(string name);
+        Task<bool> ExistsStepOrderAsync(int stepOrder);
     }
 }
