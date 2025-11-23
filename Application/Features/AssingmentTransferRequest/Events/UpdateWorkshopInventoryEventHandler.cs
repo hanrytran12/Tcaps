@@ -23,9 +23,14 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
             var assignment = await _appDbContext.Assignments.Where(a => a.Id == notification.AssignmentId).FirstOrDefaultAsync();
 
+            if (assignment.Status == "Reworking")
+            {
+                materialUse = materialUse.Where(m => m.ReworkRequestId is not null).ToList();
+            }
+
             foreach (var itemMaterialUse in materialUse)
             {
-                var surplusQuantity = itemMaterialUse.QuantityDivide - itemMaterialUse.QuantityStaffUse;
+                var surplusQuantity = itemMaterialUse.QuantityDivide - itemMaterialUse.ReconciledQuantity;
 
                 if (surplusQuantity > 0)
                 {
