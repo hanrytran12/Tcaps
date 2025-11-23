@@ -33,11 +33,13 @@ namespace Application.Features.Productions.Command.AddProductionReport
                 await _productionRepository.AddAsync(production);
             }
 
-
             if (request.MaterialUsed.Count() > 0)
             {
                 foreach (var items in request.MaterialUsed)
                 {
+                    if (items.QuantityUsed <= 0)
+                        return Result.Failure("Số lượng sử dụng phải lớn hơn 0");
+
                     var listMaterialUse = await _appDbContext.MaterialUse.Where(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId).ToListAsync();
 
                     if (listMaterialUse is null)
@@ -45,17 +47,35 @@ namespace Application.Features.Productions.Command.AddProductionReport
                         return Result.Failure("Không tìm thấy MaterailUse");
                     }
 
+                    MaterialUse? targetMaterialUse;
+
                     if (assignment.Status == "Reworking")
                     {
-                        var materialUseRework = listMaterialUse.Where(m => m.ReworkRequestId != null).FirstOrDefault();
-                        materialUseRework.IncreaseQuantityStaffUse(items.QuantityUsed);
+                        targetMaterialUse = listMaterialUse.FirstOrDefault(m => m.ReworkRequestId != null);
+                        if (targetMaterialUse == null)
+                            return Result.Failure("Không tìm thấy MaterialUse thuộc ReworkRequest.");
                     }
-
                     else
                     {
-                        var materialUse = listMaterialUse.Where(m => m.ReworkRequestId == null).FirstOrDefault();
-                        materialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
+                        targetMaterialUse = listMaterialUse.FirstOrDefault(m => m.ReworkRequestId == null);
+                        if (targetMaterialUse == null)
+                            return Result.Failure("Không tìm thấy MaterialUse của Assignment bình thường.");
                     }
+
+                    var quantityDivide = targetMaterialUse.QuantityDivide;     // Số lượng được chia
+                    var staffUsed = targetMaterialUse.QuantityStaffUse;        // Đã dùng trước đó
+                    var remaining = quantityDivide - staffUsed;                // Số còn lại có thể dùng
+
+                    if (items.QuantityUsed > quantityDivide)
+                        return Result.Failure($"SL đưa vào ({items.QuantityUsed}) vượt SL được chia ({quantityDivide}).");
+
+                    if (items.QuantityUsed > remaining)
+                        return Result.Failure(
+                            $"SL sử dụng vượt mức cho phép. Đã dùng: {staffUsed}, " +
+                            $"Được chia: {quantityDivide}, Còn lại: {remaining}, Bạn nhập: {items.QuantityUsed}"
+                        );
+
+                    targetMaterialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
                 }
             }
 
