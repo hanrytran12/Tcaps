@@ -21,6 +21,7 @@ namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQC
                         join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
                         join b in _appDbContext.Batches on a.BatchId equals b.Id
                         join p in _appDbContext.Products on b.ProductId equals p.Id
+                        join u in _appDbContext.Users on mw.SupplierId equals u.Id
                         select new MaterialWorkshopDTO
                         {
                             Id = mw.Id,
@@ -28,6 +29,8 @@ namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQC
                             WorkshopName = w.Name,
                             BatchCode = b.Code,
                             ProductCode = p.Code,
+                            SupplierId = mw.SupplierId,
+                            SupplierName = u.FullName,
                             AssignId = a.Id,
                             QuantitySend = mw.QuantitySend,
                             QuantityReceive = mw.QuantityReceive,
