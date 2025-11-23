@@ -20,21 +20,33 @@ namespace Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive
         }
         public async Task<Result<int>> Handle(TotalQuantityReceiveQuery request, CancellationToken cancellationToken)
         {
-            var qc = await _context.Users.FindAsync(request.QcId);
-            if (qc == null)
-                return Result<int>.Failure("QC không tồn tại");
 
-            var assignments = await _context.Assignments
-                .Where(a => a.BatchId == request.BatchId && a.WorkshopId == qc.WorkshopId)
-                .Select(a => a.Id)
-                .ToListAsync();
+            var currentAssign = await _context.Assignments //xưởng tiếp theo
+                .Join(_context.Users,
+                    a => a.WorkshopId,
+                    u => u.WorkshopId,
+                    (a, u) => new { a, u })
+                .Where(x => x.a.BatchId == request.BatchId
+                         && x.u.Id == request.QcId)
+                .Select(x => x.a)
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (!assignments.Any())
-                return Result<int>.Success(0);
+            if (currentAssign == null)
+                return Result<int>.Failure("Không tìm thấy Assignment hiện tại.");
 
+            var prevAssign = await _context.Assignments
+                .Where(a => a.BatchId == request.BatchId
+                         && a.StepOrder == currentAssign.StepOrder - 1)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (prevAssign == null)
+                return Result<int>.Failure("Không tìm thấy Assignment của xưởng trước.");
+
+            // Lấy tổng QuantityReceive theo AssignId của xưởng tiếp trước
             var totalQuantity = await _context.MaterialWorkshops
-                .Where(mw => assignments.Contains(mw.AssignId))
+                .Where(mw => mw.AssignId == prevAssign.Id)
                 .SumAsync(mw => mw.QuantityReceive, cancellationToken);
+
 
             return Result<int>.Success(totalQuantity);
         }
