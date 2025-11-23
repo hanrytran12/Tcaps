@@ -58,7 +58,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     return Result.Failure("Không tìm thấy lô hàng");
                 }
 
-                batch.ActiveNextAssignment(assigment.Id);
+                batch.ActiveNextAssignment(assigment.Id, transferRequest.CompletedQuantity);
 
                 transferRequest.MarkAsApproved(request.SupplierId);
             }

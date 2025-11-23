@@ -15,45 +15,64 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetReconciliati
 
         public async Task<ReconcilationSummaryDTO> Handle(GetReconciliationSummaryQuery request, CancellationToken cancellationToken)
         {
-            var assignment = await _context.Assignments.AsNoTracking().Select(a => new { a.Id, a.Quantity }).FirstOrDefaultAsync(a => a.Id == request.AssigmentId);
-            if (assignment == null)
+            var summaryData = await _context.Assignments
+                .AsNoTracking()
+                .Where(a => a.Id == request.AssigmentId)
+                .Select(a => new
+                {
+                    QuantityTarget = a.Quantity,
+
+                    TotalSubmitted = _context.Productions
+                    .Where(p => p.AssignId == a.Id)
+                    .Sum(p => p.Quantity),
+
+                    TotalRejected = _context.Productions
+                    .Where(p => p.AssignId == a.Id)
+                    .SelectMany(p => _context.Evaluates.Where(e => e.ProductionId == p.Id))
+                    .Where(e => e.Status == "Rejected")
+                    .Sum(e => e.QuantityError),
+
+                    TotalUnfixable = _context.Productions
+                    .Where(p => p.AssignId == a.Id)
+                    .SelectMany(p => _context.Evaluates.Where(e => e.ProductionId == p.Id))
+                    .Where(e => e.Status == "Failed")
+                    .SelectMany(e => _context.ComponentDefects.Where(cd => cd.EvaluateId == e.Id))
+                    .Where(cd => cd.Status == "Unfixable")
+                    .Sum(cd => cd.Quantity)
+
+                }).FirstOrDefaultAsync();
+
+            if (summaryData == null)
             {
-                throw new Exception("Không tìm thấy công đoạn.");
+                throw new Exception("Không tìm thấy công đoạn");
             }
 
-            var totalSubmitted = await _context.Productions.AsNoTracking().Where(p => p.AssignId == request.AssigmentId).SumAsync(p => p.Quantity);
+            var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;
+            var finalCompletedQuantity = summaryData.TotalSubmitted - totalLoss;
 
-            var query = from p in _context.Productions
-                        where p.AssignId == request.AssigmentId
-                        join e in _context.Evaluates on p.Id equals e.ProductionId
-                        where e.Status == "Rejected"
-                        select e.QuantityError;
+            var materialSummaries = await _context.MaterialUse
+                .AsNoTracking()
+                .Where(m => m.AssignId == request.AssigmentId)
+                .Join(_context.Materials,
+                    mu => mu.MaterialId,
+                    ma => ma.Id,
+                    (mu, ma) => new MaterialUsageSummaryDTO
+                    {
+                        MaterialId = ma.Id,
+                        MaterialName = ma.Name,
+                        QuantityDivided = mu.QuantityDivide,
+                        QuantityStaffUsed = mu.QuantityStaffUse
+                    })
+                .ToListAsync();
 
-            var totalRejected = await query.SumAsync();
-            var finalCompletedQuantity = totalSubmitted - totalRejected;
-
-            var materialSummaries = await _context.MaterialUse.AsNoTracking().Where(m => m.AssignId == request.AssigmentId)
-                                                  .Join(_context.Materials,
-                                                  mu => mu.MaterialId,
-                                                  ma => ma.Id,
-                                                  (mu, ma) => new MaterialUsageSummaryDTO
-                                                  {
-                                                      MaterialId = ma.Id,
-                                                      MaterialName = ma.Name,
-                                                      QuantityDivided = mu.QuantityDivide,
-                                                      QuantityStaffUsed = mu.QuantityStaffUse
-                                                  }).ToListAsync();
-
-            var summary = new ReconcilationSummaryDTO
+            return new ReconcilationSummaryDTO
             {
-                QuantityTarget = assignment.Quantity,
-                TotalSumbimttedQuantity = totalSubmitted,
-                TotalRejectedQuantity = totalRejected,
+                QuantityTarget = summaryData.QuantityTarget,
+                TotalSumbimttedQuantity = summaryData.TotalSubmitted,
+                TotalRejectedQuantity = totalLoss,
                 FinalCompletedQuantity = finalCompletedQuantity,
                 MaterialUsageSummary = materialSummaries
             };
-
-            return summary;
         }
     }
 }
