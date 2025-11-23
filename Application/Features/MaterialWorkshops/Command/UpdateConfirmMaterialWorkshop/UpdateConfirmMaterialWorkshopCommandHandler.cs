@@ -15,14 +15,15 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
         private readonly IMaterialWorkshopRepository _materialWorkshopRepository;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
+        private readonly IUserRepository _userRepository;
 
         public UpdateConfirmMaterialWorkshopCommandHandler(IMaterialWorkshopRepository materialWorkshopRepository, 
-            IUnitOfWork unitOfWork,
-            IMediator mediator)
+            IUnitOfWork unitOfWork, IMediator mediator, IUserRepository userRepository)
         {
             _materialWorkshopRepository = materialWorkshopRepository;
             _unitOfWork = unitOfWork;
             _mediator = mediator;
+            _userRepository = userRepository;
         }
         public async Task<Result<Guid>> Handle(UpdateConfirmMaterialWorkshopCommand request, CancellationToken cancellationToken)
         {
@@ -30,9 +31,18 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
             if (materialWorkshop == null)
                 return Result<Guid>.Failure("Không tìm thấy phiếu vật liệu.");
 
+            var supplier = await _userRepository.GetByIdAsync(materialWorkshop.SupplierId);
+
             materialWorkshop.Confirmed();
             materialWorkshop.Update(request.QuantityReceive);
             _materialWorkshopRepository.Update(materialWorkshop);
+
+            if (supplier != null && supplier.Role == "QCTransport")
+            {
+                supplier.MarkAsNotQcTransport();
+                _userRepository.Update(supplier);
+            }
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             await _mediator.Publish(new MaterialWorkshopConfirmEvent(
