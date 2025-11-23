@@ -9,7 +9,7 @@ namespace Domain.Entities
         public string Message { get; private set; } = string.Empty;
         public string Type { get; private set; } = string.Empty;
         public bool IsRead { get; private set; }
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         public Notification(Guid id, Guid userId, string title, string message, string type)
             : base(id)
@@ -18,7 +18,7 @@ namespace Domain.Entities
             Title = title;
             Message = message;
             Type = type;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
         }
 
         public static Notification Create(Guid userId, string title, string message, string type)
