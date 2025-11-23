@@ -34,6 +34,8 @@ namespace Application.Features.Batches.Queries.GetBatchById
                 DurationDay = data.Batch.EndDate.DayNumber - data.Batch.StartDate.DayNumber,
                 EndDate = data.Batch.EndDate,
                 TotalPrice = (decimal)totalIncome,
+                ActualQuantity = data.Batch.ActualQuantity,
+                LostQuantity = data.Batch.LostQuantity,
 
                 ProgressPercentage = (data.TotalAssignments > 0) ? Math.Round((double)data.CompletedAssignments / data.TotalAssignments * 100, 2) : 0,
                 Assignments =
