@@ -8,12 +8,12 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
     {
         public Guid TransferRequestId { get; set; }
         [JsonIgnore]
-        public Guid QcTransportId { get; set; }
+        public Guid SupplierId { get; set; }
 
-        public UpdateAssignmentTransferRequestCommand(Guid transferRequestId, Guid qcTransportId)
+        public UpdateAssignmentTransferRequestCommand(Guid transferRequestId, Guid supplierId)
         {
             TransferRequestId = transferRequestId;
-            QcTransportId = qcTransportId;
+            SupplierId = supplierId;
         }
     }
 }

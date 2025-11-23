@@ -33,20 +33,17 @@ namespace Application.Features.MaterialRequest.Commands.QcTransportReceptionMate
                 return Result<Guid>.Failure("Material request not found.");
             }
 
-            if (materialRequest.Status == "QCTransportInProgress")
+            if (materialRequest.Status == "QCTransportReception")
             {
                 return Result<Guid>.Failure("Yêu cầu đã được tiếp nhận");
             }
-
-            materialRequest.MarkAsReception();
-            _repository.Update(materialRequest);
 
             var qcTransport = await _userRepository.GetByIdAsync(request.QcTransportId);
             if (qcTransport == null)
                 return Result<Guid>.Failure("Không tìm thấy người vận chuyển (QC Transport).");
 
-            qcTransport.MarkAsNotQcTransport();
-            _userRepository.Update(qcTransport);
+            materialRequest.MarkAsReception();
+            _repository.Update(materialRequest);
 
             await _unitOfWorks.SaveChangesAsync(cancellationToken);
 
