@@ -480,8 +480,8 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly>("CreatedAt")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<bool>("IsRead")
                         .HasColumnType("bit");
