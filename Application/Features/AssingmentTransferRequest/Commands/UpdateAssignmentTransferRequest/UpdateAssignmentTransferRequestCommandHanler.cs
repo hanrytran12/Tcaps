@@ -36,7 +36,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
 
             if (transferRequest.ReworkRequestId == null)
             {
-                if (transferRequest is null || (transferRequest.Status != "PendingApproval" && transferRequest.Status == "QCTransportReception"))
+                if (transferRequest is null || (transferRequest.Status != "PendingApproval" && transferRequest.Status != "QCTransportReception"))
                 {
                     return Result.Failure("Yêu cầu không hợp lệ hoặc đã được duyệt");
                 }

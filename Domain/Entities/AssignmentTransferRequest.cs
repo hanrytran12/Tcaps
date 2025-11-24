@@ -21,7 +21,7 @@ namespace Domain.Entities
             CompletedQuantity = completedQuantity;
             Status = "PendingApproval";
             Note = note;
-            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
             ReworkRequestId = reworkRequestId;
         }
 
