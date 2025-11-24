@@ -274,6 +274,7 @@ select * from MaterialRequests
 select * from TaskTransferRequests
 select * from ReworkRequests
 select * from WorkshopInventory
+select * from AssignmentTransferRequests
 insert into MaterialWorkshops values 
 ('A0000000-0000-0000-0000-000000000015', 
 'A1C9B3A0-4F12-4E81-B17B-000000000003',

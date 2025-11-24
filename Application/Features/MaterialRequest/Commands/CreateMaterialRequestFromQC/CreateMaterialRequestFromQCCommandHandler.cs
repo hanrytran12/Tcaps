@@ -26,7 +26,7 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
             if (assignment == null)
                 return Result.Failure("không tìm thấy phân công này.");
 
-            var today = DateOnly.FromDateTime(DateTime.UtcNow);
+            var today = DateOnly.FromDateTime(DateTime.Now);
 
             if (today < assignment.StartDate || today > assignment.EndDate)
             {
