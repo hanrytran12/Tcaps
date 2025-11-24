@@ -15,16 +15,25 @@ namespace Application.Features.Materials.Queries.GetAllMaterialToWatch
 
         public async Task<List<MaterialToWatchDTO>> Handle(GetAllMaterialToWatchQuery request, CancellationToken cancellationToken)
         {
-            return await _context.Materials.AsNoTracking()
-                .Select(m => new MaterialToWatchDTO
-                {
-                    Id = m.Id,
-                    Name = m.Name,
-                    Quantity = m.Quantity,
-                    Description = m.Description,
-                    Unit = m.Unit,
-                    Price = m.Price,
-                }).ToListAsync();
+            var query = from ma in _context.Materials.AsNoTracking()
+                        join mr in _context.MaterialRequests.AsNoTracking()
+                        on ma.Id equals mr.MaterialId into requests
+
+                        select new MaterialToWatchDTO
+                        {
+                            Id = ma.Id,
+                            Name = ma.Name,
+                            Description = ma.Description,
+                            Quantity = ma.Quantity,
+                            Unit = ma.Unit,
+                            Price = ma.Price,
+
+                            QuantitySend = (int)requests
+                                .Where(r => r.Status == "Confirmed" || r.Status == "ConfirmedWithDiscrepancy")
+                                .Sum(r => r.QuantityRequest)
+                        };
+
+            return await query.ToListAsync(cancellationToken);
         }
     }
 }

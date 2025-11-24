@@ -33,7 +33,7 @@ namespace Application.Features.Inventories.Queries.GetInventoryByMaterialId
             var inventoryList = await query.ToListAsync(cancellationToken);
             return new InventoryHistoryDTO
             {
-                TotalPrice = inventoryList.Sum(i => i.Price * i.Quantity),
+                TotalPrice = inventoryList.Sum(i => i.Price),
                 TotalQuantity = inventoryList.Sum(i => i.Quantity),
                 Inventories = inventoryList
             };
