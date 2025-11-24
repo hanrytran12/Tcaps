@@ -35,7 +35,7 @@ namespace Application.Features.MaterialRequest.Commands.DispatchRequest
 
             foreach (var item in request.Items)
             {
-                var materialRequest = Domain.Entities.MaterialRequest.Create(item.MaterialId, request.UserId, batch.Id, request.AssignmentId, item.Quantity, "Yêu cầu xuất kho từ Lead", request.Type);
+                var materialRequest = Domain.Entities.MaterialRequest.Create(item.MaterialId, request.UserId, batch.Id, request.AssignmentId, item.Quantity, "Đơn xuất kho từ Lead", request.Type);
                 await _materialRequestRepository.AddAsync(materialRequest);
 
                 var material = await _appDbContext.Materials.Where(m => m.Id == item.MaterialId).FirstOrDefaultAsync();
