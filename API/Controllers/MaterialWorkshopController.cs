@@ -56,7 +56,7 @@ namespace API.Controllers
         }
 
         [HttpGet("total-quantity-receive")]
-        [Authorize(Roles = "QC")]
+        [Authorize(Roles = "QC,Lead")]
         public async Task<IActionResult> GetTotalQuantityReceive([FromQuery] Guid batchId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
