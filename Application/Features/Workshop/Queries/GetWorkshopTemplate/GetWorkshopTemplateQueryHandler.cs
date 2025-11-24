@@ -21,6 +21,7 @@ namespace Application.Features.Workshop.Queries.GetWorkshopTemplate
                 {
                     WorkshopId = w.Id,
                     WorkshopName = w.Name,
+                    Description = w.Description,
                     StepOrder = w.StepOrder,
                 }).ToListAsync();
         }

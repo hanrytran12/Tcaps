@@ -35,7 +35,7 @@ namespace Application.Features.Users.Queries.GetGroupProgress
             var reworkRequest = assignment.Status == "Reworking" ?
                 await _context.ReworkRequests
                 .Where(r => r.AssignmentId == assignment.Id
-                    && r.Status == "Approved")
+                    && r.Status != "PendingLead")
                 .FirstOrDefaultAsync(cancellationToken) : null;
 
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
