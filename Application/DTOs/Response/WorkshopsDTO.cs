@@ -4,6 +4,7 @@
     {
         public Guid WorkshopId { get; set; }
         public string WorkshopName { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public int StepOrder { get; set; }
     }
 }
