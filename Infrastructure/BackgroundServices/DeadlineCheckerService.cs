@@ -58,7 +58,7 @@ namespace Infrastructure.BackgroundServices
                     await unitOfWork.SaveChangesAsync(cancellationToken);
                 }
 
-                var reworkRequestToUpdate = await context.ReworkRequests.Where(r => r.EndDate == today && r.Status == "InProgress").ToListAsync(cancellationToken);
+                var reworkRequestToUpdate = await context.ReworkRequests.Where(r => r.EndDate == today && (r.Status == "InProgress" || r.Status == "Approved")).ToListAsync(cancellationToken);
                 if (reworkRequestToUpdate.Any())
                 {
                     foreach (var reworkRequest in reworkRequestToUpdate)

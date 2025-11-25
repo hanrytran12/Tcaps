@@ -23,7 +23,7 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
             if (assignment.Status == "Reworking")
             {
-                var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == assignment.Id && r.Status == "InProgress").FirstOrDefaultAsync(cancellationToken);
+                var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == assignment.Id && (r.Status == "InProgress" || r.Status == "Approved")).FirstOrDefaultAsync(cancellationToken);
                 var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, reworkRequest?.Id);
                 await _productionRepository.AddAsync(production);
             }

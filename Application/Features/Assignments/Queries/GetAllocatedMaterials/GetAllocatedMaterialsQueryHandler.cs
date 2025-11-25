@@ -1,59 +1,55 @@
 ﻿using Application.DTOs.Response;
+using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Features.Assignments.Queries.GetAllocatedMaterials
+public class GetAllocatedMaterialsQueryHandler : IRequestHandler<GetAllocatedMaterialsQuery, List<AllocatedMaterialDto>>
 {
-    public class GetAllocatedMaterialsQueryHandler : IRequestHandler<GetAllocatedMaterialsQuery, List<AllocatedMaterialDto>>
+    private readonly IAppDbContext _context;
+
+    public GetAllocatedMaterialsQueryHandler(IAppDbContext context)
     {
-        private readonly IAppDbContext _context;
-        public GetAllocatedMaterialsQueryHandler(IAppDbContext context)
+        _context = context;
+    }
+
+    public async Task<List<AllocatedMaterialDto>> Handle(GetAllocatedMaterialsQuery request, CancellationToken cancellationToken)
+    {
+        var assignmentStatus = await _context.Assignments
+            .AsNoTracking()
+            .Where(a => a.Id == request.AssignmentId)
+            .Select(a => a.Status)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (assignmentStatus is null)
         {
-            _context = context;
+            return new List<AllocatedMaterialDto>();
         }
 
-        public async Task<List<AllocatedMaterialDto>> Handle(GetAllocatedMaterialsQuery request, CancellationToken cancellationToken)
+        var query = _context.MaterialUse.AsNoTracking()
+            .Where(mu => mu.AssignId == request.AssignmentId);
+
+        if (assignmentStatus == "InProgress")
         {
-            var assignment = await _context.Assignments.AsNoTracking()
-                                .FirstOrDefaultAsync(a => a.Id == request.AssignmentId);
-
-            if (assignment == null)
-            {
-                // Xử lý trường hợp không tìm thấy Assignment
-                return new List<AllocatedMaterialDto>();
-            }
-            var materialUse = from mu in _context.MaterialUse
-                              join ma in _context.Materials on mu.MaterialId equals ma.Id
-                              where mu.AssignId == request.AssignmentId
-                              select new
-                              {
-                                  mu.MaterialId,
-                                  MaterialName = ma.Name,
-                                  mu.ReworkRequestId
-                              };
-
-            var filteredQuery = materialUse;
-
-            if (assignment.Status == "InProgress")
-            {
-                filteredQuery = filteredQuery.Where(x => x.ReworkRequestId == null);
-            }
-            else if (assignment.Status == "Reworking")
-            {
-                filteredQuery = filteredQuery.Where(x => x.ReworkRequestId != null);
-            }
-
-            var result = await filteredQuery
-                .GroupBy(x => new { x.MaterialId, x.MaterialName })
-                .Select(g => new AllocatedMaterialDto
-                {
-                    MaterialId = g.Key.MaterialId,
-                    MaterialName = g.Key.MaterialName,
-                })
-                .ToListAsync();
-
-            return result;
+            query = query.Where(mu => mu.ReworkRequestId == null);
         }
+        else if (assignmentStatus == "Reworking")
+        {
+            query = query.Where(mu => mu.ReworkRequestId != null);
+        }
+
+        var result = await query
+            .Join(_context.Materials,
+                  mu => mu.MaterialId,
+                  ma => ma.Id,
+                  (mu, ma) => new AllocatedMaterialDto
+                  {
+                      MaterialId = ma.Id,
+                      MaterialName = ma.Name
+                  })
+            .Distinct()
+            .ToListAsync(cancellationToken);
+
+        return result;
     }
 }
