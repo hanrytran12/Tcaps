@@ -6,7 +6,7 @@
         public Guid TransferRequestId { get; set; }
         public string Status { get; set; } = string.Empty;
         public string Note { get; set; } = string.Empty;
-        public DateOnly CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public CreatedBy CreatedBy { get; set; } = new CreatedBy();
         public List<ReconciliationMaterials> ReconciliationMaterials { get; set; } = new List<ReconciliationMaterials>();
     }

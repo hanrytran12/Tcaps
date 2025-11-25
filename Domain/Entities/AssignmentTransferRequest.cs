@@ -11,7 +11,7 @@ namespace Domain.Entities
         public decimal CompletedQuantity { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public string? Note { get; private set; } = string.Empty;
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         public AssignmentTransferRequest(Guid RequestId, Guid assignmentId, Guid userId, decimal completedQuantity, string? note, Guid? reworkRequestId)
             : base(RequestId)
@@ -21,7 +21,7 @@ namespace Domain.Entities
             CompletedQuantity = completedQuantity;
             Status = "PendingApproval";
             Note = note;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
             ReworkRequestId = reworkRequestId;
         }
 

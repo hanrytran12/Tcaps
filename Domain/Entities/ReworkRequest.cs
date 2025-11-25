@@ -10,7 +10,7 @@ namespace Domain.Entities
         public decimal DefectiveQuantity { get; private set; }
         public string NoteQc { get; private set; } = string.Empty;
         public string Status { get; private set; } = string.Empty;
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
         public DateOnly? DeliveryDate { get; private set; }
         public DateOnly? EndDate { get; private set; }
         public DateOnly? NextStepDeliveryDate { get; private set; }
@@ -22,7 +22,7 @@ namespace Domain.Entities
             AssignmentId = assignmentId;
             DefectiveQuantity = defectiveQuantity;
             NoteQc = noteQc;
-            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            CreatedAt = DateTime.Now;
             Status = "PendingLead";
         }
 

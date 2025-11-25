@@ -10,7 +10,7 @@
         public string NoteQc { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
         public bool RequiresMaterialDelivery { get; set; }
-        public DateOnly CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateOnly? DeliveryDate { get; set; }
         public DateOnly? EndDate { get; set; }
         public DateOnly? NextStepDeliveryDate { get; set; }
