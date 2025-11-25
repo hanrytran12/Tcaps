@@ -2,6 +2,7 @@
 using Application.Features.Incomes.Command.AddIncome;
 using Application.Features.Incomes.Queries.GetIncomesByStaffId;
 using Application.Features.Incomes.Queries.GetMonthlyIncome;
+using Application.Features.Incomes.Queries.GetTotalIncomeExpect;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -51,6 +52,24 @@ namespace API.Controllers
                 Month = month,
                 Year = year
             };
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("income-expected")]
+        public async Task<IActionResult> GetIncomeExpected()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
+            {
+                return Unauthorized("Không thể xác định người dùng từ token.");
+            }
+
+            var query = new GetTotalIncomeExpectedQuery
+            {
+                StaffId = staffId
+            };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }
