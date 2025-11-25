@@ -1,0 +1,47 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Application.Common;
+using Application.DTOs.Response;
+using Application.Features.Incomes.Queries.GetTotalIncomeExpect;
+using Application.Interfaces;
+using MediatR;
+
+namespace Application.Features.Incomes.Queries.GetTotalIncomeExpected
+{
+    public class GetTotalIncomeExpectedQueryHandler : IRequestHandler<GetTotalIncomeExpectedQuery, Result<IncomeExpectedDTO>>
+    {
+        private readonly IAppDbContext _context;
+
+        public GetTotalIncomeExpectedQueryHandler(IAppDbContext context)
+        {
+            _context = context;
+        }
+        public async Task<Result<IncomeExpectedDTO>> Handle(GetTotalIncomeExpectedQuery request, CancellationToken cancellationToken)
+        {
+            var result = from production in _context.Productions
+                         join assign in _context.Assignments
+                         on production.AssignId equals assign.Id
+                         where production.UserId == request.StaffId
+                         select new
+                         {
+                             production.Quantity,
+                             assign.UnitPrice
+                         };
+
+            var totalQuantity = result.Sum(x => x.Quantity);
+
+            var totalIncomeExpected = result.Sum(x => x.Quantity * x.UnitPrice);
+
+            var dto = new IncomeExpectedDTO
+            {
+                QuantityExpect = totalQuantity,
+                TotalExpect = totalIncomeExpected
+            };
+
+            return Result<IncomeExpectedDTO>.Success(dto);
+        }
+    }
+}
