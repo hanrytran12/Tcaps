@@ -21,10 +21,12 @@ namespace Application.Features.Incomes.Queries.GetTotalIncomeExpected
         }
         public async Task<Result<IncomeExpectedDTO>> Handle(GetTotalIncomeExpectedQuery request, CancellationToken cancellationToken)
         {
+            var today = DateOnly.FromDateTime(DateTime.Now);
             var result = from production in _context.Productions
                          join assign in _context.Assignments
                          on production.AssignId equals assign.Id
-                         where production.UserId == request.StaffId
+                         where production.UserId == request.StaffId &&
+                                production.Date == today
                          select new
                          {
                              production.Quantity,
