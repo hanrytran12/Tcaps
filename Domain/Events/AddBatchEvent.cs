@@ -11,7 +11,7 @@ namespace Domain.Events
     {
         public string BatchCode { get; set; }
         public decimal Quantity { get; set; }
-        public AddBatchEvent(string batchCode, int quantity)
+        public AddBatchEvent(string batchCode, decimal quantity)
         {
             BatchCode = batchCode;
             Quantity = quantity;
