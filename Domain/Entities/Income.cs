@@ -19,7 +19,7 @@ namespace Domain.Entities
             UserId = userId;
             Quantity = quantity;
             TotalPrice = totalPrice;
-            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
         }
 
         private Income() : base(Guid.NewGuid()) { }
