@@ -17,9 +17,9 @@ namespace Application.Features.Batches.Events
         {
             _notificationService = notificationService;
         }
-        public Task Handle(AddBatchEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(AddBatchEvent notification, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            await _notificationService.AddBatchNotificationAsync(notification.BatchCode, notification.Quantity);
         }
     }
 }
