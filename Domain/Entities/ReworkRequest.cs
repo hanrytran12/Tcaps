@@ -22,7 +22,7 @@ namespace Domain.Entities
             AssignmentId = assignmentId;
             DefectiveQuantity = defectiveQuantity;
             NoteQc = noteQc;
-            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
             Status = "PendingLead";
         }
 

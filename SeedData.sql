@@ -51,7 +51,7 @@ VALUES
 -- Staff xưởng 3 (Dán vải)
 ('A0000000-0000-0000-0000-000000000004', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 'Staff', N'Phạm Thị Dung', 'staff.dung@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0904567890', 'Active', 0, GETDATE()),
 -- QC Transport
-('A0000000-0000-0000-0000-000000000005', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QCTransport', N'Nguyễn Thị Hạnh', 'qctransport@company.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0906789012', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000005', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'QCTransport', N'Nguyễn Thị Hạnh', 'qctransport@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0906789012', 'Active', 0, GETDATE()),
 
 -- QC cho 16 xưởng
 -- Step 1: Cắt laser
