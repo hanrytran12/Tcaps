@@ -32,6 +32,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                             CompletedQuantity = tr.CompletedQuantity,
                             Note = tr.Note,
                             Status = tr.Status,
+                            CreatedAt = tr.CreatedAt
                         };
 
             return await query.AsNoTracking().ToListAsync();
