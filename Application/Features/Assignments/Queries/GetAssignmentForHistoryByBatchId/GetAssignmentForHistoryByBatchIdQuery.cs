@@ -11,7 +11,7 @@ namespace Application.Features.Assignments.Queries.NewFolder
 {
     public class GetAssignmentForHistoryByBatchIdQuery : IRequest<Result<List<AssignmentHistoryDTO>>>
     {
-        public Guid QcId { get; set; }
+        public Guid UserId { get; set; }
         public Guid BatchId { get; set; }
     }
 }

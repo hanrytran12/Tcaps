@@ -8,6 +8,7 @@ namespace Application.DTOs.Response
 {
     public class AssignmentHistoryDTO
     {
+        public Guid AssignmentId { get; set; }
         public Guid WorkshopId { get; set; }
         public int StepOrder { get; set; }
         public int QuantityOrder { get; set; }
