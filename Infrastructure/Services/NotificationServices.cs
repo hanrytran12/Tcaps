@@ -515,5 +515,19 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task AddBatchNotificationAsync(string batchCode, decimal quantity)
+        {
+            var lead = await _userRepository.GetByRoleAsync("Lead");
+            if (lead is null) return;
+
+            var title = "Thêm lô hàng mới";
+            var message = $"Lô hàng mới với mã lô {batchCode} và số lượng {quantity} đã được thêm vào hệ thống.";
+            var type = "Batch";
+
+            var notification = Notification.Create(lead.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
