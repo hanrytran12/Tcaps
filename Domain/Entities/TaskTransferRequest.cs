@@ -27,7 +27,7 @@ namespace Domain.Entities
             AssignmentTransferId = assignmentTransferId;
             Status = "Pending";
             Note = note;
-            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
         }
 
         public static TaskTransferRequest Create(Guid batchId, Guid workshopId, Guid qcTransportId, Guid? requestId, Guid? assignmentTransferId, string? note)

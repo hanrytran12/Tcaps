@@ -19,7 +19,7 @@ namespace Domain.Entities
             AssignId = assignId;
             SupplierId = supplierId;
             QuantitySend = quantitySend;
-            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
             Status = "Pending";
         }
 

@@ -23,7 +23,7 @@ namespace Domain.Entities
             Description = description;
             Solution = solution;
             Quantity = quantity;
-            CreatedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
             Status = status;
         }
 
