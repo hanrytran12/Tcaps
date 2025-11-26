@@ -5,7 +5,9 @@
         public Guid Id { get; set; }
         public string BatchCode { get; set; } = string.Empty;
         public string QcName { get; set; } = string.Empty;
+        public Guid WorkshopId { get; set; }
         public string WorkshopName { get; set; } = string.Empty;
+        public Guid AssignmentId { get; set; }
         public decimal DefectiveQuantity { get; set; }
         public string NoteQc { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;

@@ -7,6 +7,7 @@ using Application.Common;
 using Application.DTOs.Response;
 using Application.Features.Assignments.Queries.NewFolder;
 using Application.Interfaces;
+using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -24,20 +25,31 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
         public async Task<Result<List<AssignmentHistoryDTO>>> Handle(GetAssignmentForHistoryByBatchIdQuery request, CancellationToken cancellationToken)
         {
             // 1. QUERY NHẸ: Lấy WorkshopId của QC
-            var qcWorkshopId = await _context.Users
+            var user = await _context.Users
                 .AsNoTracking()
-                .Where(u => u.Id == request.QcId)
-                .Select(u => u.WorkshopId)
+                .Where(u => u.Id == request.UserId)
+                .Select(u => new { u.WorkshopId, u.Role })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (qcWorkshopId == null)
-                return Result<List<AssignmentHistoryDTO>>.Failure("QC không tìm thấy hoặc chưa được gán Workshop.");
+            if (user == null)
+                return Result<List<AssignmentHistoryDTO>>.Failure("Người dùng không tìm thấy.");
 
+            var qcWorkshopId = user.WorkshopId;
+            var userRole = user.Role;
+
+            // Xác định điều kiện lọc WorkshopId
+            // Chỉ lọc theo xưởng nếu Role là QC. Admin/Lead thấy tất cả.
+            bool shouldFilterByWorkshop = userRole.Equals("QC", StringComparison.OrdinalIgnoreCase);
+
+            if (shouldFilterByWorkshop && qcWorkshopId == null)
+                return Result<List<AssignmentHistoryDTO>>.Failure("QC chưa được gán Workshop.");
 
             // 2. QUERY CHÍNH (Sử dụng LEFT JOIN để giữ lại Assignment chưa có Production)
             var rawData = await (
                 from assign in _context.Assignments.AsNoTracking()
-                where assign.BatchId == request.BatchId && assign.WorkshopId == qcWorkshopId
+                where assign.BatchId == request.BatchId &&
+                    (!shouldFilterByWorkshop 
+                    || (qcWorkshopId != null && assign.WorkshopId == qcWorkshopId))
 
                 // *** LEFT JOIN: Assignments -> Productions ***
                 join prod in _context.Productions.AsNoTracking()
@@ -46,14 +58,14 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
 
                     // *** LEFT JOIN: Production -> User (Staff) ***
                     // Ta cần dùng ID ảo (Guid.Empty) để EF có thể dịch Left Join.
-                join user in _context.Users.AsNoTracking()
-                    on (prod != null ? prod.UserId : Guid.Empty) equals user.Id into userGroup
-                from user in userGroup.DefaultIfEmpty()
+                join userStaff in _context.Users.AsNoTracking()
+                    on (prod != null ? prod.UserId : Guid.Empty) equals userStaff.Id into userGroup
+                from userStaff in userGroup.DefaultIfEmpty()
 
                     // Lọc vai trò (Chỉ lấy Staff HOẶC trường hợp chưa có Production/User)
                     // prod == null: Giữ lại Assignment chưa có Production.
                     // user.Role.ToLower() == "staff": Giữ lại Assignment đã có Production từ Staff.
-                where prod == null || (user != null && user.Role.ToLower() == "staff")
+                where prod == null || (user != null && userStaff.Role.ToLower() == "staff")
 
                 // --- PROJECTION & SUB-QUERY AGGREGATION ---
                 select new
@@ -63,7 +75,7 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
 
                     // Thông tin Production & Staff (có thể là null)
                     ProductionId = prod != null ? prod.Id : (Guid?)null,
-                    StaffName = user != null ? user.FullName : null,
+                    StaffName = user != null ? userStaff.FullName : null,
                     QuantityWork = prod != null ? prod.Quantity : 0,
 
                     // TÍNH TỔNG LỖI (Chỉ tính nếu Production tồn tại)
@@ -90,6 +102,7 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
 
                     return new AssignmentHistoryDTO
                     {
+                        AssignmentId = assignmentData.Id,
                         WorkshopId = assignmentData.WorkshopId,
                         StepOrder = assignmentData.StepOrder,
                         QuantityOrder = assignmentData.Quantity,
