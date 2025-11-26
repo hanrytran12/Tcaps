@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -15,7 +10,7 @@ namespace Domain.Entities
         public Guid WorkshopId { get; private set; }
         public int Quantity { get; private set; }
         public string Unit { get; private set; }
-        public DateOnly DateShip {  get; private set; }
+        public DateOnly DateShip { get; private set; }
         public DateOnly? DateReceive { get; private set; }
         public string Status { get; private set; } = "Pending";
 
@@ -30,6 +25,8 @@ namespace Domain.Entities
             DateShip = dateShip;
             Status = status;
         }
+
+        private MaterialSupply() : base(Guid.NewGuid()) { }
 
         public static MaterialSupply Create(Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantity, string unit, DateOnly dateShip, Guid leadId)
         {

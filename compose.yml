@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   tcaps:
-    image: longdong123/tcaps:latest
+    image: hanryhuy/tcaps:latest
     container_name: tcaps
     ports:
       - "5000:5000"

@@ -5,6 +5,7 @@ using DotNetEnv;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -120,10 +121,28 @@ builder.WebHost.ConfigureKestrel(options =>
     });
 });
 
+// 2. Config tăng giới hạn
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = 104857600; // 100MB
+    o.MemoryBufferThreshold = int.MaxValue;
+});
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = 104857600; // 100MB
+});
+
+
 var app = builder.Build();
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors("AllowedFrontend");
+
+app.UseExceptionHandler();
 
 // -----------------------------
 // DB migration & seeding
@@ -141,7 +160,7 @@ using (var scope = app.Services.CreateScope())
             await db.Database.MigrateAsync();
 
             // Seed Users
-            await Infrastructure.Persistence.Seeders.UserSeeder.SeedUsersAsync(db, CancellationToken.None);
+            await Infrastructure.Persistence.Seeders.DbSeeder.SeedAllAsync(db);
 
             Console.WriteLine("Database migrated and seeded successfully.");
             break;
@@ -175,10 +194,9 @@ app.UseStaticFiles(new StaticFileOptions
     ServeUnknownFileTypes = true
 });
 
-app.UseCors("AllowedFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseExceptionHandler();
+
 app.MapControllers();
 app.MapHub<NotificationHub>("/notificationHub");
 
