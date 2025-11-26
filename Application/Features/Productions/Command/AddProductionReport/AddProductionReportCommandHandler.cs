@@ -21,6 +21,13 @@ namespace Application.Features.Productions.Command.AddProductionReport
         {
             var assignment = await _appDbContext.Assignments.Where(a => a.Id == request.AssignId).FirstOrDefaultAsync(cancellationToken);
 
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
+            if (today < assignment.StartDate || today > assignment.EndDate)
+            {
+                return Result.Failure("Ngày nộp sản phẩm không nằm trong khoảng thời gian của Assignment.");
+            }
+
             if (assignment.Status == "Reworking")
             {
                 var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == assignment.Id && (r.Status == "InProgress" || r.Status == "Approved")).FirstOrDefaultAsync(cancellationToken);
