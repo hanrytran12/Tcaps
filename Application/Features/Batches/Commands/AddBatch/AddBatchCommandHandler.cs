@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 
@@ -9,12 +10,14 @@ namespace Application.Features.Batches.Commands.AddBatch
     {
         private readonly IBatchRepository _batchRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IMediator _mediator;
         private const string CodeBatch = "LO_";
 
-        public AddBatchCommandHandler(IBatchRepository batchRepository, IProductRepository productRepository)
+        public AddBatchCommandHandler(IBatchRepository batchRepository, IProductRepository productRepository, IMediator mediator)
         {
             _batchRepository = batchRepository;
             _productRepository = productRepository;
+            _mediator = mediator;
         }
 
         public async Task<Result<Guid>> Handle(AddBatchCommand request, CancellationToken cancellationToken)
@@ -37,6 +40,8 @@ namespace Application.Features.Batches.Commands.AddBatch
                 request.EndDate
             );
             await _batchRepository.AddAsync(result);
+
+            await _mediator.Publish(new AddBatchEvent(newCode, request.Quantity));
             return Result<Guid>.Success(result.Id);
         }
     }
