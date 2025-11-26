@@ -23,6 +23,7 @@ namespace Application.Features.ReworkRequest.Queries.GetAllReworkRequest
                         join u in _appDbContext.Users on rr.QcId equals u.Id
                         select new ReworkRequestDTO
                         {
+                            Id = rr.Id,
                             BatchCode = b.Code,
                             QcName = u.FullName,
                             WorkshopName = w.Name,
@@ -32,7 +33,8 @@ namespace Application.Features.ReworkRequest.Queries.GetAllReworkRequest
                             CreatedAt = rr.CreatedAt,
                             DeliveryDate = rr.DeliveryDate,
                             EndDate = rr.EndDate,
-                            NextStepDeliveryDate = rr.NextStepDeliveryDate
+                            NextStepDeliveryDate = rr.NextStepDeliveryDate,
+                            RequiresMaterialDelivery = a.RequiresMaterialDelivery
                         };
 
             return await query.ToListAsync();

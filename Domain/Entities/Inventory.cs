@@ -7,7 +7,7 @@ namespace Domain.Entities
     {
         public Guid MaterialId { get; private set; }
         public int Quantity { get; private set; }
-        public DateOnly Date { get; private set; }
+        public DateTime Date { get; private set; }
         public decimal Price { get; private set; }
         public string ImageURL { get; private set; } = string.Empty;
 
@@ -16,7 +16,7 @@ namespace Domain.Entities
         {
             MaterialId = materialId;
             Quantity = quantity;
-            Date = DateOnly.FromDateTime(DateTime.Now);
+            Date = DateTime.Now;
             ImageURL = imageURL;
             Price = price;
         }
