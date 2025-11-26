@@ -85,18 +85,19 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpGet("for-qc/assign-history/{batchId}")]
+        [HttpGet("qc-lead-admin/assign-history/{batchId}")]
+        [Authorize(Roles = "QC,Admin,Lead")]
         public async Task<IActionResult> GetAssignmentHistoryForQCAsync(Guid batchId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
             {
                 return Unauthorized();
             }
 
             var query = new GetAssignmentForHistoryByBatchIdQuery
             {
-                QcId = qcId,
+                UserId = userId,
                 BatchId = batchId
             };
             var result = await _mediator.Send(query);
