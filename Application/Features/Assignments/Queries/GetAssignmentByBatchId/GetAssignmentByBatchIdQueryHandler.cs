@@ -79,6 +79,7 @@ namespace Application.Features.Assignments.Queries.GetAssignmentByBatchId
                             UnitPrice = assign.UnitPrice,
                             StartDate = assign.StartDate,
                             EndDate = assign.EndDate,
+                            DateCompleted = assign.DateCompleted,
                             ExpectedDeliveryDate = assign.ExpectedDeliveryDate,
                             Status = assign.Status
                         };

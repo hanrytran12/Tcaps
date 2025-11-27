@@ -52,6 +52,7 @@ namespace Application.Features.Assignments.Queries.GetAllAsignmentByQCId
                             Quantity = assign.Quantity,
                             StartDate = assign.StartDate,
                             EndDate = assign.EndDate,
+                            DateCompleted = assign.DateCompleted,
                             ExpectedDeliveryDate = assign.ExpectedDeliveryDate,
                             UnitPrice = assign.UnitPrice,
                             Status = assign.Status

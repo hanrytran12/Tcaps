@@ -12,6 +12,7 @@ namespace Domain.Entities
         public DateOnly StartDate { get; private set; }
         public DateOnly EndDate { get; private set; }
         public DateOnly? ExpectedDeliveryDate { get; private set; }
+        public DateOnly? DateCompleted { get; private set; }
         public bool RequiresMaterialDelivery { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public DateOnly CreatedAt { get; private set; }
@@ -64,6 +65,12 @@ namespace Domain.Entities
         public void Active()
         {
             UpdateStatus("InProgress");
+        }
+
+        public void UpdateDateComplete()
+        {
+            DateOnly today = DateOnly.FromDateTime(DateTime.Now);
+            DateCompleted = today;
         }
     }
 }
