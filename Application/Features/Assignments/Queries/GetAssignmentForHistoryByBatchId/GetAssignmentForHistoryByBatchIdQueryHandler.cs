@@ -109,6 +109,7 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
                         UnitPrice = assignmentData.UnitPrice,
                         StartDate = assignmentData.StartDate,
                         EndDate = assignmentData.EndDate,
+                        DateCompleted = assignmentData.DateCompleted,
                         ExpectedDeliveryDate = assignmentData.ExpectedDeliveryDate,
                         Status = assignmentData.Status,
 

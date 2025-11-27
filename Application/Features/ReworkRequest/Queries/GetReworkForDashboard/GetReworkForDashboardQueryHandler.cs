@@ -28,6 +28,8 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkForDashboard
                             BatchCode = b.Code,
                             QcName = u.FullName,
                             WorkshopName = w.Name,
+                            WorkshopId = w.Id,
+                            AssignmentId = a.Id,
                             DefectiveQuantity = rr.DefectiveQuantity,
                             NoteQc = rr.NoteQc,
                             Status = rr.Status,

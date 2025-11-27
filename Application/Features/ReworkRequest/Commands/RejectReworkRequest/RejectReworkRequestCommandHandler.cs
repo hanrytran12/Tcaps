@@ -24,6 +24,7 @@ namespace Application.Features.ReworkRequest.Commands.RejectReworkRequest
             var queryInfo = await query.FirstOrDefaultAsync();
             var assignment = queryInfo.a;
             assignment.UpdateStatus("Completed");
+            assignment.UpdateDateComplete();
 
             var reworkRequest = queryInfo.rr;
             reworkRequest.RejecetedRequest();

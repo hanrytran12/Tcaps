@@ -48,10 +48,7 @@ namespace Application.Features.Evaluates.Commands.UpdateEvaluate
                     {
                         var component = Domain.Entities.ComponentDefect.Create(
                             evaluate.Id,
-                            item.DefectType,
-                            item.Severity,
                             item.Description,
-                            item.Solution,
                             item.Quantity,
                             item.Status);
                         await _componentDefectRepository.AddAsync(component);
@@ -62,10 +59,7 @@ namespace Application.Features.Evaluates.Commands.UpdateEvaluate
                         if (defect != null)
                         {
                             defect.Update(
-                                item.DefectType,
-                                item.Severity,
                                 item.Description,
-                                item.Solution,
                                 item.Quantity,
                                 item.Status
                             );
