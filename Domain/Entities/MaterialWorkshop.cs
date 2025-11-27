@@ -28,8 +28,6 @@ namespace Domain.Entities
             return new MaterialWorkshop(Guid.NewGuid(), workshopId, assignId, supplierId, quantitySend);
         }
 
-        private MaterialWorkshop() : base(Guid.NewGuid()) { }
-
         public void Confirmed() => Status = "Confirmed";
         public void Update(int quantityReceive)
         {
