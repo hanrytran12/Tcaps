@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -30,6 +25,7 @@ namespace Domain.Entities
             CreatedAt = DateOnly.FromDateTime(DateTime.Now);
         }
 
+        private TaskTransferRequest() : base(Guid.NewGuid()) { }
         public static TaskTransferRequest Create(Guid batchId, Guid workshopId, Guid qcTransportId, Guid? requestId, Guid? assignmentTransferId, string? note)
         {
             return new TaskTransferRequest(Guid.NewGuid(), batchId, workshopId, qcTransportId, requestId, assignmentTransferId, note);
