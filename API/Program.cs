@@ -1,12 +1,17 @@
 ﻿using API.Hubs;
 using API.Middlewares;
 using Application;
+using DotNetEnv;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
+
+Env.Load();
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -47,7 +52,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowedFrontend", policy =>
     {
-        policy.WithOrigins("http://localhost:8081")
+        policy.AllowAnyOrigin()
         .AllowAnyHeader()
         .AllowAnyMethod();
     });
@@ -59,13 +64,13 @@ builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.Authenticati
         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(conf["JwtSettings:SecretKey"])),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY"))),
 
             ValidateIssuer = true,
-            ValidIssuer = conf["JwtSettings:Issuer"],
+            ValidIssuer = Environment.GetEnvironmentVariable("ISSUER"),
 
             ValidateAudience = true,
-            ValidAudience = conf["JwtSettings:Audience"],
+            ValidAudience = Environment.GetEnvironmentVariable("AUDIENCE"),
 
             ValidateLifetime = true,
 
@@ -98,15 +103,79 @@ builder.Services.AddSignalR();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+// -----------------------------
+// Kestrel
+// -----------------------------
+builder.WebHost.ConfigureKestrel(options =>
+{
+    // gRPC endpoint  requires HTTP/2
+    options.ListenAnyIP(5001, listenOptions =>
+    {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http2;
+    });
+
+    // REST endpoint  uses standard HTTP/1.1
+    options.ListenAnyIP(5000, listenOptions =>
+    {
+        listenOptions.Protocols = Microsoft.AspNetCore.Server.Kestrel.Core.HttpProtocols.Http1;
+    });
+});
+
+// 2. Config tăng giới hạn
+builder.Services.Configure<FormOptions>(o =>
+{
+    o.ValueLengthLimit = int.MaxValue;
+    o.MultipartBodyLengthLimit = 104857600; // 100MB
+    o.MemoryBufferThreshold = int.MaxValue;
+});
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = 104857600; // 100MB
+});
+
+
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
-app.UseHttpsRedirection();
+app.UseCors("AllowedFrontend");
+
+app.UseExceptionHandler();
+
+// -----------------------------
+// DB migration & seeding
+// -----------------------------
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    var retries = 5;
+    for (int i = 0; i < retries; i++)
+    {
+        try
+        {
+            // Create DB if it doesn’t exist and apply all migrations
+            await db.Database.MigrateAsync();
+
+            // Seed Users
+            await Infrastructure.Persistence.Seeders.DbSeeder.SeedAllAsync(db);
+
+            Console.WriteLine("Database migrated and seeded successfully.");
+            break;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Database not ready, retrying in 5s... ({i + 1}/{retries})");
+            Console.WriteLine($"Error: {ex.Message}");
+            await Task.Delay(5000);
+
+            if (i == retries - 1)
+                throw; // rethrow last exception if retries exhausted
+        }
+    }
+}
 
 app.UseStaticFiles(new StaticFileOptions
 {
@@ -125,10 +194,9 @@ app.UseStaticFiles(new StaticFileOptions
     ServeUnknownFileTypes = true
 });
 
-app.UseCors("AllowedFrontend");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseExceptionHandler();
+
 app.MapControllers();
 app.MapHub<NotificationHub>("/notificationHub");
 

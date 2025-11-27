@@ -32,6 +32,8 @@ namespace Domain.Entities
             Type = type;
         }
 
+        private MaterialRequest() : base(Guid.NewGuid()) { }
+
         public static MaterialRequest Create(Guid materialId, Guid userId, Guid batchId, Guid assignId, decimal quantityRequest, string note, string type)
         {
             return new MaterialRequest(Guid.NewGuid(), materialId, userId, batchId, assignId, quantityRequest, note, type);
