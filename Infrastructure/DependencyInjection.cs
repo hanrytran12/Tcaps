@@ -20,7 +20,7 @@ namespace Infrastructure
         {
             // Đăng ký DbContext
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("TCAPS_DB_CONNECTION")));
+                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             // Đăng ký các interface của DbContext
             services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
@@ -28,7 +28,7 @@ namespace Infrastructure
 
             // Đăng ký Azure Blob Service
             services.AddSingleton(x =>
-                new BlobServiceClient(Environment.GetEnvironmentVariable("BLOB_STORAGE_SETTINGS")));
+                new BlobServiceClient(configuration["BlobStorageSettings:ConnectionString"]));
 
             // Đăng ký Behavior của Infrastructure
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
