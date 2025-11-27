@@ -147,6 +147,7 @@ namespace Domain.Entities
             {
                 this.CompleteBatch(quantityCompleted);
                 currentAssignment.UpdateStatus("Completed");
+                currentAssignment.UpdateDateComplete();
             }
         }
 

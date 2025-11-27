@@ -69,18 +69,18 @@ namespace Application.Features.Productions.Command.AddProductionReport
                             return Result.Failure("Không tìm thấy MaterialUse của Assignment bình thường.");
                     }
 
-                    var quantityDivide = targetMaterialUse.QuantityDivide;     // Số lượng được chia
-                    var staffUsed = targetMaterialUse.QuantityStaffUse;        // Đã dùng trước đó
-                    var remaining = quantityDivide - staffUsed;                // Số còn lại có thể dùng
+                    //var quantityDivide = targetMaterialUse.QuantityDivide;     // Số lượng được chia
+                    //var staffUsed = targetMaterialUse.QuantityStaffUse;        // Đã dùng trước đó
+                    //var remaining = quantityDivide - staffUsed;                // Số còn lại có thể dùng
 
-                    if (items.QuantityUsed > quantityDivide)
-                        return Result.Failure($"SL đưa vào ({items.QuantityUsed}) vượt SL được chia ({quantityDivide}).");
+                    //if (items.QuantityUsed > quantityDivide)
+                    //    return Result.Failure($"SL đưa vào ({items.QuantityUsed}) vượt SL được chia ({quantityDivide}).");
 
-                    if (items.QuantityUsed > remaining)
-                        return Result.Failure(
-                            $"SL sử dụng vượt mức cho phép. Đã dùng: {staffUsed}, " +
-                            $"Được chia: {quantityDivide}, Còn lại: {remaining}, Bạn nhập: {items.QuantityUsed}"
-                        );
+                    //if (items.QuantityUsed > remaining)
+                    //    return Result.Failure(
+                    //        $"SL sử dụng vượt mức cho phép. Đã dùng: {staffUsed}, " +
+                    //        $"Được chia: {quantityDivide}, Còn lại: {remaining}, Bạn nhập: {items.QuantityUsed}"
+                    //    );
 
                     targetMaterialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
                 }

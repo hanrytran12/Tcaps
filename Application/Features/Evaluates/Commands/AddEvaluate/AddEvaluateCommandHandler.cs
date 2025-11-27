@@ -90,10 +90,7 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
                 var componentDefects = request.Defects
                     .Select(item => Domain.Entities.ComponentDefect.Create(
                         evaluate.Id,
-                        item.DefectType,
-                        item.Severity,
                         item.Description,
-                        item.Solution,
                         item.Quantity,
                         item.Status))
                     .ToList();

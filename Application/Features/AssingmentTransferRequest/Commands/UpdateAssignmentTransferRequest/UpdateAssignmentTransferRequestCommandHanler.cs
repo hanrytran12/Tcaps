@@ -50,6 +50,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                 if (assigment.Quantity == transferRequest.CompletedQuantity)
                 {
                     assigment.UpdateStatus("Completed");
+                    assigment.UpdateDateComplete();
                 }
 
                 var batch = await _batchRepository.GetByAssignmentIdAsync(assigment.Id);
@@ -69,6 +70,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
 
                 var assignment = await _assignmentRepository.GetByIdAsync(reworkRequest.AssignmentId);
                 assignment.UpdateStatus("Completed");
+                assignment.UpdateDateComplete();
 
                 reworkRequest.AddDomainEvent(new ReworkRequestCompletedEvent(reworkRequest.Id));
 

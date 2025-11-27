@@ -68,10 +68,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
                                             .Select(cd => new ComponentDefectsDTO
                                             {
                                                 Id = cd.Id,
-                                                DefectType = cd.DefectType,
-                                                Severity = cd.Serverity,
                                                 Description = cd.Description,
-                                                Solution = cd.Solution,
                                                 Quantity = cd.Quantity,
                                                 Status = cd.Status,
                                             }).ToList()

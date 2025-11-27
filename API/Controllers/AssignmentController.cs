@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Assignments.Commands.PlanAssignments;
+using Application.Features.Assignments.Commands.UpdateReadyForTransfer;
 using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
 using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
@@ -132,6 +133,24 @@ namespace API.Controllers
             }
 
             return BadRequest(result.error);
+        }
+
+        [HttpPut("update-ready-for-transfer")]
+        public async Task<IActionResult> UpdateReadyForTransfer([FromQuery] Guid assignmentId)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
+            {
+                return Unauthorized();
+            }
+
+            var command = new UpdateReadyForTransferCommand
+            {
+                AssignmentId = assignmentId,
+                QcId = qcId
+            };
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
     }
 }
