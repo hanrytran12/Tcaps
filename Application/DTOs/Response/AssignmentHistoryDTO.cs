@@ -15,6 +15,7 @@ namespace Application.DTOs.Response
         public decimal UnitPrice { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
+        public DateOnly? DateCompleted { get; set; }
         public DateOnly? ExpectedDeliveryDate { get; set; }
         public string Status { get; set; } = string.Empty;
         public ICollection<StaffWorksingDTO> Items { get; set; }
