@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using Application.Interfaces;
-using AutoMapper;
-using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +29,8 @@ namespace Application.Features.Productions.Query.GetAllProductionByQCId
 
             var users = await _userRepository.GetUsersByWorkshopIdAsync(workshopId);
             if (users == null || !users.Any())
-                throw new InvalidOperationException($"No staff found for workshop.");
+                //throw new InvalidOperationException($"No staff found for workshop.");
+                return new List<ProductionDTO>();
 
             var userIds = users.Select(u => u.Id).ToList();
 
