@@ -1,6 +1,6 @@
 ﻿namespace Application.DTOs.Response
 {
-    public class TrasnferRequestDTO
+    public class AssignmentTransferRequestDTO
     {
         public Guid TransferRequestId { get; set; }
         public string BatchCode { get; set; } = string.Empty;

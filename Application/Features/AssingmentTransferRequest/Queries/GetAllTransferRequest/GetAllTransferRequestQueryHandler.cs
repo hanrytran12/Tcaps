@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest
 {
-    public class GetAllTransferRequestQueryHandler : IRequestHandler<GetAllTransferRequestQuery, List<TrasnferRequestDTO>>
+    public class GetAllTransferRequestQueryHandler : IRequestHandler<GetAllTransferRequestQuery, List<AssignmentTransferRequestDTO>>
     {
         private readonly IAppDbContext _appDbContext;
 
@@ -14,7 +14,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
             _appDbContext = appDbContext;
         }
 
-        public async Task<List<TrasnferRequestDTO>> Handle(GetAllTransferRequestQuery request, CancellationToken cancellationToken)
+        public async Task<List<AssignmentTransferRequestDTO>> Handle(GetAllTransferRequestQuery request, CancellationToken cancellationToken)
         {
             var query = from tr in _appDbContext.AssignmentTransferRequests.AsNoTracking()
                         join a in _appDbContext.Assignments.AsNoTracking() on tr.AssignmentId equals a.Id
@@ -22,7 +22,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                         join b in _appDbContext.Batches.AsNoTracking() on a.BatchId equals b.Id
                         join p in _appDbContext.Products.AsNoTracking() on b.ProductId equals p.Id
                         join u in _appDbContext.Users.AsNoTracking() on tr.UserId equals u.Id
-                        select new TrasnferRequestDTO
+                        select new AssignmentTransferRequestDTO
                         {
                             TransferRequestId = tr.Id,
                             UserName = u.FullName,
