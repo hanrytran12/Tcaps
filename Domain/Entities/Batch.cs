@@ -12,7 +12,7 @@ namespace Domain.Entities
         public decimal LostQuantity { get; private set; }
         public DateOnly StartDate { get; private set; }
         public DateOnly EndDate { get; private set; }
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public bool isDeleted { get; private set; }
 
@@ -40,7 +40,7 @@ namespace Domain.Entities
             Quantity = quantity;
             StartDate = startDate;
             EndDate = endDate;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
             Status = "Planned";
         }
 

@@ -27,6 +27,7 @@ namespace Application.Features.Batches.Queries.GetBatchForManagement
                                 StartDate = b.StartDate,
                                 EndDate = b.EndDate,
                                 Status = b.Status,
+                                CreatedAt = b.CreatedAt
                             };
 
             return await batchList.ToListAsync();
