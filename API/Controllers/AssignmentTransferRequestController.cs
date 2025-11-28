@@ -2,6 +2,7 @@
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.QcTransportReception;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
+using Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTransport;
 using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferRequest;
 using Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTransferForQcTransport;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
@@ -25,7 +26,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Lead")]
-        public async Task<ActionResult<List<TrasnferRequestDTO>>> GetAllTrasnferRequest()
+        public async Task<ActionResult<List<AssignmentTransferRequestDTO>>> GetAllTrasnferRequest()
         {
             var query = new GetAllTransferRequestQuery();
             var result = await _mediator.Send(query);
@@ -148,6 +149,23 @@ namespace API.Controllers
                 AssignmentTransferRequestId = assignmentTransferId
             };
             var result = await _mediator.Send(command);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        }
+
+        [HttpGet("getAll-for-qcTransport")]
+        public async Task<IActionResult> GetAllForQcTransport()
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+            {
+                return Unauthorized();
+            }
+
+            var query = new GetAllForQcTransportQuery
+            {
+                QcTransportId = userId
+            };
+            var result = await _mediator.Send(query);
             return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
         }
     }
