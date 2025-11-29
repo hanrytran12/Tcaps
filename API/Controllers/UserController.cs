@@ -2,6 +2,7 @@ using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
+using Application.Features.Users.Commands.ReactiveUser;
 using Application.Features.Users.Commands.UpdateUser;
 using Application.Features.Users.Commands.UpdateUserProfile;
 using Application.Features.Users.Queries.GetAllQCTransport;
@@ -216,6 +217,14 @@ namespace API.Controllers
             var query = new GetAllQCTransportQuery();
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+
+        [HttpPut("{userId:guid}/re-active")]
+        public async Task<IActionResult> ReactiveUser(Guid userId)
+        {
+            var command = new ReactiveUserCommand { UserId = userId };
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
         }
     }
 }
