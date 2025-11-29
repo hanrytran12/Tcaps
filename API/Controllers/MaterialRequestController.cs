@@ -128,7 +128,7 @@ namespace API.Controllers
             if (result.IsFailure)
                 return BadRequest(result);
 
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.error);
         }
 
         [HttpPut("approve/{id:guid}")]
