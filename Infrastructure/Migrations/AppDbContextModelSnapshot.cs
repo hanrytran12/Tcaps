@@ -33,6 +33,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
+                    b.Property<DateOnly?>("DateCompleted")
+                        .HasColumnType("date");
+
                     b.Property<DateOnly>("EndDate")
                         .HasColumnType("date");
 
@@ -153,10 +156,6 @@ namespace Infrastructure.Migrations
                     b.Property<DateOnly>("CreatedAt")
                         .HasColumnType("date");
 
-                    b.Property<string>("DefectType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -166,14 +165,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<string>("Serverity")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Solution")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
