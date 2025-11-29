@@ -46,7 +46,7 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
                 request.MaterialId,
                 supplierId,
                 request.WorkshopId,
-                request.Quantity,
+                request.QuantitySend,
                 request.Unit,
                 request.DateShip,
                 request.LeadId // để xác định ai là lead duyệt
@@ -60,7 +60,7 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
                 materialRequest.UserId,
                 request.RequestId,
                 request.MaterialId,
-                request.Quantity));
+                request.QuantitySend));
 
             return Result.Success();
         }

@@ -87,22 +87,6 @@ namespace Infrastructure.Persistence
                 .Property(a => a.ReworkRequestId)
                 .IsRequired(false);
 
-            modelBuilder.Entity<TaskTransferRequest>(builder =>
-            {
-                // Chuyển đổi CreatedAt
-                builder.Property(e => e.CreatedAt)
-                       .HasConversion(
-                           v => v.ToDateTime(new TimeOnly(0, 0)),   // lưu vào database dưới dạng DateTime
-                           v => DateOnly.FromDateTime(v));          // đọc từ database về DateOnly
-
-                // Chuyển đổi ApprovedAt
-                builder.Property(e => e.ApprovedAt)
-                       .HasConversion(
-                           v => v.HasValue ? v.Value.ToDateTime(new TimeOnly(0, 0)) : (DateTime?)null,
-                           v => v.HasValue ? DateOnly.FromDateTime(v.Value) : (DateOnly?)null
-                       );
-            });
-
             modelBuilder.Entity<Evaluate>()
                 .HasMany(e => e.ComponentDefects) // Tên thuộc tính trong Evaluate Entity (ví dụ: public ICollection<ComponentDefect> ComponentDefects)
                 .WithOne() // Hoặc WithOne(cd => cd.Evaluate) nếu có navigation property ngược

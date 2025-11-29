@@ -43,7 +43,7 @@ namespace Application.Features.MaterialSupplies.Command.UpdateApproveByAdmin
                     qcTransport.Id,
                     materialSupply.RequestId,
                     materialSupply.MaterialId,
-                    materialSupply.Quantity));
+                    materialSupply.QuantitySend));
 
             return Result<Guid>.Success(materialSupply.Id);
         }
