@@ -26,8 +26,9 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                         join r in _context.MaterialRequests on s.RequestId equals r.Id
                         join b in _context.Batches on r.BatchId equals b.Id
                         join u in _context.Users on r.UserId equals u.Id
-                        join w in _context.Workshop on u.WorkshopId equals w.Id
-                        select new { s, m, r, b, u, w };
+                        join w in _context.Workshop on u.WorkshopId equals w.Id into workshopGroup
+                        from wItem in workshopGroup.DefaultIfEmpty() // Thêm DefaultIfEmpty()
+                        select new { s, m, r, b, u, wItem };
 
             // Normalize role
             string role = request.Role?.Trim() ?? "";
@@ -62,12 +63,12 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                 MaterialId = x.s.MaterialId,
                 MaterialName = x.m.Name,
                 BatchCode = x.b.Code,
-                WorkshopId = x.w.Id,
-                WorkshopName = x.w.Name,
+                WorkshopId = x.u.WorkshopId ?? Guid.Empty,
+                WorkshopName = x.wItem.Name,
                 SupplierId = x.s.SupplierId,
-                SupplierName = x.u.FullName,
+                SupplierName = x.u.FullName ?? string.Empty,
                 QuantitySend = x.s.QuantitySend,
-                QuantityReceive = x.s.QuantityReceive.Value,
+                QuantityReceive = x.s.QuantityReceive ?? 0,
                 Unit = x.s.Unit,
                 DateShip = x.s.DateShip,
                 Status = x.s.Status

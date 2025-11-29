@@ -77,7 +77,7 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             await _mediator.Publish(new CompletedMaterialSupplyEvent(
                 request.SupplyId,
                 materialSupply.MaterialId,
-                materialSupply.QuantityReceive.Value));
+                materialSupply.QuantityReceive ?? 0));
             return Result<Guid>.Success(materialSupply.Id);
         }
     }
