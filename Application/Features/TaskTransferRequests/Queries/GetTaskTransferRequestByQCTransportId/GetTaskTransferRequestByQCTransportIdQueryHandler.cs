@@ -53,6 +53,14 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             on ttr.WorkshopId equals workshop.Id into workshopGroup
                         from workshopItem in workshopGroup.DefaultIfEmpty()
 
+                        join mr in _context.MaterialRequests.AsNoTracking()
+                            on ttr.MaterialRequestId equals mr.Id into mrGroup
+                        from mrItem in mrGroup.DefaultIfEmpty()
+
+                        join m in _context.Materials.AsNoTracking()
+                            on mrItem.MaterialId equals m.Id into materialGroup
+                        from m in materialGroup.DefaultIfEmpty()
+
                             // Ánh xạ trực tiếp sang DTO (Projection)
                         select new TaskTransferRequestDTO
                         {
@@ -70,6 +78,8 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
 
                             MaterialRequestId = ttr.MaterialRequestId,
                             AssignmentTransferId = ttr.AssignmentTransferId,
+                            MaterialName = m.Name ?? string.Empty,
+                            QuantityRequest = (int)(mrItem.QuantityRequest),
                             Status = ttr.Status,
                             Note = ttr.Note,
                             CreatedAt = ttr.CreatedAt,
