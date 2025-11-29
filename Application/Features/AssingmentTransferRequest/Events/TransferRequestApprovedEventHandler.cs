@@ -20,8 +20,9 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
         public async Task Handle(TransferRequestApprovedEvent notification, CancellationToken cancellationToken)
         {
-            var assignment = await _appDbContext.Assignments.Where(a => a.Id == notification.AssignmentId).FirstOrDefaultAsync(cancellationToken);
-            if (assignment.Status == "Reworking")
+            var asignmentTransferRequest = await _appDbContext.AssignmentTransferRequests.Where(atr => atr.AssignmentId == notification.AssignmentId).FirstOrDefaultAsync();
+            var assignment = await _appDbContext.Assignments.Where(a => a.Id == notification.AssignmentId).FirstOrDefaultAsync();
+            if (asignmentTransferRequest.ReworkRequestId is not null)
             {
                 var reworkRequest = await _appDbContext.ReworkRequests.Where(rr => rr.AssignmentId == notification.AssignmentId).FirstOrDefaultAsync();
                 notification.QuantitySend = reworkRequest.DefectiveQuantity;
