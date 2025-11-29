@@ -76,37 +76,6 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
-        [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> AddBatch(AddBatchCommand command)
-        {
-            var result = await _mediator.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Error);
-            }
-
-            return CreatedAtAction(nameof(GetAllBatch), new { id = result.Value }, result.Value);
-        }
-
-        [HttpPut("{id:guid}")]
-        [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> UpdateBatch(Guid id, [FromBody] UpdateBatchCommand command)
-        {
-            command.Id = id;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
-        }
-
-        [HttpDelete("{id:guid}")]
-        [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> DeleteBatch(Guid id)
-        {
-            var command = new DeleteBatchCommand(id);
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
-        }
-
         [HttpGet("staff/bactches")]
         public async Task<IActionResult> GetBatchesByStaffIdAsync()
         {
@@ -144,6 +113,37 @@ namespace API.Controllers
 
             var result = await _mediator.Send(query);
             return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> AddBatch(AddBatchCommand command)
+        {
+            var result = await _mediator.Send(command);
+            if (!result.IsSuccess)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return CreatedAtAction(nameof(GetAllBatch), new { id = result.Value }, result.Value);
+        }
+
+        [HttpPut("{id:guid}")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> UpdateBatch(Guid id, [FromBody] UpdateBatchCommand command)
+        {
+            command.Id = id;
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+        }
+
+        [HttpDelete("{id:guid}")]
+        [Authorize(Policy = "Admin")]
+        public async Task<IActionResult> DeleteBatch(Guid id)
+        {
+            var command = new DeleteBatchCommand(id);
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
         }
     }
 }
