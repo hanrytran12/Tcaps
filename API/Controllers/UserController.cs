@@ -57,36 +57,6 @@ namespace API.Controllers
             return result;
         }
 
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddUser(AddUserCommand command)
-        {
-            var result = await _mediator.Send(command);
-
-            if (result.IsFailure)
-            {
-                return BadRequest(result.Error);
-            }
-
-            return CreatedAtAction(nameof(GetAllUser), new { id = result.Value }, result.Value);
-        }
-
-        [HttpPut("{id:guid}")]
-        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserCommand command)
-        {
-            command.Id = id;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
-        }
-
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            var command = new DeleteUserCommand(id);
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
-        }
-
         [HttpGet("total-income/{userId:guid}")]
         public async Task<IActionResult> TotalIncome(Guid userId)
         {
@@ -120,33 +90,6 @@ namespace API.Controllers
         {
             var response = await _staffService.GetEvaluateHistoryAsync(userId);
             return StatusCode(response.StatusCode, response);
-        }
-
-        [HttpPut("change-password")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto, CancellationToken cancellationToken)
-        {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-            var userId = Guid.Parse(userIdString);
-            var response = await _staffService.ChangePasswordAsync(userId, dto.CurrentPassword, dto.NewPassword, cancellationToken);
-            return StatusCode(response.StatusCode, response);
-        }
-
-        [HttpPut("update-profile")]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileCommand command)
-        {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-            var userId = Guid.Parse(userIdString);
-            command.Id = userId;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
         }
 
         [HttpGet("staff-performance")]
@@ -217,6 +160,63 @@ namespace API.Controllers
             var query = new GetAllQCTransportQuery();
             var result = await _mediator.Send(query);
             return Ok(result);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AddUser(AddUserCommand command)
+        {
+            var result = await _mediator.Send(command);
+
+            if (result.IsFailure)
+            {
+                return BadRequest(result.Error);
+            }
+
+            return CreatedAtAction(nameof(GetAllUser), new { id = result.Value }, result.Value);
+        }
+
+        [HttpPut("{id:guid}")]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserCommand command)
+        {
+            command.Id = id;
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+        }
+
+        [HttpPut("change-password")]
+        public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto, CancellationToken cancellationToken)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = Guid.Parse(userIdString);
+            var response = await _staffService.ChangePasswordAsync(userId, dto.CurrentPassword, dto.NewPassword, cancellationToken);
+            return StatusCode(response.StatusCode, response);
+        }
+
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileCommand command)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+            var userId = Guid.Parse(userIdString);
+            command.Id = userId;
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            var command = new DeleteUserCommand(id);
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
         }
 
         [HttpPut("{userId:guid}/re-active")]

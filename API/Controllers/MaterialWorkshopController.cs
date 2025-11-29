@@ -47,14 +47,6 @@ namespace API.Controllers
             return Ok(result);
         }
 
-        [HttpPut("update-confirm")]
-        [Authorize(Policy = "QC")]
-        public async Task<IActionResult> UpdateConfirmAsync([FromQuery] UpdateConfirmMaterialWorkshopCommand query)
-        {
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
-        }
-
         [HttpGet("total-quantity-receive")]
         [Authorize(Roles = "QC,Lead")]
         public async Task<IActionResult> GetTotalQuantityReceive([FromQuery] Guid batchId)
@@ -71,6 +63,14 @@ namespace API.Controllers
                 BatchId = batchId,
                 QcId = Guid.Parse(userIdString)
             };
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
+        [HttpPut("update-confirm")]
+        [Authorize(Policy = "QC")]
+        public async Task<IActionResult> UpdateConfirmAsync([FromQuery] UpdateConfirmMaterialWorkshopCommand query)
+        {
             var result = await _mediator.Send(query);
             return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }

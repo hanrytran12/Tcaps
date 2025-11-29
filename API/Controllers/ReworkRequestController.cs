@@ -47,6 +47,21 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("by-assignId")]
+        public async Task<IActionResult> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        [HttpGet("{assignId:guid}/for-dashboard")]
+        public async Task<IActionResult> GetReworkForDashboard(Guid assignId)
+        {
+            var query = new GetReworkForDashboardQuery(assignId);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateReworkRequest([FromBody] CreateReworkRequestCommand command)
         {
@@ -69,21 +84,6 @@ namespace API.Controllers
         {
             command.RequestId = requestId;
             var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpGet("by-assignId")]
-        public async Task<IActionResult> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
-        {
-            var result = await _mediator.Send(query);
-            return Ok(result);
-        }
-
-        [HttpGet("{assignId:guid}/for-dashboard")]
-        public async Task<IActionResult> GetReworkForDashboard(Guid assignId)
-        {
-            var query = new GetReworkForDashboardQuery(assignId);
-            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }
