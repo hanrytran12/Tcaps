@@ -126,7 +126,7 @@ namespace API.Controllers
             var result = await _mediator.Send(command);
 
             if (result.IsFailure)
-                return BadRequest(result);
+                return BadRequest(result.error);
 
             return result.IsSuccess ? Ok(result) : BadRequest(result.error);
         }
