@@ -29,7 +29,8 @@ namespace Application.Features.Users.Queries.GetAllUser
                             Email = u.Email,
                             Phone = u.Phone,
                             CreatedAt = u.CreatedAt,
-                            WorkshopName = subW != null ? subW.Name : string.Empty
+                            WorkshopName = subW != null ? subW.Name : string.Empty,
+                            Status = u.Status
                         };
 
             return await users.AsNoTracking().ToListAsync();
