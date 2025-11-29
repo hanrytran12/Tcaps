@@ -95,8 +95,6 @@ VALUES
 
 INSERT INTO [Users] (Id, WorkshopId, Role, FullName, Email, PasswordHash, Phone, Status, IsQcTransport, CreatedAt)
 VALUES
--- === Nhân viên (Staff) cho 16 xưởng ===
-
 -- Step 1: Cắt laser (WorkshopId: A1C9B3A0-4F12-4E81-B17B-000000000001)
 ('A0000000-0000-0000-0000-000000000022', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'Staff', N'Nguyễn Văn A - Laser', 'staff.laser1@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902010101', 'Active', 0, GETDATE()),
 ('A0000000-0000-0000-0000-000000000023', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'Staff', N'Trần Thị B - Laser', 'staff.laser2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902010102', 'Active', 0, GETDATE()),
@@ -349,6 +347,7 @@ select * from TaskTransferRequests
 select * from ReworkRequests
 select * from WorkshopInventory
 select * from AssignmentTransferRequests
+select * from ReworkRequests
 insert into MaterialWorkshops values 
 ('A0000000-0000-0000-0000-000000000015', 
 'A1C9B3A0-4F12-4E81-B17B-000000000003',

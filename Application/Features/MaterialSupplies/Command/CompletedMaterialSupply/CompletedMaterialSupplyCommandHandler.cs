@@ -30,10 +30,16 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             if (qc == null)
                 return Result<Guid>.Failure("Người dùng không tồn tại");
 
+            var today = DateOnly.FromDateTime(DateTime.Now);
 
             var materialSupply = await _context.MaterialSupplies.FindAsync(request.SupplyId);
             if (materialSupply == null)
                 return Result<Guid>.Failure("Không tìm thấy phiếu cung cấp vật liệu.");
+
+            if (today < materialSupply.DateShip)
+            {
+                return Result<Guid>.Failure("Chưa tới ngày nhận vì chưa đến thời gian giao NVL.");
+            }
 
             var materialRequest = await _context.MaterialRequests.FindAsync(materialSupply.RequestId);
             if (materialRequest == null)
