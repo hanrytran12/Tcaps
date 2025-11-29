@@ -173,13 +173,13 @@ VALUES
 ('B0000000-0000-0000-0000-000000000006', N'Khóa cài nón', N'Khóa cài nhựa chắc chắn', 1000, 5000, N'Cái');
 
 select * from Products
-INSERT INTO [Products] (Id, Code, Name, Image, Description, IsDeleted)
+INSERT INTO [Products] (Id, Code, Name, Image, Description, IsDeleted, CreatedAt)
 VALUES 
-('C0000000-0000-0000-0000-000000000001', 'NON-001', N'Nón bảo hiểm 3/4 đầu', N'/images/products/helmet_34.jpg', N'Nón bảo hiểm 3/4 đầu có kính, chất liệu ABS cao cấp', 0),
-('C0000000-0000-0000-0000-000000000002', 'NON-002', N'Nón bảo hiểm fullface', N'/images/products/helmet_fullface.jpg', N'Nón bảo hiểm fullface nguyên đầu, tiêu chuẩn DOT', 0),
-('C0000000-0000-0000-0000-000000000003', 'NON-003', N'Nón bảo hiểm nửa đầu', N'/images/products/helmet_half.jpg', N'Nón bảo hiểm nửa đầu thời trang, nhẹ và thoáng khí', 0),
-('C0000000-0000-0000-0000-000000000004', 'NON-004', N'Nón bảo hiểm trẻ em', N'/images/products/helmet_kids.jpg', N'Nón bảo hiểm dành cho trẻ em, nhiều màu sắc', 0),
-('C0000000-0000-0000-0000-000000000005', 'NON-005', N'Nón bảo hiểm thể thao', N'/images/products/helmet_sport.jpg', N'Nón bảo hiểm thể thao Motocross, chất liệu composite', 0);
+('C0000000-0000-0000-0000-000000000001', 'NON-001', N'Nón bảo hiểm 3/4 đầu', N'/images/products/helmet_34.jpg', N'Nón bảo hiểm 3/4 đầu có kính, chất liệu ABS cao cấp', 0, ''),
+('C0000000-0000-0000-0000-000000000002', 'NON-002', N'Nón bảo hiểm fullface', N'/images/products/helmet_fullface.jpg', N'Nón bảo hiểm fullface nguyên đầu, tiêu chuẩn DOT', 0, ''),
+('C0000000-0000-0000-0000-000000000003', 'NON-003', N'Nón bảo hiểm nửa đầu', N'/images/products/helmet_half.jpg', N'Nón bảo hiểm nửa đầu thời trang, nhẹ và thoáng khí', 0, ''),
+('C0000000-0000-0000-0000-000000000004', 'NON-004', N'Nón bảo hiểm trẻ em', N'/images/products/helmet_kids.jpg', N'Nón bảo hiểm dành cho trẻ em, nhiều màu sắc', 0, ''),
+('C0000000-0000-0000-0000-000000000005', 'NON-005', N'Nón bảo hiểm thể thao', N'/images/products/helmet_sport.jpg', N'Nón bảo hiểm thể thao Motocross, chất liệu composite', 0, '');
 
 select * from Batches
 INSERT INTO [Batches] (Id, ProductId, Code, Quantity, StartDate, EndDate, CreatedAt, Status, isDeleted)
