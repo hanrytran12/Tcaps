@@ -4,6 +4,7 @@
     {
         public Guid Id { get; set; }
         public Guid MaterialId { get; set; }
+        public string MaterialName { get; set; }
         public Guid UserId { get; set; }
         public Guid WorkshopId { get; set; }
         public string WorkshopName { get; set; }

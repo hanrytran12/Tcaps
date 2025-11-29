@@ -83,5 +83,10 @@ namespace Domain.Entities
         {
             IsQcTransport = false;
         }
+
+        public void Reactive()
+        {
+            this.Status = "Active";
+        }
     }
 }

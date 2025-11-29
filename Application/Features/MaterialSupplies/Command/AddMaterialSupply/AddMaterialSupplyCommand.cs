@@ -19,7 +19,7 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
         public Guid WorkshopId { get; set; }
         public DateOnly DateShip { get; set; }
         public Guid MaterialId { get; set; }
-        public int Quantity { get; set; }
+        public int QuantitySend { get; set; }
         public string Unit { get; set; }
     }
 }

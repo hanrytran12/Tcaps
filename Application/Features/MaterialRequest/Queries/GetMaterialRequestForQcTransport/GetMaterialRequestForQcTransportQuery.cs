@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTransport
 {
-    public class GetMaterialRequestForQcTransportQuery : IRequest<Result<Domain.Entities.MaterialRequest>>
+    public class GetMaterialRequestForQcTransportQuery : IRequest<Result<MaterialRequestDTO>>
     {
         public Guid MaterialRequestId { get; set; }
     }

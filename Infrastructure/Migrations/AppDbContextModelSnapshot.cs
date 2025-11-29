@@ -371,7 +371,10 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("QuantityReceive")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantitySend")
                         .HasColumnType("int");
 
                     b.Property<Guid>("RequestId")
@@ -512,6 +515,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .IsRequired()

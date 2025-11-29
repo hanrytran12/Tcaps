@@ -337,8 +337,11 @@ namespace Infrastructure.Services
             var qc = await _userRepository.GetByIdAsync(qcTransportId);
             if (admin is null) return;
 
+            var batch = await _batchRepository.GetByIdAsync(batchId);
+            var workshop = await _workshopRepository.GetByIdAsync(workshopId);
+
             var title = "Yêu cầu chuyển giao công việc cho QC vận chuyển";
-            var message = $"Lead vừa tạo yêu cầu chuyển giao cho lô {batchId} tại xưởng {workshopId} cho QC tên {qc.FullName}. Ghi chú: {note}";
+            var message = $"Lead vừa tạo yêu cầu chuyển giao cho lô {batch.Code} tại xưởng {workshop.Name} cho QC tên {qc.FullName}. Ghi chú: {note}";
             var type = "TaskTransferRequest";
 
             var notification = Notification.Create(admin.Id, title, message, type);
@@ -352,7 +355,7 @@ namespace Infrastructure.Services
             if (qcTransport is null) return;
 
             var title = "Yêu cầu chuyển giao đã được duyệt";
-            var message = $"Yêu cầu chuyển giao #{taskTransferRequestId} của bạn đã được duyệt. Vui lòng kiểm tra để tiến hành vận chuyển.";
+            var message = $"Yêu cầu chuyển giao của Admin đã được duyệt. Vui lòng kiểm tra để tiến hành vận chuyển.";
             var type = "TaskTransferRequest";
 
             var notification = Notification.Create(qcTransport.Id, title, message, type);
@@ -444,7 +447,7 @@ namespace Infrastructure.Services
             var admin = await _userRepository.GetByRoleAsync("Admin");
 
             var title = "QC vận chuyển tiếp nhận";
-            var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn {materialSupplyId} cung cấp NVL.";
+            var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn yêu cầu cung cấp thêm NVL có mã đơn là {materialSupplyId}.";
             var type = "MaterialSupply";
 
             var notificationLead = Notification.Create(lead.Id, title, message, type);
@@ -467,7 +470,7 @@ namespace Infrastructure.Services
             var workshop = await _workshopRepository.GetByIdAsync(assignment.WorkshopId);
 
             var title = "QC vận chuyển tiếp nhận";
-            var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn {assignTransferRequestId} để kiểm tra yêu cầu tại xưởng {workshop.Name}.";
+            var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn chuyển giao để kiểm tra yêu cầu tại xưởng {workshop.Name}.";
             var type = "AssignmentTransferRequest";
 
             var notificationLead = Notification.Create(lead.Id, title, message, type);
@@ -490,7 +493,7 @@ namespace Infrastructure.Services
             var workshop = await _workshopRepository.GetByIdAsync(assignment.WorkshopId);
 
             var title = "QC vận chuyển tiếp nhận";
-            var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn {materialRequestId} để kiểm tra yêu cầu tại xưởng {workshop.Name}.";
+            var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn xuất kho để giao NVL xuống xưởng {workshop.Name}.";
             var type = "AssignmentTransferRequest";
 
             var notificationLead = Notification.Create(lead.Id, title, message, type);
@@ -508,7 +511,7 @@ namespace Infrastructure.Services
             var workshop = await _workshopRepository.GetByIdAsync(qc.WorkshopId);
 
             var title = "Lead chấp nhận cung cấp NVL";
-            var message = $"Lead đã chấp nhận yêu cầu {materialRequestId} cung cấp NVL cho {qc.FullName} tại xưởng {workshop.Name}.";
+            var message = $"Lead đã chấp nhận yêu cầu thêm NVL cho {qc.FullName} tại xưởng {workshop.Name}.";
             var type = "MaterialSupply";
 
             var notification = Notification.Create(qc.Id, title, message, type);
