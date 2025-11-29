@@ -9,6 +9,7 @@ namespace Domain.Entities
         public string Image { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;
         public bool IsDeleted { get; private set; }
+        public DateTime CreatedAt { get; private set; } = DateTime.Now;
 
         public Product(Guid id, string code, string name, string image, string description)
             : base(id)
@@ -17,6 +18,7 @@ namespace Domain.Entities
             Name = name;
             Image = image;
             Description = description;
+            CreatedAt = DateTime.Now;
         }
 
         private Product() : base(Guid.NewGuid()) { }

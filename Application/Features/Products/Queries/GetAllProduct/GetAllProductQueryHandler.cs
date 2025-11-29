@@ -28,6 +28,7 @@ namespace Application.Features.Products.Queries.GetAllProduct
                     Name = p.Name,
                     Image = _fileStorageService.GetFileUrl(p.Image),
                     Description = p.Description,
+                    CreatedAt = p.CreatedAt
                 });
 
             return await query.ToListAsync();
