@@ -66,7 +66,8 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                 WorkshopName = x.w.Name,
                 SupplierId = x.s.SupplierId,
                 SupplierName = x.u.FullName,
-                Quantity = x.s.Quantity,
+                QuantitySend = x.s.QuantitySend,
+                QuantityReceive = x.s.QuantityReceive.Value,
                 Unit = x.s.Unit,
                 DateShip = x.s.DateShip,
                 Status = x.s.Status

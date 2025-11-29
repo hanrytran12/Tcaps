@@ -19,7 +19,7 @@ namespace Application.DTOs.Response
         public Guid? AssignmentTransferId { get; set; }
         public string Status { get; set; }
         public string? Note { get; set; }
-        public DateOnly CreatedAt { get; set; }
-        public DateOnly? ApprovedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? ApprovedAt { get; set; }
     }
 }
