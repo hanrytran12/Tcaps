@@ -50,7 +50,7 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
                 return Result<Guid>.Failure("Bạn không có quyền cập nhật");
             }
 
-            materialSupply.MarkAsCompleted();
+            materialSupply.MarkAsCompleted(request.QuantityReceive);
             _context.MaterialSupplies.Update(materialSupply);
 
             var materialUse = await _context.MaterialUse
@@ -59,7 +59,7 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             if (materialUse == null)
                 return Result<Guid>.Failure("Không tìm thấy bản ghi sử dụng vật liệu cho lô hàng này.");
 
-            materialUse.IncreaseQuantityRequest(materialSupply.Quantity);
+            materialUse.IncreaseQuantityRequest(materialSupply.QuantityReceive.Value);
             _context.MaterialUse.Update(materialUse);
 
             var supplier = await _context.Users.FindAsync(materialSupply.SupplierId);
@@ -77,7 +77,7 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             await _mediator.Publish(new CompletedMaterialSupplyEvent(
                 request.SupplyId,
                 materialSupply.MaterialId,
-                materialSupply.Quantity));
+                materialSupply.QuantityReceive.Value));
             return Result<Guid>.Success(materialSupply.Id);
         }
     }

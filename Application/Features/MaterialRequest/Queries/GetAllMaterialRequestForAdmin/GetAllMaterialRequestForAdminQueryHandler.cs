@@ -34,6 +34,9 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForA
 
             var materialRequestsQuery = from mr in _context.MaterialRequests.AsNoTracking()
 
+                                        join m in _context.Materials.AsNoTracking()
+                                            on mr.MaterialId equals m.Id
+
                                         join u in _context.Users.AsNoTracking()
                                             on mr.UserId equals u.Id
 
@@ -44,6 +47,7 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForA
                                         {
                                             Id = mr.Id,
                                             MaterialId = mr.MaterialId,
+                                            MaterialName = m.Name,
                                             UserId = mr.UserId,
                                             WorkshopId = u.WorkshopId ?? Guid.Empty,
                                             WorkshopName = wItem.Name ?? string.Empty,

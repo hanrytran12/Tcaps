@@ -86,7 +86,7 @@ namespace API.Controllers
 
         [HttpPut("qc/Completed/{supplyId}")]
         [Authorize(Roles = "QC")]
-        public async Task<IActionResult> UpdateCompletedAsync(Guid supplyId)
+        public async Task<IActionResult> UpdateCompletedAsync(Guid supplyId, int quantityReceive)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
@@ -97,7 +97,8 @@ namespace API.Controllers
             var command = new CompletedMaterialSupplyCommand
             {
                 QcId = qcId,
-                SupplyId = supplyId
+                SupplyId = supplyId,
+                QuantityReceive = quantityReceive
             };
             var result = await _mediator.Send(command);
             if (!result.IsSuccess)
