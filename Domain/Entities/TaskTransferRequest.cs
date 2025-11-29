@@ -16,8 +16,8 @@ namespace Domain.Entities
         public Guid? AssignmentTransferId { get; private set; }
         public string Status { get; private set; }
         public string? Note { get; private set; }
-        public DateOnly CreatedAt { get; private set; }
-        public DateOnly? ApprovedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
+        public DateTime? ApprovedAt { get; private set; }
         public TaskTransferRequest(Guid id, Guid batchId, Guid workshopId, Guid qcTransportId, Guid? materialRequestId, Guid? assignmentTransferId, string? note) : base(id)
         {
             BatchId = batchId;
@@ -27,7 +27,7 @@ namespace Domain.Entities
             AssignmentTransferId = assignmentTransferId;
             Status = "Pending";
             Note = note;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
         }
 
         public static TaskTransferRequest Create(Guid batchId, Guid workshopId, Guid qcTransportId, Guid? requestId, Guid? assignmentTransferId, string? note)
@@ -38,7 +38,7 @@ namespace Domain.Entities
         public void UpdateApproveStatus()
         {
             Status = "Approved";
-            ApprovedAt = DateOnly.FromDateTime(DateTime.UtcNow);
+            ApprovedAt = DateTime.UtcNow;
         }
     }
 }
