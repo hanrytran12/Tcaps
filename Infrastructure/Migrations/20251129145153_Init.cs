@@ -296,6 +296,7 @@ namespace Infrastructure.Migrations
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
                     ExpectedDeliveryDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    DateCompleted = table.Column<DateOnly>(type: "date", nullable: true),
                     RequiresMaterialDelivery = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
@@ -398,10 +399,7 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     EvaluateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DefectType = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Serverity = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Solution = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
