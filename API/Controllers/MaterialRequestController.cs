@@ -1,20 +1,20 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
+using Application.Features.MaterialRequest.Commands.ConfirmRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
 using Application.Features.MaterialRequest.Commands.CreateMaterialRequestFromQC;
 using Application.Features.MaterialRequest.Commands.DispatchRequest;
+using Application.Features.MaterialRequest.Commands.QcTransportReceptionMaterialRequest;
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
 using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
-using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
+using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTransport;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTransport;
-using Application.Features.MaterialRequest.Commands.QcTransportReceptionMaterialRequest;
-using Application.Features.MaterialRequest.Commands.ConfirmRequestFromLead;
 
 namespace API.Controllers
 {
@@ -68,6 +68,29 @@ namespace API.Controllers
                 QcId = qcId,
                 Status = status
             };
+            var result = await _mediator.Send(query);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+        }
+
+        [HttpGet("qc-transport")]
+        [Authorize(Roles = "QCTransport")]
+        public async Task<IActionResult> GetRequestsForQcTransport([FromQuery] GetMaterialRequestForQcTransportQuery query)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var isQcTransport = User.FindFirstValue("isQcTransport");
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return Unauthorized();
+            }
+
+            // Chỉ cho phép nếu có claim isQcTransport = true
+            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
+            {
+                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
+            }
+
             var result = await _mediator.Send(query);
             return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }
@@ -145,29 +168,6 @@ namespace API.Controllers
                 return NoContent();
             }
             return BadRequest(result.error);
-        }
-
-        [HttpGet("qc-transport")]
-        [Authorize(Roles = "QCTransport")]
-        public async Task<IActionResult> GetRequestsForQcTransport([FromQuery] GetMaterialRequestForQcTransportQuery query)
-        {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            var isQcTransport = User.FindFirstValue("isQcTransport");
-
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            // Chỉ cho phép nếu có claim isQcTransport = true
-            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
-            {
-                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
-            }
-
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
         }
 
         [HttpPut("qc-transport-reception")]

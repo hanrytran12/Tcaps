@@ -28,6 +28,13 @@ namespace API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("materialRequestId-assignmentTransferId")]
+        public async Task<IActionResult> GetById([FromQuery] GetByMaterialRequestIdOrAssignTransferIdQuery query)
+        {
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
         [HttpGet("for-QcTransport")]
         [Authorize(Roles = "QCTransport")]
         public async Task<IActionResult> GetByQcTransportAsync([FromQuery] string? status)
@@ -57,13 +64,6 @@ namespace API.Controllers
         public async Task<IActionResult> ApproveRequestAsync([FromQuery] UpdateApproveTaskTransferRequestCommand command)
         {
             var result = await _mediator.Send(command);
-            return Ok(result);
-        }
-
-        [HttpGet("materialRequestId-assignmentTransferId")]
-        public async Task<IActionResult> GetById([FromQuery] GetByMaterialRequestIdOrAssignTransferIdQuery query)
-        {
-            var result = await _mediator.Send(query);
             return Ok(result);
         }
     }
