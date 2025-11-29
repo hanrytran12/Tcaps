@@ -67,13 +67,6 @@ namespace API.Controllers
             return Ok(notifications);
         }
 
-        //[HttpGet("{userId:guid}")]
-        //public async Task<IActionResult> GetNotificationByUserId(Guid userId)
-        //{
-        //    var response = await _notificationService.GetNotificationByUserIdAsync(userId);
-        //    return StatusCode(response.StatusCode, response);
-        //}
-
         [HttpPut("mark-as-read/{notificationId}")]
         public async Task<IActionResult> MarkAsRead(Guid notificationId)
         {
@@ -96,12 +89,5 @@ namespace API.Controllers
             }
             return NoContent();
         }
-
-        //[HttpPut("is-read/{notificationId:guid}")]
-        //public async Task<IActionResult> MarkAsRead(Guid notificationId)
-        //{
-        //    var response = await _notificationService.MarkAsReadAsync(notificationId);
-        //    return StatusCode(response.StatusCode, response);
-        //}
     }
 }

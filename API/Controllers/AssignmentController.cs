@@ -47,6 +47,7 @@ namespace API.Controllers
             {
                 StaffId = staffId
             };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }
@@ -64,6 +65,7 @@ namespace API.Controllers
             {
                 QcId = qcId
             };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }
@@ -82,6 +84,7 @@ namespace API.Controllers
                 StaffId = staffId,
                 BatchId = batchId
             };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }
@@ -101,6 +104,7 @@ namespace API.Controllers
                 UserId = userId,
                 BatchId = batchId
             };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }
@@ -112,6 +116,7 @@ namespace API.Controllers
             {
                 BatchId = batchId
             };
+
             var result = await _mediator.Send(query);
             return Ok(result);
         }
@@ -149,6 +154,7 @@ namespace API.Controllers
                 AssignmentId = assignmentId,
                 QcId = qcId
             };
+
             var result = await _mediator.Send(command);
             return result.IsSuccess ? Ok(result) : BadRequest(result);
         }
