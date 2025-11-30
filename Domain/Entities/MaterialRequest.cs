@@ -59,8 +59,8 @@ namespace Domain.Entities
 
         public void MarkAsConfirmedWithDiscrepancy(decimal actualReceivedQuantity, string noteFromQC)
         {
-            if (Status != "Pending")
-                throw new InvalidOperationException("Only pending requests can be confirmed.");
+            if (Status != "Pending" && Status != "QCTransportReception")
+                throw new InvalidOperationException("Only pending or QCTransportReception requests can be confirmed.");
 
             Status = "ConfirmedWithDiscrepancy";
             ActualReceivedQuantity = actualReceivedQuantity;
@@ -70,8 +70,8 @@ namespace Domain.Entities
 
         public void MarkAdRejected(string rejectedReason)
         {
-            if (Status != "Pending")
-                throw new InvalidOperationException("Only pending requests can be rejected.");
+            if (Status != "Pending" && Status != "QCTransportReception")
+                throw new InvalidOperationException("Only pending or QCTransportReception requests can be confirmed.");
 
             Status = "Rejected";
             NoteFromQC = rejectedReason;
