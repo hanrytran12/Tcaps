@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.DTOs;
+﻿using Application.Common;
 using Application.DTOs.Response;
 using Application.Interfaces;
-using Domain.Entities;
-using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -17,10 +9,12 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
     public class GetEvaluatesByStaffIdQueryHandler : IRequestHandler<GetEvaluatesByStaffIdQuery, Result<List<EvaluateDTO>>>
     {
         private readonly IAppDbContext _context;
+        private readonly IFileStorageService _fileStorageService;
 
-        public GetEvaluatesByStaffIdQueryHandler(IAppDbContext context)
+        public GetEvaluatesByStaffIdQueryHandler(IAppDbContext context, IFileStorageService fileStorageService)
         {
             _context = context;
+            _fileStorageService = fileStorageService;
         }
         public async Task<Result<List<EvaluateDTO>>> Handle(GetEvaluatesByStaffIdQuery request, CancellationToken cancellationToken)
         {
@@ -51,7 +45,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
 
                                     join evaluate in _context.Evaluates.AsNoTracking()
                                         on production.Id equals evaluate.ProductionId
-                                    
+
 
                                     select new EvaluateDTO
                                     {
@@ -60,7 +54,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
                                         QuantityError = evaluate.QuantityError,
                                         QuantitySuccess = evaluate.QuantitySuccess,
                                         Note = evaluate.Note,
-                                        Image = evaluate.Image,
+                                        Image = _fileStorageService.GetFileUrl(evaluate.Image),
                                         Status = evaluate.Status,
                                         Created_At = evaluate.CreatedAt,
 
