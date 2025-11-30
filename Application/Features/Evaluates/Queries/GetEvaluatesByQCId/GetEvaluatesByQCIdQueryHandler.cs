@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Application.DTOs.Response;
 using Application.Interfaces;
-using AutoMapper;
-using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
 {
     public class GetEvaluatesByQCIdQueryHandler : IRequestHandler<GetEvaluatesByQCIdQuery, Result<List<EvaluateDTO>>>
     {
         private readonly IAppDbContext _context;
+        private readonly IFileStorageService _fileStorageService;
 
-        public GetEvaluatesByQCIdQueryHandler(IAppDbContext context)
+        public GetEvaluatesByQCIdQueryHandler(IAppDbContext context, IFileStorageService fileStorageService)
         {
             _context = context;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<Result<List<EvaluateDTO>>> Handle(GetEvaluatesByQCIdQuery request, CancellationToken cancellationToken)
@@ -42,7 +36,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
                     QuantityError = e.QuantityError,
                     QuantitySuccess = e.QuantitySuccess,
                     Note = e.Note,
-                    Image = e.Image,
+                    Image = _fileStorageService.GetFileUrl(e.Image),
                     Status = e.Status,
                     Created_At = e.CreatedAt,
 
