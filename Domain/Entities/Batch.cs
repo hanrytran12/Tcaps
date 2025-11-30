@@ -158,7 +158,7 @@ namespace Domain.Entities
             if (assignmentCurrent.Status == "Reworking")
             {
                 var currentMaterialUsage = this.MaterialUses.FirstOrDefault(m => m.AssignId == assignmentId && m.MaterialId == materialId && m.ReworkRequestId != null);
-                if (reconciledQuantity > currentMaterialUsage.QuantityRequest)
+                if (reconciledQuantity > currentMaterialUsage.QuantityDivide)
                 {
                     throw new InvalidOperationException("Số lượng ghi nhận không được lớn hơn số lượng yêu cầu.");
                 }
@@ -169,7 +169,7 @@ namespace Domain.Entities
             else
             {
                 var currentMaterialUsage = this.MaterialUses.FirstOrDefault(m => m.AssignId == assignmentId && m.MaterialId == materialId);
-                if (reconciledQuantity > currentMaterialUsage.QuantityRequest)
+                if (reconciledQuantity > currentMaterialUsage.QuantityDivide)
                 {
                     throw new InvalidOperationException("Số lượng ghi nhận không được lớn hơn số lượng yêu cầu.");
                 }
