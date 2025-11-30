@@ -126,9 +126,9 @@ namespace API.Controllers
             var result = await _mediator.Send(command);
 
             if (result.IsFailure)
-                return BadRequest(result);
+                return BadRequest(result.error);
 
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+            return result.IsSuccess ? Ok(result) : BadRequest(result.error);
         }
 
         [HttpPut("approve/{id:guid}")]
