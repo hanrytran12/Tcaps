@@ -70,7 +70,10 @@ namespace Domain.Entities
         public void CompleteBatch(decimal completedQuantity)
         {
             this.ActualQuantity = completedQuantity;
-            this.LostQuantity = Quantity - completedQuantity;
+            if (completedQuantity <= Quantity)
+            {
+                this.LostQuantity = Quantity - completedQuantity;
+            }
             UpdateStatus("Completed");
 
             AddDomainEvent(new BatchCompletedEvent(Id, Code));
