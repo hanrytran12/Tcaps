@@ -47,7 +47,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     return Result.Failure("Không tìm thấy công đoạn");
                 }
 
-                if (assigment.Quantity == transferRequest.CompletedQuantity)
+                if (assigment.Quantity <= transferRequest.CompletedQuantity)
                 {
                     assigment.UpdateStatus("Completed");
                     assigment.UpdateDateComplete();
