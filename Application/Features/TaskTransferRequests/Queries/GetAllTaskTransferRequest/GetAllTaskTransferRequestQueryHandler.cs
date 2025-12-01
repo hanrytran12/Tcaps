@@ -42,6 +42,18 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             on ttr.QcTransportId equals user.Id into userGroup
                         from qcTransportUser in userGroup.DefaultIfEmpty()
 
+                        join mr in _context.MaterialRequests.AsNoTracking()
+                            on ttr.MaterialRequestId equals mr.Id into mrGroup
+                        from mrItem in mrGroup.DefaultIfEmpty()
+
+                        join m in _context.Materials.AsNoTracking()
+                            on mrItem.MaterialId equals m.Id into materialGroup
+                        from m in materialGroup.DefaultIfEmpty()
+
+                        join assignTransfer in _context.AssignmentTransferRequests.AsNoTracking()
+                            on ttr.AssignmentTransferId equals assignTransfer.Id into assignTransferGroup
+                        from assignTransferItem in assignTransferGroup.DefaultIfEmpty()
+
                             // Ánh xạ trực tiếp sang DTO (Projection)
                         select new TaskTransferRequestDTO
                         {
@@ -54,6 +66,9 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             QcTransportName = qcTransportUser.FullName,
                             MaterialRequestId = ttr.MaterialRequestId,
                             AssignmentTransferId = ttr.AssignmentTransferId,
+                            MaterialName = m.Name, 
+                            QuantityRequest = mrItem == null ? 0 : (int)mrItem.QuantityRequest,
+                            CompleteQuantity = assignTransferItem == null ? 0 : (int)assignTransferItem.CompletedQuantity,
                             Status = ttr.Status,
                             Note = ttr.Note,
                             CreatedAt = ttr.CreatedAt,

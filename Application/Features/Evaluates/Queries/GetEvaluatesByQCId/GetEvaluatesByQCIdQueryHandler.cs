@@ -1,26 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Application.DTOs.Response;
 using Application.Interfaces;
-using AutoMapper;
-using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
 {
     public class GetEvaluatesByQCIdQueryHandler : IRequestHandler<GetEvaluatesByQCIdQuery, Result<List<EvaluateDTO>>>
     {
         private readonly IAppDbContext _context;
+        private readonly IFileStorageService _fileStorageService;
 
-        public GetEvaluatesByQCIdQueryHandler(IAppDbContext context)
+        public GetEvaluatesByQCIdQueryHandler(IAppDbContext context, IFileStorageService fileStorageService)
         {
             _context = context;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<Result<List<EvaluateDTO>>> Handle(GetEvaluatesByQCIdQuery request, CancellationToken cancellationToken)
@@ -31,31 +25,49 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
 
             if (!string.IsNullOrWhiteSpace(request.Status))
             {
-                query = query.Where(e => e.Status.ToLower() == request.Status.ToLower());
+                query = query.Where(e => e.Status == request.Status);
             }
 
-            var resultDtos = await query
-                .Select(e => new EvaluateDTO
+            var rawData = await query
+                .Select(e => new
                 {
-                    Id = e.Id,
-                    ProductionId = e.ProductionId,
-                    QuantityError = e.QuantityError,
-                    QuantitySuccess = e.QuantitySuccess,
-                    Note = e.Note,
-                    Image = e.Image,
-                    Status = e.Status,
-                    Created_At = e.CreatedAt,
+                    e.Id,
+                    e.ProductionId,
+                    e.QuantityError,
+                    e.QuantitySuccess,
+                    e.Note,
+                    e.Status,
+                    e.CreatedAt,
+                    RawImageString = e.Image,
 
-                    Defects = e.ComponentDefects
-                        .Select(cd => new ComponentDefectsDTO
-                        {
-                            Id = cd.Id,
-                            Description = cd.Description,
-                            Quantity = cd.Quantity,
-                            Status = cd.Status,
-                        }).ToList()
+                    Defects = e.ComponentDefects.Select(cd => new ComponentDefectsDTO
+                    {
+                        Id = cd.Id,
+                        Description = cd.Description,
+                        Quantity = cd.Quantity,
+                        Status = cd.Status,
+                    }).ToList()
                 })
                 .ToListAsync(cancellationToken);
+
+            var resultDtos = rawData.Select(item => new EvaluateDTO
+            {
+                Id = item.Id,
+                ProductionId = item.ProductionId,
+                QuantityError = item.QuantityError,
+                QuantitySuccess = item.QuantitySuccess,
+                Note = item.Note,
+                Status = item.Status,
+                Created_At = item.CreatedAt,
+                Defects = item.Defects,
+
+                Images = string.IsNullOrEmpty(item.RawImageString)
+                    ? new List<string>()
+                    : item.RawImageString
+                          .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                          .Select(path => _fileStorageService.GetFileUrl(path.Trim()))
+                          .ToList()
+            }).ToList();
             return Result<List<EvaluateDTO>>.Success(resultDtos);
         }
     }

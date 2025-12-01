@@ -17,6 +17,7 @@ namespace Application.DTOs.Response
         public string? WorkshopName { get; set; }
         public Guid SupplierId { get; set; }
         public string? SupplierName { get; set; }
+        public string ReceiverName { get; set; }
         public int QuantitySend { get; set; }
         public int QuantityReceive { get; set; }
         public string Unit { get; set; }

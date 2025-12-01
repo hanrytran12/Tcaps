@@ -25,9 +25,19 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                         join m in _context.Materials on s.MaterialId equals m.Id
                         join r in _context.MaterialRequests on s.RequestId equals r.Id
                         join b in _context.Batches on r.BatchId equals b.Id
-                        join u in _context.Users on r.UserId equals u.Id
-                        join w in _context.Workshop on u.WorkshopId equals w.Id
-                        select new { s, m, r, b, u, w };
+
+                        // 💡 JOIN 1: Lấy thông tin Người Cung cấp (Supplier)
+                        join su in _context.Users.AsNoTracking() on s.SupplierId equals su.Id into supplierGroup
+                        from supplierUser in supplierGroup.DefaultIfEmpty()
+
+                            // 💡 JOIN 2: Lấy thông tin Người Yêu cầu/Nhận (Receiver)
+                        join ru in _context.Users.AsNoTracking() on r.UserId equals ru.Id into receiverGroup
+                        from receiverUser in receiverGroup.DefaultIfEmpty()
+
+                            // 💡 JOIN 3: Workshop (dựa trên người yêu cầu, thường là QC Workshop)
+                        join w in _context.Workshop.AsNoTracking() on receiverUser.WorkshopId equals w.Id into workshopGroup
+                        from wItem in workshopGroup.DefaultIfEmpty() // Thêm DefaultIfEmpty()
+                        select new { s, m, r, b, supplierUser, receiverUser, wItem };
 
             // Normalize role
             string role = request.Role?.Trim() ?? "";
@@ -62,12 +72,13 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                 MaterialId = x.s.MaterialId,
                 MaterialName = x.m.Name,
                 BatchCode = x.b.Code,
-                WorkshopId = x.w.Id,
-                WorkshopName = x.w.Name,
+                WorkshopId = x.receiverUser.WorkshopId ?? Guid.Empty,
+                WorkshopName = x.wItem.Name,
                 SupplierId = x.s.SupplierId,
-                SupplierName = x.u.FullName,
+                SupplierName = x.supplierUser.FullName ?? string.Empty,
+                ReceiverName = x.receiverUser.FullName,
                 QuantitySend = x.s.QuantitySend,
-                QuantityReceive = x.s.QuantityReceive.Value,
+                QuantityReceive = x.s.QuantityReceive ?? 0,
                 Unit = x.s.Unit,
                 DateShip = x.s.DateShip,
                 Status = x.s.Status

@@ -17,6 +17,9 @@ namespace Application.DTOs.Response
         public string QcTransportName { get; set; }
         public Guid? MaterialRequestId { get; set; }
         public Guid? AssignmentTransferId { get; set; }
+        public string MaterialName { get; set; }
+        public int QuantityRequest { get; set; }
+        public int CompleteQuantity { get; set; }
         public string Status { get; set; }
         public string? Note { get; set; }
         public DateTime CreatedAt { get; set; }
