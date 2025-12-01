@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Application.DTOs.Response;
 using Application.Interfaces;
-using Domain.Entities;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,7 +32,8 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
                                      Quantity = b.Quantity,
                                      StartDate = b.StartDate,
                                      EndDate = b.EndDate,
-                                     Status = b.Status
+                                     Status = b.Status,
+                                     CreatedAt = b.CreatedAt
                                  })
                                  // Dùng Distinct() để loại bỏ các Batch trùng lặp (vì 1 Batch có thể có nhiều Assignment)
                                  .Distinct()
