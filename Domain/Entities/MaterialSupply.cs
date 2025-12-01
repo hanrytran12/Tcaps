@@ -32,7 +32,7 @@ namespace Domain.Entities
         public static MaterialSupply Create(Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantity, string unit, DateOnly dateShip, Guid leadId)
         {
             var status = supplierId == leadId ? "InProgress" : "Pending";
-            return new MaterialSupply(Guid.NewGuid(), requestId, materialId, supplierId, workshopId, quantitySend, unit, dateShip, status);
+            return new MaterialSupply(Guid.NewGuid(), requestId, materialId, supplierId, workshopId, quantity, unit, dateShip, status);
         }
 
         public void MarkAsInProgress() => Status = "InProgress";
