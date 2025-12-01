@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.Response
+﻿namespace Application.DTOs.Response
 {
     public class EvaluateDTO
     {
@@ -13,10 +7,10 @@ namespace Application.DTOs.Response
         public int QuantityError { get; set; }
         public int QuantitySuccess { get; set; }
         public string Note { get; set; } = string.Empty;
-        public string? Image { get; set; }
         public string Status { get; set; }
         public DateOnly Created_At { get; set; }
 
+        public List<string> Images { get; set; } = new();
         public List<ComponentDefectsDTO> Defects { get; set; } = new();
     }
 }

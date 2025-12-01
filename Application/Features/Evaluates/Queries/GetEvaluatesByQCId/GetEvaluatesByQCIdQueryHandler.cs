@@ -25,31 +25,49 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
 
             if (!string.IsNullOrWhiteSpace(request.Status))
             {
-                query = query.Where(e => e.Status.ToLower() == request.Status.ToLower());
+                query = query.Where(e => e.Status == request.Status);
             }
 
-            var resultDtos = await query
-                .Select(e => new EvaluateDTO
+            var rawData = await query
+                .Select(e => new
                 {
-                    Id = e.Id,
-                    ProductionId = e.ProductionId,
-                    QuantityError = e.QuantityError,
-                    QuantitySuccess = e.QuantitySuccess,
-                    Note = e.Note,
-                    Image = _fileStorageService.GetFileUrl(e.Image),
-                    Status = e.Status,
-                    Created_At = e.CreatedAt,
+                    e.Id,
+                    e.ProductionId,
+                    e.QuantityError,
+                    e.QuantitySuccess,
+                    e.Note,
+                    e.Status,
+                    e.CreatedAt,
+                    RawImageString = e.Image,
 
-                    Defects = e.ComponentDefects
-                        .Select(cd => new ComponentDefectsDTO
-                        {
-                            Id = cd.Id,
-                            Description = cd.Description,
-                            Quantity = cd.Quantity,
-                            Status = cd.Status,
-                        }).ToList()
+                    Defects = e.ComponentDefects.Select(cd => new ComponentDefectsDTO
+                    {
+                        Id = cd.Id,
+                        Description = cd.Description,
+                        Quantity = cd.Quantity,
+                        Status = cd.Status,
+                    }).ToList()
                 })
                 .ToListAsync(cancellationToken);
+
+            var resultDtos = rawData.Select(item => new EvaluateDTO
+            {
+                Id = item.Id,
+                ProductionId = item.ProductionId,
+                QuantityError = item.QuantityError,
+                QuantitySuccess = item.QuantitySuccess,
+                Note = item.Note,
+                Status = item.Status,
+                Created_At = item.CreatedAt,
+                Defects = item.Defects,
+
+                Images = string.IsNullOrEmpty(item.RawImageString)
+                    ? new List<string>()
+                    : item.RawImageString
+                          .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                          .Select(path => _fileStorageService.GetFileUrl(path.Trim()))
+                          .ToList()
+            }).ToList();
             return Result<List<EvaluateDTO>>.Success(resultDtos);
         }
     }
