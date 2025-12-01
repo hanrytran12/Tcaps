@@ -23,7 +23,7 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
             var today = DateOnly.FromDateTime(DateTime.Now);
 
-            if (today < assignment.StartDate || today > assignment.EndDate)
+            if ((today < assignment.StartDate || today > assignment.EndDate) && assignment.Status != "Reworking")
             {
                 return Result.Failure("Ngày nộp sản phẩm không nằm trong khoảng thời gian của Assignment.");
             }
