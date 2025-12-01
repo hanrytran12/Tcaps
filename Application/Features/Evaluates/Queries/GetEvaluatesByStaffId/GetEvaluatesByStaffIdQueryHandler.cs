@@ -18,65 +18,63 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
         }
         public async Task<Result<List<EvaluateDTO>>> Handle(GetEvaluatesByStaffIdQuery request, CancellationToken cancellationToken)
         {
-            //var user = await _userRepository.GetByIdAsync(request.StaffId);
-            //if (user == null)
-            //{
-            //    throw new Exception($"Không tìm thấy user với ID = {request.StaffId}");
-            //}
+            var query = from e in _context.Evaluates.AsNoTracking()
+                        join p in _context.Productions.AsNoTracking() on e.ProductionId equals p.Id
+                        where p.UserId == request.StaffId && p.AssignId == request.AssignId
+                        select new
+                        {
+                            e.Id,
+                            e.ProductionId,
+                            e.QuantityError,
+                            e.QuantitySuccess,
+                            e.Note,
+                            e.Status,
+                            e.CreatedAt,
+                            RawImageString = e.Image,
 
-            ////lấy ds productions
-            //var productions = await _productionRepository.GetByUserAsync(user.Id);
-            //if (!productions.Any())
-            //    throw new Exception("Nhân viên chưa có sản xuất nào cho AssignId này.");
+                            Defects = e.ComponentDefects.Select(cd => new ComponentDefectsDTO
+                            {
+                                Id = cd.Id,
+                                Description = cd.Description,
+                                Quantity = cd.Quantity,
+                                Status = cd.Status,
+                            }).ToList()
+                        };
 
-            //productions = productions.Where(p => p.AssignId == request.AssignId).ToList();
-            ////lấy ds productionId
-            //var productionIds = productions.Select(x => x.Id).ToList();
+            var rawData = await query.ToListAsync(cancellationToken);
 
-            ////lấy ds evaluate
-            //var evaluates = await _evaluateRepository.GetByProductionIdsAsync(productionIds);
-
-            var resultDtos = await (from user in _context.Users.AsNoTracking()
-                                    where user.Id == request.StaffId
-
-                                    join production in _context.Productions.AsNoTracking()
-                                        on user.Id equals production.UserId
-                                    where production.AssignId == request.AssignId
-
-                                    join evaluate in _context.Evaluates.AsNoTracking()
-                                        on production.Id equals evaluate.ProductionId
-
-
-                                    select new EvaluateDTO
-                                    {
-                                        Id = evaluate.Id,
-                                        ProductionId = evaluate.ProductionId,
-                                        QuantityError = evaluate.QuantityError,
-                                        QuantitySuccess = evaluate.QuantitySuccess,
-                                        Note = evaluate.Note,
-                                        Image = _fileStorageService.GetFileUrl(evaluate.Image),
-                                        Status = evaluate.Status,
-                                        Created_At = evaluate.CreatedAt,
-
-                                        Defects = evaluate.ComponentDefects
-                                            .Select(cd => new ComponentDefectsDTO
-                                            {
-                                                Id = cd.Id,
-                                                Description = cd.Description,
-                                                Quantity = cd.Quantity,
-                                                Status = cd.Status,
-                                            }).ToList()
-                                    }).ToListAsync(cancellationToken);
-
-            if (!resultDtos.Any())
+            if (!rawData.Any())
             {
-                var staffExists = await _context.Users.AnyAsync(u => u.Id == request.StaffId);
+                var staffExists = await _context.Users.AsNoTracking()
+                    .AnyAsync(u => u.Id == request.StaffId, cancellationToken);
 
                 if (!staffExists)
                 {
                     return Result<List<EvaluateDTO>>.Failure($"Không tìm thấy User với ID = {request.StaffId}.");
                 }
+
+                return Result<List<EvaluateDTO>>.Success(new List<EvaluateDTO>());
             }
+
+            var resultDtos = rawData.Select(item => new EvaluateDTO
+            {
+                Id = item.Id,
+                ProductionId = item.ProductionId,
+                QuantityError = item.QuantityError,
+                QuantitySuccess = item.QuantitySuccess,
+                Note = item.Note,
+                Status = item.Status,
+                Created_At = item.CreatedAt,
+                Defects = item.Defects,
+
+                Images = string.IsNullOrEmpty(item.RawImageString)
+                    ? new List<string>()
+                    : item.RawImageString
+                          .Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
+                          .Select(path => _fileStorageService.GetFileUrl(path.Trim()))
+                          .ToList()
+            }).ToList();
+
             return Result<List<EvaluateDTO>>.Success(resultDtos);
         }
     }
