@@ -1,7 +1,9 @@
-﻿namespace Application.Interfaces
+﻿using Application.DTOs.Response;
+
+namespace Application.Interfaces
 {
     public interface IAssignmentCompletionService
     {
-        Task<decimal> CalculateCompetedQuantityAsync(Guid assignmentId, Guid? reworkRequestId);
+        Task<SummaryCalculateCompletedDTO> CalculateCompetedQuantityAsync(Guid assignmentId, Guid? reworkRequestId);
     }
 }

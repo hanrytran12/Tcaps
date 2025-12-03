@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.DTOs.Response;
+using Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services
@@ -11,7 +12,7 @@ namespace Application.Services
             _context = appDbContext;
         }
 
-        public async Task<decimal> CalculateCompetedQuantityAsync(Guid assignmentId, Guid? reworkRequestId)
+        public async Task<SummaryCalculateCompletedDTO> CalculateCompetedQuantityAsync(Guid assignmentId, Guid? reworkRequestId)
         {
             if (reworkRequestId == null)
             {
@@ -46,7 +47,12 @@ namespace Application.Services
                 }
 
                 var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;
-                return summaryData.TotalSubmitted - totalLoss;
+                return new SummaryCalculateCompletedDTO
+                {
+                    TotalSubmitted = summaryData.TotalSubmitted,
+                    TotalCompleted = summaryData.TotalSubmitted - totalLoss,
+                    TotalRejected = totalLoss,
+                };
             }
             else
             {
@@ -81,7 +87,12 @@ namespace Application.Services
                 }
 
                 var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;
-                return summaryData.TotalSubmitted - totalLoss;
+                return new SummaryCalculateCompletedDTO
+                {
+                    TotalSubmitted = summaryData.TotalSubmitted,
+                    TotalCompleted = summaryData.TotalSubmitted - totalLoss,
+                    TotalRejected = totalLoss,
+                };
             }
         }
     }
