@@ -67,12 +67,22 @@ namespace Domain.Entities
             Status = status;
         }
 
-        public void CompleteBatch(decimal completedQuantity)
+        public void CompleteBatch(decimal completedQuantity, decimal rejectedQuantity)
         {
             this.ActualQuantity = completedQuantity;
             if (completedQuantity <= Quantity)
             {
                 this.LostQuantity = Quantity - completedQuantity;
+            }
+            else
+            {
+                var extraQuantity = completedQuantity - Quantity;
+                var quantityConflict = extraQuantity - rejectedQuantity;
+                this.ActualQuantity = Quantity + quantityConflict;
+                if (quantityConflict < 0)
+                {
+                    this.LostQuantity = Math.Abs(quantityConflict);
+                }
             }
             UpdateStatus("Completed");
 
@@ -131,7 +141,7 @@ namespace Domain.Entities
             assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
         }
 
-        public void ActiveNextAssignment(Guid completedAssignmentId, decimal quantityCompleted)
+        public void ActiveNextAssignment(Guid completedAssignmentId, decimal quantityCompleted, decimal rejectedQuantity)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
@@ -148,7 +158,7 @@ namespace Domain.Entities
 
             else
             {
-                this.CompleteBatch(quantityCompleted);
+                this.CompleteBatch(quantityCompleted, rejectedQuantity);
                 currentAssignment.UpdateStatus("Completed");
                 currentAssignment.UpdateDateComplete();
             }
