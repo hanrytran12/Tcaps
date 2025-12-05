@@ -19,14 +19,27 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
         public async Task<Result> Handle(AddProductionReportCommand request, CancellationToken cancellationToken)
         {
+            var workshopId = await _appDbContext.Users
+                .Where(u => u.Id == request.StaffId)
+                .Select(u => u.WorkshopId)
+                .FirstOrDefaultAsync(cancellationToken);
+
             var assignment = await _appDbContext.Assignments.Where(a => a.Id == request.AssignId).FirstOrDefaultAsync(cancellationToken);
 
-            var today = DateOnly.FromDateTime(DateTime.Now);
+            var materialWorkshopStatus = await _appDbContext.MaterialWorkshops
+                .Where(mw => mw.WorkshopId == workshopId && mw.AssignId == assignment.Id)
+                .Select(mw => mw.Status)
+                .FirstOrDefaultAsync();
 
-            if ((today < assignment.StartDate || today > assignment.EndDate) && assignment.Status != "Reworking")
+            if (materialWorkshopStatus != null)
             {
-                return Result.Failure("Ngày nộp sản phẩm không nằm trong khoảng thời gian của Assignment.");
+                if (materialWorkshopStatus != "Approved")
+                {
+                    return Result.Failure("Xưởng trước cung cấp lô hàng chưa được phê duyệt, không thể nộp báo cáo sản xuất.");
+                }
             }
+
+            var today = DateOnly.FromDateTime(DateTime.Now);
 
             if (assignment.Status == "Reworking")
             {
