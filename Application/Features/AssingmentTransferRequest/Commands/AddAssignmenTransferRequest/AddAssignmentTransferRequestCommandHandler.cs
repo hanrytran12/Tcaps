@@ -54,12 +54,14 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
 
             if (assignment.Status == "Reworking")
             {
-                completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, request.ReworkRequestId);
+                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, request.ReworkRequestId);
+                completedQuantity = summary.TotalCompleted;
             }
 
             else
             {
-                completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, null);
+                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, null);
+                completedQuantity = summary.TotalCompleted;
             }
             //var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
 

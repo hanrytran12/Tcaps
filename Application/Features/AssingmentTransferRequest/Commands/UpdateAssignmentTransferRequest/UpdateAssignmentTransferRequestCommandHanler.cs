@@ -14,15 +14,17 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
         private readonly IBatchRepository _batchRepository;
         private readonly IAppDbContext _appDbContext;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IAssignmentCompletionService _assignmentCompletionService;
 
         public UpdateAssignmentTransferRequestCommandHanler(IAssignmentRepository assignmentRepository, IAssignmentTransferRequestRepository assignmentTransferRequestRepository, IBatchRepository batchRepository, IAppDbContext appDbContext,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork, IAssignmentCompletionService assignmentCompletionService)
         {
             _assignmentRepository = assignmentRepository;
             _assignmentTransferRequestRepository = assignmentTransferRequestRepository;
             _batchRepository = batchRepository;
             _appDbContext = appDbContext;
             _unitOfWork = unitOfWork;
+            _assignmentCompletionService = assignmentCompletionService;
         }
 
         public async Task<Result> Handle(UpdateAssignmentTransferRequestCommand request, CancellationToken cancellationToken)
@@ -59,7 +61,8 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     return Result.Failure("Không tìm thấy lô hàng");
                 }
 
-                batch.ActiveNextAssignment(assigment.Id, transferRequest.CompletedQuantity);
+                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assigment.Id, null);
+                batch.ActiveNextAssignment(assigment.Id, transferRequest.CompletedQuantity, summary.TotalRejected);
 
                 transferRequest.MarkAsApproved(request.SupplierId);
             }
