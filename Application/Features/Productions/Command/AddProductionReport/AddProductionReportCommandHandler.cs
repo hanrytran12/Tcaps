@@ -33,7 +33,7 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
             if (materialWorkshopStatus != null)
             {
-                if (materialWorkshopStatus != "Approved")
+                if (materialWorkshopStatus != "Confirmed")
                 {
                     return Result.Failure("Xưởng trước cung cấp lô hàng chưa được phê duyệt, không thể nộp báo cáo sản xuất.");
                 }
