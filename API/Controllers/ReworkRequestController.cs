@@ -1,4 +1,5 @@
-﻿using Application.Features.ReworkRequest.Commands.ApproveReworkRequest;
+﻿using Application.DTOs.Response;
+using Application.Features.ReworkRequest.Commands.ApproveReworkRequest;
 using Application.Features.ReworkRequest.Commands.CreateReworkRequest;
 using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
 using Application.Features.ReworkRequest.Queries.GetAllReworkRequest;
@@ -6,85 +7,65 @@ using Application.Features.ReworkRequest.Queries.GetRequestById;
 using Application.Features.ReworkRequest.Queries.GetReworkByAssignId;
 using Application.Features.ReworkRequest.Queries.GetReworkForDashboard;
 using Application.Features.ReworkRequest.Queries.GetReworkReconciliationSummary;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ReworkRequestController : ControllerBase
+    public class ReworkRequestController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public ReworkRequestController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
-        public async Task<IActionResult> GetAllReworkRequest()
+        public async Task<List<ReworkRequestDTO>> GetAllReworkRequest()
         {
-            var query = new GetAllReworkRequestQuery();
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetAllReworkRequestQuery());
         }
 
         [HttpGet("{reworkRequestId:guid}")]
-        public async Task<IActionResult> GetReworkRequestById(Guid reworkRequestId)
+        public async Task<Domain.Entities.ReworkRequest> GetReworkRequestById(Guid reworkRequestId)
         {
-            var query = new GetRequestByIdQuery(reworkRequestId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetRequestByIdQuery(reworkRequestId));
         }
 
         [HttpGet("{assignmentId:guid}/summary")]
-        public async Task<IActionResult> GetReworkReconciliationSummary(Guid assignmentId)
+        public async Task<ReconcilationSummaryDTO> GetReworkReconciliationSummary(Guid assignmentId)
         {
-            var query = new GetReworkReconciliationSummaryQuery(assignmentId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetReworkReconciliationSummaryQuery(assignmentId));
         }
 
         [HttpGet("by-assignId")]
-        public async Task<IActionResult> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
+        public async Task<Domain.Entities.ReworkRequest> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("{assignId:guid}/for-dashboard")]
-        public async Task<IActionResult> GetReworkForDashboard(Guid assignId)
+        public async Task<ReworkRequestDTO> GetReworkForDashboard(Guid assignId)
         {
-            var query = new GetReworkForDashboardQuery(assignId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetReworkForDashboardQuery(assignId));
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateReworkRequest([FromBody] CreateReworkRequestCommand command)
         {
-            var userId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            command.QCId = userId;
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            command.QCId = CurrentUserId;
+            await Mediator.Send(command);
+            return Ok("Create rework request successfully");
         }
 
         [HttpPut("{requestId:guid}/rejected")]
         public async Task<IActionResult> RejectReworkRequest(Guid requestId)
         {
-            var query = new RejectRequestReworkCommand(requestId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            await Mediator.Send(new RejectRequestReworkCommand(requestId));
+            return Ok("Reject rework request successfully");
         }
 
         [HttpPut("{requestId:guid}/approved")]
         public async Task<IActionResult> ApproveReworkRequest(Guid requestId, [FromBody] ApproveReworkRequestCommand command)
         {
             command.RequestId = requestId;
-            var result = await _mediator.Send(command);
-            return Ok(result);
+            await Mediator.Send(command);
+            return Ok("Approve rework request successfully");
         }
     }
 }
