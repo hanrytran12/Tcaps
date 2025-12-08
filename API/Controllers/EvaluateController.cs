@@ -5,7 +5,6 @@ using Application.Features.Evaluates.Queries.GetEvaluatesByStaffId;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -59,7 +58,7 @@ namespace API.Controllers
         {
             command.UserId = CurrentUserId;
             await _mediator.Send(command);
-            return NoContent();
+            return Ok("Evaluate created successfully");
         }
     }
 }

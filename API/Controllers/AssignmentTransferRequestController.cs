@@ -88,7 +88,7 @@ namespace API.Controllers
             };
 
             await Mediator.Send(command);
-            return NoContent();
+            return Ok("Tiếp nhận yêu cầu chuyển giao thành công.");
         }
     }
 }

@@ -17,12 +17,8 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> LoginAsync([FromQuery] LoginQuery query)
         {
-            var result = await _mediator.Send(query);
-            if (result.IsFailure)
-            {
-                return BadRequest(result.Error);
-            }
-            return Ok(result.Value);
+            await _mediator.Send(query);
+            return Ok("Login successful");
         }
     }
 }
