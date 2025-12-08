@@ -65,7 +65,6 @@ namespace API.Controllers
         {
             return await Mediator.Send(new GetDetailAssignmentByBatchIdQuery
             {
-                QcId = CurrentUserId,
                 BatchId = batchId
             });
         }
