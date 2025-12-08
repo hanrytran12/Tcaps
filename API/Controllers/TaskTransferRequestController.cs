@@ -4,10 +4,8 @@ using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransfe
 using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Queries.GetByMaterialRequestIdOrAssignTransferId;
 using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -31,9 +29,7 @@ namespace API.Controllers
         [Authorize(Roles = "QCTransportOnly")]
         public async Task<List<TaskTransferRequestDTO>> GetByQcTransportAsync([FromQuery] string? status)
         {
-            var query = new GetTaskTransferRequestByQCTransportIdQuery(CurrentUserId, status);
-
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetTaskTransferRequestByQCTransportIdQuery(CurrentUserId, status));
         }
 
         [HttpPost("for-lead")]
@@ -41,7 +37,7 @@ namespace API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] CreateTaskTransferRequestCommand command)
         {
             await Mediator.Send(command);
-            return NoContent();
+            return Ok("Tạo yêu cầu chuyển nhiệm vụ thành công");
         }
 
         [HttpPut("approved")]
