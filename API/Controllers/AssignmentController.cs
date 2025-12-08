@@ -1,124 +1,78 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Assignments.Commands.PlanAssignments;
-using Application.Features.Assignments.Commands.UpdateReadyForTransfer;
 using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
 using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
 using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId;
 using Application.Features.Assignments.Queries.NewFolder;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AssignmentController : ControllerBase
+    public class AssignmentController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public AssignmentController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet("{assignmentId:guid}/allocated-materials")]
-        public async Task<ActionResult<List<AllocatedMaterialDto>>> GetAllocatedMaterials(Guid assignmentId)
+        public async Task<List<AllocatedMaterialDto>> GetAllocatedMaterials(Guid assignmentId)
         {
-            var query = new GetAllocatedMaterialsQuery(assignmentId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetAllocatedMaterialsQuery(assignmentId));
         }
 
         [HttpGet("for-staff")]
-        public async Task<IActionResult> GetAssignmentsForStaffById()
+        public async Task<List<AssignForStaffDTO>> GetAssignmentsForStaffById()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
-            {
-                return Unauthorized();
-            }
-
             var query = new GetAssignmentsByStaffIdQuery
             {
-                StaffId = staffId
+                StaffId = CurrentUserId
             };
-
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("qc/assignments")]
-        public async Task<IActionResult> GetAssignmentForQCIdAsync()
+        public async Task<List<AssignForStaffDTO>> GetAssignmentForQCIdAsync()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
-            {
-                return Unauthorized();
-            }
-
             var query = new GetAllAssignmentByQCIdQuery
             {
-                QcId = qcId
+                QcId = CurrentUserId
             };
-
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("staff/{batchId}")]
-        public async Task<IActionResult> GetAssignmentByBatchIdAsync(Guid batchId)
+        public async Task<AssignForStaffDTO> GetAssignmentByBatchIdAsync(Guid batchId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
-            {
-                return Unauthorized();
-            }
-
             var query = new GetAssignmentByBatchIdQuery
             {
-                StaffId = staffId,
+                StaffId = CurrentUserId,
                 BatchId = batchId
             };
-
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("qc-lead-admin/assign-history/{batchId}")]
         [Authorize(Roles = "QC,Admin,Lead")]
-        public async Task<IActionResult> GetAssignmentHistoryForQCAsync(Guid batchId)
+        public async Task<List<AssignmentHistoryDTO>> GetAssignmentHistoryForQCAsync(Guid batchId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-            {
-                return Unauthorized();
-            }
-
             var query = new GetAssignmentForHistoryByBatchIdQuery
             {
-                UserId = userId,
+                UserId = CurrentUserId,
                 BatchId = batchId
             };
-
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("qc/detail-assignment/{batchId}")]
-        public async Task<IActionResult> GetDetailAssignmentForQCAsync(Guid batchId)
+        public async Task<List<DashboardAssignmentDTO>> GetDetailAssignmentForQCAsync(Guid batchId)
         {
             var query = new GetDetailAssignmentByBatchIdQuery
             {
                 BatchId = batchId
             };
-
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpPost("{batchId:guid}/plan-assignments")]
@@ -130,33 +84,8 @@ namespace API.Controllers
                 BatchId = batchId,
                 PlanItems = planItems
             };
-
-            var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok("Kế hoạch sản xuất đã được tạo thành công.");
-            }
-
-            return BadRequest(result.error);
-        }
-
-        [HttpPut("update-ready-for-transfer")]
-        public async Task<IActionResult> UpdateReadyForTransfer([FromQuery] Guid assignmentId)
-        {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
-            {
-                return Unauthorized();
-            }
-
-            var command = new UpdateReadyForTransferCommand
-            {
-                AssignmentId = assignmentId,
-                QcId = qcId
-            };
-
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result) : BadRequest(result);
+            await Mediator.Send(command);
+            return Ok("Kế hoạch sản xuất đã được tạo thành công.");
         }
     }
 }
