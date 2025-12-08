@@ -1,4 +1,4 @@
-using Application.DTOs.Request;
+﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Users.Commands.AddUser;
 using Application.Features.Users.Commands.DeleteUser;
@@ -38,15 +38,13 @@ namespace API.Controllers
         [HttpGet]
         public async Task<List<UsersDTO>> GetAllUser()
         {
-            var listUser = await _mediator.Send(new GetAllUserQuery());
-            return listUser;
+            return await _mediator.Send(new GetAllUserQuery());
         }
 
         [HttpGet("{workshopId:guid}")]
         public async Task<User> GetUserByWorkshopId(Guid workshopId)
         {
-            var query = new GetUserByWorkshopIdQuery(workshopId);
-            return await _mediator.Send(query);
+            return await _mediator.Send(new GetUserByWorkshopIdQuery(workshopId));
         }
 
         [HttpGet("{workshopId:guid}/users-in-workshop")]
@@ -94,21 +92,15 @@ namespace API.Controllers
 
         [HttpGet("staff-performance")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetStaffPerformance([FromQuery] GetStaffPerformanceQuery query)
+        public async Task<List<StaffPerformanceDTO>> GetStaffPerformance([FromQuery] GetStaffPerformanceQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await _mediator.Send(query);
         }
 
         [HttpGet("staff-dashboard/{assignId}")]
         public async Task<IActionResult> GetStaffDashboard(Guid assignId)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
             var query = new GetStaffDashboardQuery
             {
                 StaffId = Guid.Parse(userIdString),
@@ -166,22 +158,16 @@ namespace API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser(AddUserCommand command)
         {
-            var result = await _mediator.Send(command);
-
-            if (result.IsFailure)
-            {
-                return BadRequest(result.Error);
-            }
-
-            return CreatedAtAction(nameof(GetAllUser), new { id = result.Value }, result.Value);
+            await _mediator.Send(command);
+            return Ok("Tạo User thành công");
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserCommand command)
         {
             command.Id = id;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await _mediator.Send(command);
+            return Ok("Cập nhật User thành công");
         }
 
         [HttpPut("change-password")]
@@ -214,17 +200,15 @@ namespace API.Controllers
         [HttpPut("{userId:guid}/re-active")]
         public async Task<IActionResult> ReactiveUser(Guid userId)
         {
-            var command = new ReactiveUserCommand { UserId = userId };
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await _mediator.Send(new ReactiveUserCommand(userId));
+            return Ok("Kích hoạt lại User thành công");
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            var command = new DeleteUserCommand(id);
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await _mediator.Send(new DeleteUserCommand(id));
+            return Ok("Xóa User thành công");
         }
     }
 }

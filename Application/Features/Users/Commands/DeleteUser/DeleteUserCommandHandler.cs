@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -18,21 +19,18 @@ namespace Application.Features.Users.Commands.DeleteUser
         public async Task<Result> Handle(DeleteUserCommand request, CancellationToken cancellationToken)
         {
             var user = await _repository.GetByIdAsync(request.Id);
-
             if (user is null)
             {
-                return Result.Failure($"Không tìm thấy User với Id: {request.Id}.");
+                throw new NotFoundException($"Không tìm thấy User với Id: {request.Id}.");
             }
 
             var isWorkshopBusy = await _assignmentRepository.HasActiveAssignmentByWorkshopIdAsync(user.WorkshopId);
-
             if (isWorkshopBusy)
             {
-                return Result.Failure("Không thể xóa nhân viên này vì xưởng của họ đang có công đoạn sản xuất.");
+                throw new ConflictException("Không thể xóa nhân viên này vì xưởng của họ đang có công đoạn sản xuất.");
             }
 
             user.MarkAsDeleted();
-
             return Result.Success();
         }
     }
