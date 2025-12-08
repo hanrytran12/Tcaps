@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -23,7 +24,7 @@ namespace Application.Features.Materials.Commands.AddMaterial
             var materialDb = await _appDbContext.Materials.Where(m => m.Name.ToLower() == (request.Name.ToLower())).FirstOrDefaultAsync();
             if (materialDb is not null)
             {
-                return Result<Guid>.Failure("Tên nguyên vật liệu đã có sẵn trong hệ thống");
+                throw new ConflictException("Tên nguyên vật liệu đã có sẵn trong hệ thống");
             }
 
             var material = Material.Create(request.Name, request.Description, request.Unit);

@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -22,17 +23,15 @@ namespace Application.Features.Inventories.Commands.AddInventory
         public async Task<Result<Guid>> Handle(AddInventoryCommand request, CancellationToken cancellationToken)
         {
             string imageUrl = await _fileStorageService.SaveFileAsync(request.ImageURL, "inventories", cancellationToken);
-
             var materials = await _materialRepository.GetByNameAsync(request.MaterialName);
 
             if (materials is null)
             {
-                return Result<Guid>.Failure("Material is not exist");
+                throw new NotFoundException("Material is not exist");
             }
 
             var inventory = Inventory.Create(materials.Id, request.Quantity, imageUrl, request.Price);
             await _inventoryRepository.AddAsync(inventory);
-
             return Result<Guid>.Success(inventory.Id);
         }
     }
