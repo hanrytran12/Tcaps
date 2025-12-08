@@ -30,6 +30,12 @@ namespace API.Middlewares
                 UnauthorizedAccessException =>
                     (StatusCodes.Status401Unauthorized, "Truy cập bị từ chối", exception.Message),
 
+                BadRequestException =>
+                    (StatusCodes.Status400BadRequest, "Yêu cầu không hợp lệ", exception.Message),
+
+                ConflictException =>
+                    (StatusCodes.Status409Conflict, "Xung đột dữ liệu", exception.Message),
+
                 _ => (StatusCodes.Status500InternalServerError, "Lỗi hệ thống", "Đã có lỗi không mong muốn xảy ra.")
             };
 
