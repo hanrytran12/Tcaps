@@ -211,18 +211,18 @@ namespace API.Controllers
             return result.IsSuccess ? NoContent() : BadRequest(result.error);
         }
 
-        [HttpDelete("{id:guid}")]
-        public async Task<IActionResult> DeleteUser(Guid id)
-        {
-            var command = new DeleteUserCommand(id);
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
-        }
-
         [HttpPut("{userId:guid}/re-active")]
         public async Task<IActionResult> ReactiveUser(Guid userId)
         {
             var command = new ReactiveUserCommand { UserId = userId };
+            var result = await _mediator.Send(command);
+            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            var command = new DeleteUserCommand(id);
             var result = await _mediator.Send(command);
             return result.IsSuccess ? NoContent() : BadRequest(result.error);
         }
