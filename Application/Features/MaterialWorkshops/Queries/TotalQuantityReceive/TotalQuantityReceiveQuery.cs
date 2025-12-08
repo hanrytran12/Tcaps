@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive
 {
-    public class TotalQuantityReceiveQuery : IRequest<Result<int>>
+    public class TotalQuantityReceiveQuery : IRequest<int>
     {
         public Guid QcId { get; set; }
         public Guid BatchId { get; set; }
