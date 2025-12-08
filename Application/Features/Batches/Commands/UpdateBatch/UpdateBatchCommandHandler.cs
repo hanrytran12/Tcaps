@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -17,7 +18,7 @@ namespace Application.Features.Batches.Commands.UpdateBatch
             var batch = await _batchRepository.GetByIdAsync(request.Id);
             if (batch is null)
             {
-                return Result.Failure($"Batch with Id: {request.Id} not found.");
+                throw new NotFoundException($"Batch with Id: {request.Id} not found.");
             }
 
             try

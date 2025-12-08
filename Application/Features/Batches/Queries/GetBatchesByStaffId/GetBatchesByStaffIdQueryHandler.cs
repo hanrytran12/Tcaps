@@ -1,4 +1,4 @@
-﻿using Application.Common;
+﻿using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Batches.Queries.GetBatchesByStaffId
 {
-    public class GetBatchesByStaffIdQueryHandler : IRequestHandler<GetBatchesByStaffIdQuery, Result<List<BatchDTO>>>
+    public class GetBatchesByStaffIdQueryHandler : IRequestHandler<GetBatchesByStaffIdQuery, List<BatchDTO>>
     {
         private readonly IAppDbContext _context;
 
@@ -14,7 +14,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
         {
             _context = context;
         }
-        public async Task<Result<List<BatchDTO>>> Handle(GetBatchesByStaffIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<BatchDTO>> Handle(GetBatchesByStaffIdQuery request, CancellationToken cancellationToken)
         {
             var batches = await (from user in _context.Users.AsNoTracking()
                                  where user.Id == request.StaffId
@@ -35,7 +35,6 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
                                      Status = b.Status,
                                      CreatedAt = b.CreatedAt
                                  })
-                                 // Dùng Distinct() để loại bỏ các Batch trùng lặp (vì 1 Batch có thể có nhiều Assignment)
                                  .Distinct()
                                  .ToListAsync(cancellationToken);
 
@@ -44,10 +43,10 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
                 var staffExists = await _context.Users.AnyAsync(u => u.Id == request.StaffId, cancellationToken);
                 if (!staffExists)
                 {
-                    return Result<List<BatchDTO>>.Failure("Staff not found.");
+                    throw new NotFoundException("Staff not found.");
                 }
             }
-            return Result<List<BatchDTO>>.Success(batches);
+            return batches;
         }
     }
 }
