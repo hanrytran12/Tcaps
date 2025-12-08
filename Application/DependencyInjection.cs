@@ -29,7 +29,6 @@ namespace Application
             // Đăng ký các Service
             services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
             services.AddScoped<IStaffService, StaffService>();
-            services.AddScoped<IProductionService, ProductionService>();
 
             return services;
         }
