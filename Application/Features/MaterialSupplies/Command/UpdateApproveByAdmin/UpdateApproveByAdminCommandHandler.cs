@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -29,11 +30,11 @@ namespace Application.Features.MaterialSupplies.Command.UpdateApproveByAdmin
         {
             var materialSupply = await _materialSupplyRepository.GetByIdAsync(request.MaterialSupplyId);
             if (materialSupply == null)
-                return Result<Guid>.Failure("Không tìm thấy Material Supply.");
+                throw new NotFoundException("Không tìm thấy Material Supply.");
 
             var qcTransport = await _userRepository.GetByIdAsync(materialSupply.SupplierId);
             if (qcTransport == null)
-                return Result<Guid>.Failure("Không tìm thấy người phụ trách vận chuyển (QC Transport).");
+                throw new NotFoundException("Không tìm thấy người phụ trách vận chuyển (QC Transport).");
 
             materialSupply.MarkAsApprovedByAdmin();
             qcTransport.MarkAsQcTransport();

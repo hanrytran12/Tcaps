@@ -1,4 +1,6 @@
 ﻿using System.Security.Claims;
+using Application.Common;
+using Application.DTOs.Response;
 using Application.Features.MaterialSupplies.Command.AddMaterialSupply;
 using Application.Features.MaterialSupplies.Command.CompletedMaterialSupply;
 using Application.Features.MaterialSupplies.Command.UpdateApproveByAdmin;
@@ -12,120 +14,67 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MaterialSupplyController : ControllerBase
+    public class MaterialSupplyController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public MaterialSupplyController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet()]
-        public async Task<IActionResult> GetAllAsync([FromQuery] string? status)
+        public async Task<Result<List<MaterialSupplyDTO>>> GetAllAsync([FromQuery] string? status)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
             var query = new GetAllMaterialSuppliesQuery
             {
-                UserId = userId,
-                Role = role,
+                UserId = CurrentUserId,
+                Role = User.FindFirstValue(ClaimTypes.Role),
                 Status = status
             };
 
-            var result = await _mediator.Send(query);
-            if (!result.IsSuccess)
-                return BadRequest(result.Error);
-
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpPost]
         [Authorize(Roles = "Lead")]
         public async Task<IActionResult> CreateAsync([FromBody] AddMaterialSupplyCommand command)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var leadId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-            command.LeadId = leadId;
-            var result = await _mediator.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result.IsFailure);
-
-            return Ok(result);
+            command.LeadId = CurrentUserId;
+            await Mediator.Send(command);
+            return NoContent();
         }
 
         [HttpPut("qcTransport/InProgress/{supplyId}")]
-        [Authorize(Roles = "QCTransport")]
+        [Authorize(Policy = "QCTransportOnly")]
         public async Task<IActionResult> UpdateInProgressAsync(Guid supplyId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcTransportId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
             var command = new UpdateInProgressByQcTransportCommand
             {
-                QcTransportId = qcTransportId,
+                QcTransportId = CurrentUserId,
                 SupplyId = supplyId
             };
-            var result = await _mediator.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result.IsFailure);
-
-            return Ok(result);
+            await Mediator.Send(command);
+            return NoContent();
         }
 
         [HttpPut("qc/Completed/{supplyId}")]
         [Authorize(Roles = "QC")]
         public async Task<IActionResult> UpdateCompletedAsync(Guid supplyId, int quantityReceive)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
             var command = new CompletedMaterialSupplyCommand
             {
-                QcId = qcId,
+                QcId = CurrentUserId,
                 SupplyId = supplyId,
                 QuantityReceive = quantityReceive
             };
-            var result = await _mediator.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result.IsFailure);
-
-            return Ok(result);
+            await Mediator.Send(command);
+            return NoContent();
         }
 
         [HttpPut("admin/Approve/{supplyId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ApproveByAdminAsync(Guid supplyId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
             var command = new UpdateApproveByAdminCommand
             {
                 MaterialSupplyId = supplyId
             };
-            var result = await _mediator.Send(command);
-            if (!result.IsSuccess)
-                return BadRequest(result.Error);
-
-            return Ok(result);
+            await Mediator.Send(command);
+            return NoContent();
         }
     }
 }
