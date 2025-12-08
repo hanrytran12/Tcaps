@@ -1,4 +1,5 @@
-﻿using Application.Features.MaterialUses.Query.GetMaterialUseByAssignId;
+﻿using Application.DTOs.Response;
+using Application.Features.MaterialUses.Query.GetMaterialUseByAssignId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,10 +17,9 @@ namespace API.Controllers
         }
 
         [HttpGet("qc/materials/request")]
-        public async Task<IActionResult> GetByAssignIdAsync([FromQuery] GetMaterialUseByAssignIdQuery query)
+        public async Task<List<MaterialUseDTO>> GetByAssignIdAsync([FromQuery] GetMaterialUseByAssignIdQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await _mediator.Send(query);
         }
     }
 }
