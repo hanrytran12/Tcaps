@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Entities;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest
 {
-    public class GetAllTaskTransferRequestQueryHandler : IRequestHandler<GetAllTaskTransferRequestQuery, Result<List<TaskTransferRequestDTO>>>
+    public class GetAllTaskTransferRequestQueryHandler : IRequestHandler<GetAllTaskTransferRequestQuery, List<TaskTransferRequestDTO>>
     {
         private readonly ITaskTransferRequestRepository _taskTransferRequestRepository;
         private readonly IAppDbContext _context;
@@ -23,7 +24,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
             _taskTransferRequestRepository = taskTransferRequestRepository;
             _context = context;
         }
-        public async Task<Result<List<TaskTransferRequestDTO>>> Handle(GetAllTaskTransferRequestQuery request, CancellationToken cancellationToken)
+        public async Task<List<TaskTransferRequestDTO>> Handle(GetAllTaskTransferRequestQuery request, CancellationToken cancellationToken)
         {
             var query = from ttr in _context.TaskTransferRequests.AsNoTracking()
 
@@ -85,9 +86,9 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
             var dtos = await query.ToListAsync(cancellationToken);
 
             if (!dtos.Any())
-                return Result<List<TaskTransferRequestDTO>>.Failure("Không tìm thấy yêu cầu chuyển giao nào.");
+                throw new NotFoundException("Không tìm thấy yêu cầu chuyển giao nào.");
 
-            return Result<List<TaskTransferRequestDTO>>.Success(dtos);
+            return dtos;
         }
     }
 }

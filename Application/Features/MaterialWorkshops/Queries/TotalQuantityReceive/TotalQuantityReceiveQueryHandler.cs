@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive
 {
-    public class TotalQuantityReceiveQueryHandler : IRequestHandler<TotalQuantityReceiveQuery, Result<int>>
+    public class TotalQuantityReceiveQueryHandler : IRequestHandler<TotalQuantityReceiveQuery, int>
     {
         private readonly IAppDbContext _context;
 
@@ -18,7 +19,7 @@ namespace Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive
         {
             _context = context;
         }
-        public async Task<Result<int>> Handle(TotalQuantityReceiveQuery request, CancellationToken cancellationToken)
+        public async Task<int> Handle(TotalQuantityReceiveQuery request, CancellationToken cancellationToken)
         {
 
             var currentAssign = await _context.Assignments //xưởng tiếp theo
@@ -32,7 +33,7 @@ namespace Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (currentAssign == null)
-                return Result<int>.Failure("Không tìm thấy Assignment hiện tại.");
+                throw new NotFoundException("Không tìm thấy Assignment hiện tại.");
 
             var prevAssign = await _context.Assignments
                 .Where(a => a.BatchId == request.BatchId
@@ -40,7 +41,7 @@ namespace Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive
                 .FirstOrDefaultAsync(cancellationToken);
 
             if (prevAssign == null)
-                return Result<int>.Failure("Không tìm thấy Assignment của xưởng trước.");
+                throw new NotFoundException("Không tìm thấy Assignment của xưởng trước.");
 
             // Lấy tổng QuantityReceive theo AssignId của xưởng tiếp trước
             var totalQuantity = await _context.MaterialWorkshops
@@ -48,7 +49,7 @@ namespace Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive
                 .SumAsync(mw => mw.QuantityReceive, cancellationToken);
 
 
-            return Result<int>.Success(totalQuantity);
+            return totalQuantity;
         }
     }
 }
