@@ -13,7 +13,6 @@ namespace API.Controllers
         [Authorize(Policy = "QC")]
         public async Task<List<ComponentDefectsDTO>> GetAllComponentDefect([FromQuery] string? status)
         {
-            var query = new GetComponentDefectsQuery();
             return await Mediator.Send(new GetComponentDefectsQuery
             {
                 QCId = CurrentUserId,
