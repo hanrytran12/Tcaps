@@ -25,66 +25,60 @@ namespace API.Controllers
         [HttpGet("for-staff")]
         public async Task<List<AssignForStaffDTO>> GetAssignmentsForStaffById()
         {
-            var query = new GetAssignmentsByStaffIdQuery
+            return await Mediator.Send(new GetAssignmentsByStaffIdQuery
             {
                 StaffId = CurrentUserId
-            };
-            return await Mediator.Send(query);
+            });
         }
 
         [HttpGet("qc/assignments")]
         public async Task<List<AssignForStaffDTO>> GetAssignmentForQCIdAsync()
         {
-            var query = new GetAllAssignmentByQCIdQuery
+            return await Mediator.Send(new GetAllAssignmentByQCIdQuery
             {
                 QcId = CurrentUserId
-            };
-            return await Mediator.Send(query);
+            });
         }
 
         [HttpGet("staff/{batchId}")]
         public async Task<AssignForStaffDTO> GetAssignmentByBatchIdAsync(Guid batchId)
         {
-            var query = new GetAssignmentByBatchIdQuery
+            return await Mediator.Send(new GetAssignmentByBatchIdQuery
             {
                 StaffId = CurrentUserId,
                 BatchId = batchId
-            };
-            return await Mediator.Send(query);
+            });
         }
 
         [HttpGet("qc-lead-admin/assign-history/{batchId}")]
         [Authorize(Roles = "QC,Admin,Lead")]
         public async Task<List<AssignmentHistoryDTO>> GetAssignmentHistoryForQCAsync(Guid batchId)
         {
-            var query = new GetAssignmentForHistoryByBatchIdQuery
+            return await Mediator.Send(new GetAssignmentForHistoryByBatchIdQuery
             {
-                UserId = CurrentUserId,
                 BatchId = batchId
-            };
-            return await Mediator.Send(query);
+            });
         }
 
         [HttpGet("qc/detail-assignment/{batchId}")]
         public async Task<List<DashboardAssignmentDTO>> GetDetailAssignmentForQCAsync(Guid batchId)
         {
-            var query = new GetDetailAssignmentByBatchIdQuery
+            return await Mediator.Send(new GetDetailAssignmentByBatchIdQuery
             {
+                QcId = CurrentUserId,
                 BatchId = batchId
-            };
-            return await Mediator.Send(query);
+            });
         }
 
         [HttpPost("{batchId:guid}/plan-assignments")]
         [Authorize(Policy = "Lead")]
         public async Task<IActionResult> PlanAssignments(Guid batchId, [FromBody] List<AssignmentPlanItemDTO> planItems)
         {
-            var command = new PlanAssignmentsCommand
+            await Mediator.Send(new PlanAssignmentsCommand
             {
                 BatchId = batchId,
-                PlanItems = planItems
-            };
-            await Mediator.Send(command);
+                PlanItems = planItems,
+            });
             return Ok("Kế hoạch sản xuất đã được tạo thành công.");
         }
     }
