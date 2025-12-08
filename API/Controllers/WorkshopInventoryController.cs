@@ -26,12 +26,7 @@ namespace API.Controllers
         [HttpGet("for-qc")]
         public async Task<List<WorkshopInventoryForQCDTO>> GetWorkshopInventoryForQC()
         {
-            var query = new GetWorkshopInventoryForQCQuery
-            {
-                UserId = CurrentUserId
-            };
-
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetWorkshopInventoryForQCQuery());
         }
 
         [HttpGet("by-material")]
