@@ -12,7 +12,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EvaluateController : ControllerBase
+    public class EvaluateController : BaseApiController
     {
         private readonly IMediator _mediator;
 
@@ -32,65 +32,35 @@ namespace API.Controllers
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> GetByQCId([FromQuery] string? status)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
             var query = new GetEvaluatesByQCIdQuery
             {
-                QC_Id = qcId,
+                QC_Id = CurrentUserId,
                 Status = status
             };
 
             var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+            return Ok(result);
         }
 
         [HttpGet("for-staff")]
         public async Task<IActionResult> GetByStaffId([FromQuery] Guid assignId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
             var query = new GetEvaluatesByStaffIdQuery
             {
-                StaffId = staffId,
+                StaffId = CurrentUserId,
                 AssignId = assignId
             };
             var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+            return Ok(result);
         }
 
         [HttpPost]
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> CreateEvaluate([FromForm] AddEvaluateCommand command)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-            command.UserId = qcId;
-            var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
-        }
-
-        [HttpPut("{evaluateId:guid}")]
-        [Authorize(Policy = "QC")]
-        public async Task<IActionResult> UpdateEvaluate(Guid evaluateId, [FromBody] UpdateEvaluateCommand command)
-        {
-            command.Id = evaluateId;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(new { success = false, message = result.Error ?? "Update evaluate failed" });
+            command.UserId = CurrentUserId;
+            await _mediator.Send(command);
+            return NoContent();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
@@ -50,7 +51,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
 
                 if (!staffExists)
                 {
-                    return Result<List<EvaluateDTO>>.Failure($"Không tìm thấy User với ID = {request.StaffId}.");
+                    throw new NotFoundException($"Không tìm thấy User với ID = {request.StaffId}.");
                 }
 
                 return Result<List<EvaluateDTO>>.Success(new List<EvaluateDTO>());
