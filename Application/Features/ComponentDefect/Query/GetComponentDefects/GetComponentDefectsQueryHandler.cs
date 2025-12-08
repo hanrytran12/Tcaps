@@ -30,6 +30,7 @@ namespace Application.Features.ComponentDefects.Query.GetComponentDefects
 
             var finalQuery = query.Select(q => new ComponentDefectsDTO
             {
+                Id = q.defect.Id,
                 Description = q.defect.Description,
                 Quantity = q.defect.Quantity,
                 NameStaff = q.staff.FullName,

@@ -1,4 +1,5 @@
-﻿using Application.Features.ComponentDefect.Commands.UpdateComponentDefectConfirm;
+﻿using Application.DTOs.Response;
+using Application.Features.ComponentDefect.Commands.UpdateComponentDefectConfirm;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
 using Application.Features.ComponentDefect.Query.GetComponentByEvaluateId;
 using MediatR;

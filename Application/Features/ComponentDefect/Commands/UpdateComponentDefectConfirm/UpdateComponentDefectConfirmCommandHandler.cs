@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -27,7 +28,7 @@ namespace Application.Features.ComponentDefect.Commands.UpdateComponentDefectCon
         {
             var evaluate = await _evaluateRepository.GetByIdAsync(request.EvaluateId);
             if (evaluate == null)
-                return Result.Failure("Không tìm thấy đánh giá (Evaluate) theo ID cung cấp.");
+                throw new NotFoundException("Không tìm thấy đánh giá (Evaluate) theo ID cung cấp.");
 
             try
             {
