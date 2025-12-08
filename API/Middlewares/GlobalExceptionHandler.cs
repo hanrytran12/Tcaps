@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using Application.Common.Exceptions;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Middlewares
@@ -6,33 +7,46 @@ namespace API.Middlewares
     public class GlobalExceptionHandler : IExceptionHandler
     {
         private readonly ILogger<GlobalExceptionHandler> _logger;
-        private readonly IHostEnvironment _env; // <-- THÊM DÒNG NÀY
+        private readonly IHostEnvironment _env;
 
-        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env) // <-- SỬA CONSTRUCTOR
+        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env)
         {
             _logger = logger;
-            _env = env; // <-- THÊM DÒNG NÀY
+            _env = env;
         }
 
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
             _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
-            // Bắt đầu với một lỗi 500 chung chung
-            var problemDetails = new ProblemDetails
+            (int statusCode, string title, string detail) = exception switch
             {
-                Status = StatusCodes.Status500InternalServerError,
-                Title = "Lỗi hệ thống",
-                Detail = "Đã có một lỗi không mong muốn xảy ra. Vui lòng thử lại sau."
+                NotFoundException =>
+                    (StatusCodes.Status404NotFound, "Không tìm thấy tài nguyên", exception.Message),
+
+                ArgumentException or ArgumentNullException or InvalidOperationException =>
+                    (StatusCodes.Status400BadRequest, "Dữ liệu không hợp lệ", exception.Message),
+
+                UnauthorizedAccessException =>
+                    (StatusCodes.Status401Unauthorized, "Truy cập bị từ chối", exception.Message),
+
+                _ => (StatusCodes.Status500InternalServerError, "Lỗi hệ thống", "Đã có lỗi không mong muốn xảy ra.")
             };
 
-            if (_env.IsDevelopment() && problemDetails.Status == 500)
+            var problemDetails = new ProblemDetails
             {
-                problemDetails.Title = exception.GetType().Name;
+                Status = statusCode,
+                Title = title,
+                Detail = detail,
+                Instance = httpContext.Request.Path
+            };
+
+            if (statusCode == StatusCodes.Status500InternalServerError && _env.IsDevelopment())
+            {
                 problemDetails.Detail = exception.ToString();
             }
 
-            httpContext.Response.StatusCode = problemDetails.Status.Value;
+            httpContext.Response.StatusCode = statusCode;
             await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
 
             return true;
