@@ -13,6 +13,8 @@ namespace API.Controllers
 
         protected Guid CurrentUserId
         {
+            get
+            {
                 var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
                 if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
