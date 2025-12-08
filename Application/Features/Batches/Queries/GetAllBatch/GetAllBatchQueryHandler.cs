@@ -6,12 +6,10 @@ namespace Application.Features.Batches.Queries.GetAllBatch
 {
     public class GetAllBatchQueryHandler : IRequestHandler<GetAllBatchQuery, List<Batch>>
     {
-        private readonly IUnitOfWork _unitOfWork;
         private readonly IBatchRepository _batchRepository;
 
-        public GetAllBatchQueryHandler(IUnitOfWork unitOfWork, IBatchRepository batchRepository)
+        public GetAllBatchQueryHandler(IBatchRepository batchRepository)
         {
-            _unitOfWork = unitOfWork;
             _batchRepository = batchRepository;
         }
 
