@@ -8,6 +8,7 @@ namespace Application.Features.Workshop.Queries.GetWorkshopTemplate
     public class GetWorkshopTemplateQueryHandler : IRequestHandler<GetWorkshopTemplateQuery, List<WorkshopsDTO>>
     {
         private readonly IAppDbContext _appDbContext;
+
         public GetWorkshopTemplateQueryHandler(IAppDbContext appDbContext)
         {
             _appDbContext = appDbContext;

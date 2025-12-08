@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -24,17 +20,16 @@ namespace Application.Features.Workshop.Command.AddWorkshop
 
             if (isNameExists)
             {
-                return Result<Guid>.Failure($"Workshop with name '{request.Name}' already exists.");
+                throw new ConflictException($"Workshop with name '{request.Name}' already exists.");
             }
 
             if (isStepOrderExists)
             {
-                return Result<Guid>.Failure($"Workshop with step order '{request.StepOrder}' already exists.");
+                throw new ConflictException($"Workshop with step order '{request.StepOrder}' already exists.");
             }
 
             var workshop = Domain.Entities.Workshop.Create(request.Name, request.Description, request.StepOrder);
             await _workshopRepository.AddAsync(workshop);
-
             return Result<Guid>.Success(workshop.Id);
         }
     }
