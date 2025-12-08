@@ -30,24 +30,21 @@ namespace API.Controllers
         [Authorize(Policy = "QC")]
         public async Task<List<EvaluateDTO>> GetByQCId([FromQuery] string? status)
         {
-            var query = new GetEvaluatesByQCIdQuery
+            return await _mediator.Send(new GetEvaluatesByQCIdQuery
             {
                 QC_Id = CurrentUserId,
                 Status = status
-            };
-
-            return await _mediator.Send(query);
+            });
         }
 
         [HttpGet("for-staff")]
         public async Task<List<EvaluateDTO>> GetByStaffId([FromQuery] Guid assignId)
         {
-            var query = new GetEvaluatesByStaffIdQuery
+            return await _mediator.Send(new GetEvaluatesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 AssignId = assignId
-            };
-            return await _mediator.Send(query);
+            });
         }
 
         [HttpPost]
