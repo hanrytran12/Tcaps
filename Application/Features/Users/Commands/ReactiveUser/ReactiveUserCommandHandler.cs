@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -18,7 +19,7 @@ namespace Application.Features.Users.Commands.ReactiveUser
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user is null)
             {
-                return Result.Failure("User not found.");
+                throw new NotFoundException("User not found.");
             }
 
             user.Reactive();

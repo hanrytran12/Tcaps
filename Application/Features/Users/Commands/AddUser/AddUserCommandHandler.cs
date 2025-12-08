@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
@@ -23,17 +24,17 @@ namespace Application.Features.Users.Commands.AddUser
         {
             if (await _repository.DoesEmailExistAsync(request.Email))
             {
-                return Result<Guid>.Failure("Email này đã được sử dụng.");
+                throw new ConflictException("Email này đã được sử dụng.");
             }
 
             if (await _repository.DoesPhoneExistAsync(request.Phone))
             {
-                return Result<Guid>.Failure("Số điện thoại này đã được sử dụng.");
+                throw new ConflictException("Số điện thoại này đã được sử dụng.");
             }
 
             if (request.WorkshopId.HasValue && !await _workshopRepository.ExistsAsync(request.WorkshopId))
             {
-                return Result<Guid>.Failure("Xưởng không tồn tại");
+                throw new BadRequestException("Xưởng không tồn tại");
             }
 
             var passwordHash = _passwordHasher.Hash(request.Password);
