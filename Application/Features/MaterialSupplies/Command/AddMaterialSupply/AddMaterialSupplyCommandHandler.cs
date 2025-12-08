@@ -5,6 +5,7 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Events;
@@ -29,17 +30,17 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
         {
             var lead = await _context.Users.FindAsync(request.LeadId);
             if (lead == null)
-                return Result.Failure("Lead không tồn tại.");
+                throw new NotFoundException("Lead không tồn tại.");
 
             var materialRequest = await _context.MaterialRequests.FindAsync(request.RequestId);
             if (materialRequest == null)
-                return Result.Failure("MaterialRequest không tồn tại.");
+                throw new NotFoundException("MaterialRequest không tồn tại.");
 
             var supplierId = request.SupplierId == Guid.Empty ? request.LeadId : request.SupplierId;
 
             var qcTransport = await _context.Users.FindAsync(supplierId);
             if (qcTransport == null)
-                return Result.Failure("Không tìm thấy người phụ trách vận chuyển (QC Transport).");
+                throw new NotFoundException("Không tìm thấy người phụ trách vận chuyển (QC Transport).");
 
             var supply = MaterialSupply.Create(
                 request.RequestId,

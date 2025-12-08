@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Events;
 using Domain.Interfaces;
@@ -28,26 +29,26 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
         {
             var qc = await _context.Users.FindAsync(request.QcId);
             if (qc == null)
-                return Result<Guid>.Failure("Người dùng không tồn tại");
+                throw new NotFoundException("Người dùng không tồn tại");
 
             var today = DateOnly.FromDateTime(DateTime.Now);
 
             var materialSupply = await _context.MaterialSupplies.FindAsync(request.SupplyId);
             if (materialSupply == null)
-                return Result<Guid>.Failure("Không tìm thấy phiếu cung cấp vật liệu.");
+                throw new NotFoundException("Không tìm thấy phiếu cung cấp vật liệu.");
 
             if (today < materialSupply.DateShip)
             {
-                return Result<Guid>.Failure("Chưa tới ngày nhận vì chưa đến thời gian giao NVL.");
+                throw new BadRequestException("Chưa tới ngày nhận vì chưa đến thời gian giao NVL.");
             }
 
             var materialRequest = await _context.MaterialRequests.FindAsync(materialSupply.RequestId);
             if (materialRequest == null)
-                return Result<Guid>.Failure("Không tìm thấy yêu cầu vật liệu tương ứng.");
+                throw new NotFoundException("Không tìm thấy yêu cầu vật liệu tương ứng.");
 
             if (qc.Id != materialRequest.UserId)
             {
-                return Result<Guid>.Failure("Bạn không có quyền cập nhật");
+                throw new ForbiddenException("Bạn không có quyền cập nhật");
             }
 
             materialSupply.MarkAsCompleted(request.QuantityReceive);
@@ -57,14 +58,14 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
                 .FirstOrDefaultAsync(m => m.BatchId == materialRequest.BatchId
                                        && m.MaterialId == materialSupply.MaterialId);
             if (materialUse == null)
-                return Result<Guid>.Failure("Không tìm thấy bản ghi sử dụng vật liệu cho lô hàng này.");
+                throw new NotFoundException("Không tìm thấy bản ghi sử dụng vật liệu cho lô hàng này.");
 
             materialUse.IncreaseQuantityRequest(materialSupply.QuantityReceive.Value);
             _context.MaterialUse.Update(materialUse);
 
             var supplier = await _context.Users.FindAsync(materialSupply.SupplierId);
             if (supplier == null)
-                return Result<Guid>.Failure("Không tìm thấy người vận chuyển (QC Transport).");
+                throw new NotFoundException("Không tìm thấy người vận chuyển (QC Transport).");
 
             if (supplier.Role == "QCTransport")
             {

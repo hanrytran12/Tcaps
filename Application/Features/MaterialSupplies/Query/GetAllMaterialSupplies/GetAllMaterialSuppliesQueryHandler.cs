@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
@@ -58,7 +59,7 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
             }
             else
             {
-                return Result<List<MaterialSupplyDTO>>.Failure("Vai trò người dùng không hợp lệ.");
+                throw new BadRequestException("Vai trò người dùng không hợp lệ.");
             }
 
             if (request.Status != null)

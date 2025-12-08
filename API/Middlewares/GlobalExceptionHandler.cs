@@ -36,6 +36,9 @@ namespace API.Middlewares
                 ConflictException =>
                     (StatusCodes.Status409Conflict, "Xung đột dữ liệu", exception.Message),
 
+                ForbiddenException =>
+                    (StatusCodes.Status403Forbidden, "Không có quyền truy cập", exception.Message),
+
                 _ => (StatusCodes.Status500InternalServerError, "Lỗi hệ thống", "Đã có lỗi không mong muốn xảy ra.")
             };
 
