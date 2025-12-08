@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -21,7 +22,7 @@ namespace Application.Features.MaterialRequest.Commands.RejectMaterialRequest
 
             if (materialRequest is null)
             {
-                Result.Failure("MaterialRequest is not exist.");
+                throw new NotFoundException("MaterialRequest is not exist.");
             }
 
             materialRequest.MarkAdRejected(request.RejectedReason);

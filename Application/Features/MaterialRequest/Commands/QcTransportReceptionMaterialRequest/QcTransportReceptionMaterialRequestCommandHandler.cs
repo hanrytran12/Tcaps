@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -30,17 +31,17 @@ namespace Application.Features.MaterialRequest.Commands.QcTransportReceptionMate
 
             if (materialRequest == null)
             {
-                return Result<Guid>.Failure("Material request not found.");
+                throw new NotFoundException("Material request not found.");
             }
 
             if (materialRequest.Status == "QCTransportReception")
             {
-                return Result<Guid>.Failure("Yêu cầu đã được tiếp nhận");
+                throw new BadRequestException("Yêu cầu đã được tiếp nhận");
             }
 
             var qcTransport = await _userRepository.GetByIdAsync(request.QcTransportId);
             if (qcTransport == null)
-                return Result<Guid>.Failure("Không tìm thấy người vận chuyển (QC Transport).");
+                throw new NotFoundException("Không tìm thấy người vận chuyển (QC Transport).");
 
             materialRequest.MarkAsReception();
             _repository.Update(materialRequest);

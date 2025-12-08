@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
@@ -60,7 +61,7 @@ namespace Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTr
 
             if (result == null)
             {
-                return Result<MaterialRequestDTO>.Failure("Không tìm thấy yêu cầu vật liệu với ID đã cung cấp.");
+                throw new NotFoundException("Không tìm thấy yêu cầu vật liệu với ID đã cung cấp.");
             }
 
             return Result<MaterialRequestDTO>.Success(result);

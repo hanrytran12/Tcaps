@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -20,7 +21,7 @@ namespace Application.Features.MaterialRequest.Commands.ApproveRequestFromLead
             var materialRequest = await _materialRequestRepository.GetByIdAsync(request.Id);
             if (materialRequest is null)
             {
-                return Result.Failure("Material request not found.");
+                throw new NotFoundException("Material request not found.");
             }
 
             try

@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Request;
+﻿using Application.Common;
+using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromLead;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc;
@@ -20,115 +21,71 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class MaterialRequestController : ControllerBase
+    public class MaterialRequestController : BaseApiController
     {
-        private readonly IMediator _mediator;
-        public MaterialRequestController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
         public async Task<IActionResult> GetAllRequest()
         {
             var query = new GetAllMaterialRequestQuery();
-            var result = await _mediator.Send(query);
+            var result = await Mediator.Send(query);
             return Ok(result);
         }
 
         [HttpGet("pending-confirmation")]
         public async Task<ActionResult<List<PendingRequestDTO>>> GetPendingRequests()
         {
-            var qcId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
-            var query = new GetPendingRequestForQcQuery(qcId);
-            var result = await _mediator.Send(query);
+            var query = new GetPendingRequestForQcQuery(CurrentUserId);
+            var result = await Mediator.Send(query);
             return Ok(result);
         }
 
         [HttpGet("lead/admin/all-request")]
         [Authorize(Roles = "Admin,Lead")]
-        public async Task<IActionResult> GetAllAsync([FromQuery] GetAllMaterialRequestForAdminQuery query)
+        public async Task<Result<List<MaterialRequestDTO>>> GetAllAsync([FromQuery] GetAllMaterialRequestForAdminQuery query)
         {
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("qc/request")]
-        public async Task<IActionResult> GetByQCIdAsync([FromQuery] string? status)
+        public async Task<Result<List<MaterialRequestDTO>>> GetByQCIdAsync([FromQuery] string? status)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
             var query = new GetMaterialRequestForQCQuery
             {
-                QcId = qcId,
+                QcId = CurrentUserId,
                 Status = status
             };
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("qc-transport")]
-        [Authorize(Roles = "QCTransport")]
-        public async Task<IActionResult> GetRequestsForQcTransport([FromQuery] GetMaterialRequestForQcTransportQuery query)
+        [Authorize(Policy = "QCTransportOnly")]
+        public async Task<Result<MaterialRequestDTO>> GetRequestsForQcTransport([FromQuery] GetMaterialRequestForQcTransportQuery query)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            var isQcTransport = User.FindFirstValue("isQcTransport");
-
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            // Chỉ cho phép nếu có claim isQcTransport = true
-            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
-            {
-                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
-            }
-
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+            return await Mediator.Send(query);
         }
 
         [HttpPost("{assignmentId:guid}/dispatch-materials")]
         [Authorize(Policy = "Lead")]
         public async Task<IActionResult> DispatchMaterialsToAssignment(Guid assignmentId, [FromBody] List<MaterialRequestItemDTO> items)
         {
-            var leadId = Guid.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-
             var command = new DispatchRequestCommand
             {
                 AssignmentId = assignmentId,
-                UserId = leadId,
+                UserId = CurrentUserId,
                 Items = items
             };
 
-            var result = await _mediator.Send(command);
-
-            return result.IsSuccess ? Ok() : BadRequest(result.error);
+            await Mediator.Send(command);
+            return NoContent();
         }
 
         [HttpPost("qc/material-requests")]
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> CreateMaterailRequestAsync([FromBody] CreateMaterialRequestFromQCCommand command)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-            command.UserId = qcId;
-            var result = await _mediator.Send(command);
-
-            if (result.IsFailure)
-                return BadRequest(result.error);
-
-            return result.IsSuccess ? Ok(result) : BadRequest(result.error);
+            command.UserId = CurrentUserId;
+            var result = await Mediator.Send(command);
+            return NoContent();
         }
 
         [HttpPut("approve/{id:guid}")]
@@ -136,7 +93,7 @@ namespace API.Controllers
         public async Task<IActionResult> ApproveMaterialRequest([FromRoute] Guid id)
         {
             var command = new Application.Features.MaterialRequest.Commands.ApproveRequestFromLead.ApproveRequestFromLeadCommand { Id = id };
-            var result = await _mediator.Send(command);
+            var result = await Mediator.Send(command);
             if (result.IsSuccess)
             {
                 return NoContent();
@@ -149,7 +106,7 @@ namespace API.Controllers
         public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id, [FromBody] ConfirmRequestFromQcCommand command)
         {
             command.Id = id;
-            var result = await _mediator.Send(command);
+            var result = await Mediator.Send(command);
             if (result.IsSuccess)
             {
                 return NoContent();
@@ -162,7 +119,7 @@ namespace API.Controllers
         public async Task<IActionResult> RejectMaterialRequest([FromRoute] Guid id, [FromBody] RejectMaterialRequestCommand command)
         {
             command.Id = id;
-            var result = await _mediator.Send(command);
+            var result = await Mediator.Send(command);
             if (result.IsSuccess)
             {
                 return NoContent();
@@ -171,39 +128,24 @@ namespace API.Controllers
         }
 
         [HttpPut("qc-transport-reception")]
-        [Authorize(Roles = "QCTransport")]
+        [Authorize(Policy = "QCTransportOnly")]
         public async Task<IActionResult> QcTransportReceptionMaterialRequest([FromQuery] Guid materialRequestId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            var isQcTransport = User.FindFirstValue("isQcTransport");
-
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            // Chỉ cho phép nếu có claim isQcTransport = true
-            if (role == "QCTransport" && isQcTransport?.ToLower() != "true")
-            {
-                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
-            }
-
             var command = new QcTransportReceptionMaterialRequestCommand
             {
-                QcTransportId = Guid.Parse(userIdString),
+                QcTransportId = CurrentUserId,
                 MaterialRequestId = materialRequestId
             };
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+            var result = await Mediator.Send(command);
+            return NoContent();
         }
 
         [HttpPut("lead-confirm")]
         [Authorize(Roles = "Lead")]
         public async Task<IActionResult> LeadConfirm([FromQuery] ConfirmRequestFromLeadCommand command)
         {
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+            var result = await Mediator.Send(command);
+            return NoContent();
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Events;
 using Domain.Interfaces;
@@ -33,7 +34,7 @@ namespace Application.Features.MaterialRequest.Commands.DispatchRequest
 
             if (batch is null)
             {
-                return Result.Failure("Không tìm thấy lô hàng");
+                throw new NotFoundException("Không tìm thấy lô hàng");
             }
 
             var assignment = await _assignmentRepository.GetByIdAsync(request.AssignmentId);
