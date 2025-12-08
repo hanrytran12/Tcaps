@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
@@ -37,19 +38,19 @@ namespace Application.Features.Incomes.Command.AddIncome
         {
             var staff = await _userRepository.GetByIdAsync(request.UserId);
             if (staff == null)
-                return Result<Guid>.Failure("Không tìm thấy nhân viên.");
+                throw new NotFoundException("Không tìm thấy nhân viên.");
 
             var production = await _productionRepository.GetByIdAsync(request.ProductionId);
             if (production == null)
-                return Result<Guid>.Failure("Không tìm thấy dữ liệu sản xuất.");
+                throw new NotFoundException("Không tìm thấy dữ liệu sản xuất.");
 
             var assign = await _assignmentRepository.GetByIdAsync(production.AssignId);
             if (assign == null)
-                return Result<Guid>.Failure("Không tìm thấy phân công.");
+                throw new NotFoundException("Không tìm thấy phân công.");
 
             var evaluate = await _evaluateRepository.GetEvaluateByProductionIdAsync(production.Id);
             if (evaluate == null)
-                return Result<Guid>.Failure("Không tìm thấy đánh giá.");
+                throw new NotFoundException("Không tìm thấy đánh giá.");
 
             //lấy ds componentDefect
             var componentDefects = await _componentDefectRepository.GetAllByEvaluateIdAsync(evaluate.Id);
