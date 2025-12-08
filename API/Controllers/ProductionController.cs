@@ -4,11 +4,8 @@ using Application.Features.Productions.Command.UpdateProduction;
 using Application.Features.Productions.Query.GetAllProduction;
 using Application.Features.Productions.Query.GetAllProductionByQCId;
 using Application.Features.Productions.Query.GetAllProductionByStaffId;
-using Application.Interfaces;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -25,23 +22,21 @@ namespace API.Controllers
         [HttpGet("for-staff")]
         public async Task<List<ProductionDTO>> GetByStaffIdAsync([FromQuery] string? status)
         {
-            var query = new GetAllProductionByStaffIdQuery
+            return await Mediator.Send(new GetAllProductionByStaffIdQuery
             {
                 UserId = CurrentUserId,
                 Status = status
-            };
-            return await Mediator.Send(query);
+            });
         }
 
         [HttpGet("for-qc")]
         public async Task<List<ProductionDTO>> GetProductionsWithStatusPendingQC([FromQuery] string? status)
         {
-            var query = new GetAllProductionByQCIdQuery
+            return await Mediator.Send(new GetAllProductionByQCIdQuery
             {
                 QC_Id = CurrentUserId,
                 Status = status
-            };
-            return await Mediator.Send(query);
+            });
         }
 
         [HttpPost("report-work")]
