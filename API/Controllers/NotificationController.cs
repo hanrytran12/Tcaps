@@ -2,7 +2,6 @@
 using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -19,23 +18,6 @@ namespace API.Controllers
         {
             _mediator = mediator;
             _notificationService = notificationService;
-        }
-
-
-        [HttpGet("my-notifications")]
-        [Authorize]
-        public async Task<IActionResult> GetNotificationByUserId([FromQuery] int pageNumber, [FromQuery] int pageSize)
-        {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            var userId = Guid.Parse(userIdString);
-
-            var response = await _notificationService.GetNotificationByUserIdAsync(userId, pageNumber, pageSize);
-            return StatusCode(response.StatusCode, response);
         }
 
         [HttpGet("count")]
