@@ -76,7 +76,7 @@ namespace API.Controllers
             };
 
             await Mediator.Send(command);
-            return NoContent();
+            return Ok("Cung cấp NVL thành công");
         }
 
         [HttpPost("qc/material-requests")]
@@ -85,7 +85,7 @@ namespace API.Controllers
         {
             command.UserId = CurrentUserId;
             var result = await Mediator.Send(command);
-            return NoContent();
+            return Ok("Yêu cầu cung cấp thêm NVL thành công");
         }
 
         [HttpPut("approve/{id:guid}")]
@@ -137,7 +137,7 @@ namespace API.Controllers
                 MaterialRequestId = materialRequestId
             };
             var result = await Mediator.Send(command);
-            return NoContent();
+            return Ok("Tiếp nhận NVL thành công");
         }
 
         [HttpPut("lead-confirm")]
@@ -145,7 +145,7 @@ namespace API.Controllers
         public async Task<IActionResult> LeadConfirm([FromQuery] ConfirmRequestFromLeadCommand command)
         {
             var result = await Mediator.Send(command);
-            return NoContent();
+            return Ok("Duyệt yêu cầu cho QC vận chuyển thành công.");
         }
     }
 }

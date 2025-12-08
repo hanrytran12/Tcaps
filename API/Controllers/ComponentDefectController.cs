@@ -19,33 +19,31 @@ namespace API.Controllers
         }
 
         [HttpGet("for-staff")]
-        public async Task<IActionResult> GetAllByEvaluateIdForStaffAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
+        public async Task<List<ComponentDefectsDTO>> GetAllByEvaluateIdForStaffAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await _mediator.Send(query);
         }
 
         [HttpGet("for-qc")]
-        public async Task<IActionResult> GetAllByEvaluateIdForQCAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
+        public async Task<List<ComponentDefectsDTO>> GetAllByEvaluateIdForQCAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await _mediator.Send(query);
         }
 
         [HttpPut("resolve/{componentId}")]
         public async Task<IActionResult> UpdateResolveAsync(Guid componentId, [FromQuery] UpdateComponentDefectResolvedCommand command)
         {
             command.Id = componentId;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await _mediator.Send(command);
+            return Ok("Sửa chữa thành công.");
         }
 
         [HttpPut("confirm/{componentId}")]
         public async Task<IActionResult> UpdateConfirmAsync(Guid componentId, [FromQuery] UpdateComponentDefectConfirmCommand command)
         {
             command.ComponentId = componentId;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await _mediator.Send(command);
+            return Ok("Chấp nhận đã sửa thành công.");
         }
     }
 }
