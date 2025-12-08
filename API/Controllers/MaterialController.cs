@@ -1,4 +1,5 @@
-﻿using Application.Features.Materials.Commands.AddMaterial;
+﻿using Application.DTOs.Response;
+using Application.Features.Materials.Commands.AddMaterial;
 using Application.Features.Materials.Queries;
 using Application.Features.Materials.Queries.GetAllMaterialToWatch;
 using MediatR;
@@ -18,11 +19,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllMaterialsAsync()
+        public async Task<List<MaterialToWatchDTO>> GetAllMaterialsAsync()
         {
-            var query = new GetAllMaterialToWatchQuery();
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await _mediator.Send(new GetAllMaterialToWatchQuery());
         }
 
 
@@ -36,13 +35,8 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMaterial([FromBody] AddMaterialCommand command)
         {
-            var result = await _mediator.Send(command);
-            if (result.IsFailure)
-            {
-                return BadRequest(result.Error);
-            }
-
-            return Ok(result.Value);
+            await _mediator.Send(command);
+            return Ok("Material created successfully");
         }
     }
 }
