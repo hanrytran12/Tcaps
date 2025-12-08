@@ -1,63 +1,43 @@
-﻿using System.Security.Claims;
+﻿using Application.DTOs.Response;
 using Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByMaterialId;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByWorkshopId;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryForQC;
-using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WorkshopInventoryController : ControllerBase
+    public class WorkshopInventoryController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public WorkshopInventoryController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
-        public async Task<IActionResult> GetAllWorkshopInventory()
+        public async Task<List<Domain.Entities.WorkshopInventory>> GetAllWorkshopInventory()
         {
-            var query = new GetAllWorkshopInventoryQuery();
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetAllWorkshopInventoryQuery());
         }
 
         [HttpGet("{workshopId:guid}")]
-        public async Task<IActionResult> GetWorkshopInvenntoryByWorkshopId(Guid workshopId)
+        public async Task<List<WorkshopInventoryForExportDTO>> GetWorkshopInvenntoryByWorkshopId(Guid workshopId)
         {
-            var query = new GetWorkshopInventoryByWorkshopIdQuery(workshopId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetWorkshopInventoryByWorkshopIdQuery(workshopId));
         }
 
         [HttpGet("for-qc")]
-        public async Task<IActionResult> GetWorkshopInventoryForQC()
+        public async Task<List<WorkshopInventoryForQCDTO>> GetWorkshopInventoryForQC()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
             var query = new GetWorkshopInventoryForQCQuery
             {
-                UserId = Guid.Parse(userIdString),
+                UserId = CurrentUserId
             };
 
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("by-material")]
-        public async Task<IActionResult> GetByMaterialId([FromQuery] GetWorkshopInventoryByMaterialIdQuery query)
+        public async Task<Domain.Entities.WorkshopInventory> GetByMaterialId([FromQuery] GetWorkshopInventoryByMaterialIdQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result.Value);
+            return await Mediator.Send(query);
         }
     }
 }
