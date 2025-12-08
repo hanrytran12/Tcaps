@@ -74,7 +74,7 @@ namespace API.Controllers
         {
             var command = new UpdateAssignmentTransferRequestCommand(transferRequestId, CurrentUserId);
             await Mediator.Send(command);
-            return NoContent();
+            return Ok("Yêu cầu chuyển giao đã được phê duyệt thành công.");
         }
 
         [HttpPut("qc-transport-reception")]
