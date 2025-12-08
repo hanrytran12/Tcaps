@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
@@ -26,7 +27,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTran
 
             if (qc == null)
             {
-                return Result<List<AssignmentTransferRequestDTO>>.Failure("Không tìm thấy QC vận chuyển");
+                throw new NotFoundException("Không tìm thấy QC vận chuyển");
             }
 
             var assignmentTransfer = from assignTransfer in _context.AssignmentTransferRequests
