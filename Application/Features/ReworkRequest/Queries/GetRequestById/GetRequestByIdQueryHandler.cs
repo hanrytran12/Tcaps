@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,13 @@ namespace Application.Features.ReworkRequest.Queries.GetRequestById
 
         public async Task<Domain.Entities.ReworkRequest> Handle(GetRequestByIdQuery request, CancellationToken cancellationToken)
         {
-            return await _appDbContext.ReworkRequests.Where(r => r.Id == request.ReworkRequestId).FirstOrDefaultAsync(cancellationToken);
+            var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.Id == request.ReworkRequestId).FirstOrDefaultAsync(cancellationToken);
+            if (reworkRequest is null)
+            {
+                throw new NotFoundException("ReworkRequest is not found");
+            }
+
+            return reworkRequest;
         }
     }
 }

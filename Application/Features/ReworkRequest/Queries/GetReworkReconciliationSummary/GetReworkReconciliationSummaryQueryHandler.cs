@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Response;
+﻿using Application.Common.Exceptions;
+using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -46,7 +47,7 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
 
             if (summaryData == null)
             {
-                throw new Exception("Không tìm thấy yêu cầu làm lại cho công đoạn này.");
+                throw new NotFoundException("Không tìm thấy yêu cầu làm lại cho công đoạn này.");
             }
 
             var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;

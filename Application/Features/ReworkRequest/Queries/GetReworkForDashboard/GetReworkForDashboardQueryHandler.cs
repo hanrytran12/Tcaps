@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Response;
+﻿using Application.Common.Exceptions;
+using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,12 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkForDashboard
                             RequiresMaterialDelivery = a.RequiresMaterialDelivery
                         };
 
-            return await query.FirstOrDefaultAsync(cancellationToken);
+            var reworkRequest = await query.FirstOrDefaultAsync(cancellationToken);
+            if (reworkRequest == null)
+            {
+                throw new NotFoundException("Rework request not found for the given assignment ID.");
+            }
+            return reworkRequest;
         }
     }
 }
