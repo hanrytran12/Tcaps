@@ -22,36 +22,31 @@ namespace API.Controllers
         [HttpGet("by-staff")]
         public async Task<List<Income>> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
-            var query = new GetIncomesByStaffIdQuery
+            return await _mediator.Send(new GetIncomesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 Date = date
-            };
-
-            return await _mediator.Send(query);
+            });
         }
 
         [HttpGet("total-monthly")]
         public async Task<MonthlyIncomeDTO> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
         {
-            var query = new GetMonthlyIncomeQuery
+            return await _mediator.Send(new GetMonthlyIncomeQuery
             {
                 StaffId = CurrentUserId,
                 Month = month,
                 Year = year
-            };
-            return await _mediator.Send(query);
+            });
         }
 
         [HttpGet("income-expected")]
         public async Task<IncomeExpectedDTO> GetIncomeExpected()
         {
-            var query = new GetTotalIncomeExpectedQuery
+            return await _mediator.Send(new GetTotalIncomeExpectedQuery
             {
                 StaffId = CurrentUserId
-            };
-
-            return await _mediator.Send(query);
+            });
         }
     }
 }
