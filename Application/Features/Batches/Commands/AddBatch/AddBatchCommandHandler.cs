@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
@@ -29,7 +30,7 @@ namespace Application.Features.Batches.Commands.AddBatch
             var product = await _productRepository.GetByCodeAsync(request.CodeProduct);
             if (product is null)
             {
-                return Result<Guid>.Failure("Product is not exist.");
+                throw new NotFoundException("Product is not exist.");
             }
 
             var result = Batch.Create(
@@ -40,7 +41,6 @@ namespace Application.Features.Batches.Commands.AddBatch
                 request.EndDate
             );
             await _batchRepository.AddAsync(result);
-
             await _mediator.Publish(new AddBatchEvent(newCode, request.Quantity));
             return Result<Guid>.Success(result.Id);
         }

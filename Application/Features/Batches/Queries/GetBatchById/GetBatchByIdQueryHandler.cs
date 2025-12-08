@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Response;
+﻿using Application.Common.Exceptions;
+using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +52,11 @@ namespace Application.Features.Batches.Queries.GetBatchById
                         EndDate = a.EndDate,
                     }).ToList()
             }).AsNoTracking().FirstOrDefaultAsync();
+
+            if (batchDetails == null)
+            {
+                throw new NotFoundException("Batch not found");
+            }
 
             return batchDetails;
         }
