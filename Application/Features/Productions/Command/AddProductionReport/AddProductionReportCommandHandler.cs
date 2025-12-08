@@ -19,7 +19,60 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
         public async Task<Result> Handle(AddProductionReportCommand request, CancellationToken cancellationToken)
         {
-            var assignment = await _appDbContext.Assignments.Where(a => a.Id == request.AssignId).FirstOrDefaultAsync(cancellationToken);
+            // Lấy workshop hiện tại
+            var workshopId = await _appDbContext.Users
+                .Where(u => u.Id == request.StaffId)
+                .Select(u => u.WorkshopId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            // Lấy assignment hiện tại
+            var assignment = await _appDbContext.Assignments
+                .Where(a => a.Id == request.AssignId)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            if (assignment == null)
+                return Result.Failure("Không tìm thấy Assignment.");
+
+            // Lấy tất cả assignment của batch
+            var assignmentsOfBatch = await _appDbContext.Assignments
+                .Where(a => a.BatchId == assignment.BatchId)
+                .ToListAsync(cancellationToken);
+
+            // Xác định step đầu tiên của batch (KHÔNG cố định là 1 → đúng theo yêu cầu)
+            int firstStepOrder = assignmentsOfBatch.Min(a => a.StepOrder);
+
+            // Step hiện tại
+            int currentStepOrder = assignment.StepOrder;
+
+            // Nếu đây là bước đầu → KHÔNG cần kiểm tra MaterialWorkshop
+            bool isFirstWorkshop = currentStepOrder == firstStepOrder;
+
+            if (!isFirstWorkshop)
+            {
+                // Lấy assignment của xưởng trước
+                var previousAssignment = assignmentsOfBatch
+                    .FirstOrDefault(a => a.StepOrder == currentStepOrder - 1);
+
+                if (previousAssignment == null)
+                    return Result.Failure("Không tìm thấy xưởng trước trong quy trình.");
+
+                var currentWorkshopId = workshopId;
+
+                var previousMaterialStatus = await _appDbContext.MaterialWorkshops
+                    .Where(mw =>
+                        mw.AssignId == previousAssignment.Id &&
+                        mw.WorkshopId == currentWorkshopId
+                    )
+                    .Select(mw => mw.Status)
+                    .FirstOrDefaultAsync(cancellationToken);
+
+
+
+                if (previousMaterialStatus != "Confirmed")
+                {
+                    return Result.Failure("Xưởng trước chưa chuyển hàng hoặc chưa QC Confirm. Không thể nộp báo cáo.");
+                }
+            }
 
             var today = DateOnly.FromDateTime(DateTime.Now);
 
