@@ -10,7 +10,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class IncomeController : ControllerBase
+    public class IncomeController : BaseApiController
     {
         private readonly IMediator _mediator;
 
@@ -22,15 +22,9 @@ namespace API.Controllers
         [HttpGet("by-staff")]
         public async Task<IActionResult> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
             var query = new GetIncomesByStaffIdQuery
             {
-                StaffId = staffId,
+                StaffId = CurrentUserId,
                 Date = date
             };
 
@@ -41,14 +35,9 @@ namespace API.Controllers
         [HttpGet("total-monthly")]
         public async Task<IActionResult> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
             var query = new GetMonthlyIncomeQuery
             {
-                StaffId = staffId,
+                StaffId = CurrentUserId,
                 Month = month,
                 Year = year
             };
@@ -59,15 +48,9 @@ namespace API.Controllers
         [HttpGet("income-expected")]
         public async Task<IActionResult> GetIncomeExpected()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
             var query = new GetTotalIncomeExpectedQuery
             {
-                StaffId = staffId
+                StaffId = CurrentUserId
             };
 
             var result = await _mediator.Send(query);
