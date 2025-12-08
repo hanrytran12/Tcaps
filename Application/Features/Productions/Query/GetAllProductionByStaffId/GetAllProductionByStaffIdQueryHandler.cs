@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
@@ -34,7 +35,7 @@ namespace Application.Features.Productions.Query.GetAllProductionByStaffId
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user == null)
             {
-                throw new InvalidOperationException("User không tồn tại");
+                throw new NotFoundException("User không tồn tại");
             }
             query = query.Where(q => q.UserId == request.UserId);
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
@@ -32,11 +33,11 @@ namespace Application.Features.Productions.Query.GetAllProductionByQCId
 
             var workshopId = await _userRepository.GetWorkshopIdByQCIdAsync(request.QC_Id);
             if (workshopId == Guid.Empty)
-                throw new InvalidOperationException($"Workshop for QC {request.QC_Id} not found.");
+                throw new NotFoundException($"Workshop for QC {request.QC_Id} not found.");
 
             var users = await _userRepository.GetUsersByWorkshopIdAsync(workshopId);
             if (users == null || !users.Any())
-                throw new InvalidOperationException($"No staff found for workshop.");
+                throw new NotFoundException($"No staff found for workshop.");
 
             var userIds = users.Select(u => u.Id).ToList();
 
