@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -26,7 +27,7 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromLead
 
             if (materialRequest == null)
             {
-                return Result<Guid>.Failure("Material request not found.");
+                throw new NotFoundException("Material request not found.");
             }
 
             materialRequest.MarkAsConfirmFromLead();

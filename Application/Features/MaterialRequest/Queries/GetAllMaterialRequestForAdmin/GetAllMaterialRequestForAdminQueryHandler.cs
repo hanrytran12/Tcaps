@@ -19,19 +19,6 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForA
         }
         public async Task<Result<List<MaterialRequestDTO>>> Handle(GetAllMaterialRequestForAdminQuery request, CancellationToken cancellationToken)
         {
-            //var materialRequests = await _materialRequestRepository.GetAllAsync();
-            //if (materialRequests == null || !materialRequests.Any())
-            //{
-            //    return Result<List<Domain.Entities.MaterialRequest>>.Failure("Không có yêu cầu thêm vật liệu.");
-            //}
-
-            //if (!string.IsNullOrEmpty(request.Status))
-            //{
-            //    materialRequests = materialRequests
-            //        .Where(m => string.Equals(m.Status, request.Status, StringComparison.OrdinalIgnoreCase))
-            //        .ToList();
-            //}
-
             var materialRequestsQuery = from mr in _context.MaterialRequests.AsNoTracking()
 
                                         join m in _context.Materials.AsNoTracking()
