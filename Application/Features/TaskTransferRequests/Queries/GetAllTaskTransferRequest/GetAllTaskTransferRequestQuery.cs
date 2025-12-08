@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest
 {
-    public class GetAllTaskTransferRequestQuery : IRequest<Result<List<TaskTransferRequestDTO>>>
+    public class GetAllTaskTransferRequestQuery : IRequest<List<TaskTransferRequestDTO>>
     {
         public string? Status { get; set; }
     }

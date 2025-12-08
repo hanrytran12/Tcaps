@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequestIdOrAssignTransferId
 {
-    public class GetByMaterialRequestIdOrAssignTransferIdQuery : IRequest<Result<TaskTransferRequestDTO>>
+    public class GetByMaterialRequestIdOrAssignTransferIdQuery : IRequest<TaskTransferRequestDTO>
     {
         public Guid RequestId { get; set; }
     }
