@@ -3,10 +3,9 @@ using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorksh
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive;
-using MediatR;
+using Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
@@ -15,35 +14,23 @@ namespace API.Controllers
     public class MaterialWorkshopController : BaseApiController
     {
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
+        public async Task<List<MaterialWorkshop>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
         {
-            var result = await Mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
         public async Task<List<MaterialWorkshopDTO>> GetByQCIdAsync([FromQuery] Guid workshopId)
         {
-            var query = new GetMaterialWorkshopByQCIdQuery
-            {
-                QC_Id = CurrentUserId,
-                WorkshopId = workshopId
-            };
-
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetMaterialWorkshopByQCIdQuery { QC_Id = CurrentUserId, WorkshopId = workshopId });
         }
 
         [HttpGet("total-quantity-receive")]
         [Authorize(Roles = "QC,Lead")]
         public async Task<int> GetTotalQuantityReceive([FromQuery] Guid batchId)
         {
-            var query = new TotalQuantityReceiveQuery
-            {
-                BatchId = batchId,
-                QcId = CurrentUserId
-            };
-            return await Mediator.Send(query);
+            return await Mediator.Send(new TotalQuantityReceiveQuery { BatchId = batchId, QcId = CurrentUserId });
         }
 
         [HttpPut("update-confirm")]
