@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Entities;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId
 {
-    public class GetTaskTransferRequestByQCTransportIdQueryHandler : IRequestHandler<GetTaskTransferRequestByQCTransportIdQuery, Result<List<TaskTransferRequestDTO>>>
+    public class GetTaskTransferRequestByQCTransportIdQueryHandler : IRequestHandler<GetTaskTransferRequestByQCTransportIdQuery, List<TaskTransferRequestDTO>>
     {
         private readonly ITaskTransferRequestRepository _taskTransferRequestRepository;
         private readonly IUserRepository _userRepository;
@@ -25,13 +26,13 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
             _userRepository = userRepository;
             _context = context;
         }
-        public async Task<Result<List<TaskTransferRequestDTO>>> Handle(GetTaskTransferRequestByQCTransportIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<TaskTransferRequestDTO>> Handle(GetTaskTransferRequestByQCTransportIdQuery request, CancellationToken cancellationToken)
         {
             // 1. Kiểm tra vai trò của QC Transport (Truy vấn bắt buộc)
             var qcTransport = await _userRepository.GetByIdAsync(request.QcTransportId);
             if (qcTransport == null || qcTransport.Role != "QCTransport")
             {
-                return Result<List<TaskTransferRequestDTO>>.Failure("Không tìm thấy QC vận chuyển này.");
+                throw new NotFoundException("Không tìm thấy QC vận chuyển này.");
             }
 
             // Lấy Tên QC Transport một lần để sử dụng trong DTO (vì DTO cần FullName)
@@ -102,9 +103,9 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
             var dtos = await query.ToListAsync(cancellationToken);
 
             if (!dtos.Any())
-                return Result<List<TaskTransferRequestDTO>>.Failure("Không tìm thấy yêu cầu chuyển giao nào cho QC này.");
+                throw new NotFoundException("Không tìm thấy yêu cầu chuyển giao nào cho QC này.");
 
-            return Result<List<TaskTransferRequestDTO>>.Success(dtos);
+            return dtos;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Interfaces;
@@ -12,7 +13,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequestIdOrAssignTransferId
 {
-    public class GetByMaterialRequestIdOrAssignTransferIdQueryHandler : IRequestHandler<GetByMaterialRequestIdOrAssignTransferIdQuery, Result<TaskTransferRequestDTO>>
+    public class GetByMaterialRequestIdOrAssignTransferIdQueryHandler : IRequestHandler<GetByMaterialRequestIdOrAssignTransferIdQuery, TaskTransferRequestDTO>
     {
         private readonly IAppDbContext _context;
 
@@ -20,7 +21,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequest
         {
             _context = context;
         }
-        public async Task<Result<TaskTransferRequestDTO>> Handle(GetByMaterialRequestIdOrAssignTransferIdQuery request, CancellationToken cancellationToken)
+        public async Task<TaskTransferRequestDTO> Handle(GetByMaterialRequestIdOrAssignTransferIdQuery request, CancellationToken cancellationToken)
         {
             var query = from ttr in _context.TaskTransferRequests.AsNoTracking()
 
@@ -78,10 +79,10 @@ namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequest
 
             if (dto == null)
             {
-                return Result<TaskTransferRequestDTO>.Failure("Task Transfer Request not found.");
+                throw new NotFoundException("Task Transfer Request not found.");
             }
 
-            return Result<TaskTransferRequestDTO>.Success(dto);
+            return dto;
         }
     }
 }
