@@ -50,9 +50,7 @@ namespace API.Controllers
         [HttpGet("{workshopId:guid}/users-in-workshop")]
         public async Task<List<UsersDTO>> GetStaffByWorkshopId(Guid workshopId)
         {
-            var query = new GetStaffByWorkshopIdQuery(workshopId);
-            var result = await _mediator.Send(query);
-            return result;
+            return await _mediator.Send(new GetStaffByWorkshopIdQuery(workshopId));
         }
 
         [HttpGet("total-income/{userId:guid}")]
