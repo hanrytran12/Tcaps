@@ -1,12 +1,11 @@
-﻿using Application.Common;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
 {
-    public class GetEvaluatesByQCIdQueryHandler : IRequestHandler<GetEvaluatesByQCIdQuery, Result<List<EvaluateDTO>>>
+    public class GetEvaluatesByQCIdQueryHandler : IRequestHandler<GetEvaluatesByQCIdQuery, List<EvaluateDTO>>
     {
         private readonly IAppDbContext _context;
         private readonly IFileStorageService _fileStorageService;
@@ -17,7 +16,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
             _fileStorageService = fileStorageService;
         }
 
-        public async Task<Result<List<EvaluateDTO>>> Handle(GetEvaluatesByQCIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<EvaluateDTO>> Handle(GetEvaluatesByQCIdQuery request, CancellationToken cancellationToken)
         {
             var query = _context.Evaluates
                 .AsNoTracking()
@@ -68,7 +67,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByQCId
                           .Select(path => _fileStorageService.GetFileUrl(path.Trim()))
                           .ToList()
             }).ToList();
-            return Result<List<EvaluateDTO>>.Success(resultDtos);
+            return resultDtos;
         }
     }
 }

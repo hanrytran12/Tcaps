@@ -26,10 +26,9 @@ namespace API.Controllers
 
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllAsync([FromQuery] GetAllMaterialQuery query)
+        public async Task<List<MaterialDTO>> GetAllAsync([FromQuery] GetAllMaterialQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await _mediator.Send(query);
         }
 
         [HttpPost]
