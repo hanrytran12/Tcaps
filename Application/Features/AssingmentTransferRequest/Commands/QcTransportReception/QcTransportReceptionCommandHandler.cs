@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
@@ -26,12 +27,12 @@ namespace Application.Features.AssingmentTransferRequest.Commands.QcTransportRec
             var assignmentTransferRequest = await _repository.GetByIdAsync(request.AssignmentTransferRequestId);
             if (assignmentTransferRequest == null)
             {
-                return Result<Guid>.Failure("Assignment Transfer Request không tìm thấy.");
+                throw new NotFoundException("Yêu cầu đánh giá không tìm thấy.");
             }
 
             if (assignmentTransferRequest.Status == "QCTransportReception")
             {
-                return Result<Guid>.Failure("Yêu cầu đã được tiếp nhận");
+                throw new BadRequestException("Yêu cầu đã được tiếp nhận");
             }
 
             assignmentTransferRequest.MarkAsReception();

@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Events;
 using Domain.Interfaces;
@@ -33,20 +34,20 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
             var supplier = await _appDbContext.Users.FindAsync(request.SupplierId);
             if (supplier is null)
             {
-                return Result.Failure("Không tìm thấy người vận chuyển.");
+                throw new NotFoundException("Không tìm thấy người vận chuyển.");
             }
 
             if (transferRequest.ReworkRequestId == null)
             {
                 if (transferRequest is null || (transferRequest.Status != "PendingApproval" && transferRequest.Status != "QCTransportReception"))
                 {
-                    return Result.Failure("Yêu cầu không hợp lệ hoặc đã được duyệt");
+                    throw new BadRequestException("Yêu cầu không hợp lệ hoặc đã được duyệt");
                 }
 
                 var assigment = await _assignmentRepository.GetByIdAsync(transferRequest.AssignmentId);
                 if (assigment is null)
                 {
-                    return Result.Failure("Không tìm thấy công đoạn");
+                    throw new NotFoundException("Không tìm thấy công đoạn");
                 }
 
                 if (assigment.Quantity <= transferRequest.CompletedQuantity)
@@ -58,7 +59,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                 var batch = await _batchRepository.GetByAssignmentIdAsync(assigment.Id);
                 if (batch is null)
                 {
-                    return Result.Failure("Không tìm thấy lô hàng");
+                    throw new NotFoundException("Không tìm thấy lô hàng");
                 }
 
                 var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assigment.Id, null);
