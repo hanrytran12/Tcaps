@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -19,15 +20,14 @@ namespace Application.Features.Notifications.Commands.MarkNotificationAsRead
             var notification = await _notificationRepository.GetByIdAsync(request.NotificationId);
             if (notification is null)
             {
-                return Result.Failure("Notification not found.");
+                throw new NotFoundException("Notification not found.");
             }
             if (notification.UserId != request.UserId)
             {
-                return Result.Failure("You not have permission to do that.");
+                throw new BadRequestException("You not have permission to do that.");
             }
 
             notification.MarkAsRead();
-            await _unitOfWork.SaveChangesAsync(cancellationToken);
             return Result.Success();
         }
     }
