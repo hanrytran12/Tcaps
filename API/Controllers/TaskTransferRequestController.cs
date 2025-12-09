@@ -26,7 +26,7 @@ namespace API.Controllers
         }
 
         [HttpGet("for-QcTransport")]
-        [Authorize(Roles = "QCTransportOnly")]
+        //[Authorize(Roles = "QCTransportOnly")]
         public async Task<List<TaskTransferRequestDTO>> GetByQcTransportAsync([FromQuery] string? status)
         {
             return await Mediator.Send(new GetTaskTransferRequestByQCTransportIdQuery(CurrentUserId, status));
