@@ -31,7 +31,7 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
 
             if (today < assignment.StartDate || today > assignment.EndDate)
             {
-                throw new BadRequestException($"Ngày yêu cầu ({today}) phải nằm trong khoảng từ {assignment.StartDate} đến {assignment.EndDate}.");
+                throw new BadRequestException($"Ngày yêu cầu ({today:dd/MM/yyyy}) phải nằm trong khoảng từ {assignment.StartDate:dd/MM/yyyy} đến {assignment.EndDate:dd/MM/yyyy}.");
             }
 
             if (today > assignment.EndDate.AddDays(-2))
