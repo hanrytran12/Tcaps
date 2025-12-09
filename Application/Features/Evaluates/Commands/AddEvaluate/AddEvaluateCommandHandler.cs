@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Entities;
@@ -27,20 +28,15 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
 
         public async Task<Result<Guid>> Handle(AddEvaluateCommand request, CancellationToken cancellationToken)
         {
-            // Deserialize Defects from JSON string
             if (!string.IsNullOrEmpty(request.DefectsJson))
             {
                 try
                 {
                     var json = request.DefectsJson.Trim();
-
-                    // Bỏ dấu ngoặc kép ngoài nếu cần
                     if (json.StartsWith("\"") && json.EndsWith("\""))
                     {
                         json = System.Text.RegularExpressions.Regex.Unescape(json.Substring(1, json.Length - 2));
                     }
-
-                    // Kiểm tra xem có phải array hay không
                     json = json.Trim();
                     if (!json.StartsWith("["))
                     {
@@ -60,16 +56,16 @@ namespace Application.Features.Evaluates.Commands.AddEvaluate
 
                     if (request.Defects == null || request.Defects.Count == 0)
                     {
-                        return Result<Guid>.Failure("Defects list trống sau khi deserialize");
+                        throw new ConflictException("Defects list trống sau khi deserialize");
                     }
                 }
                 catch (JsonException ex)
                 {
-                    return Result<Guid>.Failure($"DefectsJson không hợp lệ: {ex.Message}. Path: {ex.Path}");
+                    throw new BadRequestException("DefectsJson không hợp lệ");
                 }
                 catch (Exception ex)
                 {
-                    return Result<Guid>.Failure($"Lỗi deserialize: {ex.Message}");
+                    throw new BadRequestException("Lỗi không xác định khi xử lý DefectsJson");
                 }
             }
 

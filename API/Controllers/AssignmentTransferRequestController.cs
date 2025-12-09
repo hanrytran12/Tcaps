@@ -22,22 +22,19 @@ namespace API.Controllers
         [Authorize(Roles = "Lead")]
         public async Task<ActionResult<List<AssignmentTransferRequestDTO>>> GetAllTrasnferRequest()
         {
-            var query = new GetAllTransferRequestQuery();
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetAllTransferRequestQuery());
         }
 
         [HttpGet("{assignmentId:guid}/reconcilliation-summary")]
         public async Task<ReconcilationSummaryDTO> GetReconciliationSummary(Guid assignmentId)
         {
-            var query = new GetReconciliationSummaryQuery(assignmentId);
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetReconciliationSummaryQuery(assignmentId));
         }
 
         [HttpGet("by-assignment/{assignmentId:guid}")]
         public async Task<TransferRequestDTO> GetTransferRequestByAssignmentId(Guid assignmentId)
         {
-            var query = new GetTransferRequestByAssignmentIdQuery(assignmentId);
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetTransferRequestByAssignmentIdQuery(assignmentId));
         }
 
         [HttpGet("qc-transport")]
@@ -51,12 +48,10 @@ namespace API.Controllers
         [HttpGet("getAll-for-qcTransport")]
         public async Task<Result<List<AssignmentTransferRequestDTO>>> GetAllForQcTransport()
         {
-            var query = new GetAllForQcTransportQuery
+            return await Mediator.Send(new GetAllForQcTransportQuery
             {
                 QcTransportId = CurrentUserId
-            };
-
-            return await Mediator.Send(query);
+            });
         }
 
         [HttpPost]
@@ -72,22 +67,19 @@ namespace API.Controllers
         [Authorize(Policy = "LeadOrValidQCTransport")]
         public async Task<IActionResult> ApproveTrasnferRequest(Guid transferRequestId)
         {
-            var command = new UpdateAssignmentTransferRequestCommand(transferRequestId, CurrentUserId);
-            await Mediator.Send(command);
-            return NoContent();
+            await Mediator.Send(new UpdateAssignmentTransferRequestCommand(transferRequestId, CurrentUserId));
+            return Ok("Yêu cầu chuyển giao đã được phê duyệt thành công.");
         }
 
         [HttpPut("qc-transport-reception")]
         [Authorize(Policy = "QCTransportOnly")]
         public async Task<IActionResult> QCTransportReception([FromQuery] Guid assignmentTransferId)
         {
-            var command = new QcTransportReceptionCommand
+            await Mediator.Send(new QcTransportReceptionCommand
             {
                 QCTransportId = CurrentUserId,
                 AssignmentTransferRequestId = assignmentTransferId
-            };
-
-            await Mediator.Send(command);
+            });
             return Ok("Tiếp nhận yêu cầu chuyển giao thành công.");
         }
     }

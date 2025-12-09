@@ -1,8 +1,8 @@
-﻿using System.Security.Claims;
-using Application.Features.Incomes.Command.AddIncome;
+﻿using Application.DTOs.Response;
 using Application.Features.Incomes.Queries.GetIncomesByStaffId;
 using Application.Features.Incomes.Queries.GetMonthlyIncome;
 using Application.Features.Incomes.Queries.GetTotalIncomeExpect;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,41 +20,33 @@ namespace API.Controllers
         }
 
         [HttpGet("by-staff")]
-        public async Task<IActionResult> GetIncomesByStaffId([FromQuery] DateOnly? date)
+        public async Task<List<Income>> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
-            var query = new GetIncomesByStaffIdQuery
+            return await _mediator.Send(new GetIncomesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 Date = date
-            };
-
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            });
         }
 
         [HttpGet("total-monthly")]
-        public async Task<IActionResult> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
+        public async Task<MonthlyIncomeDTO> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
         {
-            var query = new GetMonthlyIncomeQuery
+            return await _mediator.Send(new GetMonthlyIncomeQuery
             {
                 StaffId = CurrentUserId,
                 Month = month,
                 Year = year
-            };
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            });
         }
 
         [HttpGet("income-expected")]
-        public async Task<IActionResult> GetIncomeExpected()
+        public async Task<IncomeExpectedDTO> GetIncomeExpected()
         {
-            var query = new GetTotalIncomeExpectedQuery
+            return await _mediator.Send(new GetTotalIncomeExpectedQuery
             {
                 StaffId = CurrentUserId
-            };
-
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            });
         }
     }
 }

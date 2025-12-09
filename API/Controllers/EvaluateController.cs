@@ -1,4 +1,5 @@
-﻿using Application.Features.Evaluates.Commands.AddEvaluate;
+﻿using Application.DTOs.Response;
+using Application.Features.Evaluates.Commands.AddEvaluate;
 using Application.Features.Evaluates.Queries.GetAllEvaluate;
 using Application.Features.Evaluates.Queries.GetEvaluatesByQCId;
 using Application.Features.Evaluates.Queries.GetEvaluatesByStaffId;
@@ -20,36 +21,30 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<List<EvaluateDTO>> GetAll()
         {
-            var result = await _mediator.Send(new GetAllEvaluateQuery());
-            return Ok(result);
+            return await _mediator.Send(new GetAllEvaluateQuery());
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<IActionResult> GetByQCId([FromQuery] string? status)
+        public async Task<List<EvaluateDTO>> GetByQCId([FromQuery] string? status)
         {
-            var query = new GetEvaluatesByQCIdQuery
+            return await _mediator.Send(new GetEvaluatesByQCIdQuery
             {
                 QC_Id = CurrentUserId,
                 Status = status
-            };
-
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            });
         }
 
         [HttpGet("for-staff")]
-        public async Task<IActionResult> GetByStaffId([FromQuery] Guid assignId)
+        public async Task<List<EvaluateDTO>> GetByStaffId([FromQuery] Guid assignId)
         {
-            var query = new GetEvaluatesByStaffIdQuery
+            return await _mediator.Send(new GetEvaluatesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 AssignId = assignId
-            };
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            });
         }
 
         [HttpPost]
