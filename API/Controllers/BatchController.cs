@@ -48,8 +48,7 @@ namespace API.Controllers
         [Authorize(Policy = "QC")]
         public async Task<List<BatchDTO>> GetBatchByWorkshopId([FromQuery] string? Status, DateOnly? FromDate, DateOnly? ToDate)
         {
-            var userId = CurrentUserId;
-            return await Mediator.Send(new GetBatchByWorkshopIdQuery(userId, Status, FromDate, ToDate));
+            return await Mediator.Send(new GetBatchByWorkshopIdQuery(CurrentUserId, Status, FromDate, ToDate));
         }
 
         [HttpGet("staff/bactches")]

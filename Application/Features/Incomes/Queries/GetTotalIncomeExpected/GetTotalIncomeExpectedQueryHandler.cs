@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using Application.Features.Incomes.Queries.GetTotalIncomeExpect;
 using Application.Interfaces;
 using MediatR;
 
 namespace Application.Features.Incomes.Queries.GetTotalIncomeExpected
 {
-    public class GetTotalIncomeExpectedQueryHandler : IRequestHandler<GetTotalIncomeExpectedQuery, Result<IncomeExpectedDTO>>
+    public class GetTotalIncomeExpectedQueryHandler : IRequestHandler<GetTotalIncomeExpectedQuery, IncomeExpectedDTO>
     {
         private readonly IAppDbContext _context;
 
@@ -19,7 +13,7 @@ namespace Application.Features.Incomes.Queries.GetTotalIncomeExpected
         {
             _context = context;
         }
-        public async Task<Result<IncomeExpectedDTO>> Handle(GetTotalIncomeExpectedQuery request, CancellationToken cancellationToken)
+        public async Task<IncomeExpectedDTO> Handle(GetTotalIncomeExpectedQuery request, CancellationToken cancellationToken)
         {
             var today = DateOnly.FromDateTime(DateTime.Now);
             var result = from production in _context.Productions
@@ -43,7 +37,7 @@ namespace Application.Features.Incomes.Queries.GetTotalIncomeExpected
                 TotalExpect = totalIncomeExpected
             };
 
-            return Result<IncomeExpectedDTO>.Success(dto);
+            return dto;
         }
     }
 }

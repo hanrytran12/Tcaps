@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace Application.Features.Incomes.Queries.GetMonthlyIncome
 {
-    public class GetMonthlyIncomeQuery : IRequest<Result<MonthlyIncomeDTO>>
+    public class GetMonthlyIncomeQuery : IRequest<MonthlyIncomeDTO>
     {
         [JsonIgnore]
         public Guid StaffId { get; set; }
