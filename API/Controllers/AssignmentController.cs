@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Assignments.Commands.PlanAssignments;
+using Application.Features.Assignments.Commands.UpdateReadyForTransfer;
 using Application.Features.Assignments.Queries.GetAllAsignmentByQCId;
 using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
@@ -56,7 +57,8 @@ namespace API.Controllers
         {
             return await Mediator.Send(new GetAssignmentForHistoryByBatchIdQuery
             {
-                BatchId = batchId
+                BatchId = batchId,
+                UserId = CurrentUserId
             });
         }
 
@@ -79,6 +81,17 @@ namespace API.Controllers
                 PlanItems = planItems,
             });
             return Ok("Kế hoạch sản xuất đã được tạo thành công.");
+        }
+
+        [HttpPut("update-ready-for-transfer")]
+        public async Task<IActionResult> UpdateReadyForTransfer([FromQuery] Guid assignmentId)
+        {
+            await Mediator.Send(new UpdateReadyForTransferCommand
+            {
+                AssignmentId = assignmentId,
+                QcId = CurrentUserId
+            });
+            return Ok("Cập nhật trạng thái sẵn sàng chuyển giao thành công.");
         }
     }
 }
