@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Entities;
@@ -13,7 +14,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Queries.GetGroupProgress
 {
-    public class GetGroupProgressQueryHandler : IRequestHandler<GetGroupProgressQuery, Result<GroupProgressDTO>>
+    public class GetGroupProgressQueryHandler : IRequestHandler<GetGroupProgressQuery, GroupProgressDTO>
     {
         private readonly IAppDbContext _context;
 
@@ -21,11 +22,11 @@ namespace Application.Features.Users.Queries.GetGroupProgress
         {
             _context = context;
         }
-        public async Task<Result<GroupProgressDTO>> Handle(GetGroupProgressQuery request, CancellationToken cancellationToken)
+        public async Task<GroupProgressDTO> Handle(GetGroupProgressQuery request, CancellationToken cancellationToken)
         {
             var user = await _context.Users.FindAsync(request.UserId);
             if (user is null)
-                return Result<GroupProgressDTO>.Failure("Không tìm thấy người dùng");
+                throw new NotFoundException("Không tìm thấy người dùng");
 
             var workshop = await _context.Workshop.FindAsync(user.WorkshopId);
 
@@ -100,7 +101,7 @@ namespace Application.Features.Users.Queries.GetGroupProgress
                 Members = staffNames //cuong, dung
             };
 
-            return Result<GroupProgressDTO>.Success(results);
+            return results;
         }
     }
 }
