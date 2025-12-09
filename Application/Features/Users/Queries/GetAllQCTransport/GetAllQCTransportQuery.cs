@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Application.Features.Users.Queries.GetAllQCTransport
 {
-    public class GetAllQCTransportQuery : IRequest<Result<List<UserDTO>>>
+    public class GetAllQCTransportQuery : IRequest<List<UserDTO>>
     {
     }
 }
