@@ -1,20 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.Common.Exceptions;
+﻿using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
-using Domain.Entities;
-using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTransferForQcTransport
 {
-    public class GetAssignmentTransferForQcTransportQueryHandler : IRequestHandler<GetAssignmentTransferForQcTransportQuery, Result<AssignmentTransferRequestDTO>>
+    public class GetAssignmentTransferForQcTransportQueryHandler : IRequestHandler<GetAssignmentTransferForQcTransportQuery, AssignmentTransferRequestDTO>
     {
         private readonly IAppDbContext _context;
 
@@ -22,7 +14,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTr
         {
             _context = context;
         }
-        public async Task<Result<AssignmentTransferRequestDTO>> Handle(GetAssignmentTransferForQcTransportQuery request, CancellationToken cancellationToken)
+        public async Task<AssignmentTransferRequestDTO> Handle(GetAssignmentTransferForQcTransportQuery request, CancellationToken cancellationToken)
         {
             var dto = from assignTransfer in _context.AssignmentTransferRequests
                       join assignment in _context.Assignments on assignTransfer.AssignmentId equals assignment.Id
@@ -51,7 +43,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTr
                 throw new NotFoundException("Yêu cầu đánh giá không tồn tại.");
             }
 
-            return Result<AssignmentTransferRequestDTO>.Success(assignmentTransferRequestDTO);
+            return assignmentTransferRequestDTO;
         }
     }
 }

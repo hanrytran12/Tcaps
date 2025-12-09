@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.Common.Exceptions;
+﻿using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
@@ -12,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTransport
 {
-    public class GetAllForQcTransportQueryHandler : IRequestHandler<GetAllForQcTransportQuery, Result<List<AssignmentTransferRequestDTO>>>
+    public class GetAllForQcTransportQueryHandler : IRequestHandler<GetAllForQcTransportQuery, List<AssignmentTransferRequestDTO>>
     {
         private readonly IAppDbContext _context;
 
@@ -20,7 +14,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTran
         {
             _context = context;
         }
-        public async Task<Result<List<AssignmentTransferRequestDTO>>> Handle(GetAllForQcTransportQuery request, CancellationToken cancellationToken)
+        public async Task<List<AssignmentTransferRequestDTO>> Handle(GetAllForQcTransportQuery request, CancellationToken cancellationToken)
         {
             var qc = await _context.Users.
                 FindAsync(request.QcTransportId);
@@ -32,22 +26,22 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTran
 
             var assignmentTransfer = from assignTransfer in _context.AssignmentTransferRequests
 
-                                     join taskTransfer in _context.TaskTransferRequests 
+                                     join taskTransfer in _context.TaskTransferRequests
                                      on assignTransfer.Id equals taskTransfer.AssignmentTransferId
 
-                                     join assignment in _context.Assignments 
+                                     join assignment in _context.Assignments
                                      on assignTransfer.AssignmentId equals assignment.Id
 
-                                     join workshop in _context.Workshop 
+                                     join workshop in _context.Workshop
                                      on assignment.WorkshopId equals workshop.Id
 
-                                     join batch in _context.Batches 
+                                     join batch in _context.Batches
                                      on assignment.BatchId equals batch.Id
 
                                      join product in _context.Products
                                      on batch.ProductId equals product.Id
 
-                                     join user in _context.Users 
+                                     join user in _context.Users
                                      on assignTransfer.UserId equals user.Id
 
                                      where taskTransfer.QcTransportId == request.QcTransportId
@@ -64,7 +58,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTran
                                      };
 
             var result = await assignmentTransfer.ToListAsync(cancellationToken);
-            return Result<List<AssignmentTransferRequestDTO>>.Success(result);
+            return result;
         }
     }
 }
