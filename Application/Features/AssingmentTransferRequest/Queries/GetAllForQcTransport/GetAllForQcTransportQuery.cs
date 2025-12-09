@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using MediatR;
 
 namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTransport
 {
-    public class GetAllForQcTransportQuery : IRequest<Result<List<AssignmentTransferRequestDTO>>>
+    public class GetAllForQcTransportQuery : IRequest<List<AssignmentTransferRequestDTO>>
     {
         public Guid QcTransportId { get; set; }
     }

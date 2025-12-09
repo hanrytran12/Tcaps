@@ -1,5 +1,4 @@
-﻿using Application.Common;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTransferRequest;
 using Application.Features.AssingmentTransferRequest.Commands.QcTransportReception;
 using Application.Features.AssingmentTransferRequest.Commands.UpdateAssignmentTransferRequest;
@@ -39,14 +38,14 @@ namespace API.Controllers
 
         [HttpGet("qc-transport")]
         [Authorize(Policy = "QCTransportOnly")]
-        public async Task<Result<AssignmentTransferRequestDTO>> GetForQCTransportAsync(
+        public async Task<AssignmentTransferRequestDTO> GetForQCTransportAsync(
         [FromQuery] GetAssignmentTransferForQcTransportQuery query)
         {
             return await Mediator.Send(query);
         }
 
         [HttpGet("getAll-for-qcTransport")]
-        public async Task<Result<List<AssignmentTransferRequestDTO>>> GetAllForQcTransport()
+        public async Task<List<AssignmentTransferRequestDTO>> GetAllForQcTransport()
         {
             return await Mediator.Send(new GetAllForQcTransportQuery
             {
