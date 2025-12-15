@@ -19,7 +19,7 @@ namespace Application.Features.Batches.Events
         }
         public async Task Handle(AddBatchEvent notification, CancellationToken cancellationToken)
         {
-            await _notificationService.AddBatchNotificationAsync(notification.BatchCode, notification.Quantity);
+            await _notificationService.AddBatchNotificationAsync(notification.UserId, notification.BatchCode, notification.Quantity);
         }
     }
 }

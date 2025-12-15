@@ -2,6 +2,8 @@
 {
     public class BatchDetailResponseDTO
     {
+        public Guid UserId { get; set; }
+        public string LeadName { get; set; } = string.Empty;
         public string Code { get; set; } = string.Empty;
         public decimal Quantity { get; set; }
         public DateOnly EndDate { get; set; }

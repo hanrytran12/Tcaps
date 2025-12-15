@@ -519,10 +519,10 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddBatchNotificationAsync(string batchCode, decimal quantity)
+        public async Task AddBatchNotificationAsync(Guid userId, string batchCode, decimal quantity)
         {
-            var lead = await _userRepository.GetByRoleAsync("Lead");
-            if (lead is null) return;
+            var lead = await _userRepository.GetByIdAsync(userId);
+            if (lead is null || lead.Role != "Lead") return;
 
             var title = "Thêm lô hàng mới";
             var message = $"Lô hàng mới với mã lô {batchCode} và số lượng {quantity} đã được thêm vào hệ thống.";

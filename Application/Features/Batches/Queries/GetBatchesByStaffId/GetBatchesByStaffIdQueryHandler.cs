@@ -24,9 +24,13 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
                                      on a.BatchId equals b.Id
                                  join p in _context.Products.AsNoTracking()
                                      on b.ProductId equals p.Id
+                                 join u in _context.Users.AsNoTracking()
+                                     on b.UserId equals u.Id
                                  select new BatchDTO
                                  {
                                      BatchId = b.Id,
+                                     UserId = b.UserId,
+                                     LeadName = u.FullName,
                                      ProductName = p.Name,
                                      Code = b.Code,
                                      Quantity = b.Quantity,

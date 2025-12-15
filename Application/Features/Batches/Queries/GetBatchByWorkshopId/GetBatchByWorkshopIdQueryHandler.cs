@@ -25,7 +25,8 @@ namespace Application.Features.Batches.Queries.GetBatchByWorkshopId
                         where assignment.WorkshopId == user.WorkshopId
                         join batch in _context.Batches on assignment.BatchId equals batch.Id
                         join product in _context.Products on batch.ProductId equals product.Id
-                        select new { batch, product };
+                        join u in _context.Users on batch.UserId equals u.Id
+                        select new { batch, product, u };
 
             if (!string.IsNullOrEmpty(request.Status))
             {
@@ -45,6 +46,8 @@ namespace Application.Features.Batches.Queries.GetBatchByWorkshopId
             var finalQuery = query.Select(batch => new BatchDTO
             {
                 ProductName = batch.product.Name,
+                UserId = batch.batch.UserId,
+                LeadName = batch.u.FullName,
                 Code = batch.batch.Code,
                 Quantity = batch.batch.Quantity,
                 StartDate = batch.batch.StartDate,
