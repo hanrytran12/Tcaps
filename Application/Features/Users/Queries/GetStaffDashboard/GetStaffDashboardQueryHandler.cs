@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Queries.GetStaffDashboard
 {
-    public class GetStaffDashboardQueryHandler : IRequestHandler<GetStaffDashboardQuery, Result<StaffDashboardDTO>>
+    public class GetStaffDashboardQueryHandler : IRequestHandler<GetStaffDashboardQuery, StaffDashboardDTO>
     {
         private readonly IAppDbContext _appDbContext;
 
@@ -15,7 +15,7 @@ namespace Application.Features.Users.Queries.GetStaffDashboard
             _appDbContext = appDbContext;
         }
 
-        public async Task<Result<StaffDashboardDTO>> Handle(GetStaffDashboardQuery request, CancellationToken cancellationToken)
+        public async Task<StaffDashboardDTO> Handle(GetStaffDashboardQuery request, CancellationToken cancellationToken)
         {
             var today = DateOnly.FromDateTime(DateTime.UtcNow);
 
@@ -23,14 +23,14 @@ namespace Application.Features.Users.Queries.GetStaffDashboard
 
             if (user is null)
             {
-                return Result<StaffDashboardDTO>.Success(new StaffDashboardDTO());
+                return new StaffDashboardDTO();
             }
 
             var currentAssignment = await _appDbContext.Assignments.AsNoTracking().FirstOrDefaultAsync(a => a.Id == request.AssignId && a.Status == "InProgress");
 
             if (currentAssignment is null)
             {
-                return Result<StaffDashboardDTO>.Success(new StaffDashboardDTO());
+                return new StaffDashboardDTO();        
             }
 
             var todayProduction = await _appDbContext.Productions.AsNoTracking()
@@ -46,7 +46,7 @@ namespace Application.Features.Users.Queries.GetStaffDashboard
                 EstimatedTodayIncome = todayProduction * currentAssignment.UnitPrice,
             };
 
-            return Result<StaffDashboardDTO>.Success(dashboard);
+            return dashboard;
         }
     }
 }

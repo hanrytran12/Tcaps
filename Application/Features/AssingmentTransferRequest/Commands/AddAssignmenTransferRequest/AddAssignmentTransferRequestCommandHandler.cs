@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Events;
@@ -27,7 +28,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
             var assignment = await _assignmentRepository.GetByIdAsync(request.AssignmentId);
             if (assignment is null)
             {
-                return Result<Guid>.Failure("Assignment is not exist");
+                throw new NotFoundException("Không tìm thấy công đoạn.");
             }
 
             //if (assignment.Status != "ReadyForTransfer")
@@ -39,7 +40,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
 
             if (batch is null)
             {
-                return Result<Guid>.Failure("Không tìm thấy lô hàng của công đoạn này.");
+                throw new NotFoundException("Không tìm thấy lô hàng của công đoạn này.");
             }
 
             if (request.ReconciliationMaterials.Count > 0)

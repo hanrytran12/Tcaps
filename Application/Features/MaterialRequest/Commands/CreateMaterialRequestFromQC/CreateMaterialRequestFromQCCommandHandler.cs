@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -24,18 +25,18 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
         {
             var assignment = await _assignmentRepository.GetByIdAsync(request.AssignId);
             if (assignment == null)
-                return Result.Failure("không tìm thấy phân công này.");
+                throw new NotFoundException("không tìm thấy phân công này.");
 
             var today = DateOnly.FromDateTime(DateTime.Now);
 
             if (today < assignment.StartDate || today > assignment.EndDate)
             {
-                return Result.Failure($"Ngày yêu cầu ({today}) phải nằm trong khoảng từ {assignment.StartDate} đến {assignment.EndDate}.");
+                throw new BadRequestException($"Ngày yêu cầu ({today:dd/MM/yyyy}) phải nằm trong khoảng từ {assignment.StartDate:dd/MM/yyyy} đến {assignment.EndDate:dd/MM/yyyy}.");
             }
 
             if (today > assignment.EndDate.AddDays(-2))
             {
-                return Result.Failure("Không thể tạo yêu cầu vật liệu vì đã quá sát ngày kết thúc (trước EndDate dưới 2 ngày).");
+                throw new BadRequestException("Không thể tạo yêu cầu vật liệu vì đã quá sát ngày kết thúc (trước EndDate dưới 2 ngày).");
             }
 
             foreach (var item in request.Items)
@@ -50,7 +51,7 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
                     "QcAddMaterial");
 
                 if (materialRequest == null)
-                    return Result.Failure("Failed to create material request");
+                    throw new BadRequestException("Failed to create material request");
 
                 await _materialRequestRepository.AddAsync(materialRequest);
             }

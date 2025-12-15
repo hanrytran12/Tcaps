@@ -9,7 +9,6 @@ namespace Application.Features.Assignments.Commands.PlanAssignments
     {
         [JsonIgnore]
         public Guid BatchId { get; set; }
-
         public List<AssignmentPlanItemDTO> PlanItems { get; set; } = new();
     }
 }

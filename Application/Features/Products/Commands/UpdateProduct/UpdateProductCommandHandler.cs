@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -18,7 +19,7 @@ namespace Application.Features.Products.Commands.UpdateProduct
 
             if (product is null)
             {
-                return Result.Failure($"Không tìm thấy Product với Id: {request.Id}.");
+                throw new NotFoundException($"Không tìm thấy Product với Id: {request.Id}.");
             }
 
             if (request.Name != product.Name)
@@ -26,12 +27,11 @@ namespace Application.Features.Products.Commands.UpdateProduct
                 var existingProduct = await _repository.GetByNameAsync(request.Name);
                 if (existingProduct is not null)
                 {
-                    return Result.Failure("Tên sản phẩm này đã tồn tại");
+                    throw new ConflictException("Tên sản phẩm này đã tồn tại");
                 }
             }
 
             product.UpdateDetails(request.Name, request.Description);
-
             return Result.Success();
         }
     }

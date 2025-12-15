@@ -1,4 +1,4 @@
-﻿using Application.Common;
+﻿using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
 {
-    public class GetEvaluatesByStaffIdQueryHandler : IRequestHandler<GetEvaluatesByStaffIdQuery, Result<List<EvaluateDTO>>>
+    public class GetEvaluatesByStaffIdQueryHandler : IRequestHandler<GetEvaluatesByStaffIdQuery, List<EvaluateDTO>>
     {
         private readonly IAppDbContext _context;
         private readonly IFileStorageService _fileStorageService;
@@ -16,7 +16,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
             _context = context;
             _fileStorageService = fileStorageService;
         }
-        public async Task<Result<List<EvaluateDTO>>> Handle(GetEvaluatesByStaffIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<EvaluateDTO>> Handle(GetEvaluatesByStaffIdQuery request, CancellationToken cancellationToken)
         {
             var query = from e in _context.Evaluates.AsNoTracking()
                         join p in _context.Productions.AsNoTracking() on e.ProductionId equals p.Id
@@ -50,10 +50,10 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
 
                 if (!staffExists)
                 {
-                    return Result<List<EvaluateDTO>>.Failure($"Không tìm thấy User với ID = {request.StaffId}.");
+                    throw new NotFoundException($"Không tìm thấy User với ID = {request.StaffId}.");
                 }
 
-                return Result<List<EvaluateDTO>>.Success(new List<EvaluateDTO>());
+                return new List<EvaluateDTO>();
             }
 
             var resultDtos = rawData.Select(item => new EvaluateDTO
@@ -75,7 +75,7 @@ namespace Application.Features.Evaluates.Queries.GetEvaluatesByStaffId
                           .ToList()
             }).ToList();
 
-            return Result<List<EvaluateDTO>>.Success(resultDtos);
+            return resultDtos;
         }
     }
 }

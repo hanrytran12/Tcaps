@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using MediatR;
+using System.Text.Json.Serialization;
 
 namespace Application.Features.Assignments.Commands.UpdateReadyForTransfer
 {

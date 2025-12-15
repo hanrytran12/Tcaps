@@ -10,122 +10,72 @@ using Application.Features.Batches.Queries.GetBatchesByStaffId;
 using Application.Features.Batches.Queries.GetBatchForManagement;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class BatchController : ControllerBase
+    public class BatchController : BaseApiController
     {
-        private readonly IMediator _mediator;
-        public BatchController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
         public async Task<List<Batch>> GetAllBatch()
         {
-            var listBatch = await _mediator.Send(new GetAllBatchQuery());
-            return listBatch;
+            return await Mediator.Send(new GetAllBatchQuery());
         }
 
         [HttpGet("management")]
         public async Task<List<BatchDTO>> GetBatchForManagement()
         {
-            var query = new GetBatchForManagementQuery();
-            var result = await _mediator.Send(query);
-            return result;
+            return await Mediator.Send(new GetBatchForManagementQuery());
         }
 
         [HttpGet("{batchId:guid}")]
-        public async Task<IActionResult> GetBatchById(Guid batchId)
+        public async Task<BatchDetailResponseDTO> GetBatchById(Guid batchId)
         {
-            var query = new GetBatchByIdQuery(batchId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetBatchByIdQuery(batchId));
         }
 
         [HttpGet("dashboard")]
         [Authorize(Policy = "CanViewDashboard")]
-        public async Task<IActionResult> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
+        public async Task<DashboardResultDTO> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
         {
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<IActionResult> GetBatchByWorkshopId([FromQuery] string? Status, DateOnly? FromDate, DateOnly? ToDate)
+        public async Task<List<BatchDTO>> GetBatchByWorkshopId([FromQuery] string? Status, DateOnly? FromDate, DateOnly? ToDate)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
-            var userId = Guid.Parse(userIdString);
-
-            var query = new GetBatchByWorkshopIdQuery(userId, Status, FromDate, ToDate);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetBatchByWorkshopIdQuery(CurrentUserId, Status, FromDate, ToDate));
         }
 
         [HttpGet("staff/bactches")]
-        public async Task<IActionResult> GetBatchesByStaffIdAsync()
+        public async Task<List<BatchDTO>> GetBatchesByStaffIdAsync()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var staffId))
+            return await Mediator.Send(new GetBatchesByStaffIdQuery
             {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
-            var query = new GetBatchesByStaffIdQuery
-            {
-                StaffId = staffId
-            };
-
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+                StaffId = CurrentUserId
+            });
         }
 
         [HttpGet("qc/bactches")]
         [Authorize(Policy = "QC")]
-        public async Task<IActionResult> GetBatchesByQCIdAsync()
+        public async Task<List<BatchDTO>> GetBatchesByQCIdAsync()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var qcId))
+            return await Mediator.Send(new GetBatchesByQCIdQuery
             {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
-            var query = new GetBatchesByQCIdQuery
-            {
-                QcId = qcId
-            };
-
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result) : BadRequest(result.IsFailure);
+                QcId = CurrentUserId
+            });
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddBatch(AddBatchCommand command)
         {
-            var result = await _mediator.Send(command);
-            if (!result.IsSuccess)
-            {
-                return BadRequest(result.Error);
-            }
-
-            return CreatedAtAction(nameof(GetAllBatch), new { id = result.Value }, result.Value);
+            await Mediator.Send(command);
+            return Ok("Create batch successfully");
         }
 
         [HttpPut("{id:guid}")]
@@ -133,17 +83,16 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateBatch(Guid id, [FromBody] UpdateBatchCommand command)
         {
             command.Id = id;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await Mediator.Send(command);
+            return Ok("Update batch successfully");
         }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteBatch(Guid id)
         {
-            var command = new DeleteBatchCommand(id);
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await Mediator.Send(new DeleteBatchCommand(id));
+            return Ok("Delete batch successfully");
         }
     }
 }

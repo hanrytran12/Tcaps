@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Response;
+﻿using Application.Common.Exceptions;
+using Application.DTOs.Response;
 using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Interfaces;
 using MediatR;
@@ -23,7 +24,7 @@ public class GetAllocatedMaterialsQueryHandler : IRequestHandler<GetAllocatedMat
 
         if (assignmentStatus is null)
         {
-            return new List<AllocatedMaterialDto>();
+            throw new NotFoundException($"Không tìm thấy công đoạn với Id: {request.AssignmentId}");
         }
 
         var query = _context.MaterialUse.AsNoTracking()

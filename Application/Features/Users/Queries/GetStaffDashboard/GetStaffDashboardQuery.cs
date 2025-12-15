@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace Application.Features.Users.Queries.GetStaffDashboard
 {
-    public class GetStaffDashboardQuery : IRequest<Result<StaffDashboardDTO>>
+    public class GetStaffDashboardQuery : IRequest<StaffDashboardDTO>
     {
         [JsonIgnore]
         public Guid StaffId { get; set; }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Interfaces;
 using MediatR;
@@ -23,7 +24,7 @@ namespace Application.Features.Productions.Command.UpdateProduction
             var production = await _productionRepository.GetByIdAsync(request.ProductionId);
             if (production == null)
             {
-                return Result<Guid>.Failure("Production not found.");
+                throw new NotFoundException("Production not found.");
             }
 
             production.SetQuantity(request.Quantity);

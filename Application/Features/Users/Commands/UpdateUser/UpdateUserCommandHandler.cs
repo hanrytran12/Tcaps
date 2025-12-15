@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -18,14 +19,14 @@ namespace Application.Features.Users.Commands.UpdateUser
 
             if (user is null)
             {
-                return Result.Failure($"Không tìm thấy User với Id: {request.Id}.");
+                throw new NotFoundException($"Không tìm thấy User với Id: {request.Id}.");
             }
 
             if (!string.IsNullOrEmpty(request.Email) && user.Email != request.Email)
             {
                 if (await _userRepository.IsEmailTakenByAnotherUserAsync(request.Email, user.Id))
                 {
-                    return Result.Failure("Email mới đã được sử dụng bởi tài khoản khác");
+                    throw new ConflictException("Email mới đã được sử dụng bởi tài khoản khác");
                 }
             }
 
@@ -33,7 +34,7 @@ namespace Application.Features.Users.Commands.UpdateUser
             {
                 if (await _userRepository.IsPhoneTakenByAnotherUserAsync(request.Phone, user.Id))
                 {
-                    return Result.Failure("Phone mới đã được sử dụng bởi tài khoản khác");
+                    throw new ConflictException("Phone mới đã được sử dụng bởi tài khoản khác");
                 }
             }
 

@@ -1,4 +1,5 @@
-﻿using Application.Features.Workshop.Command.AddWorkshop;
+﻿using Application.DTOs.Response;
+using Application.Features.Workshop.Command.AddWorkshop;
 using Application.Features.Workshop.Queries.GetWorkshopTemplate;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -17,22 +18,17 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetWorkshopsTemplate()
+        public async Task<List<WorkshopsDTO>> GetWorkshopsTemplate()
         {
-            var result = await _mediator.Send(new GetWorkshopTemplateQuery());
-            return Ok(result);
+            return await _mediator.Send(new GetWorkshopTemplateQuery());
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddWorkshop([FromBody] AddWorkshopCommand command)
         {
-            var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
+            await _mediator.Send(command);
+            return Ok("Workshop added successfully");
         }
     }
 }

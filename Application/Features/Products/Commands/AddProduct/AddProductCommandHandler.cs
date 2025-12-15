@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
@@ -22,15 +23,12 @@ namespace Application.Features.Products.Commands.AddProduct
         {
             if (!await _repository.IsNameUniqueAsync(request.Name))
             {
-                return Result<Guid>.Failure("Tên sản phẩm này đã tồn tại");
+                throw new ConflictException("Tên sản phẩm này đã tồn tại");
             }
-
             var lastIndex = await _repository.GetLastCodeIndexAsync(ProductPrefix);
             var nextIdex = (lastIndex ?? 0) + 1;
             var newCode = $"{ProductPrefix}{nextIdex}";
-
             string realativePath = await _fileStorageService.SaveFileAsync(request.ImageFile, "products", cancellationToken);
-
             var product = Product.Create(newCode, request.Name, realativePath, request.Description);
             await _repository.AddAsync(product);
             return Result<Guid>.Success(product.Id);

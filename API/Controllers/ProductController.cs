@@ -22,16 +22,15 @@ namespace API.Controllers
         [HttpGet]
         public async Task<List<ProductsDTO>> GetAllProduct()
         {
-            var listProduct = await _mediator.Send(new GetAllProductQuery());
-            return listProduct;
+            return await _mediator.Send(new GetAllProductQuery());
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? CreatedAtAction(nameof(GetAllProduct), new { id = result.Value }) : BadRequest(result.Error);
+            await _mediator.Send(command);
+            return Ok("Product added successfully");
         }
 
         [HttpPut("{id:guid}")]
@@ -39,17 +38,16 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductCommand command)
         {
             command.Id = id;
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await _mediator.Send(command);
+            return Ok("Product updated successfully");
         }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            var command = new DeleteProductCommand(id);
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? NoContent() : BadRequest(result.error);
+            await _mediator.Send(new DeleteProductCommand(id));
+            return Ok("Product deleted successfully");
         }
     }
 }

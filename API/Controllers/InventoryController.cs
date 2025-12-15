@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Response;
 using Application.Features.Inventories.Commands.AddInventory;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,32 +20,21 @@ namespace API.Controllers
         [HttpGet("from-{materialId:guid}")]
         public async Task<InventoryHistoryDTO> GetInventoryByMaterialId(Guid materialId, [FromQuery] int month, [FromQuery] int year)
         {
-            var result = await _mediator.Send(new Application.Features.Inventories.Queries.GetInventoryByMaterialId.GetInventoryByMaterialIdQuery(materialId, month, year));
-            return result;
+            return await _mediator.Send(new Application.Features.Inventories.Queries.GetInventoryByMaterialId.GetInventoryByMaterialIdQuery(materialId, month, year));
         }
 
 
         [HttpGet("{id:guid}")]
-        public async Task<IActionResult> GetInventoryById(Guid id)
+        public async Task<Inventory> GetInventoryById(Guid id)
         {
-            var result = await _mediator.Send(new Application.Features.Inventories.Queries.GetInventoryById.GetInventoryByIdQuery(id));
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return NotFound(result.Error);
+            return await _mediator.Send(new Application.Features.Inventories.Queries.GetInventoryById.GetInventoryByIdQuery(id));
         }
 
         [HttpPost]
-        //[Authorize(Policy = "Lead")]
         public async Task<IActionResult> AddInventory([FromForm] AddInventoryCommand command)
         {
-            var result = await _mediator.Send(command);
-            if (result.IsSuccess)
-            {
-                return Ok(result.Value);
-            }
-            return BadRequest(result.Error);
+            await _mediator.Send(command);
+            return Ok("Inventory added successfully");
         }
     }
 }

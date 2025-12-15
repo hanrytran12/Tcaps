@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
@@ -11,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryForQC
 {
-    public class GetWorkshopInventoryForQCQueryHandler : IRequestHandler<GetWorkshopInventoryForQCQuery, Result<List<WorkshopInventoryForQCDTO>>>
+    public class GetWorkshopInventoryForQCQueryHandler : IRequestHandler<GetWorkshopInventoryForQCQuery, List<WorkshopInventoryForQCDTO>>
     {
         private readonly IAppDbContext _appDbContext;
 
@@ -19,9 +14,8 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryFor
         {
             _appDbContext = appDbContext;
         }
-        public async Task<Result<List<WorkshopInventoryForQCDTO>>> Handle(GetWorkshopInventoryForQCQuery request, CancellationToken cancellationToken)
+        public async Task<List<WorkshopInventoryForQCDTO>> Handle(GetWorkshopInventoryForQCQuery request, CancellationToken cancellationToken)
         {
-            // Lấy user
             var user = await _appDbContext.Users
                 .AsNoTracking()
                 .Where(u => u.Id == request.UserId)
@@ -30,10 +24,9 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryFor
 
             if (user == null)
             {
-                return Result<List<WorkshopInventoryForQCDTO>>.Failure("User not found");
+                throw new NotFoundException("User not found");
             }
 
-            // Lấy tồn kho của xưởng tương ứng
             var query = from w in _appDbContext.WorkshopInventory
                         join m in _appDbContext.Materials on w.MaterialId equals m.Id
                         join a in _appDbContext.Assignments on w.WorkshopId equals a.WorkshopId
@@ -48,14 +41,12 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryFor
                             MaterialName = m.Name,
                             BatchCode = b.Code,
                             Quantity = (int)w.Quantity,
-                            //Unit = w.Unit
                         };
 
             var result = await query
                 .Distinct()
                 .ToListAsync(cancellationToken);
-
-            return Result<List<WorkshopInventoryForQCDTO>>.Success(result);
+            return result;
         }
     }
 }

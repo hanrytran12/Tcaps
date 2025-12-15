@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -31,18 +32,18 @@ namespace Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTran
         {
             var materialSupply = await _materialSupplyRepository.GetByIdAsync(request.SupplyId);
             if (materialSupply == null)
-                return Result<Guid>.Failure("Không tìm thấy phiếu cung cấp vật liệu.");
+                throw new NotFoundException("Không tìm thấy phiếu cung cấp vật liệu.");
 
             var materialRequest = await _materialRequestRepository.GetByIdAsync(materialSupply.RequestId);
             if (materialRequest == null)
-                return Result<Guid>.Failure("Không tìm thấy yêu cầu vật liệu tương ứng.");
+                throw new NotFoundException("Không tìm thấy yêu cầu vật liệu tương ứng.");
 
             var qcTransport = await _userRepository.GetByIdAsync(request.QcTransportId);
             if (qcTransport == null || qcTransport.IsQcTransport == false)
-                return Result<Guid>.Failure("Không tìm thấy người vận chuyển (QC Transport).");
+                throw new NotFoundException("Không tìm thấy người vận chuyển (QC Transport).");
 
             if (materialSupply.Status == "InProgress")
-                return Result<Guid>.Failure("Phiếu đã ở trạng thái InProgress.");
+                throw new BadRequestException("Phiếu đã ở trạng thái InProgress.");
 
             materialSupply.MarkAsInProgress();
             _materialSupplyRepository.Update(materialSupply);

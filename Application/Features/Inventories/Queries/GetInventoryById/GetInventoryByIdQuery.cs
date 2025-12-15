@@ -1,10 +1,9 @@
-﻿using Application.Common;
-using Domain.Entities;
+﻿using Domain.Entities;
 using MediatR;
 
 namespace Application.Features.Inventories.Queries.GetInventoryById
 {
-    public class GetInventoryByIdQuery : IRequest<Result<Inventory>>
+    public class GetInventoryByIdQuery : IRequest<Inventory>
     {
         public Guid Id { get; set; }
 

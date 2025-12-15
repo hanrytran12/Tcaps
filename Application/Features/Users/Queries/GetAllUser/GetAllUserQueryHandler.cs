@@ -7,7 +7,6 @@ namespace Application.Features.Users.Queries.GetAllUser
 {
     public class GetAllUserQueryHandler : IRequestHandler<GetAllUserQuery, List<UsersDTO>>
     {
-        //private readonly IUserRepository _repository;
         private readonly IAppDbContext _appDbContext;
 
         public GetAllUserQueryHandler(IAppDbContext appDbContext)
@@ -32,7 +31,6 @@ namespace Application.Features.Users.Queries.GetAllUser
                             WorkshopName = subW != null ? subW.Name : string.Empty,
                             Status = u.Status
                         };
-
             return await users.AsNoTracking().ToListAsync();
         }
     }

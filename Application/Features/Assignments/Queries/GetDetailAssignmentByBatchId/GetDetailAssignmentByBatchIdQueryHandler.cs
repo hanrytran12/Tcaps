@@ -1,12 +1,11 @@
-﻿using Application.Common;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId
 {
-    public class GetDetailAssignmentByBatchIdQueryHandler : IRequestHandler<GetDetailAssignmentByBatchIdQuery, Result<List<DashboardAssignmentDTO>>>
+    public class GetDetailAssignmentByBatchIdQueryHandler : IRequestHandler<GetDetailAssignmentByBatchIdQuery, List<DashboardAssignmentDTO>>
     {
         private readonly IAppDbContext _context;
 
@@ -14,7 +13,7 @@ namespace Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId
         {
             _context = context;
         }
-        public async Task<Result<List<DashboardAssignmentDTO>>> Handle(GetDetailAssignmentByBatchIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<DashboardAssignmentDTO>> Handle(GetDetailAssignmentByBatchIdQuery request, CancellationToken cancellationToken)
         {
             var assignments = await (
                 from a in _context.Assignments.AsNoTracking()
@@ -30,7 +29,7 @@ namespace Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId
                     Status = a.Status,
                 }).ToListAsync(cancellationToken);
 
-            return Result<List<DashboardAssignmentDTO>>.Success(assignments);
+            return assignments;
         }
     }
 }

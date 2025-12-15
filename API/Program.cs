@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Security.Claims;
 using System.Text;
 
 Env.Load();
@@ -89,8 +90,30 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("QC", policy =>
         policy.RequireRole("QC"));
 
-    options.AddPolicy("QCTransport", policy =>
-        policy.RequireRole("QCTransport"));
+    options.AddPolicy("QCTransportOnly", policy =>
+    {
+        policy.RequireRole("QCTransport");
+        policy.RequireClaim("isQcTransport", "true");
+    });
+
+    options.AddPolicy("LeadOrValidQCTransport", policy =>
+    {
+        policy.RequireAssertion(context =>
+        {
+            var role = context.User.FindFirstValue(ClaimTypes.Role);
+
+            // Lead luôn được phép
+            if (role == "Lead")
+                return true;
+
+            // QCTransport phải có claim isQcTransport=true
+            if (role == "QCTransport" &&
+                context.User.HasClaim("isQcTransport", "true"))
+                return true;
+
+            return false;
+        });
+    });
 
     options.AddPolicy("CanCreateMaterialRequest", policy =>
         policy.RequireRole("Lead", "QC"));

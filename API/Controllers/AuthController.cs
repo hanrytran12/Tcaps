@@ -1,4 +1,5 @@
-﻿using Application.Features.Auth.Queries;
+﻿using Application.DTOs.Response;
+using Application.Features.Auth.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,14 +16,9 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> LoginAsync([FromQuery] LoginQuery query)
+        public async Task<AuthRepsponseDTO> LoginAsync([FromQuery] LoginQuery query)
         {
-            var result = await _mediator.Send(query);
-            if (result.IsFailure)
-            {
-                return BadRequest(result.Error);
-            }
-            return Ok(result.Value);
+            return await _mediator.Send(query);
         }
     }
 }

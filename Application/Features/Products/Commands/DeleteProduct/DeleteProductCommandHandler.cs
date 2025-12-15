@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Interfaces;
 using MediatR;
 
@@ -21,17 +22,16 @@ namespace Application.Features.Products.Commands.DeleteProduct
 
             if (product is null)
             {
-                return Result.Failure($"Không tìm thấy Product với Id: {request.Id}.");
+                throw new NotFoundException($"Không tìm thấy Product với Id: {request.Id}.");
             }
 
             var isProductInUse = await _batchRepository.IsProductInUseAsync(request.Id);
             if (isProductInUse)
             {
-                return Result.Failure("Không thể xóa Product vì đang có lô đang hoặc đã sản xuất cho mã nón này.");
+                throw new ConflictException("Không thể xóa Product vì đang có lô đang hoặc đã sản xuất cho mã nón này.");
             }
 
             product.MarkAsDeleted();
-
             return Result.Success();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Interfaces;
 using MediatR;
@@ -25,7 +26,7 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
 
             if (materialRequest is null)
             {
-                return Result.Failure("Material request not found.");
+                throw new NotFoundException("Material request not found.");
             }
 
             var taskTransferRequest = await _appDbContext.TaskTransferRequests

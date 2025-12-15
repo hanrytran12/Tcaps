@@ -7,162 +7,79 @@ using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferReque
 using Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTransferForQcTransport;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using Application.Features.AssingmentTransferRequest.Queries.GetTransferRequestByAssignmentId;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AssignmentTransferRequestController : ControllerBase
+    public class AssignmentTransferRequestController : BaseApiController
     {
-        private readonly IMediator _mediator;
-        public AssignmentTransferRequestController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
         [HttpGet]
         [Authorize(Roles = "Lead")]
         public async Task<ActionResult<List<AssignmentTransferRequestDTO>>> GetAllTrasnferRequest()
         {
-            var query = new GetAllTransferRequestQuery();
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetAllTransferRequestQuery());
         }
 
         [HttpGet("{assignmentId:guid}/reconcilliation-summary")]
-        public async Task<IActionResult> GetReconciliationSummary(Guid assignmentId)
+        public async Task<ReconcilationSummaryDTO> GetReconciliationSummary(Guid assignmentId)
         {
-            var query = new GetReconciliationSummaryQuery(assignmentId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetReconciliationSummaryQuery(assignmentId));
         }
 
         [HttpGet("by-assignment/{assignmentId:guid}")]
-        public async Task<IActionResult> GetTransferRequestByAssignmentId(Guid assignmentId)
+        public async Task<TransferRequestDTO> GetTransferRequestByAssignmentId(Guid assignmentId)
         {
-            var query = new GetTransferRequestByAssignmentIdQuery(assignmentId);
-            var result = await _mediator.Send(query);
-            return Ok(result);
+            return await Mediator.Send(new GetTransferRequestByAssignmentIdQuery(assignmentId));
         }
 
         [HttpGet("qc-transport")]
-        [Authorize(Roles = "QCTransport")]
-        public async Task<IActionResult> GetForQCTransport([FromQuery] GetAssignmentTransferForQcTransportQuery query)
+        [Authorize(Policy = "QCTransportOnly")]
+        public async Task<AssignmentTransferRequestDTO> GetForQCTransportAsync(
+        [FromQuery] GetAssignmentTransferForQcTransportQuery query)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var isQcTransport = User.FindFirstValue("isQcTransport");
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out _))
-            {
-                return Unauthorized();
-            }
-
-            if (!string.Equals(isQcTransport, "true", StringComparison.OrdinalIgnoreCase))
-            {
-                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
-            }
-
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+            return await Mediator.Send(query);
         }
 
         [HttpGet("getAll-for-qcTransport")]
-        public async Task<IActionResult> GetAllForQcTransport()
+        public async Task<List<AssignmentTransferRequestDTO>> GetAllForQcTransport()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+            return await Mediator.Send(new GetAllForQcTransportQuery
             {
-                return Unauthorized();
-            }
-
-            var query = new GetAllForQcTransportQuery
-            {
-                QcTransportId = userId
-            };
-
-            var result = await _mediator.Send(query);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+                QcTransportId = CurrentUserId
+            });
         }
 
         [HttpPost]
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> CreateTransferRequest([FromBody] AddAssignmentTransferRequestCommand command)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized("Không thể xác định người dùng từ token.");
-            }
-
-            var userId = Guid.Parse(userIdString);
-            command.UserId = userId;
-            var result = await _mediator.Send(command);
-            return (result.IsSuccess) ? Ok(result.Value) : BadRequest(result.Error);
+            command.UserId = CurrentUserId;
+            await Mediator.Send(command);
+            return Ok("Yêu cầu chuyển giao đã được tạo thành công.");
         }
 
         [HttpPut("approved/{transferRequestId:guid}")]
-        [Authorize(Roles = "Lead,QCTransport")]
+        [Authorize(Policy = "LeadOrValidQCTransport")]
         public async Task<IActionResult> ApproveTrasnferRequest(Guid transferRequestId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
-            {
-                return Unauthorized();
-            }
-
-            var role = User.FindFirstValue(ClaimTypes.Role);
-            var isQcTransport = User.FindFirstValue("isQcTransport");
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            if (string.Equals(role, "QCTransport", StringComparison.OrdinalIgnoreCase) &&
-                !string.Equals(isQcTransport, "true", StringComparison.OrdinalIgnoreCase))
-            {
-                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
-            }
-
-            var command = new UpdateAssignmentTransferRequestCommand(transferRequestId, userId);
-            var result = await _mediator.Send(command);
-            return (result.IsSuccess) ? NoContent() : BadRequest(result.error);
+            await Mediator.Send(new UpdateAssignmentTransferRequestCommand(transferRequestId, CurrentUserId));
+            return Ok("Yêu cầu chuyển giao đã được phê duyệt thành công.");
         }
 
-
-
         [HttpPut("qc-transport-reception")]
-        [Authorize(Roles = "QCTransport")]
+        [Authorize(Policy = "QCTransportOnly")]
         public async Task<IActionResult> QCTransportReception([FromQuery] Guid assignmentTransferId)
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString) || !Guid.TryParse(userIdString, out var userId))
+            await Mediator.Send(new QcTransportReceptionCommand
             {
-                return Unauthorized();
-            }
-
-            var isQcTransport = User.FindFirstValue("isQcTransport");
-
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            if (!string.Equals(isQcTransport, "true", StringComparison.OrdinalIgnoreCase))
-            {
-                return Forbid("QCTransport cần có quyền isQcTransport = true để truy cập.");
-            }
-
-            var command = new QcTransportReceptionCommand
-            {
-                QCTransportId = userId,
+                QCTransportId = CurrentUserId,
                 AssignmentTransferRequestId = assignmentTransferId
-            };
-
-            var result = await _mediator.Send(command);
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+            });
+            return Ok("Tiếp nhận yêu cầu chuyển giao thành công.");
         }
     }
 }
