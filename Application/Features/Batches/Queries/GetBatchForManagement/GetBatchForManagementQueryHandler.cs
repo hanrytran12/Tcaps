@@ -18,9 +18,12 @@ namespace Application.Features.Batches.Queries.GetBatchForManagement
         {
             var batchList = from b in _appDbContext.Batches
                             join p in _appDbContext.Products on b.ProductId equals p.Id
+                            join u in _appDbContext.Users on b.UserId equals u.Id
                             select new BatchDTO
                             {
                                 BatchId = b.Id,
+                                UserId = b.UserId,
+                                LeadName = u.FullName,
                                 Code = b.Code,
                                 ProductName = p.Name,
                                 Quantity = b.Quantity,

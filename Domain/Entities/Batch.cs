@@ -6,6 +6,7 @@ namespace Domain.Entities
     public class Batch : AggregrateRoot
     {
         public Guid ProductId { get; private set; }
+        public Guid UserId { get; private set; }
         public string Code { get; private set; } = string.Empty;
         public decimal Quantity { get; private set; }
         public decimal ActualQuantity { get; private set; }
@@ -32,10 +33,11 @@ namespace Domain.Entities
 
         public ICollection<MaterialUse> MaterialUses { get; private set; } = new List<MaterialUse>();
 
-        public Batch(Guid Id, Guid productId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
+        public Batch(Guid Id, Guid productId, Guid userId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
             : base(Id)
         {
             ProductId = productId;
+            UserId = userId;
             Code = code;
             Quantity = quantity;
             StartDate = startDate;
@@ -46,9 +48,9 @@ namespace Domain.Entities
 
         private Batch() : base(Guid.NewGuid()) { }
 
-        public static Batch Create(Guid productId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
+        public static Batch Create(Guid productId, Guid userId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
         {
-            return new Batch(Guid.NewGuid(), productId, code, quantity, startDate, endDate);
+            return new Batch(Guid.NewGuid(), productId, userId, code, quantity, startDate, endDate);
         }
 
         public void MarkAsDeleted()

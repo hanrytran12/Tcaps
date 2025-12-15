@@ -20,5 +20,6 @@ namespace Domain.Interfaces
         Task<IEnumerable<User>> GetUsersByWorkshopIdAsync(Guid workshopId);
         Task<IEnumerable<User>> GetAllQCTransportAsync();
         Task<List<User>> GetQcsByWorkshopIdsAsync(List<Guid> workshopId);
+        Task<IEnumerable<User>> GetLeadsAsync();
     }
 }
