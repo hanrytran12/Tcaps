@@ -22,6 +22,7 @@ namespace Application.Features.Batches.Queries.GetBatchForManagement
                             {
                                 BatchId = b.Id,
                                 Code = b.Code,
+                                ProductCode = p.Code,
                                 ProductName = p.Name,
                                 Quantity = b.Quantity,
                                 StartDate = b.StartDate,
