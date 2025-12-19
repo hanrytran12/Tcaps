@@ -9,6 +9,7 @@ using Application.Features.MaterialRequest.Commands.QcTransportReceptionMaterial
 using Application.Features.MaterialRequest.Commands.RejectMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequest;
 using Application.Features.MaterialRequest.Queries.GetAllMaterialRequestForAdmin;
+using Application.Features.MaterialRequest.Queries.GetForAssignmentDashboard;
 using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQC;
 using Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTransport;
 using Application.Features.MaterialRequest.Queries.GetPendingRequestForQc;
@@ -60,6 +61,12 @@ namespace API.Controllers
         [HttpGet("qc-transport")]
         [Authorize(Policy = "QCTransportOnly")]
         public async Task<Result<MaterialRequestDTO>> GetRequestsForQcTransport([FromQuery] GetMaterialRequestForQcTransportQuery query)
+        {
+            return await Mediator.Send(query);
+        }
+
+        [HttpGet("assignment-dashboard")]
+        public async Task<List<MaterialRequestForAssignmentDashboardDTO>> GetForAssignmentDashboard([FromQuery] GetForAssignmentDashboardQuery query)
         {
             return await Mediator.Send(query);
         }
