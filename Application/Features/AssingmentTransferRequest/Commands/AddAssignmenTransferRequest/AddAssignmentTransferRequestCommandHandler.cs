@@ -51,22 +51,22 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 }
             }
 
-            decimal completedQuantity = 0;
+            decimal completedQuantitySend = 0;
 
             if (assignment.Status == "Reworking")
             {
                 var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, request.ReworkRequestId);
-                completedQuantity = summary.TotalCompleted;
+                completedQuantitySend = summary.TotalCompleted;
             }
 
             else
             {
                 var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, null);
-                completedQuantity = summary.TotalCompleted;
+                completedQuantitySend = summary.TotalCompleted;
             }
             //var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
 
-            var requestTransfer = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantity, request.Note, (assignment.Status == "Reworking" ? request.ReworkRequestId : null));
+            var requestTransfer = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantitySend, request.Note, (assignment.Status == "Reworking" ? request.ReworkRequestId : null));
             await _assignmentTransferRequestRepository.AddAsync(requestTransfer);
 
             requestTransfer.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));

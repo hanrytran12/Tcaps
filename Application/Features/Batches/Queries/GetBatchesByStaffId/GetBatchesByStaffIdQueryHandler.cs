@@ -29,7 +29,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
                                  select new BatchDTO
                                  {
                                      BatchId = b.Id,
-                                     UserId = b.UserId,
+                                     UserId = b.UserId ?? Guid.Empty,
                                      LeadName = u.FullName,
                                      ProductName = p.Name,
                                      Code = b.Code,

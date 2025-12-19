@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Domain.Enums;
 using MediatR;
 
 namespace Application.Features.Workshop.Command.AddWorkshop
@@ -7,6 +8,6 @@ namespace Application.Features.Workshop.Command.AddWorkshop
     {
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public int StepOrder { get; set; }
+        public WorkshopType WorkshopType { get; set; }
     }
 }

@@ -7,7 +7,7 @@
         public string? ProductCode { get; set; }
         public Guid BatchId { get; set; }
         public Guid WorkshopId { get; set; }
-        public int StepOrder { get; set; }
+        public int? StepOrder { get; set; }
         public int Quantity { get; set; }
         public decimal UnitPrice { get; set; }
         public DateOnly StartDate { get; set; }

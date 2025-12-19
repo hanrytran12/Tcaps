@@ -29,8 +29,10 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                             BatchCode = b.Code,
                             ProductCode = p.Code,
                             WorkshopName = w.Name,
-                            CompletedQuantity = tr.CompletedQuantity,
-                            Note = tr.Note,
+                            CompletedQuantitySend = tr.CompletedQuantitySend,
+                            CompletedQuantityReceive = tr.CompletedQuantityReceive,
+                            Note = tr.Note ?? string.Empty,
+                            NotLead = tr.NoteLead ?? string.Empty,
                             Status = tr.Status,
                             CreatedAt = tr.CreatedAt
                         };

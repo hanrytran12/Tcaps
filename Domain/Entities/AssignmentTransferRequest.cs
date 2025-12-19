@@ -8,17 +8,19 @@ namespace Domain.Entities
         public Guid AssignmentId { get; private set; }
         public Guid? ReworkRequestId { get; private set; }
         public Guid UserId { get; private set; }
-        public decimal CompletedQuantity { get; private set; }
+        public decimal CompletedQuantitySend { get; private set; }
+        public decimal CompletedQuantityReceive { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public string? Note { get; private set; } = string.Empty;
+        public string? NoteLead { get; private set; } = string.Empty;
         public DateTime CreatedAt { get; private set; }
 
-        public AssignmentTransferRequest(Guid RequestId, Guid assignmentId, Guid userId, decimal completedQuantity, string? note, Guid? reworkRequestId)
+        public AssignmentTransferRequest(Guid RequestId, Guid assignmentId, Guid userId, decimal completedQuantitySend, string? note, Guid? reworkRequestId)
             : base(RequestId)
         {
             AssignmentId = assignmentId;
             UserId = userId;
-            CompletedQuantity = completedQuantity;
+            CompletedQuantitySend = completedQuantitySend;
             Status = "PendingApproval";
             Note = note;
             CreatedAt = DateTime.Now;
@@ -27,23 +29,26 @@ namespace Domain.Entities
 
         private AssignmentTransferRequest() : base(Guid.NewGuid()) { }
 
-        public static AssignmentTransferRequest Create(Guid assignmentId, Guid userId, decimal completedQuantity, string? note, Guid? reworkRequestId)
+        public static AssignmentTransferRequest Create(Guid assignmentId, Guid userId, decimal completedQuantitySend, string? note, Guid? reworkRequestId)
         {
             if (assignmentId == Guid.Empty) throw new ArgumentException("AssignmentId không được để trống.");
             if (userId == Guid.Empty) throw new ArgumentException("UserId không được để trống.");
-            if (completedQuantity < 0) throw new ArgumentException("Quantity không được là số âm.");
+            if (completedQuantitySend < 0) throw new ArgumentException("Quantity không được là số âm.");
 
-            var transferRequest = new AssignmentTransferRequest(Guid.NewGuid(), assignmentId, userId, completedQuantity, note, reworkRequestId);
+            var transferRequest = new AssignmentTransferRequest(Guid.NewGuid(), assignmentId, userId, completedQuantitySend, note, reworkRequestId);
             //transferRequest.AddDomainEvent(new TransferRequestAddedEvent(userId));
             return transferRequest;
         }
 
-        public void MarkAsApproved(Guid supplierId)
+        public void MarkAsApproved(Guid supplierId, decimal completedQuantityReceive, string notLead)
         {
             if (Status == "Approved") return;
             this.Status = "Approved";
+            this.CompletedQuantityReceive = completedQuantityReceive;
+            this.NoteLead = notLead;
 
-            AddDomainEvent(new TransferRequestApprovedEvent(AssignmentId, ReworkRequestId, CompletedQuantity, supplierId));
+            decimal quantityReject = CompletedQuantitySend - CompletedQuantityReceive;
+            AddDomainEvent(new TransferRequestApprovedEvent(AssignmentId, ReworkRequestId, CompletedQuantityReceive, quantityReject, supplierId));
         }
 
         public void MarkAsReception() => Status = "QCTransportReception";

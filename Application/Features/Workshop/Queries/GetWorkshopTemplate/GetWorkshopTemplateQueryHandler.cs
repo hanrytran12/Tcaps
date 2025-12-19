@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Response;
+﻿using Application.Common.Extensions;
+using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +25,9 @@ namespace Application.Features.Workshop.Queries.GetWorkshopTemplate
                     WorkshopName = w.Name,
                     Description = w.Description,
                     StepOrder = w.StepOrder,
+                    WorkshopType = w.WorkshopType.GetDisplayName(),
+                    CreatedAt = w.CreatedAt,
+                    Status = w.Status
                 }).ToListAsync();
         }
     }

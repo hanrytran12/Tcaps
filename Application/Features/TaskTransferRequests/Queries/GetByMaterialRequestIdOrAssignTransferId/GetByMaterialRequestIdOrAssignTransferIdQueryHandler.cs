@@ -68,7 +68,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequest
                             AssignmentTransferId = ttr.AssignmentTransferId,
                             MaterialName = m.Name,
                             QuantityRequest = mrItem == null ? 0 : (int)mrItem.QuantityRequest,
-                            CompleteQuantity = assignTransferItem == null ? 0 : (int)assignTransferItem.CompletedQuantity,
+                            CompleteQuantity = assignTransferItem == null ? 0 : (int)assignTransferItem.CompletedQuantityReceive,
                             Status = ttr.Status,
                             Note = ttr.Note,
                             CreatedAt = ttr.CreatedAt,
