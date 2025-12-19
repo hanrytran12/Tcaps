@@ -27,6 +27,8 @@ namespace Application.Interfaces
         Task SendQCTransportReceptionAssignmentTransferNotificationAsync(Guid qcTransportId, Guid assignTransferRequestId, Guid assignId);
         Task SendQCTransportReceptionMaterialRequestNotificationAsync(Guid qcTransportId, Guid materialRequestId, Guid assignId);
         Task SendConfirmRequestFromLeadNotificationAsync(Guid materialRequestId, Guid qcId);
-        Task AddBatchNotificationAsync(Guid userId, string batchCode, decimal quantity);
+        Task AddBatchNotificationAsync(Guid? userId, string batchCode, decimal quantity);
+        Task ApproveFinalTransferRequestNotificationAsync(Guid batchId, decimal quantityComplete, decimal quantityError);
+        Task UpdateQuantityDefectNotificationAsync(decimal quantityReject, Guid qcId, string batchCode);
     }
 }

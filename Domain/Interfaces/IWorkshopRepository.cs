@@ -14,5 +14,8 @@ namespace Domain.Interfaces
         Task<List<Workshop>> GetByIdsAsync(List<Guid> ids);
         Task<bool> ExistNameAsync(string name);
         Task<bool> ExistsStepOrderAsync(int stepOrder);
+        Task<int?> GetMaxStepOrderAsync();
+        Task ShiftStepOrdersAsync(int fromStepOrder);
+        Task ShiftStepOrdersDownAsync(int fromStepOrder);
     }
 }

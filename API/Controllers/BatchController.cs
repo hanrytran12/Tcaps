@@ -7,6 +7,7 @@ using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetBatchesByQCId;
 using Application.Features.Batches.Queries.GetBatchesByStaffId;
+using Application.Features.Batches.Queries.GetBatchForLead;
 using Application.Features.Batches.Queries.GetBatchForManagement;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
@@ -67,6 +68,16 @@ namespace API.Controllers
             return await Mediator.Send(new GetBatchesByQCIdQuery
             {
                 QcId = CurrentUserId
+            });
+        }
+
+        [HttpGet("lead/batches")]
+        [Authorize(Policy = "Lead")]
+        public async Task<List<BatchDTO>> GetBatchesByLeadIdAsync()
+        {
+            return await Mediator.Send(new GetBatchForLeadQuery
+            {
+                UserId = CurrentUserId
             });
         }
 

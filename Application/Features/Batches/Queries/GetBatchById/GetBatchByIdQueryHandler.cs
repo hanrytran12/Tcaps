@@ -34,7 +34,7 @@ namespace Application.Features.Batches.Queries.GetBatchById
             })
             .Select(data => new BatchDetailResponseDTO
             {
-                UserId = data.Batch.UserId,
+                UserId = data.Batch.UserId ?? Guid.Empty,
                 LeadName = data.LeadName ?? string.Empty,
                 Code = data.Batch.Code,
                 Quantity = data.Batch.Quantity,

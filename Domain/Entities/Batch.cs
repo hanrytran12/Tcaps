@@ -6,7 +6,7 @@ namespace Domain.Entities
     public class Batch : AggregrateRoot
     {
         public Guid ProductId { get; private set; }
-        public Guid UserId { get; private set; }
+        public Guid? UserId { get; private set; }
         public string Code { get; private set; } = string.Empty;
         public decimal Quantity { get; private set; }
         public decimal ActualQuantity { get; private set; }
@@ -33,7 +33,7 @@ namespace Domain.Entities
 
         public ICollection<MaterialUse> MaterialUses { get; private set; } = new List<MaterialUse>();
 
-        public Batch(Guid Id, Guid productId, Guid userId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
+        public Batch(Guid Id, Guid productId, Guid? userId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
             : base(Id)
         {
             ProductId = productId;
@@ -48,7 +48,7 @@ namespace Domain.Entities
 
         private Batch() : base(Guid.NewGuid()) { }
 
-        public static Batch Create(Guid productId, Guid userId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
+        public static Batch Create(Guid productId, Guid? userId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
         {
             return new Batch(Guid.NewGuid(), productId, userId, code, quantity, startDate, endDate);
         }
@@ -143,11 +143,20 @@ namespace Domain.Entities
             assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
         }
 
-        public void ActiveNextAssignment(Guid completedAssignmentId, decimal quantityCompleted, decimal rejectedQuantity)
+        public void ActiveNextAssignment(Guid assignTransferRequestId, Guid completedAssignmentId, decimal quantityCompleted)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
-            //currentAssignment.UpdateStatus("Completed");
+            //nếu là xưởng khoán
+            if (!currentAssignment.StepOrder.HasValue)
+            {
+                AddDomainEvent(new FinalTransferRequestCreatedEvent(
+                    Guid.NewGuid(),
+                    assignTransferRequestId,
+                    quantityCompleted));
+
+                return;
+            }
 
             var currentSteporder = currentAssignment.StepOrder;
             var nextAssignment = this.Assignments.Where(a => a.StepOrder > currentSteporder).OrderBy(a => a.StepOrder).FirstOrDefault();
@@ -160,7 +169,12 @@ namespace Domain.Entities
 
             else
             {
-                this.CompleteBatch(quantityCompleted, rejectedQuantity);
+                AddDomainEvent(new FinalTransferRequestCreatedEvent(
+                    Guid.NewGuid(),
+                    assignTransferRequestId,
+                    quantityCompleted));
+
+                //this.CompleteBatch(quantityCompleted, rejectedQuantity);
                 currentAssignment.UpdateStatus("Completed");
                 currentAssignment.UpdateDateComplete();
             }
@@ -191,6 +205,11 @@ namespace Domain.Entities
                 currentMaterialUsage.UpdateReconciledQuantity(reconciledQuantity);
                 AddDomainEvent(new MaterialUsageReconciledEvent(Code, currentMaterialUsage.Id, userId, reconciledQuantity));
             }
+        }
+
+        public void UpdateLeadForBatch(Guid userId)
+        {
+            UserId = userId;
         }
     }
 }

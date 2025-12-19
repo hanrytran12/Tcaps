@@ -26,24 +26,25 @@ DELETE FROM ReworkRequests
 DELETE FROM WorkshopInventory
 
 select * from Workshop
-INSERT INTO Workshop (Id, Name, Description, StepOrder)
+INSERT INTO Workshop (Id, Name, Description, StepOrder, WorkshopType, Status, CreatedAt)
 VALUES 
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000001' AS UNIQUEIDENTIFIER), N'Cắt laser (nếu có)', N'Công đoạn Cắt laser (nếu có)', 1),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000002' AS UNIQUEIDENTIFIER), N'Cắt vải ép keo', N'Công đoạn Cắt vải ép keo', 2),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000003' AS UNIQUEIDENTIFIER), N'Dán vải', N'Công đoạn Dán vải', 3),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000004' AS UNIQUEIDENTIFIER), N'Cắt vải ra đủ bộ', N'Công đoạn Cắt vải ra đủ bộ', 4),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000005' AS UNIQUEIDENTIFIER), N'In + thêu', N'Công đoạn In + thêu', 5),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000006' AS UNIQUEIDENTIFIER), N'Làm chỏm', N'Công đoạn Làm chỏm', 6),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000007' AS UNIQUEIDENTIFIER), N'Làm kết', N'Công đoạn Làm kết', 7),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000008' AS UNIQUEIDENTIFIER), N'Đóng nút bấm đuôi (nếu có)', N'Công đoạn Đóng nút bấm đuôi (nếu có)', 8),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000009' AS UNIQUEIDENTIFIER), N'Xỏ cây dựng + vắt sổ', N'Công đoạn Xỏ cây dựng + vắt sổ', 9),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000010' AS UNIQUEIDENTIFIER), N'Vào nón + vào đai', N'Công đoạn Vào nón + vào đai', 10),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000011' AS UNIQUEIDENTIFIER), N'Trần đầu nón', N'Công đoạn Trần đầu nón', 11),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000012' AS UNIQUEIDENTIFIER), N'May đuôi khóa vào nón (nếu có)', N'Công đoạn May đuôi khóa vào nón (nếu có)', 12),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000013' AS UNIQUEIDENTIFIER), N'May tem', N'Công đoạn May tem', 13),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000014' AS UNIQUEIDENTIFIER), N'Cắt chỉ dư + xỏ tem thẻ bài', N'Công đoạn Cắt chỉ dư + xỏ tem thẻ bài', 14),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000015' AS UNIQUEIDENTIFIER), N'Ủi nón', N'Công đoạn Ủi nón', 15),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000016' AS UNIQUEIDENTIFIER), N'Gấp cây + đóng bịch', N'Công đoạn Gấp cây + đóng bịch', 16);
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000001' AS UNIQUEIDENTIFIER), N'Cắt laser (nếu có)', N'Công đoạn Cắt laser (nếu có)', 1, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000002' AS UNIQUEIDENTIFIER), N'Cắt vải ép keo', N'Công đoạn Cắt vải ép keo', 2, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000003' AS UNIQUEIDENTIFIER), N'Dán vải', N'Công đoạn Dán vải', 3, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000004' AS UNIQUEIDENTIFIER), N'Cắt vải ra đủ bộ', N'Công đoạn Cắt vải ra đủ bộ', 4, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000005' AS UNIQUEIDENTIFIER), N'In + thêu', N'Công đoạn In + thêu', 5, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000006' AS UNIQUEIDENTIFIER), N'Làm chỏm', N'Công đoạn Làm chỏm', 6, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000007' AS UNIQUEIDENTIFIER), N'Làm kết', N'Công đoạn Làm kết', 7, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000008' AS UNIQUEIDENTIFIER), N'Đóng nút bấm đuôi (nếu có)', N'Công đoạn Đóng nút bấm đuôi (nếu có)', 8, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000009' AS UNIQUEIDENTIFIER), N'Xỏ cây dựng + vắt sổ', N'Công đoạn Xỏ cây dựng + vắt sổ', 9, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000010' AS UNIQUEIDENTIFIER), N'Vào nón + vào đai', N'Công đoạn Vào nón + vào đai', 10, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000011' AS UNIQUEIDENTIFIER), N'Trần đầu nón', N'Công đoạn Trần đầu nón', 11, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000012' AS UNIQUEIDENTIFIER), N'May đuôi khóa vào nón (nếu có)', N'Công đoạn May đuôi khóa vào nón (nếu có)', 12, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000013' AS UNIQUEIDENTIFIER), N'May tem', N'Công đoạn May tem', 13, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000014' AS UNIQUEIDENTIFIER), N'Cắt chỉ dư + xỏ tem thẻ bài', N'Công đoạn Cắt chỉ dư + xỏ tem thẻ bài', 14, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000015' AS UNIQUEIDENTIFIER), N'Ủi nón', N'Công đoạn Ủi nón', 15, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000016' AS UNIQUEIDENTIFIER), N'Gấp cây + đóng bịch', N'Công đoạn Gấp cây + đóng bịch', 16, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000017' AS UNIQUEIDENTIFIER), N'Xưởng khoán', N'Xưởng làm tất cả', null, 2, 'Assigned', GETDATE());
 
 select * from Users
 INSERT INTO [Users] (Id, WorkshopId, Role, FullName, Email, PasswordHash, Phone, Status, IsQcTransport, CreatedAt)
@@ -91,7 +92,9 @@ VALUES
 -- Step 15: Ủi nón
 ('A0000000-0000-0000-0000-000000000020', 'A1C9B3A0-4F12-4E81-B17B-000000000015', 'QC', N'QC Xưởng Ủi Nón', 'qc.uinon@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000115', 'Active', 0, GETDATE()),
 -- Step 16: Gấp cây + đóng bịch
-('A0000000-0000-0000-0000-000000000021', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'QC', N'QC Xưởng Đóng Bịch', 'qc.dongbich@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE());
+('A0000000-0000-0000-0000-000000000021', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'QC', N'QC Xưởng Đóng Bịch', 'qc.dongbich@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE()),
+-- Xưởng khoán
+('A0000000-0000-0000-0000-000000000056', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'QC', N'QC Xưởng Khoán', 'qc.khoan@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE());
 
 INSERT INTO [Users] (Id, WorkshopId, Role, FullName, Email, PasswordHash, Phone, Status, IsQcTransport, CreatedAt)
 VALUES
@@ -157,7 +160,11 @@ VALUES
 
 -- Step 16: Gấp cây + đóng bịch (WorkshopId: A1C9B3A0-4F12-4E81-B17B-000000000016)
 ('A0000000-0000-0000-0000-000000000052', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'Staff', N'Nguyễn Văn GG - Đóng Bịch', 'staff.dongbich1@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161601', 'Active', 0, GETDATE()),
-('A0000000-0000-0000-0000-000000000053', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'Staff', N'Trần Thị HH - Đóng Bịch', 'staff.dongbich2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE());
+('A0000000-0000-0000-0000-000000000053', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'Staff', N'Trần Thị HH - Đóng Bịch', 'staff.dongbich2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),
+
+-- Nhân viên xưởng khoán
+('A0000000-0000-0000-0000-000000000054', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Staff', N'Nguyễn Văn GG - Khoán', 'staff.khoan1@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161601', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000055', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Staff', N'Trần Thị HH - Khoán', 'staff.khoan2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE());
 
 -- Đổi tất cả mật khẩu thành "123"
 --UPDATE [Users] 
@@ -348,6 +355,7 @@ select * from ReworkRequests
 select * from WorkshopInventory
 select * from AssignmentTransferRequests
 select * from ReworkRequests
+select * from MaterialUse
 insert into MaterialWorkshops values 
 ('A0000000-0000-0000-0000-000000000015', 
 'A1C9B3A0-4F12-4E81-B17B-000000000003',
@@ -355,4 +363,4 @@ insert into MaterialWorkshops values
 100, 95, '2025-11-22', '2025-11-20', 'Approved');
 
 update MaterialSupplies set WorkshopId = 'A1C9B3A0-4F12-4E81-B17B-000000000003' where Id = '5C7F8137-AF53-4FD3-B9F6-5EE5DEA4A6BE'
-update MaterialSupplies set SupplierId = 'A0000000-0000-0000-0000-000000000006' where Id = '5C7F8137-AF53-4FD3-B9F6-5EE5DEA4A6BE'
+update Users set WorkshopId = '4B8DE283-FE42-4FDF-99B3-22FDE7B99C27' where Id = 'A0000000-0000-0000-0000-000000000056'

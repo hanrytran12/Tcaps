@@ -46,7 +46,7 @@ namespace Application.Features.Batches.Queries.GetBatchByWorkshopId
             var finalQuery = query.Select(batch => new BatchDTO
             {
                 ProductName = batch.product.Name,
-                UserId = batch.batch.UserId,
+                UserId = batch.batch.UserId ?? Guid.Empty,
                 LeadName = batch.u.FullName,
                 Code = batch.batch.Code,
                 Quantity = batch.batch.Quantity,

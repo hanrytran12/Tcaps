@@ -22,7 +22,7 @@ namespace Application.Features.Batches.Queries.GetBatchForManagement
                             select new BatchDTO
                             {
                                 BatchId = b.Id,
-                                UserId = b.UserId,
+                                UserId = b.UserId ?? Guid.Empty,
                                 LeadName = u.FullName,
                                 Code = b.Code,
                                 ProductName = p.Name,
