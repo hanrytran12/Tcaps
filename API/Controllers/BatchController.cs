@@ -2,6 +2,7 @@
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
+using Application.Features.Batches.Commands.UpdateLeadForBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
@@ -96,6 +97,14 @@ namespace API.Controllers
             command.Id = id;
             await Mediator.Send(command);
             return Ok("Update batch successfully");
+        }
+
+        [HttpPut("lead-for-batch")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateLeadForBatch([FromQuery] UpdateLeadForBatchCommand command)
+        {
+            await Mediator.Send(command);
+            return Ok("Cập nhật Lead cho lô hàng thành công.");
         }
 
         [HttpDelete("{id:guid}")]
