@@ -15,7 +15,8 @@ namespace Domain.Interfaces
         Task<bool> ExistNameAsync(string name);
         Task<bool> ExistsStepOrderAsync(int stepOrder);
         Task<int?> GetMaxStepOrderAsync();
-        Task ShiftStepOrdersAsync(int fromStepOrder);
-        Task ShiftStepOrdersDownAsync(int fromStepOrder);
+        Task ShiftStepOrdersUpAsync(int from, int to);
+        Task ShiftStepOrdersDownAsync(int from, int to);
+        Task ReindexFromAsync(int fromStepOrder);
     }
 }

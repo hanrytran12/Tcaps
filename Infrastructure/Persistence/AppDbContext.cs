@@ -121,5 +121,10 @@ namespace Infrastructure.Persistence
             }
             return await base.SaveChangesAsync(cancellationToken);
         }
+
+        public void ClearTracker()
+        {
+            base.ChangeTracker.Clear();
+        }
     }
 }

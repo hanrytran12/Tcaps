@@ -28,7 +28,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddWorkshop([FromBody] AddWorkshopCommand command)
         {
             await _mediator.Send(command);
@@ -36,7 +36,7 @@ namespace API.Controllers
         }
 
         [HttpPut("insert")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> InsertWorkshopAsync([FromQuery] InsertWorkshopCommand command)
         {
             await _mediator.Send(command);
@@ -44,7 +44,7 @@ namespace API.Controllers
         }
 
         [HttpPut("update")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAsync([FromQuery] UpdateWorkshopCommand command)
         {
             await _mediator.Send(command);
@@ -52,7 +52,7 @@ namespace API.Controllers
         }
 
         [HttpPut("swap-workshop")]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> SwapAsync([FromQuery] SwapWorkshopCommand command)
         {
             await _mediator.Send(command);
@@ -60,7 +60,7 @@ namespace API.Controllers
         }
 
         [HttpDelete]
-        [Authorize(Roles = "Admin")]
+        //[Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync([FromQuery] DeleteWorkshopCommand command)
         {
             await _mediator.Send(command);

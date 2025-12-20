@@ -37,6 +37,11 @@ namespace Domain.Entities
         public void IncreaseStepOrder() => StepOrder++;
         public void DecreaseStepOrder() => StepOrder--;
         public void MarkAssigned() => Status = "Assigned";
+        public void RemoveFromFlow()
+        {
+            StepOrder = null;
+        }
+
 
         public void Update(string? name, string? description)
         {

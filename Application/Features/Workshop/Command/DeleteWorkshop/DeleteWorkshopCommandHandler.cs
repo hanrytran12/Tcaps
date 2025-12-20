@@ -35,8 +35,16 @@ namespace Application.Features.Workshop.Command.DeleteWorkshop
 
             if (workshop.StepOrder.HasValue)
             {
-                await _workshopRepository
-                    .ShiftStepOrdersDownAsync(workshop.StepOrder.Value);
+                int oldStep = workshop.StepOrder.Value;
+
+                workshop.RemoveFromFlow();
+
+                int? maxStep = await _workshopRepository.GetMaxStepOrderAsync();
+
+                await _workshopRepository.ShiftStepOrdersUpAsync(
+                    from: oldStep + 1,
+                    to: maxStep.Value
+                );
             }
 
             _workshopRepository.Delete(workshop);

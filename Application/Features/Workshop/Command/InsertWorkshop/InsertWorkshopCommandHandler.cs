@@ -13,10 +13,12 @@ namespace Application.Features.Workshop.Command.InsertWorkshop
     public class InsertWorkshopCommandHandler : IRequestHandler<InsertWorkshopCommand, Result<Guid>>
     {
         private readonly IWorkshopRepository _workshopRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public InsertWorkshopCommandHandler(IWorkshopRepository workshopRepository)
+        public InsertWorkshopCommandHandler(IWorkshopRepository workshopRepository, IUnitOfWork unitOfWork)
         {
             _workshopRepository = workshopRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Result<Guid>> Handle(InsertWorkshopCommand request, CancellationToken cancellationToken)
         {
@@ -31,34 +33,51 @@ namespace Application.Features.Workshop.Command.InsertWorkshop
                 throw new ConflictException("Xưởng khoán không được phép chèn.");
             }
 
-            if (workshop.StepOrder != null)
-            {
-                throw new BadRequestException("Xưởng này đã được phân StepOrder");
-            }
-
-            int newStepOrder;
-            var maxStep = await _workshopRepository.GetMaxStepOrderAsync();
+            int targetStep;
+            //int? maxStep = await _workshopRepository.GetMaxStepOrderAsync();
             if (request.PreviousWorkshopId == null)
             {
-                newStepOrder = 1;
-                await _workshopRepository.ShiftStepOrdersAsync(newStepOrder);
+                targetStep = 1;
             }
             else
             {
-                var afterWorkshop = await _workshopRepository
+                var previousWorkshop = await _workshopRepository
                 .GetByIdAsync(request.PreviousWorkshopId.Value)
                 ?? throw new NotFoundException("Xưởng chèn sau không tồn tại.");
 
-                if (afterWorkshop.StepOrder == null)
+                if (previousWorkshop.StepOrder == null)
                     throw new BadRequestException("Xưởng chèn sau chưa nằm trong flow.");
 
-                newStepOrder = afterWorkshop.StepOrder.Value + 1;
+                int previousStep = previousWorkshop.StepOrder.Value;
 
-                await _workshopRepository.ShiftStepOrdersAsync(newStepOrder);
+                if (workshop.StepOrder.HasValue && workshop.StepOrder.Value < previousStep)
+                {
+                    targetStep = previousStep;
+                }
+                else
+                {
+                    targetStep = previousStep + 1;
+                }
             }
 
-            workshop.Insert(newStepOrder);
-            return Result<Guid>.Success(workshop.Id);
+            if (workshop.StepOrder == targetStep) return Result<Guid>.Success(workshop.Id);
+
+            int? oldStep = workshop.StepOrder;
+
+            if (oldStep.HasValue)
+            {
+                workshop.RemoveFromFlow();
+                await _workshopRepository.ShiftStepOrdersUpAsync(oldStep.Value + 1, int.MaxValue);
+            }
+
+            await _workshopRepository.ShiftStepOrdersDownAsync(targetStep, int.MaxValue);
+
+            _unitOfWork.ClearTracker();
+
+            var workshopToUpdate = await _workshopRepository.GetByIdAsync(request.WorkshopId);
+            workshopToUpdate.Insert(targetStep);
+            await _unitOfWork.SaveChangesAsync();
+            return Result<Guid>.Success(workshopToUpdate.Id);
         }
     }
 }
