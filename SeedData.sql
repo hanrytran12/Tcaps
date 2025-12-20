@@ -189,18 +189,10 @@ VALUES
 ('C0000000-0000-0000-0000-000000000005', 'NON-005', N'Nón bảo hiểm thể thao', N'/images/products/helmet_sport.jpg', N'Nón bảo hiểm thể thao Motocross, chất liệu composite', 0, '');
 
 select * from Batches
-INSERT INTO [Batches] (Id, ProductId, Code, Quantity, StartDate, EndDate, CreatedAt, Status, isDeleted)
+INSERT INTO [Batches] (Id, ProductId, UserId, Code, Quantity, ActualQuantity, LostQuantity, StartDate, EndDate, CreatedAt, Status, isDeleted)
 VALUES 
 -- Lô 1: NON-001, 100 cái, Đang sản xuất
-('D0000000-0000-0000-0000-000000000001', 'C0000000-0000-0000-0000-000000000001', 'BATCH-2025-001', 100, '2025-10-01', '2025-11-12', GETDATE(), N'Planned', 0),
--- Lô 2: NON-002, 50 cái, Đang sản xuất
-('D0000000-0000-0000-0000-000000000002', 'C0000000-0000-0000-0000-000000000002', 'BATCH-2025-002', 50, '2025-11-05', '2025-11-20', GETDATE(), N'Planned', 0),
--- Lô 3: NON-001, 150 cái, Chưa bắt đầu
-('D0000000-0000-0000-0000-000000000003', 'C0000000-0000-0000-0000-000000000001', 'BATCH-2025-003', 150, '2025-10-10', '2025-11-02', GETDATE(), N'Completed', 0),
--- Lô 4: NON-003, 80 cái, Chưa bắt đầu
-('D0000000-0000-0000-0000-000000000004', 'C0000000-0000-0000-0000-000000000003', 'BATCH-2025-004', 80, '2025-11-12', '2025-11-30', GETDATE(), N'InProgress', 0),
--- Lô 5: NON-004, 120 cái, Hoàn thành
-('D0000000-0000-0000-0000-000000000005', 'C0000000-0000-0000-0000-000000000004', 'BATCH-2025-005', 120, '2025-11-01', '2025-12-28', GETDATE(), N'InProgress', 0);
+('D0000000-0000-0000-0000-000000000001', 'C0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000002', 'BATCH-2025-001', 100, 100, 0, '2025-10-01', '2025-11-12', GETDATE(), N'Planned', 0);
 
 select * from Assignments
 INSERT INTO [Assignments] (Id, BatchId, WorkshopId, StepOrder, Quantity, UnitPrice, StartDate, EndDate, ExpectedDeliveryDate, RequiresMaterialDelivery, Status, CreatedAt)
@@ -314,10 +306,10 @@ VALUES
 
 select * from AssignmentTransferRequests
 INSERT INTO [TcapsDB].[dbo].[AssignmentTransferRequests]
-    ([Id], [AssignmentId], [ReworkRequestId], [UserId], [CompletedQuantity], [Status], [Note], [CreatedAt])
+    ([Id], [AssignmentId], [ReworkRequestId], [UserId], [CompletedQuantitySend], [CompletedQuantityReceive], [Status], [Note], [NoteLead], [CreatedAt])
 VALUES
-    ('a1b2c3d4-e5f6-7890-1234-56789abcdef0', 'E0000000-0000-0000-0000-000000000001', NULL, 'A0000000-0000-0000-0000-000000000005', 50, 'PendingApproval', N'Yêu cầu chuyển giao lần 1', GETDATE()),
-    ('b2c3d4e5-f6a1-8901-2345-6789abcdef01', 'E0000000-0000-0000-0000-000000000002', null, 'A0000000-0000-0000-0000-000000000005', 75, 'PendingApproval', N'Hoàn tất chuyển giao', GETDATE());
+    ('a1b2c3d4-e5f6-7890-1234-56789abcdef0', 'E0000000-0000-0000-0000-000000000001', NULL, 'A0000000-0000-0000-0000-000000000005', 50, 0, 'PendingApproval', N'Yêu cầu chuyển giao lần 1', NULL, GETDATE()),
+    ('b2c3d4e5-f6a1-8901-2345-6789abcdef01', 'E0000000-0000-0000-0000-000000000002', NULL, 'A0000000-0000-0000-0000-000000000005', 75, 0, 'PendingApproval', N'Hoàn tất chuyển giao', NULL, GETDATE());
 
 select * from WorkshopInventory
 INSERT INTO [TcapsDB].[dbo].[WorkshopInventory]
