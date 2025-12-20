@@ -31,6 +31,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
                                      BatchId = b.Id,
                                      UserId = b.UserId ?? Guid.Empty,
                                      LeadName = u.FullName,
+                                     ProductCode = p.Code,
                                      ProductName = p.Name,
                                      Code = b.Code,
                                      Quantity = b.Quantity,

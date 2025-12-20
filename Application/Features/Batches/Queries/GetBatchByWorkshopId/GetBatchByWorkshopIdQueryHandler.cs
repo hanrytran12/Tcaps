@@ -45,7 +45,9 @@ namespace Application.Features.Batches.Queries.GetBatchByWorkshopId
 
             var finalQuery = query.Select(batch => new BatchDTO
             {
+                BatchId = batch.batch.Id,
                 ProductName = batch.product.Name,
+                ProductCode = batch.product.Code,
                 UserId = batch.batch.UserId ?? Guid.Empty,
                 LeadName = batch.u.FullName,
                 Code = batch.batch.Code,
@@ -53,6 +55,7 @@ namespace Application.Features.Batches.Queries.GetBatchByWorkshopId
                 StartDate = batch.batch.StartDate,
                 EndDate = batch.batch.EndDate,
                 Status = batch.batch.Status,
+                CreatedAt = batch.batch.CreatedAt
             });
 
             return await finalQuery.AsNoTracking().ToListAsync();

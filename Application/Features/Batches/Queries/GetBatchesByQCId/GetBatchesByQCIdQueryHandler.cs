@@ -31,12 +31,14 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                                      BatchId = b.Id,
                                      UserId = b.UserId ?? Guid.Empty,
                                      LeadName = u.FullName,
+                                     ProductCode = p.Code,
                                      ProductName = p.Name,
                                      Code = b.Code,
                                      Quantity = b.Quantity,
                                      StartDate = b.StartDate,
                                      EndDate = b.EndDate,
-                                     Status = b.Status
+                                     Status = b.Status,
+                                     CreatedAt = b.CreatedAt
                                  })
                                  .Distinct()
                                  .ToListAsync(cancellationToken);
