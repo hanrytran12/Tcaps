@@ -26,24 +26,25 @@ DELETE FROM ReworkRequests
 DELETE FROM WorkshopInventory
 
 select * from Workshop
-INSERT INTO Workshop (Id, Name, Description, StepOrder)
+INSERT INTO Workshop (Id, Name, Description, StepOrder, WorkshopType, Status, CreatedAt)
 VALUES 
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000001' AS UNIQUEIDENTIFIER), N'Cắt laser (nếu có)', N'Công đoạn Cắt laser (nếu có)', 1),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000002' AS UNIQUEIDENTIFIER), N'Cắt vải ép keo', N'Công đoạn Cắt vải ép keo', 2),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000003' AS UNIQUEIDENTIFIER), N'Dán vải', N'Công đoạn Dán vải', 3),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000004' AS UNIQUEIDENTIFIER), N'Cắt vải ra đủ bộ', N'Công đoạn Cắt vải ra đủ bộ', 4),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000005' AS UNIQUEIDENTIFIER), N'In + thêu', N'Công đoạn In + thêu', 5),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000006' AS UNIQUEIDENTIFIER), N'Làm chỏm', N'Công đoạn Làm chỏm', 6),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000007' AS UNIQUEIDENTIFIER), N'Làm kết', N'Công đoạn Làm kết', 7),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000008' AS UNIQUEIDENTIFIER), N'Đóng nút bấm đuôi (nếu có)', N'Công đoạn Đóng nút bấm đuôi (nếu có)', 8),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000009' AS UNIQUEIDENTIFIER), N'Xỏ cây dựng + vắt sổ', N'Công đoạn Xỏ cây dựng + vắt sổ', 9),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000010' AS UNIQUEIDENTIFIER), N'Vào nón + vào đai', N'Công đoạn Vào nón + vào đai', 10),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000011' AS UNIQUEIDENTIFIER), N'Trần đầu nón', N'Công đoạn Trần đầu nón', 11),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000012' AS UNIQUEIDENTIFIER), N'May đuôi khóa vào nón (nếu có)', N'Công đoạn May đuôi khóa vào nón (nếu có)', 12),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000013' AS UNIQUEIDENTIFIER), N'May tem', N'Công đoạn May tem', 13),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000014' AS UNIQUEIDENTIFIER), N'Cắt chỉ dư + xỏ tem thẻ bài', N'Công đoạn Cắt chỉ dư + xỏ tem thẻ bài', 14),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000015' AS UNIQUEIDENTIFIER), N'Ủi nón', N'Công đoạn Ủi nón', 15),
-(CAST('A1C9B3A0-4F12-4E81-B17B-000000000016' AS UNIQUEIDENTIFIER), N'Gấp cây + đóng bịch', N'Công đoạn Gấp cây + đóng bịch', 16);
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000001' AS UNIQUEIDENTIFIER), N'Cắt laser (nếu có)', N'Công đoạn Cắt laser (nếu có)', 1, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000002' AS UNIQUEIDENTIFIER), N'Cắt vải ép keo', N'Công đoạn Cắt vải ép keo', 2, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000003' AS UNIQUEIDENTIFIER), N'Dán vải', N'Công đoạn Dán vải', 3, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000004' AS UNIQUEIDENTIFIER), N'Cắt vải ra đủ bộ', N'Công đoạn Cắt vải ra đủ bộ', 4, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000005' AS UNIQUEIDENTIFIER), N'In + thêu', N'Công đoạn In + thêu', 5, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000006' AS UNIQUEIDENTIFIER), N'Làm chỏm', N'Công đoạn Làm chỏm', 6, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000007' AS UNIQUEIDENTIFIER), N'Làm kết', N'Công đoạn Làm kết', 7, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000008' AS UNIQUEIDENTIFIER), N'Đóng nút bấm đuôi (nếu có)', N'Công đoạn Đóng nút bấm đuôi (nếu có)', 8, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000009' AS UNIQUEIDENTIFIER), N'Xỏ cây dựng + vắt sổ', N'Công đoạn Xỏ cây dựng + vắt sổ', 9, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000010' AS UNIQUEIDENTIFIER), N'Vào nón + vào đai', N'Công đoạn Vào nón + vào đai', 10, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000011' AS UNIQUEIDENTIFIER), N'Trần đầu nón', N'Công đoạn Trần đầu nón', 11, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000012' AS UNIQUEIDENTIFIER), N'May đuôi khóa vào nón (nếu có)', N'Công đoạn May đuôi khóa vào nón (nếu có)', 12, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000013' AS UNIQUEIDENTIFIER), N'May tem', N'Công đoạn May tem', 13, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000014' AS UNIQUEIDENTIFIER), N'Cắt chỉ dư + xỏ tem thẻ bài', N'Công đoạn Cắt chỉ dư + xỏ tem thẻ bài', 14, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000015' AS UNIQUEIDENTIFIER), N'Ủi nón', N'Công đoạn Ủi nón', 15, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000016' AS UNIQUEIDENTIFIER), N'Gấp cây + đóng bịch', N'Công đoạn Gấp cây + đóng bịch', 16, 1, 'Assigned', GETDATE()),
+(CAST('A1C9B3A0-4F12-4E81-B17B-000000000017' AS UNIQUEIDENTIFIER), N'Xưởng khoán', N'Xưởng làm tất cả', null, 2, 'Assigned', GETDATE());
 
 select * from Users
 INSERT INTO [Users] (Id, WorkshopId, Role, FullName, Email, PasswordHash, Phone, Status, IsQcTransport, CreatedAt)
@@ -91,7 +92,9 @@ VALUES
 -- Step 15: Ủi nón
 ('A0000000-0000-0000-0000-000000000020', 'A1C9B3A0-4F12-4E81-B17B-000000000015', 'QC', N'QC Xưởng Ủi Nón', 'qc.uinon@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000115', 'Active', 0, GETDATE()),
 -- Step 16: Gấp cây + đóng bịch
-('A0000000-0000-0000-0000-000000000021', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'QC', N'QC Xưởng Đóng Bịch', 'qc.dongbich@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE());
+('A0000000-0000-0000-0000-000000000021', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'QC', N'QC Xưởng Đóng Bịch', 'qc.dongbich@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE()),
+-- Xưởng khoán
+('A0000000-0000-0000-0000-000000000056', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'QC', N'QC Xưởng Khoán', 'qc.khoan@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE());
 
 INSERT INTO [Users] (Id, WorkshopId, Role, FullName, Email, PasswordHash, Phone, Status, IsQcTransport, CreatedAt)
 VALUES
@@ -157,8 +160,17 @@ VALUES
 
 -- Step 16: Gấp cây + đóng bịch (WorkshopId: A1C9B3A0-4F12-4E81-B17B-000000000016)
 ('A0000000-0000-0000-0000-000000000052', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'Staff', N'Nguyễn Văn GG - Đóng Bịch', 'staff.dongbich1@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161601', 'Active', 0, GETDATE()),
-('A0000000-0000-0000-0000-000000000053', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'Staff', N'Trần Thị HH - Đóng Bịch', 'staff.dongbich2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE());
+('A0000000-0000-0000-0000-000000000053', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'Staff', N'Trần Thị HH - Đóng Bịch', 'staff.dongbich2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),
 
+-- Nhân viên xưởng khoán
+('A0000000-0000-0000-0000-000000000054', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Staff', N'Nguyễn Văn GG - Khoán', 'staff.khoan1@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161601', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000055', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Staff', N'Trần Thị HH - Khoán', 'staff.khoan2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),
+
+-- QC gác cổng
+('A0000000-0000-0000-0000-000000000057', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'GuardQC', N'QC Gác Cổng', 'qc.gaccong@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),
+-- Lead
+('A0000000-0000-0000-0000-000000000058', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Lead', N'Lead1', 'lead1@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000059', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Lead', N'Lead2', 'lead2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE());
 -- Đổi tất cả mật khẩu thành "123"
 --UPDATE [Users] 
 --SET PasswordHash = '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC'
@@ -182,48 +194,22 @@ VALUES
 ('C0000000-0000-0000-0000-000000000005', 'NON-005', N'Nón bảo hiểm thể thao', N'/images/products/helmet_sport.jpg', N'Nón bảo hiểm thể thao Motocross, chất liệu composite', 0, '');
 
 select * from Batches
-INSERT INTO [Batches] (Id, ProductId, Code, Quantity, StartDate, EndDate, CreatedAt, Status, isDeleted)
+INSERT INTO [Batches] (Id, ProductId, UserId, Code, Quantity, ActualQuantity, LostQuantity, StartDate, EndDate, CreatedAt, Status, isDeleted)
 VALUES 
 -- Lô 1: NON-001, 100 cái, Đang sản xuất
-('D0000000-0000-0000-0000-000000000001', 'C0000000-0000-0000-0000-000000000001', 'BATCH-2025-001', 100, '2025-10-01', '2025-11-12', GETDATE(), N'Planned', 0),
--- Lô 2: NON-002, 50 cái, Đang sản xuất
-('D0000000-0000-0000-0000-000000000002', 'C0000000-0000-0000-0000-000000000002', 'BATCH-2025-002', 50, '2025-11-05', '2025-11-20', GETDATE(), N'Planned', 0),
--- Lô 3: NON-001, 150 cái, Chưa bắt đầu
-('D0000000-0000-0000-0000-000000000003', 'C0000000-0000-0000-0000-000000000001', 'BATCH-2025-003', 150, '2025-10-10', '2025-11-02', GETDATE(), N'Completed', 0),
--- Lô 4: NON-003, 80 cái, Chưa bắt đầu
-('D0000000-0000-0000-0000-000000000004', 'C0000000-0000-0000-0000-000000000003', 'BATCH-2025-004', 80, '2025-11-12', '2025-11-30', GETDATE(), N'InProgress', 0),
--- Lô 5: NON-004, 120 cái, Hoàn thành
-('D0000000-0000-0000-0000-000000000005', 'C0000000-0000-0000-0000-000000000004', 'BATCH-2025-005', 120, '2025-11-01', '2025-12-28', GETDATE(), N'InProgress', 0);
+('D0000000-0000-0000-0000-000000000001', 'C0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000002', 'BATCH-2025-001', 100, 100, 0, '2025-10-01', '2025-11-12', GETDATE(), N'Completed', 0);
 
 select * from Assignments
-INSERT INTO [Assignments] (Id, BatchId, WorkshopId, StepOrder, Quantity, UnitPrice, StartDate, EndDate, ExpectedDeliveryDate, RequiresMaterialDelivery, Status, CreatedAt)
+INSERT INTO [Assignments] (Id, BatchId, WorkshopId, StepOrder, Quantity, UnitPrice, StartDate, EndDate, ExpectedDeliveryDate, DateCompleted, RequiresMaterialDelivery, Status, CreatedAt)
 VALUES 
 -- Lô 1 (D001): Công đoạn 1 - Cắt laser
-('E0000000-0000-0000-0000-000000000001', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 1, 100, 10000, '2025-11-01', '2025-11-03', '2025-11-03', 1, N'InProgress', GETDATE()),
--- Lô 1 (D001): Công đoạn 2 - Cắt vải ép keo
-('E0000000-0000-0000-0000-000000000002', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 2, 100, 15000, '2025-11-04', '2025-11-06', '2025-11-06', 1, N'InProgress', GETDATE()),
--- Lô 1 (D001): Công đoạn 3 - Dán vải
-('E0000000-0000-0000-0000-000000000003', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 3, 100, 20000, '2025-11-07', '2025-11-09', '2025-11-09', 1, N'InProgress', GETDATE()),
--- Lô 1 (D001): Công đoạn 4 - Cắt vải ra đủ bộ
-('E0000000-0000-0000-0000-000000000004', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000004', 4, 100, 12000, '2025-11-10', '2025-11-12', '2025-11-12', 0, N'InProgress', GETDATE()),
-
--- Lô 2 (D002): Công đoạn 1 - Cắt laser
-('E0000000-0000-0000-0000-000000000005', 'D0000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 1, 50, 10000, '2025-11-05', '2025-11-07', '2025-11-07', 1, N'InProgress', GETDATE()),
--- Lô 2 (D002): Công đoạn 2 - Cắt vải ép keo
-('E0000000-0000-0000-0000-000000000006', 'D0000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 2, 50, 15000, '2025-11-08', '2025-11-10', '2025-11-10', 1, N'InProgress', GETDATE()),
-
--- Lô 5 (D005): 
-('E0000000-0000-0000-0000-000000000007', 'D0000000-0000-0000-0000-000000000005', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 16, 120, 8000, '2025-11-06', '2025-11-20', '2025-11-06', 0, N'InProgress', GETDATE());
+('E0000000-0000-0000-0000-000000000001', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 1, 100, 10000, '2025-11-01', '2025-11-03', '2025-11-03', null, 1, N'Completed', GETDATE());
 
 select * from MaterialRequests
-INSERT INTO MaterialRequests (Id, MaterialId, UserId, BatchId, AssignId, QuantityRequest, Status, Note, Date, Type)
+INSERT INTO MaterialRequests (Id, MaterialId, UserId, BatchId, AssignId, QuantityRequest, Status, Note, Date, Type, NoteFromQC, ActualReceivedQuantity, QuantityFromStock)
 VALUES 
 -- Staff worker1 yêu cầu vải cotton cho Lô 1, Assignment 1
-('F0000000-0000-0000-0000-000000000001', 'B0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000003', 'D0000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000001', 200, N'Đã duyệt', N'Cần gấp cho công đoạn cắt laser', '2025-11-01', 'LeadExport'),
--- Staff worker1 yêu cầu keo dán cho Lô 1, Assignment 2
-('F0000000-0000-0000-0000-000000000002', 'B0000000-0000-0000-0000-000000000004', 'A0000000-0000-0000-0000-000000000003', 'D0000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000002', 50, N'Đã duyệt', N'Keo ép vải', '2025-11-04', 'QcAddMaterial'),
--- Staff worker2 yêu cầu sợi nylon cho Lô 2, Assignment 5
-('F0000000-0000-0000-0000-000000000003', 'B0000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000004', 'D0000000-0000-0000-0000-000000000002', 'E0000000-0000-0000-0000-000000000005', 100, N'Chờ duyệt', N'Sợi nylon cho fullface', '2025-11-05', 'QcAddMaterial');
+('F0000000-0000-0000-0000-000000000001', 'B0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000008', 'D0000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000001', 200, N'Confirmed', N'Cần gấp cho công đoạn cắt laser', '2025-11-01', 'LeadExport', null, 0, 0);
 
 select * from Inventories
 INSERT INTO [Inventories] (Id, MaterialId, Quantity, Date, Price, ImageURL)
@@ -236,65 +222,46 @@ VALUES
 ('10000000-0000-0000-0000-000000000006', 'B0000000-0000-0000-0000-000000000006', 900, CAST(GETDATE() AS DATE), 5000, 'https://example.com/images/inventory6.jpg');
 
 select * from MaterialUse
-INSERT INTO [MaterialUse] (Id, MaterialId, BatchId, AssignId, QuantityDivide, QuantityStaffUse, ReconciledQuantity, QuantityRequest, Date)
+INSERT INTO [MaterialUse] (Id, MaterialId, BatchId, AssignId, ReworkRequestId, QuantityDivide, QuantityStaffUse, ReconciledQuantity, QuantityRequest, Date)
 VALUES 
 -- Lô 1, Assignment 1: Đã dùng vải cotton
-('20000000-0000-0000-0000-000000000001', 'B0000000-0000-0000-0000-000000000001', 'D0000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000001', 200, 190, 185, 200, '2025-11-02'),
--- Lô 1, Assignment 2: Đã dùng keo dán
-('20000000-0000-0000-0000-000000000002', 'B0000000-0000-0000-0000-000000000004', 'D0000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000002', 50, 45, 43, 50, '2025-11-05'),
--- Lô 2, Assignment 5: Đã dùng vải cotton
-('20000000-0000-0000-0000-000000000003', 'B0000000-0000-0000-0000-000000000001', 'D0000000-0000-0000-0000-000000000002', 'E0000000-0000-0000-0000-000000000005', 100, 95, 92, 100, '2025-11-06'),
--- Lô 5, Assignment 3: 
-('20000000-0000-0000-0000-000000000004', 'B0000000-0000-0000-0000-000000000003', 'D0000000-0000-0000-0000-000000000005', 'E0000000-0000-0000-0000-000000000007', 200, 0, 0, 0, '2025-11-02')
+('20000000-0000-0000-0000-000000000001', 'B0000000-0000-0000-0000-000000000001', 'D0000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000001', null, 200, 0, 0, 0, '2025-11-02');
 
 select * from MaterialWorkshops
-INSERT INTO [MaterialWorkshops] (Id, WorkshopId, AssignId, SupplierId, QuantitySend, QuantityReceive, ShipDate, CreatedAt, Status)
+INSERT INTO [MaterialWorkshops] (Id, WorkshopId, AssignId, AssignmentTransferRequestId, SupplierId, QuantitySend, QuantityReceive, ShipDate, CreatedAt, Status)
 VALUES
 -- Giao vải cotton cho xưởng 1
-('30000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'E0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000007', 200, 190, '2025-11-01', GETDATE(), N'Confirmed'),
--- Giao keo dán cho xưởng 2
-('30000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'E0000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000007', 50, 45, '2025-11-04', GETDATE(), N'Confirmed'),
--- Giao sợi nylon cho xưởng 1
-('30000000-0000-0000-0000-000000000003', 'A1C9B3A0-4F12-4E81-B17B-000000000004', 'E0000000-0000-0000-0000-000000000003', 'A0000000-0000-0000-0000-000000000008', 100, 95, '2025-11-05', GETDATE(), N'Confirmed');
+('30000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'E0000000-0000-0000-0000-000000000001', 'a1b2c3d4-e5f6-7890-1234-56789abcdef0', 'A0000000-0000-0000-0000-000000000002', 100, 0, '2025-11-01', GETDATE(), N'Confirmed');
+
 select * from Productions
-INSERT INTO [Productions] (Id, AssignId, UserId, Quantity, Date, Time, Status)
+INSERT INTO [Productions] (Id, AssignId, UserId, Quantity, Date, Time, Status, ReworkRequestId)
 VALUES 
 -- Worker1 hoàn thành 100 sản phẩm ở Assignment 1 (Lô 1)
-('40000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000003', 100, '2025-11-03', '08:30:00', N'Passed'),
--- Worker1 hoàn thành 50 sản phẩm ở Assignment 2 (Lô 1) - chưa kiểm tra
-('40000000-0000-0000-0000-000000000002', 'E0000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000003', 50, '2025-11-06', '10:15:00', N'Passed'),
--- Worker2 hoàn thành 50 sản phẩm ở Assignment 5 (Lô 2)
-('40000000-0000-0000-0000-000000000003', 'E0000000-0000-0000-0000-000000000005', 'A0000000-0000-0000-0000-000000000004', 50, '2025-11-07', '09:45:00', N'Passed'),
--- Worker2 hoàn thành 120 sản phẩm ở Assignment 7 (Lô 5 - Hoàn thành)
-('40000000-0000-0000-0000-000000000004', 'E0000000-0000-0000-0000-000000000005', 'A0000000-0000-0000-0000-000000000004', 120, '2025-11-08', '14:00:00', N'Rework');
+('40000000-0000-0000-0000-000000000001', 'E0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000026', 50, '2025-11-03', '08:30:00', N'Passed', null),
+('40000000-0000-0000-0000-000000000002', 'E0000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000027', 50, '2025-11-04', '08:30:00', N'Passed', null);
 
 select * from Evaluates
 INSERT INTO [Evaluates] (Id, ProductionId, UserId, Status, Note, QuantityError, QuantitySuccess, Image, CreatedAt)
 VALUES 
 -- QC kiểm tra Production 1 - Đạt
-('50000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000005', N'Đạt', N'Chất lượng tốt, không có lỗi', 0, 100, N'/images/qc/qc_001.jpg', GETDATE()),
+('50000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000008', N'Passed', N'Chất lượng tốt, không có lỗi', 0, 100, N'/images/qc/qc_001.jpg', GETDATE()),
 -- QC kiểm tra Production 3 - Đạt
-('50000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000003', 'A0000000-0000-0000-0000-000000000005', N'Đạt', N'Fullface đạt tiêu chuẩn', 0, 50, N'/images/qc/qc_002.jpg', GETDATE()),
--- QC kiểm tra Production 4 - Có lỗi nhỏ
-('50000000-0000-0000-0000-000000000003', '40000000-0000-0000-0000-000000000004', 'A0000000-0000-0000-0000-000000000005', N'Có lỗi', N'Phát hiện một số lỗi nhỏ', 5, 115, N'/images/qc/qc_003.jpg', GETDATE());
+('50000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000008', N'CompleteWithLoss', N'Fullface đạt tiêu chuẩn', 5, 50, N'/images/qc/qc_002.jpg', GETDATE());
 
-INSERT INTO [ComponentDefects] (Id, EvaluateId, DefectType, Serverity, Description, Solution, Quantity, CreatedAt, Status)
+select * from ComponentDefects
+INSERT INTO [ComponentDefects] (Id, EvaluateId, Description, Quantity, CreatedAt, Status)
 VALUES 
 -- Lỗi ở Evaluate 3 (Production 4)
-('60000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000003', N'Vết xước nhỏ', N'Thấp', N'Vết xước nhỏ trên bề mặt nón', N'Đánh bóng lại', 3, GETDATE(), N'Đã xử lý'),
-('60000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000003', N'Khóa cài lỏng', N'Trung bình', N'Khóa cài có độ lỏng nhẹ', N'Điều chỉnh lại', 2, GETDATE(), N'Đang xử lý');
+('60000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000002', N'Vết xước nhỏ trên bề mặt nón', 3, GETDATE(), N'Unfixabled'),
+('60000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000002', N'Khóa cài có độ lỏng nhẹ', 2, GETDATE(), N'Confirmed');
 
 select * from Incomes
 INSERT INTO [Incomes] (Id, BatchId, ProductionId, UserId, Quantity, TotalPrice, CreatedAt)
 VALUES 
 -- Thu nhập của Worker1 từ Production 1
-('70000000-0000-0000-0000-000000000001', 'D0000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000003', 100, 1000000, GETDATE()),
+('70000000-0000-0000-0000-000000000001', 'D0000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000026', 50, 500000, GETDATE()),
 -- Thu nhập của Worker1 từ Production 2
-('70000000-0000-0000-0000-000000000002', 'D0000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000003', 50, 750000, GETDATE()),
--- Thu nhập của Worker2 từ Production 3
-('70000000-0000-0000-0000-000000000003', 'D0000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000003', 'A0000000-0000-0000-0000-000000000004', 50, 500000, GETDATE()),
--- Thu nhập của Worker2 từ Production 4
-('70000000-0000-0000-0000-000000000004', 'D0000000-0000-0000-0000-000000000005', '40000000-0000-0000-0000-000000000004', 'A0000000-0000-0000-0000-000000000004', 120, 960000, GETDATE());
+('70000000-0000-0000-0000-000000000002', 'D0000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000027', 48, 480000, GETDATE());
 
 select * from Notifications
 INSERT INTO [Notifications] (Id, UserId, Title, Message, Type, IsRead, CreatedAt)
@@ -307,26 +274,21 @@ VALUES
 
 select * from AssignmentTransferRequests
 INSERT INTO [TcapsDB].[dbo].[AssignmentTransferRequests]
-    ([Id], [AssignmentId], [ReworkRequestId], [UserId], [CompletedQuantity], [Status], [Note], [CreatedAt])
+    ([Id], [AssignmentId], [ReworkRequestId], [UserId], [CompletedQuantitySend], [CompletedQuantityReceive], [Status], [Note], [NoteLead], [CreatedAt])
 VALUES
-    ('a1b2c3d4-e5f6-7890-1234-56789abcdef0', 'E0000000-0000-0000-0000-000000000001', NULL, 'A0000000-0000-0000-0000-000000000005', 50, 'PendingApproval', N'Yêu cầu chuyển giao lần 1', GETDATE()),
-    ('b2c3d4e5-f6a1-8901-2345-6789abcdef01', 'E0000000-0000-0000-0000-000000000002', null, 'A0000000-0000-0000-0000-000000000005', 75, 'PendingApproval', N'Hoàn tất chuyển giao', GETDATE());
+    ('a1b2c3d4-e5f6-7890-1234-56789abcdef0', 'E0000000-0000-0000-0000-000000000001', NULL, 'A0000000-0000-0000-0000-000000000005', 98, 0, 'PendingApproval', N'Yêu cầu chuyển giao lần 1', NULL, GETDATE());
 
 select * from WorkshopInventory
 INSERT INTO [TcapsDB].[dbo].[WorkshopInventory]
-    ([Id], [WorkshopId], [MaterialId], [Quantity])
+    ([Id], [WorkshopId], [MaterialId], [Quantity], [HoldingQuantity])
 VALUES
-    ('01B2C3D4-E5F6-7890-ABCD-EF1234567890', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'B0000000-0000-0000-0000-000000000001', 100),
-    ('02C3D4E5-F6A7-8901-BCDE-F12345678901', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'B0000000-0000-0000-0000-000000000003', 50),
-    ('03D4E5F6-A7B8-9012-CDEF-123456789012', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 'B0000000-0000-0000-0000-000000000001', 75);
+    ('01B2C3D4-E5F6-7890-ABCD-EF1234567890', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'B0000000-0000-0000-0000-000000000001', 100, 0);
 
 select * from TaskTransferRequests
 INSERT INTO [TcapsDB].[dbo].[TaskTransferRequests]
-    (Id, BatchId, WorkshopId, QcTransportId, Status, Note, CreatedAt, ApprovedAt)
+    (Id, BatchId, WorkshopId, QcTransportId, MaterialRequestId, AssignmentTransferId, Status, Note, CreatedAt, ApprovedAt)
 VALUES
-    ('A3F2504E-4F89-11D3-9A0C-0305E82C3301', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000001', 'A0000000-0000-0000-0000-000000000006', 'Pending', 'Test insert 1', GETDATE(), NULL),
-    ('B3F2504E-4F89-11D3-9A0C-0305E82C3302', 'D0000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000002', 'A0000000-0000-0000-0000-000000000006', 'Approved', 'Test insert 2', GETDATE(), GETDATE()),
-    ('C3F2504E-4F89-11D3-9A0C-0305E82C3303', 'D0000000-0000-0000-0000-000000000002', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'A0000000-0000-0000-0000-000000000007', 'Approved', 'Test insert 3', GETDATE(), NULL);
+    ('A3F2504E-4F89-11D3-9A0C-0305E82C3301', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'A0000000-0000-0000-0000-000000000005', 'F0000000-0000-0000-0000-000000000001', null, 'Pending', 'Test insert 1', GETDATE(), NULL);
 
 select * from Users
 select * from Evaluates
@@ -348,6 +310,9 @@ select * from ReworkRequests
 select * from WorkshopInventory
 select * from AssignmentTransferRequests
 select * from ReworkRequests
+select * from MaterialUse
+select * from FinalTransferRequests
+
 insert into MaterialWorkshops values 
 ('A0000000-0000-0000-0000-000000000015', 
 'A1C9B3A0-4F12-4E81-B17B-000000000003',
@@ -355,4 +320,4 @@ insert into MaterialWorkshops values
 100, 95, '2025-11-22', '2025-11-20', 'Approved');
 
 update MaterialSupplies set WorkshopId = 'A1C9B3A0-4F12-4E81-B17B-000000000003' where Id = '5C7F8137-AF53-4FD3-B9F6-5EE5DEA4A6BE'
-update MaterialSupplies set SupplierId = 'A0000000-0000-0000-0000-000000000006' where Id = '5C7F8137-AF53-4FD3-B9F6-5EE5DEA4A6BE'
+update Users set WorkshopId = '4B8DE283-FE42-4FDF-99B3-22FDE7B99C27' where Id = 'A0000000-0000-0000-0000-000000000056'
