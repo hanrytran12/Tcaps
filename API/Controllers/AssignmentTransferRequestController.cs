@@ -21,7 +21,7 @@ namespace API.Controllers
         [Authorize(Roles = "Lead")]
         public async Task<ActionResult<List<AssignmentTransferRequestDTO>>> GetAllTrasnferRequest()
         {
-            return await Mediator.Send(new GetAllTransferRequestQuery());
+            return await Mediator.Send(new GetAllTransferRequestQuery(CurrentUserId));
         }
 
         [HttpGet("{assignmentId:guid}/reconcilliation-summary")]

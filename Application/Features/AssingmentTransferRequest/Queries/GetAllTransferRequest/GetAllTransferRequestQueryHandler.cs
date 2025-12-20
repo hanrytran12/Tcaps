@@ -22,6 +22,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                         join b in _appDbContext.Batches.AsNoTracking() on a.BatchId equals b.Id
                         join p in _appDbContext.Products.AsNoTracking() on b.ProductId equals p.Id
                         join u in _appDbContext.Users.AsNoTracking() on tr.UserId equals u.Id
+                        where b.UserId == request.LeadId
                         select new AssignmentTransferRequestDTO
                         {
                             TransferRequestId = tr.Id,
