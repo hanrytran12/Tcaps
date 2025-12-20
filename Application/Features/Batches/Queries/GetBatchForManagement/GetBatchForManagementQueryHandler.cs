@@ -25,6 +25,7 @@ namespace Application.Features.Batches.Queries.GetBatchForManagement
                                 UserId = b.UserId ?? Guid.Empty,
                                 LeadName = u.FullName,
                                 Code = b.Code,
+                                ProductCode = p.Code,
                                 ProductName = p.Name,
                                 Quantity = b.Quantity,
                                 StartDate = b.StartDate,
