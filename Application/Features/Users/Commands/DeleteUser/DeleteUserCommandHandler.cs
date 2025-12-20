@@ -26,24 +26,15 @@ namespace Application.Features.Users.Commands.DeleteUser
                 throw new NotFoundException($"Không tìm thấy User với Id: {request.Id}.");
             }
 
-            if (user.WorkshopId != null)
-            {
-                var isWorkshopBusy = await _assignmentRepository.HasActiveAssignmentByWorkshopIdAsync(user.WorkshopId);
-                if (isWorkshopBusy)
-                {
-                    throw new ConflictException("Không thể xóa nhân viên này vì xưởng của họ đang có công đoạn sản xuất.");
-                }
-            }
-
             var productions = await _productionRepository.GetByUserAsync(user.Id);
             if (productions.Any())
             {
-                throw new ConflictException("Không thể xóa nhân viên này vì đã tham gia sản xuất.");
+                user.MarkAsDeleted();
             }
-
-            user.MarkAsDeleted();
-
-            _repository.Delete(user);
+            else
+            {
+                _repository.Delete(user);
+            }
 
             return Result.Success();
         }

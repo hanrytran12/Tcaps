@@ -37,7 +37,8 @@ namespace Application.Features.FinalTransferRequest.Queries.GetAllFinalTransferR
                            QuantityFinalReceive = f.QuantityFinalReceive,
                            Status = f.Status,
                            Note = f.Note,
-                           CreatedAt = f.CreatedAt
+                           CreatedAt = f.CreatedAt,
+                           ApprovedAt = f.ApprovedAt
                        }).ToListAsync();
 
             if (!dtos.Any())

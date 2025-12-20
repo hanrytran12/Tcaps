@@ -15,6 +15,7 @@ namespace Domain.Entities
         public string Status { get; private set; }
         public string? Note { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public DateTime ApprovedAt { get; private set; }
         
         public FinalTransferRequest(Guid id,  Guid assignTransferRequestId, decimal quantityFinalSend) : base(id)
         {
@@ -34,6 +35,7 @@ namespace Domain.Entities
             Status = "Approved";
             QuantityFinalReceive = quantityFinalReceive;
             Note = note;
+            ApprovedAt = DateTime.Now;
         }
     }
 }
