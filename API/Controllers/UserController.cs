@@ -14,6 +14,7 @@ using Application.Features.Users.Queries.GetStaffDashboard;
 using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Features.Users.Queries.GetUserById;
 using Application.Features.Users.Queries.GetUserByWorkshopId;
+using Application.Features.Users.Queries.GetUserProfileById;
 using Application.Interfaces;
 using Domain.Entities;
 using MediatR;
@@ -105,6 +106,12 @@ namespace API.Controllers
         public async Task<List<UserDTO>> GetAllLeadAsync()
         {
             var query = new GetAllLeadQuery();
+            return await _mediator.Send(query);
+        }
+
+        [HttpGet("by-userId")]
+        public async Task<UserDTO> GetByUserIdAsync([FromQuery] GetUserProfileByIdQuery query)
+        {
             return await _mediator.Send(query);
         }
 
