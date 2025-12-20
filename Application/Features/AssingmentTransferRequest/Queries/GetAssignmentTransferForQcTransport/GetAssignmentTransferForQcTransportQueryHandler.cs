@@ -33,7 +33,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTr
                           CompletedQuantitySend = assignTransfer.CompletedQuantitySend,
                           CompletedQuantityReceive = assignTransfer.CompletedQuantityReceive,
                           Note = assignTransfer.Note ?? string.Empty,
-                          NotLead = assignTransfer.NoteLead ?? string.Empty,
+                          NoteLead = assignTransfer.NoteLead ?? string.Empty,
                           Status = assignTransfer.Status,
                           CreatedAt = assignTransfer.CreatedAt
                       };

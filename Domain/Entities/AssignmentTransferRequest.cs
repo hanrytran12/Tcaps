@@ -51,6 +51,13 @@ namespace Domain.Entities
             AddDomainEvent(new TransferRequestInProgressEvent(AssignmentId, assignmentTransferRequestId, ReworkRequestId, CompletedQuantityReceive, quantityReject, supplierId));
         }
 
+        public void MarkAsApprovedFinal(decimal completedQuantityReceive, string noteLead)
+        {
+            CompletedQuantityReceive = completedQuantityReceive;
+            NoteLead = noteLead;
+            Status = "Approved";
+        }
+
         public void MarkAsApproved() => Status = "Approved";
 
         public void MarkAsReception() => Status = "QCTransportReception";

@@ -80,13 +80,19 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("AssignmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("CompletedQuantity")
+                    b.Property<decimal>("CompletedQuantityReceive")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompletedQuantitySend")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NoteLead")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("ReworkRequestId")
@@ -228,6 +234,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ApprovedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("AssignTransferRequestId")
                         .HasColumnType("uniqueidentifier");
@@ -478,6 +487,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssignId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssignmentTransferRequestId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("CreatedAt")

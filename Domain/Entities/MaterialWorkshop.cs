@@ -25,6 +25,8 @@ namespace Domain.Entities
             Status = "Pending";
         }
 
+        private MaterialWorkshop() : base(Guid.Empty) { }
+
         public static MaterialWorkshop Create(Guid workshopId, Guid assignId, Guid assignTransferRequestId, Guid supplierId, int quantitySend)
         {
             return new MaterialWorkshop(Guid.NewGuid(), workshopId, assignId, assignTransferRequestId, supplierId, quantitySend);

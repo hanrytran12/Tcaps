@@ -54,7 +54,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTran
                                          CompletedQuantitySend = assignTransfer.CompletedQuantitySend,
                                          CompletedQuantityReceive = assignTransfer.CompletedQuantityReceive,
                                          Note = assignTransfer.Note,
-                                         NotLead = assignTransfer.NoteLead,
+                                         NoteLead = assignTransfer.NoteLead,
                                          Status = assignTransfer.Status,
                                          CreatedAt = assignTransfer.CreatedAt
                                      };

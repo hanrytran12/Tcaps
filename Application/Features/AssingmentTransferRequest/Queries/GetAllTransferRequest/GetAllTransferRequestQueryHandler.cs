@@ -32,7 +32,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                             CompletedQuantitySend = tr.CompletedQuantitySend,
                             CompletedQuantityReceive = tr.CompletedQuantityReceive,
                             Note = tr.Note ?? string.Empty,
-                            NotLead = tr.NoteLead ?? string.Empty,
+                            NoteLead = tr.NoteLead ?? string.Empty,
                             Status = tr.Status,
                             CreatedAt = tr.CreatedAt
                         };

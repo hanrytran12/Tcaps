@@ -71,7 +71,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                 }
                 else
                 {
-                    transferRequest.MarkAsApproved();
+                    transferRequest.MarkAsApprovedFinal(request.CompleteQuantityReceive, request.NoteLead);
                 }
             }
             else
