@@ -39,12 +39,16 @@ namespace Application.Features.FinalTransferRequest.Queries.GetAllFinalTransferR
                            Note = f.Note,
                            CreatedAt = f.CreatedAt,
                            ApprovedAt = f.ApprovedAt
-                       }).ToListAsync();
+                       })
+                       .GroupBy(x => x.Id)
+                       .Select(g => g.First())
+                       .ToListAsync();
 
             if (!dtos.Any())
             {
                 throw new NotFoundException("Không có yêu cầu nào.");
             }
+
             return dtos;
         }
     }

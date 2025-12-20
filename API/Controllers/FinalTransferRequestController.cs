@@ -3,6 +3,7 @@ using Application.DTOs.Response;
 using Application.Features.FinalTransferRequest.Command.ApproveFinalTransferRequest;
 using Application.Features.FinalTransferRequest.Queries.GetAllFinalTransferRequest;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -25,6 +26,7 @@ namespace API.Controllers
         }
 
         [HttpPut("approve-finalTransfer")]
+        [Authorize(Roles = "GuardQC")]
         public async Task<IActionResult> UpdateApproveAsync([FromQuery] ApproveFinalTransferRequestCommand command)
         {
             await _mediator.Send(command);

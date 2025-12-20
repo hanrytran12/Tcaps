@@ -10,7 +10,7 @@
         public decimal CompletedQuantitySend { get; set; }
         public decimal CompletedQuantityReceive { get; set; }
         public string Note { get; set; } = string.Empty;
-        public string NotLead { get; set; } = string.Empty;
+        public string NoteLead { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
     }
