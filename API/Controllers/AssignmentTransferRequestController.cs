@@ -21,7 +21,7 @@ namespace API.Controllers
         [Authorize(Roles = "Lead")]
         public async Task<ActionResult<List<AssignmentTransferRequestDTO>>> GetAllTrasnferRequest()
         {
-            return await Mediator.Send(new GetAllTransferRequestQuery());
+            return await Mediator.Send(new GetAllTransferRequestQuery(CurrentUserId));
         }
 
         [HttpGet("{assignmentId:guid}/reconcilliation-summary")]
@@ -64,9 +64,9 @@ namespace API.Controllers
 
         [HttpPut("approved/{transferRequestId:guid}")]
         [Authorize(Policy = "LeadOrValidQCTransport")]
-        public async Task<IActionResult> ApproveTrasnferRequest(Guid transferRequestId)
+        public async Task<IActionResult> ApproveTrasnferRequest(Guid transferRequestId, decimal completedQuantityReceive, string noteLead)
         {
-            await Mediator.Send(new UpdateAssignmentTransferRequestCommand(transferRequestId, CurrentUserId));
+            await Mediator.Send(new UpdateAssignmentTransferRequestCommand(transferRequestId, CurrentUserId, completedQuantityReceive, noteLead));
             return Ok("Yêu cầu chuyển giao đã được phê duyệt thành công.");
         }
 

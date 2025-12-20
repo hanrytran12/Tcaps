@@ -25,5 +25,6 @@ namespace Application.Interfaces
         public DbSet<ReworkRequest> ReworkRequests { get; set; }
         public DbSet<MaterialSupply> MaterialSupplies { get; }
         public DbSet<MaterialWorkshop> MaterialWorkshops { get; }
+        public DbSet<FinalTransferRequest> FinalTransferRequests { get; }
     }
 }

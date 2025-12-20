@@ -51,8 +51,10 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTran
                                          BatchCode = batch.Code,
                                          ProductCode = product.Code,
                                          WorkshopName = workshop.Name,
-                                         CompletedQuantity = assignTransfer.CompletedQuantity,
+                                         CompletedQuantitySend = assignTransfer.CompletedQuantitySend,
+                                         CompletedQuantityReceive = assignTransfer.CompletedQuantityReceive,
                                          Note = assignTransfer.Note,
+                                         NoteLead = assignTransfer.NoteLead,
                                          Status = assignTransfer.Status,
                                          CreatedAt = assignTransfer.CreatedAt
                                      };

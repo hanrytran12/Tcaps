@@ -62,5 +62,11 @@ namespace Domain.Entities
         {
             Status = "Completed";
         }
+
+        public void UpdateDefectiveQuantity(decimal quantityReject, Guid qcId, string batchCode)
+        {
+            DefectiveQuantity += quantityReject;
+            AddDomainEvent(new UpdateQuantityDefectiveEvent(quantityReject, qcId, batchCode));
+        }
     }
 }

@@ -16,19 +16,13 @@ namespace Application.Features.Workshop.Command.AddWorkshop
         public async Task<Result<Guid>> Handle(AddWorkshopCommand request, CancellationToken cancellationToken)
         {
             bool isNameExists = await _workshopRepository.ExistNameAsync(request.Name);
-            bool isStepOrderExists = await _workshopRepository.ExistsStepOrderAsync(request.StepOrder);
 
             if (isNameExists)
             {
                 throw new ConflictException($"Workshop with name '{request.Name}' already exists.");
             }
 
-            if (isStepOrderExists)
-            {
-                throw new ConflictException($"Workshop with step order '{request.StepOrder}' already exists.");
-            }
-
-            var workshop = Domain.Entities.Workshop.Create(request.Name, request.Description, request.StepOrder);
+            var workshop = Domain.Entities.Workshop.Create(request.Name, request.Description, null, request.WorkshopType);
             await _workshopRepository.AddAsync(workshop);
             return Result<Guid>.Success(workshop.Id);
         }

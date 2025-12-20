@@ -10,7 +10,7 @@ namespace Application.DTOs.Response
     {
         public Guid AssignmentId { get; set; }
         public Guid WorkshopId { get; set; }
-        public int StepOrder { get; set; }
+        public int? StepOrder { get; set; }
         public int QuantityOrder { get; set; }
         public decimal UnitPrice { get; set; }
         public DateOnly StartDate { get; set; }

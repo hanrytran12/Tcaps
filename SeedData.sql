@@ -167,6 +167,14 @@ VALUES
 ('A0000000-0000-0000-0000-000000000055', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Staff', N'Trần Thị HH - Khoán', 'staff.khoan2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),
 
 -- QC gác cổng
+('A0000000-0000-0000-0000-000000000057', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'GuardQC', N'QC Gác Cổng', 'qc.gaccong@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE());
+
+
+-- Nhân viên xưởng khoán
+('A0000000-0000-0000-0000-000000000054', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Staff', N'Nguyễn Văn GG - Khoán', 'staff.khoan1@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161601', 'Active', 0, GETDATE()),
+('A0000000-0000-0000-0000-000000000055', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Staff', N'Trần Thị HH - Khoán', 'staff.khoan2@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),
+
+-- QC gác cổng
 ('A0000000-0000-0000-0000-000000000057', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'GuardQC', N'QC Gác Cổng', 'qc.gaccong@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),
 -- Lead
 ('A0000000-0000-0000-0000-000000000058', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'Lead', N'Lead1', 'lead1@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0902161602', 'Active', 0, GETDATE()),

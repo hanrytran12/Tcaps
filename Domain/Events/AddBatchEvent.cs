@@ -9,10 +9,12 @@ namespace Domain.Events
 {
     public class AddBatchEvent : INotification
     {
+        public Guid? UserId { get; set; }
         public string BatchCode { get; set; }
         public decimal Quantity { get; set; }
-        public AddBatchEvent(string batchCode, decimal quantity)
+        public AddBatchEvent(Guid? userId, string batchCode, decimal quantity)
         {
+            UserId = userId;
             BatchCode = batchCode;
             Quantity = quantity;
         }

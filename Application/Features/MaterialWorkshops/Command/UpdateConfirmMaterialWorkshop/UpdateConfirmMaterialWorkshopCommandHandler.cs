@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
+using Application.Common.Exceptions;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -16,14 +17,16 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
         private readonly IUserRepository _userRepository;
+        private readonly IAssignmentTransferRequestRepository _assignmentTransferRequestRepository;
 
         public UpdateConfirmMaterialWorkshopCommandHandler(IMaterialWorkshopRepository materialWorkshopRepository, 
-            IUnitOfWork unitOfWork, IMediator mediator, IUserRepository userRepository)
+            IUnitOfWork unitOfWork, IMediator mediator, IUserRepository userRepository, IAssignmentTransferRequestRepository assignmentTransferRequestRepository)
         {
             _materialWorkshopRepository = materialWorkshopRepository;
             _unitOfWork = unitOfWork;
             _mediator = mediator;
             _userRepository = userRepository;
+            _assignmentTransferRequestRepository = assignmentTransferRequestRepository;
         }
         public async Task<Result<Guid>> Handle(UpdateConfirmMaterialWorkshopCommand request, CancellationToken cancellationToken)
         {
@@ -36,6 +39,13 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
             materialWorkshop.Confirmed();
             materialWorkshop.Update(request.QuantityReceive);
             _materialWorkshopRepository.Update(materialWorkshop);
+
+            var assignTransfer = await _assignmentTransferRequestRepository.GetByIdAsync(materialWorkshop.AssignmentTransferRequestId);
+            if (assignTransfer is null)
+            {
+                throw new NotFoundException("Không tìm thấy đơn chuyển giao");
+            }
+            assignTransfer.MarkAsApproved();
 
             if (supplier != null && supplier.Role == "QCTransport")
             {

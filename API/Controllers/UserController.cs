@@ -5,6 +5,7 @@ using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.ReactiveUser;
 using Application.Features.Users.Commands.UpdateUser;
 using Application.Features.Users.Commands.UpdateUserProfile;
+using Application.Features.Users.Queries.GetAllLead;
 using Application.Features.Users.Queries.GetAllQCTransport;
 using Application.Features.Users.Queries.GetAllUser;
 using Application.Features.Users.Queries.GetGroupProgress;
@@ -13,6 +14,7 @@ using Application.Features.Users.Queries.GetStaffDashboard;
 using Application.Features.Users.Queries.GetStaffPerformance;
 using Application.Features.Users.Queries.GetUserById;
 using Application.Features.Users.Queries.GetUserByWorkshopId;
+using Application.Features.Users.Queries.GetUserProfileById;
 using Application.Interfaces;
 using Domain.Entities;
 using MediatR;
@@ -96,6 +98,20 @@ namespace API.Controllers
         public async Task<List<UserDTO>> GetAllQCTransportAsync()
         {
             var query = new GetAllQCTransportQuery();
+            return await _mediator.Send(query);
+        }
+
+        [HttpGet("all-Lead")]
+        [Authorize(Roles = "Admin")]
+        public async Task<List<UserDTO>> GetAllLeadAsync()
+        {
+            var query = new GetAllLeadQuery();
+            return await _mediator.Send(query);
+        }
+
+        [HttpGet("by-userId")]
+        public async Task<UserDTO> GetByUserIdAsync([FromQuery] GetUserProfileByIdQuery query)
+        {
             return await _mediator.Send(query);
         }
 
