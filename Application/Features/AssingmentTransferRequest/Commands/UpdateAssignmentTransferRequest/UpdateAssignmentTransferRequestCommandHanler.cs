@@ -50,7 +50,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     throw new NotFoundException("Không tìm thấy công đoạn");
                 }
 
-                if (assigment.Quantity <= transferRequest.CompletedQuantity)
+                if (assigment.Quantity <= transferRequest.CompletedQuantitySend)
                 {
                     assigment.UpdateStatus("Completed");
                     assigment.UpdateDateComplete();
@@ -63,9 +63,16 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                 }
 
                 var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assigment.Id, null);
-                batch.ActiveNextAssignment(assigment.Id, transferRequest.CompletedQuantity, summary.TotalRejected);
+                bool check = batch.ActiveNextAssignment(transferRequest.Id, assigment.Id, transferRequest.CompletedQuantitySend);
 
-                transferRequest.MarkAsApproved(request.SupplierId);
+                if (check)
+                {
+                    transferRequest.MarkAsInProgress(request.SupplierId, transferRequest.Id, request.CompleteQuantityReceive, request.NoteLead);
+                }
+                else
+                {
+                    transferRequest.MarkAsApprovedFinal(request.CompleteQuantityReceive, request.NoteLead);
+                }
             }
             else
             {
@@ -78,7 +85,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
 
                 reworkRequest.AddDomainEvent(new ReworkRequestCompletedEvent(reworkRequest.Id));
 
-                transferRequest.MarkAsApproved(request.SupplierId);
+                transferRequest.MarkAsInProgress(request.SupplierId, transferRequest.Id, request.CompleteQuantityReceive, request.NoteLead);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);

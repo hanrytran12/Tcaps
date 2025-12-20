@@ -37,7 +37,7 @@ namespace Infrastructure.Persistence
         public DbSet<WorkshopInventory> WorkshopInventory { get; set; }
         public DbSet<ReworkRequest> ReworkRequests { get; set; }
         public DbSet<MaterialSupply> MaterialSupplies { get; set; }
-
+        public DbSet<FinalTransferRequest> FinalTransferRequests { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -120,6 +120,11 @@ namespace Infrastructure.Persistence
                 }
             }
             return await base.SaveChangesAsync(cancellationToken);
+        }
+
+        public void ClearTracker()
+        {
+            base.ChangeTracker.Clear();
         }
     }
 }

@@ -24,15 +24,21 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                                      on a.BatchId equals b.Id
                                  join p in _context.Products.AsNoTracking()
                                      on b.ProductId equals p.Id
+                                 join u in _context.Users.AsNoTracking()
+                                     on b.UserId equals u.Id
                                  select new BatchDTO
                                  {
                                      BatchId = b.Id,
+                                     UserId = b.UserId ?? Guid.Empty,
+                                     LeadName = u.FullName,
+                                     ProductCode = p.Code,
                                      ProductName = p.Name,
                                      Code = b.Code,
                                      Quantity = b.Quantity,
                                      StartDate = b.StartDate,
                                      EndDate = b.EndDate,
-                                     Status = b.Status
+                                     Status = b.Status,
+                                     CreatedAt = b.CreatedAt
                                  })
                                  .Distinct()
                                  .ToListAsync(cancellationToken);

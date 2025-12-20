@@ -18,9 +18,12 @@ namespace Application.Features.Batches.Queries.GetBatchForManagement
         {
             var batchList = from b in _appDbContext.Batches
                             join p in _appDbContext.Products on b.ProductId equals p.Id
+                            join u in _appDbContext.Users on b.UserId equals u.Id
                             select new BatchDTO
                             {
                                 BatchId = b.Id,
+                                UserId = b.UserId ?? Guid.Empty,
+                                LeadName = u.FullName,
                                 Code = b.Code,
                                 ProductCode = p.Code,
                                 ProductName = p.Name,
@@ -28,6 +31,7 @@ namespace Application.Features.Batches.Queries.GetBatchForManagement
                                 StartDate = b.StartDate,
                                 EndDate = b.EndDate,
                                 Status = b.Status,
+                                CreatedAt = b.CreatedAt
                             };
 
             return await batchList.ToListAsync();

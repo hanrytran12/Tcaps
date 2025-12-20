@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251130101358_Init")]
+    [Migration("20251220091103_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -58,7 +58,7 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StepOrder")
+                    b.Property<int?>("StepOrder")
                         .HasColumnType("int");
 
                     b.Property<decimal>("UnitPrice")
@@ -83,13 +83,19 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("AssignmentId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("CompletedQuantity")
+                    b.Property<decimal>("CompletedQuantityReceive")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("CompletedQuantitySend")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NoteLead")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("ReworkRequestId")
@@ -141,6 +147,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("isDeleted")
                         .HasColumnType("bit");
@@ -221,6 +230,39 @@ namespace Infrastructure.Migrations
                     b.HasIndex("BatchId");
 
                     b.ToTable("Evaluates");
+                });
+
+            modelBuilder.Entity("Domain.Entities.FinalTransferRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("AssignTransferRequestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal?>("QuantityFinalReceive")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("QuantityFinalSend")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FinalTransferRequests");
                 });
 
             modelBuilder.Entity("Domain.Entities.Income", b =>
@@ -448,6 +490,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssignId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AssignmentTransferRequestId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateOnly>("CreatedAt")
@@ -710,6 +755,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -718,7 +766,14 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StepOrder")
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("StepOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WorkshopType")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

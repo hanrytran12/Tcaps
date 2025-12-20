@@ -39,43 +39,49 @@ namespace Application.Features.Productions.Command.AddProductionReport
                 .Where(a => a.BatchId == assignment.BatchId)
                 .ToListAsync(cancellationToken);
 
-            // Xác định step đầu tiên của batch (KHÔNG cố định là 1 → đúng theo yêu cầu)
-            int firstStepOrder = assignmentsOfBatch.Min(a => a.StepOrder);
-
-            // Step hiện tại
-            int currentStepOrder = assignment.StepOrder;
-
-            // Nếu đây là bước đầu → KHÔNG cần kiểm tra MaterialWorkshop
-            bool isFirstWorkshop = currentStepOrder == firstStepOrder;
-
-            if (!isFirstWorkshop)
+            //xử lý xưởng thường
+            if (assignment.StepOrder.HasValue)
             {
-                // Lấy assignment của xưởng trước
-                var previousAssignment = assignmentsOfBatch
-                    .FirstOrDefault(a => a.StepOrder == currentStepOrder - 1);
+                var workflowAssignments = assignmentsOfBatch
+                    .Where(a => a.StepOrder.HasValue)
+                    .ToList();
 
-                if (previousAssignment == null)
-                    throw new NotFoundException("Không tìm thấy xưởng trước trong quy trình.");
+                // Xác định step đầu tiên của batch (KHÔNG cố định là 1 → đúng theo yêu cầu)
+                int firstStepOrder = assignmentsOfBatch.Min(a => a.StepOrder!.Value);
 
-                var currentWorkshopId = workshopId;
+                // Step hiện tại
+                int currentStepOrder = assignment.StepOrder.Value;
 
-                var previousMaterialStatus = await _appDbContext.MaterialWorkshops
-                    .Where(mw =>
-                        mw.AssignId == previousAssignment.Id &&
-                        mw.WorkshopId == currentWorkshopId
-                    )
-                    .Select(mw => mw.Status)
-                    .FirstOrDefaultAsync(cancellationToken);
+                // Nếu đây là bước đầu → KHÔNG cần kiểm tra MaterialWorkshop
+                bool isFirstWorkshop = currentStepOrder == firstStepOrder;
 
-
-
-                if (previousMaterialStatus != "Confirmed")
+                if (!isFirstWorkshop)
                 {
-                    throw new BadRequestException("Xưởng trước chưa chuyển hàng hoặc chưa QC Confirm. Không thể nộp báo cáo.");
+                    // Lấy assignment của xưởng trước
+                    var previousAssignment = assignmentsOfBatch
+                        .FirstOrDefault(a => a.StepOrder == currentStepOrder - 1);
+
+                    if (previousAssignment == null)
+                        throw new NotFoundException("Không tìm thấy xưởng trước trong quy trình.");
+
+                    var currentWorkshopId = workshopId;
+
+                    var previousMaterialStatus = await _appDbContext.MaterialWorkshops
+                        .Where(mw =>
+                            mw.AssignId == previousAssignment.Id &&
+                            mw.WorkshopId == currentWorkshopId
+                        )
+                        .Select(mw => mw.Status)
+                        .FirstOrDefaultAsync(cancellationToken);
+
+
+
+                    if (previousMaterialStatus != "Confirmed")
+                    {
+                        throw new BadRequestException("Xưởng trước chưa chuyển hàng hoặc chưa QC Confirm. Không thể nộp báo cáo.");
+                    }
                 }
             }
-
-            var today = DateOnly.FromDateTime(DateTime.Now);
 
             if (assignment.Status == "Reworking")
             {

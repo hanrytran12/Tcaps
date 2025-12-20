@@ -5,6 +5,9 @@
         public Guid WorkshopId { get; set; }
         public string WorkshopName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public int StepOrder { get; set; }
+        public int? StepOrder { get; set; }
+        public string WorkshopType { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public string Status { get; set; } = string.Empty;
     }
 }
