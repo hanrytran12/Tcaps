@@ -26,10 +26,13 @@ namespace Application.Features.Users.Commands.DeleteUser
                 throw new NotFoundException($"Không tìm thấy User với Id: {request.Id}.");
             }
 
-            var isWorkshopBusy = await _assignmentRepository.HasActiveAssignmentByWorkshopIdAsync(user.WorkshopId);
-            if (isWorkshopBusy)
+            if (user.WorkshopId != null)
             {
-                throw new ConflictException("Không thể xóa nhân viên này vì xưởng của họ đang có công đoạn sản xuất.");
+                var isWorkshopBusy = await _assignmentRepository.HasActiveAssignmentByWorkshopIdAsync(user.WorkshopId);
+                if (isWorkshopBusy)
+                {
+                    throw new ConflictException("Không thể xóa nhân viên này vì xưởng của họ đang có công đoạn sản xuất.");
+                }
             }
 
             var productions = await _productionRepository.GetByUserAsync(user.Id);
@@ -38,12 +41,9 @@ namespace Application.Features.Users.Commands.DeleteUser
                 throw new ConflictException("Không thể xóa nhân viên này vì đã tham gia sản xuất.");
             }
 
-            if (productions is null)
-            {
-                _repository.Delete(user);
-            }
-
             user.MarkAsDeleted();
+
+            _repository.Delete(user);
 
             return Result.Success();
         }

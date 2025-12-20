@@ -7,20 +7,20 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.AssingmentTransferRequest.Events
 {
-    public class TransferRequestApprovedEventHandler : INotificationHandler<TransferRequestApprovedEvent>
+    public class TransferRequestInProgressEventHandler : INotificationHandler<TransferRequestInProgressEvent>
     {
         private readonly IAppDbContext _appDbContext;
         private readonly IMaterialWorkshopRepository _materialWorkshopRepository;
         private readonly IMediator _mediator;
 
-        public TransferRequestApprovedEventHandler(IAppDbContext appDbContext, IMaterialWorkshopRepository materialWorkshopRepository, IMediator mediator)
+        public TransferRequestInProgressEventHandler(IAppDbContext appDbContext, IMaterialWorkshopRepository materialWorkshopRepository, IMediator mediator)
         {
             _appDbContext = appDbContext;
             _materialWorkshopRepository = materialWorkshopRepository;
             _mediator = mediator;
         }
 
-        public async Task Handle(TransferRequestApprovedEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(TransferRequestInProgressEvent notification, CancellationToken cancellationToken)
         {
             var asignmentTransferRequest = await _appDbContext.AssignmentTransferRequests.Where(atr => atr.AssignmentId == notification.AssignmentId).FirstOrDefaultAsync();
             var assignment = await _appDbContext.Assignments.Where(a => a.Id == notification.AssignmentId).FirstOrDefaultAsync();
@@ -49,7 +49,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
             if (nextAssigment is not null)
             {
-                var materialWorkshop = MaterialWorkshop.Create(nextAssigment.WorkshopId, notification.AssignmentId, notification.SupplierId, (int)notification.QuantitySend);
+                var materialWorkshop = MaterialWorkshop.Create(nextAssigment.WorkshopId, notification.AssignmentId, notification.AssignmentTransferRequestId, notification.SupplierId, (int)notification.QuantitySend);
                 await _materialWorkshopRepository.AddAsync(materialWorkshop);
             }
         }

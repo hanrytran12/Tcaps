@@ -143,7 +143,7 @@ namespace Domain.Entities
             assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
         }
 
-        public void ActiveNextAssignment(Guid assignTransferRequestId, Guid completedAssignmentId, decimal quantityCompleted)
+        public bool ActiveNextAssignment(Guid assignTransferRequestId, Guid completedAssignmentId, decimal quantityCompleted)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
@@ -155,7 +155,7 @@ namespace Domain.Entities
                     assignTransferRequestId,
                     quantityCompleted));
 
-                return;
+                return false;
             }
 
             var currentSteporder = currentAssignment.StepOrder;
@@ -165,6 +165,7 @@ namespace Domain.Entities
             {
                 nextAssignment.Active();
                 AddDomainEvent(new AssignmentActivedEvent(Code, currentAssignment.WorkshopId, nextAssignment.StartDate, nextAssignment.WorkshopId));
+                return true;
             }
 
             else
@@ -177,6 +178,7 @@ namespace Domain.Entities
                 //this.CompleteBatch(quantityCompleted, rejectedQuantity);
                 currentAssignment.UpdateStatus("Completed");
                 currentAssignment.UpdateDateComplete();
+                return false;
             }
         }
 

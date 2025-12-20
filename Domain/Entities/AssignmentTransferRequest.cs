@@ -40,16 +40,18 @@ namespace Domain.Entities
             return transferRequest;
         }
 
-        public void MarkAsApproved(Guid supplierId, decimal completedQuantityReceive, string notLead)
+        public void MarkAsInProgress(Guid supplierId, Guid assignmentTransferRequestId, decimal completedQuantityReceive, string notLead)
         {
-            if (Status == "Approved") return;
-            this.Status = "Approved";
+            if (Status == "InProgress") return;
+            this.Status = "InProgress";
             this.CompletedQuantityReceive = completedQuantityReceive;
             this.NoteLead = notLead;
 
             decimal quantityReject = CompletedQuantitySend - CompletedQuantityReceive;
-            AddDomainEvent(new TransferRequestApprovedEvent(AssignmentId, ReworkRequestId, CompletedQuantityReceive, quantityReject, supplierId));
+            AddDomainEvent(new TransferRequestInProgressEvent(AssignmentId, assignmentTransferRequestId, ReworkRequestId, CompletedQuantityReceive, quantityReject, supplierId));
         }
+
+        public void MarkAsApproved() => Status = "Approved";
 
         public void MarkAsReception() => Status = "QCTransportReception";
     }
