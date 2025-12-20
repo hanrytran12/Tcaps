@@ -85,10 +85,12 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("QC", policy =>
         policy.RequireRole("QC"));
 
+    options.AddPolicy("GuardQC", policy =>
+        policy.RequireRole("GuardQC"));
+
     options.AddPolicy("QCTransportOnly", policy =>
     {
         policy.RequireRole("QCTransport");
-        policy.RequireClaim("isQcTransport", "true");
     });
 
     options.AddPolicy("LeadOrValidQCTransport", policy =>

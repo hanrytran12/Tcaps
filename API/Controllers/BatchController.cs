@@ -2,11 +2,13 @@
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
+using Application.Features.Batches.Commands.UpdateLeadForBatch;
 using Application.Features.Batches.Queries.GetAllBatch;
 using Application.Features.Batches.Queries.GetBatchById;
 using Application.Features.Batches.Queries.GetBatchByWorkshopId;
 using Application.Features.Batches.Queries.GetBatchesByQCId;
 using Application.Features.Batches.Queries.GetBatchesByStaffId;
+using Application.Features.Batches.Queries.GetBatchForLead;
 using Application.Features.Batches.Queries.GetBatchForManagement;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
@@ -70,6 +72,16 @@ namespace API.Controllers
             });
         }
 
+        [HttpGet("lead/batches")]
+        [Authorize(Policy = "Lead")]
+        public async Task<List<BatchDTO>> GetBatchesByLeadIdAsync()
+        {
+            return await Mediator.Send(new GetBatchForLeadQuery
+            {
+                UserId = CurrentUserId
+            });
+        }
+
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddBatch(AddBatchCommand command)
@@ -85,6 +97,14 @@ namespace API.Controllers
             command.Id = id;
             await Mediator.Send(command);
             return Ok("Update batch successfully");
+        }
+
+        [HttpPut("lead-for-batch")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateLeadForBatch([FromQuery] UpdateLeadForBatchCommand command)
+        {
+            await Mediator.Send(command);
+            return Ok("Cập nhật Lead cho lô hàng thành công.");
         }
 
         [HttpDelete("{id:guid}")]

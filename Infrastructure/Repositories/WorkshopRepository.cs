@@ -62,6 +62,41 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<int?> GetMaxStepOrderAsync()
+        {
+            return await _context.Workshop
+                .Where(w => w.WorkshopType == Domain.Enums.WorkshopType.Internal)
+                .MaxAsync(w => w.StepOrder);
+        }
+
+        public async Task ShiftStepOrdersUpAsync(int from, int to)
+        {
+            await _context.Workshop
+                .Where(w => w.StepOrder >= from && w.StepOrder <= to)
+                .ExecuteUpdateAsync(s => s.SetProperty(w => w.StepOrder, w => w.StepOrder - 1));
+        }
+
+        public async Task ShiftStepOrdersDownAsync(int from, int to)
+        {
+            await _context.Workshop
+                .Where(w => w.StepOrder >= from && w.StepOrder <= to)
+                .ExecuteUpdateAsync(s => s.SetProperty(w => w.StepOrder, w => w.StepOrder + 1));
+        }
+
+        public async Task ReindexFromAsync(int fromStepOrder)
+        {
+            var workshops = await _context.Workshop
+                .Where(w => w.StepOrder != null && w.StepOrder >= fromStepOrder)
+                .OrderBy(w => w.StepOrder)
+                .ToListAsync();
+
+            foreach (var w in workshops)
+            {
+                w.DecreaseStepOrder();
+            }
+        }
+
+
         public void Update(Workshop workshop)
         {
             _context.Workshop.Update(workshop);

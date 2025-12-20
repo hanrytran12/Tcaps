@@ -30,8 +30,10 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTr
                           ProductCode = product.Code,
                           UserName = user.FullName,
                           WorkshopName = workshop.Name,
-                          CompletedQuantity = assignTransfer.CompletedQuantity,
+                          CompletedQuantitySend = assignTransfer.CompletedQuantitySend,
+                          CompletedQuantityReceive = assignTransfer.CompletedQuantityReceive,
                           Note = assignTransfer.Note ?? string.Empty,
+                          NoteLead = assignTransfer.NoteLead ?? string.Empty,
                           Status = assignTransfer.Status,
                           CreatedAt = assignTransfer.CreatedAt
                       };

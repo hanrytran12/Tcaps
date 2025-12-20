@@ -24,11 +24,18 @@ namespace Application.Features.Batches.Queries.GetBatchById
             var batchDetails = await query.Include(b => b.Assignments).Select(b => new
             {
                 Batch = b,
+                LeadName = _appDbContext.Users
+                    .Where(u => u.Id == b.UserId)
+                    .Select(u => u.FullName)
+                    .FirstOrDefault(),
+
                 TotalAssignments = b.Assignments.Count(),
                 CompletedAssignments = b.Assignments.Count(a => a.Status == "Completed")
             })
             .Select(data => new BatchDetailResponseDTO
             {
+                UserId = data.Batch.UserId ?? Guid.Empty,
+                LeadName = data.LeadName ?? string.Empty,
                 Code = data.Batch.Code,
                 Quantity = data.Batch.Quantity,
                 Status = data.Batch.Status,
