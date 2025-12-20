@@ -63,9 +63,16 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                 }
 
                 var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assigment.Id, null);
-                batch.ActiveNextAssignment(transferRequest.Id, assigment.Id, transferRequest.CompletedQuantitySend);
+                bool check = batch.ActiveNextAssignment(transferRequest.Id, assigment.Id, transferRequest.CompletedQuantitySend);
 
-                transferRequest.MarkAsApproved(request.SupplierId, request.CompleteQuantityReceive, request.NoteLead);
+                if (check)
+                {
+                    transferRequest.MarkAsInProgress(request.SupplierId, transferRequest.Id, request.CompleteQuantityReceive, request.NoteLead);
+                }
+                else
+                {
+                    transferRequest.MarkAsApproved();
+                }
             }
             else
             {
@@ -78,7 +85,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
 
                 reworkRequest.AddDomainEvent(new ReworkRequestCompletedEvent(reworkRequest.Id));
 
-                transferRequest.MarkAsApproved(request.SupplierId, request.CompleteQuantityReceive, request.NoteLead);
+                transferRequest.MarkAsInProgress(request.SupplierId, transferRequest.Id, request.CompleteQuantityReceive, request.NoteLead);
             }
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
