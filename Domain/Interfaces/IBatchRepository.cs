@@ -17,5 +17,6 @@ namespace Domain.Interfaces
         Task<Batch?> GetByAssignmentIdAsync(Guid assignmentId);
         Task<int?> GetLastCodeIndexAsync(string prefix);
         Task<Batch?> GetByIdAssignmentWithMaterialUse(Guid assignmentId);
+        Task<List<Batch>> GetBatchesByLeadIdAsync(Guid userId);
     }
 }

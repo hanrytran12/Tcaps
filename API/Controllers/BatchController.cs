@@ -74,7 +74,7 @@ namespace API.Controllers
 
         [HttpGet("lead/batches")]
         [Authorize(Policy = "Lead")]
-        public async Task<List<BatchDTO>> GetBatchesByLeadIdAsync()
+        public async Task<List<Batch>> GetBatchesByLeadIdAsync()
         {
             return await Mediator.Send(new GetBatchForLeadQuery
             {
