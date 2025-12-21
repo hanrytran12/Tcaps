@@ -563,5 +563,34 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task AssignWorkshopNotificationAsync(Guid userId, string batchCode)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            var lead = await _userRepository.GetByIdAsync(userId);
+            if (admin is null || lead is null) return;
+
+            var title = "Lead phân công giai đoạn";
+            var message = $"Lead {lead.FullName} đã phân công giai đoạn cho lô hàng {batchCode}.";
+            var type = "Assignment";
+
+            var notification = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendAddBatchForAdminNotificationAsync(string batchCode, decimal quantity)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            if (admin is null) return;
+
+            var title = "Admin tạo lô hàng";
+            var message = $"Lô hàng {batchCode} mới được tạo với số lượng yêu cầu là {quantity}.";
+            var type = "Batch";
+
+            var notification = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
