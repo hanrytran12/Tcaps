@@ -50,7 +50,8 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
                     Assignment = assign,
 
                     ProductionId = prod != null ? prod.Id : (Guid?)null,
-                    StaffName = user != null ? userStaff.FullName : null,
+                    StaffId = userStaff != null ? userStaff.Id : Guid.Empty,
+                    StaffName = userStaff != null ? userStaff.FullName : null,
                     QuantityWork = prod != null ? prod.Quantity : 0,
 
                     QuantityError = prod == null
@@ -86,10 +87,11 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
                         Status = assignmentData.Status,
 
                         Items = g
-                            .GroupBy(x => x.StaffName)
+                            .GroupBy(x => new { x.StaffId, x.StaffName })
                             .Select(sg => new StaffWorksingDTO
                             {
-                                StaffName = sg.Key ?? "Chưa có dữ liệu sản xuất",
+                                StaffId = sg.Key.StaffId,
+                                StaffName = sg.Key.StaffName ?? "Chưa có dữ liệu.",
                                 QuantityWork = sg.Sum(x => x.QuantityWork),
                                 QuantityError = sg.Sum(x => (int)x.QuantityError)
                             })
