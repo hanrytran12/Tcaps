@@ -35,5 +35,10 @@ namespace Infrastructure.Persistence
 
             return result;
         }
+
+        public void ClearTracker()
+        {
+            _context.ChangeTracker.Clear();
+        }
     }
 }

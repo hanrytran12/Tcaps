@@ -72,7 +72,7 @@ namespace API.Controllers
         }
 
         [HttpPost("{batchId:guid}/plan-assignments")]
-        [Authorize(Policy = "Lead")]
+        [Authorize(Roles = "Lead,Admin")]
         public async Task<IActionResult> PlanAssignments(Guid batchId, [FromBody] List<AssignmentPlanItemDTO> planItems)
         {
             await Mediator.Send(new PlanAssignmentsCommand

@@ -6,6 +6,7 @@ namespace Domain.Entities
     public class Batch : AggregrateRoot
     {
         public Guid ProductId { get; private set; }
+        public Guid? UserId { get; private set; }
         public string Code { get; private set; } = string.Empty;
         public decimal Quantity { get; private set; }
         public decimal ActualQuantity { get; private set; }
@@ -32,10 +33,11 @@ namespace Domain.Entities
 
         public ICollection<MaterialUse> MaterialUses { get; private set; } = new List<MaterialUse>();
 
-        public Batch(Guid Id, Guid productId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
+        public Batch(Guid Id, Guid productId, Guid? userId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
             : base(Id)
         {
             ProductId = productId;
+            UserId = userId;
             Code = code;
             Quantity = quantity;
             StartDate = startDate;
@@ -46,9 +48,9 @@ namespace Domain.Entities
 
         private Batch() : base(Guid.NewGuid()) { }
 
-        public static Batch Create(Guid productId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
+        public static Batch Create(Guid productId, Guid? userId, string code, decimal quantity, DateOnly startDate, DateOnly endDate)
         {
-            return new Batch(Guid.NewGuid(), productId, code, quantity, startDate, endDate);
+            return new Batch(Guid.NewGuid(), productId, userId, code, quantity, startDate, endDate);
         }
 
         public void MarkAsDeleted()
@@ -141,11 +143,23 @@ namespace Domain.Entities
             assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
         }
 
-        public void ActiveNextAssignment(Guid completedAssignmentId, decimal quantityCompleted, decimal quantityRejected)
+        public bool ActiveNextAssignment(Guid assignTransferRequestId, Guid completedAssignmentId, decimal quantityCompleted)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
-            //currentAssignment.UpdateStatus("Completed");
+            //nếu là xưởng khoán
+            if (!currentAssignment.StepOrder.HasValue)
+            {
+                AddDomainEvent(new FinalTransferRequestCreatedEvent(
+                    Guid.NewGuid(),
+                    assignTransferRequestId,
+                    quantityCompleted));
+
+                currentAssignment.UpdateStatus("Completed");
+                currentAssignment.UpdateDateComplete();
+
+                return false;
+            }
 
             var currentSteporder = currentAssignment.StepOrder;
             var nextAssignment = this.Assignments.Where(a => a.StepOrder > currentSteporder).OrderBy(a => a.StepOrder).FirstOrDefault();
@@ -154,13 +168,20 @@ namespace Domain.Entities
             {
                 nextAssignment.Active();
                 AddDomainEvent(new AssignmentActivedEvent(Code, currentAssignment.WorkshopId, nextAssignment.StartDate, nextAssignment.WorkshopId));
+                return true;
             }
 
             else
             {
-                this.CompleteBatch(quantityCompleted, quantityRejected);
+                AddDomainEvent(new FinalTransferRequestCreatedEvent(
+                    Guid.NewGuid(),
+                    assignTransferRequestId,
+                    quantityCompleted));
+
+                //this.CompleteBatch(quantityCompleted, rejectedQuantity);
                 currentAssignment.UpdateStatus("Completed");
                 currentAssignment.UpdateDateComplete();
+                return false;
             }
         }
 
@@ -189,6 +210,11 @@ namespace Domain.Entities
                 currentMaterialUsage.UpdateReconciledQuantity(reconciledQuantity);
                 AddDomainEvent(new MaterialUsageReconciledEvent(Code, currentMaterialUsage.Id, userId, reconciledQuantity));
             }
+        }
+
+        public void UpdateLeadForBatch(Guid userId)
+        {
+            UserId = userId;
         }
     }
 }

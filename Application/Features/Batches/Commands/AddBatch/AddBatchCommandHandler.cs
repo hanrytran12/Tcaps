@@ -35,13 +35,21 @@ namespace Application.Features.Batches.Commands.AddBatch
 
             var result = Batch.Create(
                 product.Id,
+                request.UserId,
                 newCode,
                 request.Quantity,
                 request.StartDate,
                 request.EndDate
             );
             await _batchRepository.AddAsync(result);
-            await _mediator.Publish(new AddBatchEvent(newCode, request.Quantity));
+            
+            if (request.UserId != Guid.Empty)
+            {
+                await _mediator.Publish(new AddBatchEvent(request.UserId, newCode, request.Quantity));
+            }
+
+            await _mediator.Publish(new AddBatchForAdminEvent(newCode, request.Quantity));
+            
             return Result<Guid>.Success(result.Id);
         }
     }

@@ -519,16 +519,76 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task AddBatchNotificationAsync(string batchCode, decimal quantity)
+        public async Task AddBatchNotificationAsync(Guid? userId, string batchCode, decimal quantity)
         {
-            var lead = await _userRepository.GetByRoleAsync("Lead");
-            if (lead is null) return;
+            if (userId == null) return;
+            var lead = await _userRepository.GetByIdAsync(userId.Value);
+            if (lead is null || lead.Role != "Lead") return;
 
             var title = "Thêm lô hàng mới";
             var message = $"Lô hàng mới với mã lô {batchCode} và số lượng {quantity} đã được thêm vào hệ thống.";
             var type = "Batch";
 
             var notification = Notification.Create(lead.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task ApproveFinalTransferRequestNotificationAsync(Guid batchId, decimal quantityComplete, decimal quantityError)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            if (admin is null) return;
+
+            var batch = await _batchRepository.GetByIdAsync(batchId);
+
+            var title = "Lô hàng hoàn thành";
+            var message = $"Lô hàng với mã lô {batch.Code} đã hoàn thành với số lượng đạt là {quantityComplete} và số lượng lỗi là {quantityError}.";
+            var type = "FinalTransferRequest";
+
+            var notification = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task UpdateQuantityDefectNotificationAsync(decimal quantityReject, Guid qcId, string batchCode)
+        {
+            var qc = await _userRepository.GetByIdAsync(qcId);
+            if (qc is null) return;
+
+            var title = "Cập nhật số lượng yêu cầu làm lại";
+            var message = $"Lead đã cập nhật số lượng yêu cầu làm lại vì phát hiện thêm {quantityReject} lỗi của lô hàng {batchCode}.";
+            var type = "AssignmentTransferRequest";
+
+            var notification = Notification.Create(qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task AssignWorkshopNotificationAsync(Guid userId, string batchCode)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            var lead = await _userRepository.GetByIdAsync(userId);
+            if (admin is null || lead is null) return;
+
+            var title = "Lead phân công giai đoạn";
+            var message = $"Lead {lead.FullName} đã phân công giai đoạn cho lô hàng {batchCode}.";
+            var type = "Assignment";
+
+            var notification = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendAddBatchForAdminNotificationAsync(string batchCode, decimal quantity)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            if (admin is null) return;
+
+            var title = "Admin tạo lô hàng";
+            var message = $"Lô hàng {batchCode} mới được tạo với số lượng yêu cầu là {quantity}.";
+            var type = "Batch";
+
+            var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }

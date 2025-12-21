@@ -62,6 +62,13 @@ namespace Infrastructure.Repositories
             return await _context.Users.FirstOrDefaultAsync(p => p.Role == role);
         }
 
+        public async Task<IEnumerable<User>> GetLeadsAsync()
+        {
+            return await _context.Users
+                .Where(u => u.Role == "Lead" && u.Status == "Active")
+                .ToListAsync();
+        }
+
         public async Task<User?> GetQCByWorkshopIdAsync(Guid? workshopId)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.WorkshopId == workshopId && u.Role == "QC");

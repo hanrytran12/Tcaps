@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,9 +19,11 @@ namespace Infrastructure.Migrations
                     AssignmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ReworkRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    CompletedQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CompletedQuantitySend = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    CompletedQuantityReceive = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NoteLead = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -35,6 +37,7 @@ namespace Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     ProductId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Code = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Quantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ActualQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -48,6 +51,24 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Batches", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FinalTransferRequests",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AssignTransferRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QuantityFinalSend = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    QuantityFinalReceive = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FinalTransferRequests", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -150,6 +171,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     AssignId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AssignmentTransferRequestId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SupplierId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     QuantitySend = table.Column<int>(type: "int", nullable: false),
                     QuantityReceive = table.Column<int>(type: "int", nullable: false),
@@ -263,7 +285,10 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StepOrder = table.Column<int>(type: "int", nullable: false)
+                    StepOrder = table.Column<int>(type: "int", nullable: true),
+                    WorkshopType = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -292,7 +317,7 @@ namespace Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     WorkshopId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    StepOrder = table.Column<int>(type: "int", nullable: false),
+                    StepOrder = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
@@ -459,6 +484,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "ComponentDefects");
+
+            migrationBuilder.DropTable(
+                name: "FinalTransferRequests");
 
             migrationBuilder.DropTable(
                 name: "Incomes");

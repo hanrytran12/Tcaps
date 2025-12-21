@@ -8,6 +8,7 @@ namespace Application.DTOs.Response
 {
     public class StaffWorksingDTO
     {
+        public Guid StaffId { get; set; }
         public string StaffName { get; set; }
         public int QuantityWork { get; set; }
         public int QuantityError { get; set; }

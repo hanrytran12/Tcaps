@@ -22,6 +22,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                         join b in _appDbContext.Batches.AsNoTracking() on a.BatchId equals b.Id
                         join p in _appDbContext.Products.AsNoTracking() on b.ProductId equals p.Id
                         join u in _appDbContext.Users.AsNoTracking() on tr.UserId equals u.Id
+                        where b.UserId == request.LeadId
                         select new AssignmentTransferRequestDTO
                         {
                             TransferRequestId = tr.Id,
@@ -29,8 +30,10 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                             BatchCode = b.Code,
                             ProductCode = p.Code,
                             WorkshopName = w.Name,
-                            CompletedQuantity = tr.CompletedQuantity,
-                            Note = tr.Note,
+                            CompletedQuantitySend = tr.CompletedQuantitySend,
+                            CompletedQuantityReceive = tr.CompletedQuantityReceive,
+                            Note = tr.Note ?? string.Empty,
+                            NoteLead = tr.NoteLead ?? string.Empty,
                             Status = tr.Status,
                             CreatedAt = tr.CreatedAt
                         };

@@ -65,6 +65,7 @@ namespace Infrastructure
             services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();
             services.AddScoped<IReworkRequestRepository, ReworkRequestRepository>();
             services.AddScoped<IMaterialSupplyRepository, MaterialSupplyRepository>();
+            services.AddScoped<IFinalTransferRequestRepository, FinalTransferRequestRepository>();
 
             return services;
         }
