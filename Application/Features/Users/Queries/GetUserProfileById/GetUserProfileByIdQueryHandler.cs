@@ -23,6 +23,7 @@ namespace Application.Features.Users.Queries.GetUserProfileById
             var dto = await (from user in _context.Users
                              join workshop in _context.Workshop
                              on user.WorkshopId equals workshop.Id
+                             where user.Id == request.UserId
                              select new UserDTO
                              {
                                  Id = user.Id,
