@@ -103,5 +103,13 @@ namespace Infrastructure.Repositories
         {
             return await _context.Batches.Include(b => b.Assignments).Include(batch => batch.MaterialUses).FirstOrDefaultAsync(b => b.Assignments.Any(a => a.Id == assignmentId));
         }
+
+        public async Task<List<Batch>> GetBatchesByLeadIdAsync(Guid userId)
+        {
+            return await _context.Batches
+                                 .Include(b => b.Assignments)
+                                 .Where(b => b.UserId == userId && !b.isDeleted)
+                                 .ToListAsync();
+        }
     }
 }

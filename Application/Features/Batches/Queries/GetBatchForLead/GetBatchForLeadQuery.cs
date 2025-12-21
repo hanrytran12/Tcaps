@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.DTOs.Response;
+﻿using Domain.Entities;
 using MediatR;
 
 namespace Application.Features.Batches.Queries.GetBatchForLead
 {
-    public class GetBatchForLeadQuery : IRequest<List<BatchDTO>>
+    public class GetBatchForLeadQuery : IRequest<List<Batch>>
     {
         public Guid UserId { get; set; }
     }
