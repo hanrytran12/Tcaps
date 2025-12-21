@@ -14,13 +14,18 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
         private readonly IAssignmentTransferRequestRepository _assignmentTransferRequestRepository;
         private readonly IAssignmentCompletionService _assignmentCompletionService;
         private readonly IBatchRepository _batchRepository;
+        private readonly IFinalTransferRequestRepository _finalTransferRequestRepository;
+        private readonly IWorkshopRepository _workshopRepository;
 
-        public AddAssignmentTransferRequestCommandHandler(IAssignmentRepository assignmentRepository, IAssignmentTransferRequestRepository assignmentTransferRequestRepository, IAssignmentCompletionService assignmentCompletionService, IBatchRepository batchRepository)
+        public AddAssignmentTransferRequestCommandHandler(IAssignmentRepository assignmentRepository, IAssignmentTransferRequestRepository assignmentTransferRequestRepository, IAssignmentCompletionService assignmentCompletionService, IBatchRepository batchRepository,
+            IFinalTransferRequestRepository finalTransferRequestRepository, IWorkshopRepository workshopRepository)
         {
             _assignmentRepository = assignmentRepository;
             _assignmentTransferRequestRepository = assignmentTransferRequestRepository;
             _assignmentCompletionService = assignmentCompletionService;
             _batchRepository = batchRepository;
+            _finalTransferRequestRepository = finalTransferRequestRepository;
+            _workshopRepository = workshopRepository;
         }
 
         public async Task<Result<Guid>> Handle(AddAssignmentTransferRequestCommand request, CancellationToken cancellationToken)
@@ -41,6 +46,12 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
             if (batch is null)
             {
                 throw new NotFoundException("Không tìm thấy lô hàng của công đoạn này.");
+            }
+
+            var workshop = await _workshopRepository.GetByIdAsync(assignment.WorkshopId);
+            if (workshop is null)
+            {
+                throw new NotFoundException("Không tìm thấy xưởng phụ trách.");
             }
 
             if (request.ReconciliationMaterials.Count > 0)
@@ -66,12 +77,32 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
             }
             //var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
 
-            var requestTransfer = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantitySend, request.Note, (assignment.Status == "Reworking" ? request.ReworkRequestId : null));
-            await _assignmentTransferRequestRepository.AddAsync(requestTransfer);
+            AssignmentTransferRequest assignmentTransferRequest;
+            if (batch.UserId == null && workshop.WorkshopType == Domain.Enums.WorkshopType.Outsource)
+            {
+                assignmentTransferRequest = AssignmentTransferRequest.Create(
+                    assignment.Id,
+                    request.UserId,
+                    completedQuantitySend,
+                    request.Note,
+                    null);
 
-            requestTransfer.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));
+                await _assignmentTransferRequestRepository.AddAsync(assignmentTransferRequest);
 
-            return Result<Guid>.Success(requestTransfer.Id);
+                assignmentTransferRequest.MarkAsApproved();
+
+                batch.ActiveNextAssignment(assignmentTransferRequest.Id, assignment.Id, completedQuantitySend);
+            }
+            else
+            {
+                assignmentTransferRequest = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantitySend, request.Note, (assignment.Status == "Reworking" ? request.ReworkRequestId : null));
+                await _assignmentTransferRequestRepository.AddAsync(assignmentTransferRequest);
+
+                assignmentTransferRequest.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));
+            }
+            
+
+            return Result<Guid>.Success(assignmentTransferRequest.Id);
         }
     }
 }
