@@ -155,6 +155,9 @@ namespace Domain.Entities
                     assignTransferRequestId,
                     quantityCompleted));
 
+                currentAssignment.UpdateStatus("Completed");
+                currentAssignment.UpdateDateComplete();
+
                 return false;
             }
 
