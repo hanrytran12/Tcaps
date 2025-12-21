@@ -50,13 +50,17 @@ namespace Application.Features.Batches.Queries.GetBatchById
                 (
                     from a in data.Batch.Assignments
                     join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
+                    orderby a.StepOrder
                     select new DashboardAssignmentDTO
                     {
+                        AssignmentId = a.Id,
+                        UnitPrice = a.UnitPrice,
                         WorkshopName = w.Name,
                         Quantity = a.Quantity,
                         Status = a.Status,
                         StartDate = a.StartDate,
                         EndDate = a.EndDate,
+                        ExpectedDeliveryDate = a.ExpectedDeliveryDate,
                     }).ToList()
             }).AsNoTracking().FirstOrDefaultAsync();
 
