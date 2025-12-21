@@ -39,6 +39,13 @@ namespace Infrastructure.Repositories
             return await _context.MaterialSupplies.FindAsync(id);
         }
 
+        public async Task<IEnumerable<MaterialSupply>> GetByUserIdAsync(Guid userId)
+        {
+            return await _context.MaterialSupplies
+                .Where(m => m.SupplierId == userId)
+                .ToListAsync();
+        }
+
         public void Update(MaterialSupply materialSupply)
         {
             _context.MaterialSupplies.Update(materialSupply);

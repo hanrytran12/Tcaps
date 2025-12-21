@@ -10,6 +10,7 @@ namespace Domain.Interfaces
     public interface IMaterialSupplyRepository
     {
         Task<IEnumerable<MaterialSupply>> GetAllAsync();
+        Task<IEnumerable<MaterialSupply>> GetByUserIdAsync(Guid userId);
         Task<MaterialSupply> GetByIdAsync(Guid id);
         Task AddAsync(MaterialSupply materialSupply);
         void Update(MaterialSupply materialSupply);
