@@ -1,6 +1,7 @@
 ﻿using Application.Common;
 using Application.Common.Exceptions;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 
@@ -10,11 +11,13 @@ namespace Application.Features.Assignments.Commands.PlanAssignments
     {
         private readonly IBatchRepository _batchRepository;
         private readonly IWorkshopRepository _workshopRepository;
+        private readonly IMediator _mediator;
 
-        public PlanAssignmentsCommandHandler(IBatchRepository batchRepository, IWorkshopRepository workshopRepository)
+        public PlanAssignmentsCommandHandler(IBatchRepository batchRepository, IWorkshopRepository workshopRepository, IMediator mediator)
         {
             _batchRepository = batchRepository;
             _workshopRepository = workshopRepository;
+            _mediator = mediator;
         }
 
         public async Task<Result> Handle(PlanAssignmentsCommand request, CancellationToken cancellationToken)
@@ -82,6 +85,8 @@ namespace Application.Features.Assignments.Commands.PlanAssignments
                 batch.AddAssignment(assignment);
             }
             batch.NotifyPlanCreated();
+
+            await _mediator.Publish(new AssignWorkshopEvent(batch.UserId ?? Guid.Empty, batch.Code));
             return Result.Success();
         }
     }

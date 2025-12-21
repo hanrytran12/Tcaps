@@ -30,5 +30,7 @@ namespace Application.Interfaces
         Task AddBatchNotificationAsync(Guid? userId, string batchCode, decimal quantity);
         Task ApproveFinalTransferRequestNotificationAsync(Guid batchId, decimal quantityComplete, decimal quantityError);
         Task UpdateQuantityDefectNotificationAsync(decimal quantityReject, Guid qcId, string batchCode);
+        Task AssignWorkshopNotificationAsync(Guid userId, string batchCode);
+        Task SendAddBatchForAdminNotificationAsync(string batchCode, decimal quantity);
     }
 }
