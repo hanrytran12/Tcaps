@@ -28,10 +28,11 @@ namespace Domain.Entities
             return new Product(Guid.NewGuid(), code, name, image, description);
         }
 
-        public void UpdateDetails(string name, string description)
+        public void UpdateDetails(string name, string description, string imageURL)
         {
             this.Name = name;
             this.Description = description;
+            this.Image = imageURL;
         }
 
         public void MarkAsDeleted()

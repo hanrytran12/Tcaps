@@ -1,5 +1,6 @@
 ﻿using Application.Common;
 using Application.Common.Exceptions;
+using Application.Interfaces;
 using Domain.Interfaces;
 using MediatR;
 
@@ -8,9 +9,11 @@ namespace Application.Features.Products.Commands.UpdateProduct
     public class UpdateProductCommandHandler : IRequestHandler<UpdateProductCommand, Result>
     {
         private readonly IProductRepository _repository;
-        public UpdateProductCommandHandler(IProductRepository repository)
+        private readonly IFileStorageService _fileStorageService;
+        public UpdateProductCommandHandler(IProductRepository repository, IFileStorageService fileStorageService)
         {
             _repository = repository;
+            _fileStorageService = fileStorageService;
         }
 
         public async Task<Result> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
@@ -31,7 +34,9 @@ namespace Application.Features.Products.Commands.UpdateProduct
                 }
             }
 
-            product.UpdateDetails(request.Name, request.Description);
+            await _fileStorageService.DeleteFileAsync(product.Image, cancellationToken);
+            string relativePath = await _fileStorageService.SaveFileAsync(request.ImageFile, "products", cancellationToken);
+            product.UpdateDetails(request.Name, request.Description, relativePath);
             return Result.Success();
         }
     }

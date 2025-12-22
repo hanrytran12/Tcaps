@@ -35,7 +35,7 @@ namespace API.Controllers
 
         [HttpPut("{id:guid}")]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> UpdateProduct(Guid id, [FromBody] UpdateProductCommand command)
+        public async Task<IActionResult> UpdateProduct(Guid id, [FromForm] UpdateProductCommand command)
         {
             command.Id = id;
             await _mediator.Send(command);
