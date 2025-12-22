@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.Response
+﻿namespace Application.DTOs.Response
 {
     public class TaskTransferRequestDTO
     {
@@ -22,6 +16,8 @@ namespace Application.DTOs.Response
         public int CompleteQuantity { get; set; }
         public string Status { get; set; }
         public string? Note { get; set; }
+        public string ProductCode { get; set; }
+        public string ProductName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime DateToGo { get; set; }
         public DateTime? ApprovedAt { get; set; }
