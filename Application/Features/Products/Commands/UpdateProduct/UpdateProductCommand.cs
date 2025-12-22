@@ -1,14 +1,16 @@
 ﻿using Application.Common;
 using MediatR;
-using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace Application.Features.Products.Commands.UpdateProduct
 {
     public class UpdateProductCommand : IRequest<Result>
     {
-        [JsonIgnore]
+        [BindNever]
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+        public IFormFile ImageFile { get; set; }
     }
 }
