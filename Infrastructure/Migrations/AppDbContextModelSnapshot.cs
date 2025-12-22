@@ -682,6 +682,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<DateTime>("DateToGo")
+                        .HasColumnType("datetime2");
+
                     b.Property<Guid?>("MaterialRequestId")
                         .HasColumnType("uniqueidentifier");
 
