@@ -9,26 +9,42 @@ namespace Infrastructure.Persistence.Seeders
     {
         public static async Task SeedAllAsync(AppDbContext context)
         {
-            // Xóa dữ liệu cũ (nếu cần thiết, hoặc logic này để ensure idempotent)
-            // Trong EF Core Seed, ta thường kiểm tra Any() trước.
+            // =============================================================
+            // THỨ TỰ SEEDING RẤT QUAN TRỌNG ĐỂ TRÁNH LỖI KHÓA NGOẠI
+            // =============================================================
 
+            // 1. Dữ liệu nền tảng (Master Data)
             await SeedWorkshopsAsync(context);
             await SeedUsersAsync(context);
             await SeedMaterialsAsync(context);
             await SeedProductsAsync(context);
             await SeedInventoriesAsync(context);
+
+            // 2. Quy trình sản xuất (Production Flow)
             await SeedBatchesAsync(context);
             await SeedAssignmentsAsync(context);
+
+            // 3. Các yêu cầu (Requests)
             await SeedMaterialRequestsAsync(context);
+
+            // [FIX LỖI TRACKING] Đưa TransferRequests lên trước MaterialWorkshops
+            // Vì MaterialWorkshops có FK trỏ tới AssignmentTransferRequest
+            await SeedTransferRequestsAsync(context);
+
+            // 4. Thực thi & Chi tiết (Execution)
             await SeedMaterialUseAsync(context);
-            await SeedMaterialWorkshopsAsync(context);
+            await SeedMaterialWorkshopsAsync(context); // Chạy sau khi TransferRequest đã có
             await SeedProductionsAsync(context);
+
+            // 5. Kết quả & Báo cáo
             await SeedEvaluatesAndDefectsAsync(context);
             await SeedIncomesAsync(context);
             await SeedNotificationsAsync(context);
-            await SeedTransferRequestsAsync(context); // AssignmentTransfer & TaskTransfer
+
+            // 6. Kho xưởng
             await SeedWorkshopInventoryAsync(context);
 
+            // Lưu lần cuối để chắc chắn
             await context.SaveChangesAsync(CancellationToken.None);
         }
 
@@ -70,8 +86,6 @@ namespace Infrastructure.Persistence.Seeders
         {
             if (await context.Users.AnyAsync()) return;
 
-            // Hash password "123" (từ SQL: $2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC)
-            // Hoặc dùng hasher mặc định để đảm bảo tương thích logic đăng nhập
             var ph = new PasswordHasher();
             var pass = ph.Hash("123");
 
@@ -94,7 +108,7 @@ namespace Infrastructure.Persistence.Seeders
             users.Add(U("A0000000-0000-0000-0000-000000000004", "A1C9B3A0-4F12-4E81-B17B-000000000002", "Staff", "Phạm Thị Dung", "staff.dung@tcaps.com", "0904567890"));
             users.Add(U("A0000000-0000-0000-0000-000000000005", "A1C9B3A0-4F12-4E81-B17B-000000000003", "QCTransport", "Nguyễn Thị Hạnh", "qctransport@tcaps.com", "0906789012", true));
 
-            // QCs (Users 6-21 + 56)
+            // QCs
             users.Add(U("A0000000-0000-0000-0000-000000000006", "A1C9B3A0-4F12-4E81-B17B-000000000001", "QC", "QC Xưởng Cắt Laser", "qc.laser@tcaps.com", "0901000101"));
             users.Add(U("A0000000-0000-0000-0000-000000000007", "A1C9B3A0-4F12-4E81-B17B-000000000002", "QC", "Hoàng Văn Em", "qc.catkeo@tcaps.com", "0901000102"));
             users.Add(U("A0000000-0000-0000-0000-000000000008", "A1C9B3A0-4F12-4E81-B17B-000000000003", "QC", "Khánh Nguyệt", "qc.danvai@tcaps.com", "0901000103"));
@@ -113,7 +127,7 @@ namespace Infrastructure.Persistence.Seeders
             users.Add(U("A0000000-0000-0000-0000-000000000021", "A1C9B3A0-4F12-4E81-B17B-000000000016", "QC", "QC Xưởng Đóng Bịch", "qc.dongbich@tcaps.com", "0901000116"));
             users.Add(U("A0000000-0000-0000-0000-000000000056", "A1C9B3A0-4F12-4E81-B17B-000000000017", "QC", "QC Xưởng Khoán", "qc.khoan@tcaps.com", "0901000116"));
 
-            // Staffs (22-55) - Chi tiết theo từng xưởng
+            // Staffs
             users.Add(U("A0000000-0000-0000-0000-000000000022", "A1C9B3A0-4F12-4E81-B17B-000000000001", "Staff", "Nguyễn Văn A - Laser", "staff.laser1@tcaps.com", "0902010101"));
             users.Add(U("A0000000-0000-0000-0000-000000000023", "A1C9B3A0-4F12-4E81-B17B-000000000001", "Staff", "Trần Thị B - Laser", "staff.laser2@tcaps.com", "0902010102"));
             users.Add(U("A0000000-0000-0000-0000-000000000024", "A1C9B3A0-4F12-4E81-B17B-000000000002", "Staff", "Lê Văn C - Cắt Keo", "staff.catkeo1@tcaps.com", "0902020201"));
@@ -147,11 +161,9 @@ namespace Infrastructure.Persistence.Seeders
             users.Add(U("A0000000-0000-0000-0000-000000000052", "A1C9B3A0-4F12-4E81-B17B-000000000016", "Staff", "Nguyễn Văn GG - Đóng Bịch", "staff.dongbich1@tcaps.com", "0902161601"));
             users.Add(U("A0000000-0000-0000-0000-000000000053", "A1C9B3A0-4F12-4E81-B17B-000000000016", "Staff", "Trần Thị HH - Đóng Bịch", "staff.dongbich2@tcaps.com", "0902161602"));
 
-            // Xưởng khoán
+            // Other
             users.Add(U("A0000000-0000-0000-0000-000000000054", "A1C9B3A0-4F12-4E81-B17B-000000000017", "Staff", "Nguyễn Văn GG - Khoán", "staff.khoan1@tcaps.com", "0902161601"));
             users.Add(U("A0000000-0000-0000-0000-000000000055", "A1C9B3A0-4F12-4E81-B17B-000000000017", "Staff", "Trần Thị HH - Khoán", "staff.khoan2@tcaps.com", "0902161602"));
-
-            // Other
             users.Add(U("A0000000-0000-0000-0000-000000000057", "A1C9B3A0-4F12-4E81-B17B-000000000017", "GuardQC", "QC Gác Cổng", "qc.gaccong@tcaps.com", "0902161602"));
             users.Add(U("A0000000-0000-0000-0000-000000000058", "A1C9B3A0-4F12-4E81-B17B-000000000017", "Lead", "Lead1", "lead1@tcaps.com", "0902161602"));
             users.Add(U("A0000000-0000-0000-0000-000000000059", "A1C9B3A0-4F12-4E81-B17B-000000000017", "Lead", "Lead2", "lead2@tcaps.com", "0902161602"));
@@ -277,13 +289,14 @@ namespace Infrastructure.Persistence.Seeders
         }
 
         // ==========================================
-        // 10. MATERIAL WORKSHOPS
+        // 10. MATERIAL WORKSHOPS (CHẠY SAU TRANSFER REQUESTS)
         // ==========================================
         private static async Task SeedMaterialWorkshopsAsync(AppDbContext context)
         {
             if (await context.MaterialWorkshops.AnyAsync()) return;
             var mw = new List<MaterialWorkshop>
             {
+                // Lưu ý: AssignmentTransferRequestId phải tồn tại trước (đã tạo ở bước SeedTransferRequestsAsync)
                 CreateEntity<MaterialWorkshop>("30000000-0000-0000-0000-000000000001", new { WorkshopId = Guid.Parse("A1C9B3A0-4F12-4E81-B17B-000000000003"), AssignId = Guid.Parse("E0000000-0000-0000-0000-000000000001"), AssignmentTransferRequestId = Guid.Parse("a1b2c3d4-e5f6-7890-1234-56789abcdef0"), SupplierId = Guid.Parse("A0000000-0000-0000-0000-000000000002"), QuantitySend = 100m, QuantityReceive = 0m, ShipDate = DateTime.Parse("2025-11-01"), Status = "Confirmed", CreatedAt = DateTime.Now })
             };
             await context.MaterialWorkshops.AddRangeAsync(mw);
@@ -363,10 +376,13 @@ namespace Infrastructure.Persistence.Seeders
         }
 
         // ==========================================
-        // 15. TRANSFER REQUESTS (Assignment & Task)
+        // 15. TRANSFER REQUESTS (Assignment & Task) - ĐÃ DI CHUYỂN LÊN TRƯỚC
         // ==========================================
         private static async Task SeedTransferRequestsAsync(AppDbContext context)
         {
+            // [FIX LỖI TRACKING] Xóa bộ nhớ đệm để tránh xung đột ID với các step trước (nếu có)
+            context.ChangeTracker.Clear();
+
             // AssignmentTransferRequests
             if (!await context.AssignmentTransferRequests.AnyAsync())
             {
@@ -375,6 +391,8 @@ namespace Infrastructure.Persistence.Seeders
                     CreateEntity<AssignmentTransferRequest>("a1b2c3d4-e5f6-7890-1234-56789abcdef0", new { AssignmentId = Guid.Parse("E0000000-0000-0000-0000-000000000001"), UserId = Guid.Parse("A0000000-0000-0000-0000-000000000005"), CompletedQuantitySend = 98m, CompletedQuantityReceive = 0m, Status = "PendingApproval", Note = "Yêu cầu chuyển giao lần 1", CreatedAt = DateTime.Now })
                 };
                 await context.AssignmentTransferRequests.AddRangeAsync(atrs);
+                // [QUAN TRỌNG] Save ngay để ID tồn tại trong DB cho MaterialWorkshops tham chiếu tới
+                await context.SaveChangesAsync(CancellationToken.None);
             }
 
             // TaskTransferRequests
@@ -385,8 +403,8 @@ namespace Infrastructure.Persistence.Seeders
                     CreateEntity<TaskTransferRequest>("A3F2504E-4F89-11D3-9A0C-0305E82C3301", new { BatchId = Guid.Parse("D0000000-0000-0000-0000-000000000001"), WorkshopId = Guid.Parse("A1C9B3A0-4F12-4E81-B17B-000000000003"), QcTransportId = Guid.Parse("A0000000-0000-0000-0000-000000000005"), MaterialRequestId = Guid.Parse("F0000000-0000-0000-0000-000000000001"), Status = "Pending", Note = "Test insert 1", CreatedAt = DateTime.Now })
                 };
                 await context.TaskTransferRequests.AddRangeAsync(ttrs);
+                await context.SaveChangesAsync(CancellationToken.None);
             }
-            await context.SaveChangesAsync(CancellationToken.None);
         }
 
         // ==========================================
@@ -405,7 +423,7 @@ namespace Infrastructure.Persistence.Seeders
 
 
         // ==========================================
-        // HELPER GENERIC (CÓ AUTO-CONVERT DATEONLY <-> DATETIME)
+        // HELPER GENERIC (CÓ FIX TYPE CONVERSION)
         // ==========================================
         private static T CreateEntity<T>(string id, object data) where T : class
         {
@@ -444,7 +462,7 @@ namespace Infrastructure.Persistence.Seeders
                     {
                         value = dOnly.ToDateTime(TimeOnly.MinValue);
                     }
-                    // B. TimeOnly <-> TimeSpan (FIX LỖI CỦA BẠN Ở ĐÂY)
+                    // B. TimeOnly <-> TimeSpan
                     else if (targetType == typeof(TimeOnly) && value is TimeSpan ts)
                     {
                         value = TimeOnly.FromTimeSpan(ts);
@@ -484,7 +502,7 @@ namespace Infrastructure.Persistence.Seeders
                     {
                         value = dOnly.ToDateTime(TimeOnly.MinValue);
                     }
-                    // B. TimeOnly <-> TimeSpan (FIX LỖI CỦA BẠN Ở ĐÂY)
+                    // B. TimeOnly <-> TimeSpan
                     else if (targetType == typeof(TimeOnly) && value is TimeSpan ts)
                     {
                         value = TimeOnly.FromTimeSpan(ts);
