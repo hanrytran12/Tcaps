@@ -13,13 +13,15 @@ namespace Domain.Events
         public Guid WorkshopId { get; set; }
         public Guid QcTransportId { get; set; }
         public string? Note { get; set; }
+        public DateTime DateToGo { get; set; }
 
-        public CreateTaskTransferRequestEvent(Guid batchId, Guid workshopId, Guid qcTransportId, string note)
+        public CreateTaskTransferRequestEvent(Guid batchId, Guid workshopId, Guid qcTransportId, string note, DateTime dateToGo)
         {
             BatchId = batchId;
             WorkshopId = workshopId;
             QcTransportId = qcTransportId;
             Note = note;
+            DateToGo = dateToGo;
         }
     }
 }
