@@ -19,6 +19,18 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequest
         {
             var materialRequestsQuery = from mr in _appDbContext.MaterialRequests.AsNoTracking()
 
+                                        join a in _appDbContext.Assignments.AsNoTracking()
+                                            on mr.AssignId equals a.Id
+
+                                        join b in _appDbContext.Batches.AsNoTracking()
+                                            on a.BatchId equals b.Id
+
+                                        join uu in _appDbContext.Users.AsNoTracking()
+                                            on b.UserId equals uu.Id
+
+                                        join p in _appDbContext.Products.AsNoTracking()
+                                            on b.ProductId equals p.Id
+
                                         join m in _appDbContext.Materials.AsNoTracking()
                                             on mr.MaterialId equals m.Id
 
@@ -33,7 +45,11 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequest
                                             Id = mr.Id,
                                             MaterialId = mr.MaterialId,
                                             MaterialName = m.Name,
+                                            ProductCode = p.Code,
+                                            ProductName = p.Name,
                                             UserId = mr.UserId,
+                                            UserName = u.FullName,
+                                            UserCreate = uu.FullName,
                                             WorkshopId = u.WorkshopId ?? Guid.Empty,
                                             WorkshopName = wItem.Name ?? string.Empty,
                                             BatchId = mr.BatchId,
