@@ -289,9 +289,9 @@ VALUES
 
 select * from TaskTransferRequests
 INSERT INTO [TcapsDB].[dbo].[TaskTransferRequests]
-    (Id, BatchId, WorkshopId, QcTransportId, MaterialRequestId, AssignmentTransferId, Status, Note, CreatedAt, ApprovedAt)
+    (Id, BatchId, WorkshopId, QcTransportId, MaterialRequestId, AssignmentTransferId, Status, Note, CreatedAt, DateToGo, ApprovedAt)
 VALUES
-    ('A3F2504E-4F89-11D3-9A0C-0305E82C3301', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'A0000000-0000-0000-0000-000000000005', 'F0000000-0000-0000-0000-000000000001', null, 'Pending', 'Test insert 1', GETDATE(), NULL);
+    ('A3F2504E-4F89-11D3-9A0C-0305E82C3301', 'D0000000-0000-0000-0000-000000000001', 'A1C9B3A0-4F12-4E81-B17B-000000000003', 'A0000000-0000-0000-0000-000000000005', 'F0000000-0000-0000-0000-000000000001', null, 'Pending', 'Test insert 1', GETDATE(), GETDATE(), NULL);
 
 select * from Users
 select * from Evaluates

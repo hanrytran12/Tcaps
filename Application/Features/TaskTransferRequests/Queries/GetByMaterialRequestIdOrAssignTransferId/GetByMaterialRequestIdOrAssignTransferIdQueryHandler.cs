@@ -72,6 +72,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequest
                             Status = ttr.Status,
                             Note = ttr.Note,
                             CreatedAt = ttr.CreatedAt,
+                            DateToGo = ttr.DateToGo,
                             ApprovedAt = ttr.ApprovedAt
                         };
 
