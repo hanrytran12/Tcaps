@@ -12,8 +12,9 @@ namespace Domain.Entities
         public string Status { get; private set; }
         public string? Note { get; private set; }
         public DateTime CreatedAt { get; private set; }
+        public DateTime DateToGo { get; private set; }
         public DateTime? ApprovedAt { get; private set; }
-        public TaskTransferRequest(Guid id, Guid batchId, Guid workshopId, Guid qcTransportId, Guid? materialRequestId, Guid? assignmentTransferId, string? note) : base(id)
+        public TaskTransferRequest(Guid id, Guid batchId, Guid workshopId, Guid qcTransportId, Guid? materialRequestId, Guid? assignmentTransferId, string? note, DateTime dateToGo) : base(id)
         {
             BatchId = batchId;
             WorkshopId = workshopId;
@@ -22,13 +23,13 @@ namespace Domain.Entities
             AssignmentTransferId = assignmentTransferId;
             Status = "Pending";
             Note = note;
+            DateToGo = dateToGo;
             CreatedAt = DateTime.Now;
         }
 
-        private TaskTransferRequest() : base(Guid.NewGuid()) { }
-        public static TaskTransferRequest Create(Guid batchId, Guid workshopId, Guid qcTransportId, Guid? requestId, Guid? assignmentTransferId, string? note)
+        public static TaskTransferRequest Create(Guid batchId, Guid workshopId, Guid qcTransportId, Guid? requestId, Guid? assignmentTransferId, string? note, DateTime dateToGo)
         {
-            return new TaskTransferRequest(Guid.NewGuid(), batchId, workshopId, qcTransportId, requestId, assignmentTransferId, note);
+            return new TaskTransferRequest(Guid.NewGuid(), batchId, workshopId, qcTransportId, requestId, assignmentTransferId, note, dateToGo);
         }
 
         public void UpdateApproveStatus()

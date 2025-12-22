@@ -89,6 +89,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             Status = ttr.Status,
                             Note = ttr.Note,
                             CreatedAt = ttr.CreatedAt,
+                            DateToGo = ttr.DateToGo,
                             ApprovedAt = ttr.ApprovedAt
                         };
 

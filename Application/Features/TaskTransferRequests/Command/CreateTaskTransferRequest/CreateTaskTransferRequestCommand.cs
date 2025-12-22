@@ -16,5 +16,6 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
         public Guid? MaterialRequestId { get; set; }
         public Guid? AssignmentTransferId { get; set; }
         public string? Note { get; set; }
+        public DateTime DateToGo { get; set; }
     }
 }

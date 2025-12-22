@@ -23,6 +23,7 @@ namespace Application.DTOs.Response
         public string Status { get; set; }
         public string? Note { get; set; }
         public DateTime CreatedAt { get; set; }
+        public DateTime DateToGo { get; set; }
         public DateTime? ApprovedAt { get; set; }
     }
 }

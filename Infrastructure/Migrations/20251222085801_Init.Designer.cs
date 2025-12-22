@@ -12,7 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
+<<<<<<<< HEAD:Infrastructure/Migrations/20251221160627_Init.Designer.cs
     [Migration("20251221160627_Init")]
+========
+    [Migration("20251222085801_Init")]
+>>>>>>>> master:Infrastructure/Migrations/20251222085801_Init.Designer.cs
     partial class Init
     {
         /// <inheritdoc />
@@ -683,6 +687,9 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateToGo")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid?>("MaterialRequestId")
