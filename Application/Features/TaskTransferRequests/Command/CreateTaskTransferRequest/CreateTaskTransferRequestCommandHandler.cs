@@ -32,7 +32,8 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
                 request.QcTransportId,
                 request.MaterialRequestId,
                 request.AssignmentTransferId,
-                request.Note);
+                request.Note,
+                request.DateToGo);
             await _taskTransferRequestRepository.AddAsync(taskTranfer);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -41,7 +42,8 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
                 taskTranfer.BatchId,
                 taskTranfer.WorkshopId,
                 taskTranfer.QcTransportId,
-                taskTranfer.Note));
+                taskTranfer.Note ?? string.Empty,
+                taskTranfer.DateToGo));
 
             return Result<Guid>.Success(taskTranfer.Id);
         }
