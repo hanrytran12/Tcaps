@@ -7,5 +7,6 @@ namespace Application.Interfaces
         Task<string> SaveFileAsync(IFormFile file, string subFolder, CancellationToken cancellationToken);
         Task<List<string>> SaveFileAsync(List<IFormFile> files, string subFolder, CancellationToken cancellationToken);
         string GetFileUrl(string relativePath);
+        Task DeleteFileAsync(string relativePath, CancellationToken cancellationToken);
     }
 }
