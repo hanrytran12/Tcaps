@@ -1,6 +1,7 @@
 ﻿using API.Hubs;
 using API.Middlewares;
 using Application;
+using FluentValidation;
 using DotNetEnv;
 using Infrastructure;
 using Infrastructure.Persistence;
