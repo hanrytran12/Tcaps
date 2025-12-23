@@ -1,4 +1,5 @@
 ﻿using Application.Interfaces;
+using Domain.Enums;
 using Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,6 +65,22 @@ namespace Infrastructure.BackgroundServices
                     foreach (var reworkRequest in reworkRequestToUpdate)
                     {
                         reworkRequest.Active();
+                    }
+                    await unitOfWork.SaveChangesAsync();
+                }
+
+                var assignmentOutSource = await context.Assignments
+                    .Where(a => a.StartDate == today
+                            && a.Status == "Planned"
+                            && context.Workshop.Any(w =>
+                                w.Id == a.WorkshopId &&
+                                w.WorkshopType == WorkshopType.Outsource))
+                    .ToListAsync(cancellationToken);
+                if (assignmentOutSource.Any())
+                {
+                    foreach (var assignment in assignmentOutSource)
+                    {
+                        assignment.UpdateStatus("InProgress");
                     }
                     await unitOfWork.SaveChangesAsync();
                 }

@@ -77,7 +77,7 @@ namespace Application.Features.Assignments.Commands.PlanAssignments
                 
                 if (i == 0)
                 {
-                    if (assignment.RequiresMaterialDelivery == false)
+                    if (assignment.RequiresMaterialDelivery == false && workshop.WorkshopType == Domain.Enums.WorkshopType.Internal)
                     {
                         assignment.Active();
                     }

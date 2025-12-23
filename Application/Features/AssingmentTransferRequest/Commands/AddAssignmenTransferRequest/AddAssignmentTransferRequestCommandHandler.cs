@@ -2,6 +2,7 @@
 using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Enums;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -54,6 +55,25 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 throw new NotFoundException("Không tìm thấy xưởng phụ trách.");
             }
 
+            bool isOutsource = workshop.WorkshopType == WorkshopType.Outsource;
+
+            if (isOutsource)
+            {
+                if (!request.QuantityCompletedSend.HasValue)
+                {
+                    return Result<Guid>.Failure(
+                        "Xưởng khoán bắt buộc phải nhập số lượng hoàn thành."
+                    );
+                }
+
+                if (request.QuantityCompletedSend.Value <= 0)
+                {
+                    return Result<Guid>.Failure(
+                        "Số lượng hoàn thành phải lớn hơn 0."
+                    );
+                }
+            }
+
             if (request.ReconciliationMaterials.Count > 0)
             {
                 foreach (var item in request.ReconciliationMaterials)
@@ -77,25 +97,32 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
             }
             //var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
 
+            decimal quantityToSend = isOutsource
+                ? request.QuantityCompletedSend!.Value
+                : completedQuantitySend;
+
             AssignmentTransferRequest assignmentTransferRequest;
-            if (batch.UserId == null && workshop.WorkshopType == Domain.Enums.WorkshopType.Outsource)
+            if (isOutsource)
             {
                 assignmentTransferRequest = AssignmentTransferRequest.Create(
                     assignment.Id,
                     request.UserId,
-                    completedQuantitySend,
+                    quantityToSend,
                     request.Note,
                     null);
 
                 await _assignmentTransferRequestRepository.AddAsync(assignmentTransferRequest);
 
-                assignmentTransferRequest.MarkAsApproved();
+                if (batch.UserId == null)
+                {
+                    assignmentTransferRequest.MarkAsApproved();
+                }
 
-                batch.ActiveNextAssignment(assignmentTransferRequest.Id, assignment.Id, completedQuantitySend);
+                batch.ActiveNextAssignment(assignmentTransferRequest.Id, assignment.Id, quantityToSend);
             }
             else
             {
-                assignmentTransferRequest = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, completedQuantitySend, request.Note, (assignment.Status == "Reworking" ? request.ReworkRequestId : null));
+                assignmentTransferRequest = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, quantityToSend, request.Note, (assignment.Status == "Reworking" ? request.ReworkRequestId : null));
                 await _assignmentTransferRequestRepository.AddAsync(assignmentTransferRequest);
 
                 assignmentTransferRequest.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));
