@@ -19,8 +19,32 @@ namespace API.Middlewares
         {
             _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
+            if (exception is FluentValidation.ValidationException validationException)
+            {
+                var errors = validationException.Errors
+                    .GroupBy(e => e.PropertyName)
+                    .ToDictionary(
+                        g => g.Key,
+                        g => g.Select(e => e.ErrorMessage).ToArray()
+                    );
+
+                var validationProblem = new ValidationProblemDetails(errors)
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Title = "Dữ liệu không hợp lệ",
+                    Instance = httpContext.Request.Path
+                };
+
+                httpContext.Response.StatusCode = 400;
+                await httpContext.Response.WriteAsJsonAsync(validationProblem, cancellationToken);
+                return true;
+            }
+
             (int statusCode, string title, string detail) = exception switch
             {
+                FluentValidation.ValidationException =>
+                    (StatusCodes.Status400BadRequest, "Dữ liệu không hợp lệ", exception.Message),
+
                 NotFoundException =>
                     (StatusCodes.Status404NotFound, "Không tìm thấy tài nguyên", exception.Message),
 
