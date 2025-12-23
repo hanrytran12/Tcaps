@@ -16,7 +16,7 @@ namespace Application
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // Đăng ký FluentValidator
-            services.AddValidatorsFromAssembly(typeof(IAppDbContext).Assembly);
+            services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
 
             // Đăng ký Behavior
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

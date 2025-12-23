@@ -52,17 +52,39 @@ namespace Application.Features.FinalTransferRequest.Command.ApproveFinalTransfer
                 throw new NotFoundException("Không tìm thấy lô hàng");
             }
 
-            var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assignTransfer.AssignmentId, null);
+            var workshop = await (from a in _context.Assignments
+                           join w in _context.Workshop
+                           on a.WorkshopId equals w.Id
+                           where a.Id == assignTransfer.AssignmentId
+                           select new
+                           {
+                               IsOutSource = w.WorkshopType == Domain.Enums.WorkshopType.Outsource
+                           }).FirstOrDefaultAsync();
 
-            var quantityError = summary.TotalRejected + (finalRequest.QuantityFinalSend - request.QuantityFinalReceive);
-            
+            if (workshop is null)
+            {
+                throw new NotFoundException("Không tìm thấy xưởng");
+            }
+
+            decimal quantityError;
+            if (workshop.IsOutSource)
+            {
+                quantityError = finalRequest.QuantityFinalSend - request.QuantityFinalReceive;
+            }
+            else
+            {
+                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assignTransfer.AssignmentId, null);
+
+                quantityError = summary.TotalRejected + (finalRequest.QuantityFinalSend - request.QuantityFinalReceive);
+            }
+
             finalRequest.Approve(request.QuantityFinalReceive, request.Note);
 
-            batch.CompleteBatch(assignTransfer.CompletedQuantityReceive, quantityError);
+            batch.CompleteBatch(request.QuantityFinalReceive, quantityError);
 
             await _mediator.Publish(new ApproveFinalTransferRequestEvent(
                 batch.Id,
-                finalRequest.QuantityFinalSend,
+                request.QuantityFinalReceive,
                 quantityError));
 
             return Result<Guid>.Success(finalRequest.Id);

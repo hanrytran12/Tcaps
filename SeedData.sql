@@ -24,6 +24,7 @@ DELETE FROM Materials
 DELETE FROM MaterialSupplies
 DELETE FROM ReworkRequests
 DELETE FROM WorkshopInventory
+DELETE FROM FinalTransferRequests
 
 select * from Workshop
 INSERT INTO Workshop (Id, Name, Description, StepOrder, WorkshopType, Status, CreatedAt)
