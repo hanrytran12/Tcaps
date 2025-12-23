@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.Common.Exceptions;
+﻿using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
-using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -55,7 +48,10 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             on ttr.AssignmentTransferId equals assignTransfer.Id into assignTransferGroup
                         from assignTransferItem in assignTransferGroup.DefaultIfEmpty()
 
-                            // Ánh xạ trực tiếp sang DTO (Projection)
+                        join p in _context.Products.AsNoTracking()
+                            on batchItem.ProductId equals p.Id
+
+                        // Ánh xạ trực tiếp sang DTO (Projection)
                         select new TaskTransferRequestDTO
                         {
                             Id = ttr.Id, // FIX LỖI MAPPING Ở ĐÂY
@@ -67,14 +63,16 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             QcTransportName = qcTransportUser.FullName,
                             MaterialRequestId = ttr.MaterialRequestId,
                             AssignmentTransferId = ttr.AssignmentTransferId,
-                            MaterialName = m.Name, 
+                            MaterialName = m.Name,
                             QuantityRequest = mrItem == null ? 0 : (int)mrItem.QuantityRequest,
                             CompleteQuantity = assignTransferItem == null ? 0 : (int)assignTransferItem.CompletedQuantityReceive,
                             Status = ttr.Status,
                             Note = ttr.Note,
                             CreatedAt = ttr.CreatedAt,
                             DateToGo = ttr.DateToGo,
-                            ApprovedAt = ttr.ApprovedAt
+                            ApprovedAt = ttr.ApprovedAt,
+                            ProductCode = p.Code,
+                            ProductName = p.Name
                         };
 
             // Áp dụng bộ lọc Status (nếu có)

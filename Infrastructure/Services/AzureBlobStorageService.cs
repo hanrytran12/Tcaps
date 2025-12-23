@@ -14,6 +14,20 @@ namespace Infrastructure.Services
             _blobServiceClient = blobServiceClient;
         }
 
+        public async Task DeleteFileAsync(string relativePath, CancellationToken cancellationToken)
+        {
+            if (string.IsNullOrEmpty(relativePath))
+            {
+                return;
+            }
+            var parts = relativePath.Split(new[] { '/' }, 2);
+            var containerName = parts[0];
+            var blobName = parts[1];
+            var containerClient = _blobServiceClient.GetBlobContainerClient(containerName);
+            var blobClient = containerClient.GetBlobClient(blobName);
+            await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
+        }
+
         public string GetFileUrl(string relativePath)
         {
             if (string.IsNullOrEmpty(relativePath))
