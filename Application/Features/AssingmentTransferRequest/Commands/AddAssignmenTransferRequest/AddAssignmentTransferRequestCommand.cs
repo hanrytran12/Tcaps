@@ -13,6 +13,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
         public Guid AssignmentId { get; set; }
         public Guid? ReworkRequestId { get; set; }
         public string? Note { get; set; }
+        public decimal? QuantityCompletedSend { get; set; }
         public List<MaterialReconciliationDTO>? ReconciliationMaterials { get; set; } = new();
     }
 }
