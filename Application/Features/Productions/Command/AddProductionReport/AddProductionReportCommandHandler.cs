@@ -34,6 +34,10 @@ namespace Application.Features.Productions.Command.AddProductionReport
             if (assignment == null)
                 throw new NotFoundException("Không tìm thấy Assignment.");
 
+            var materialRequest = await _appDbContext.MaterialRequests
+                .Where(m => m.AssignId == assignment.Id)
+                .FirstOrDefaultAsync(cancellationToken);
+
             // Lấy tất cả assignment của batch
             var assignmentsOfBatch = await _appDbContext.Assignments
                 .Where(a => a.BatchId == assignment.BatchId)
@@ -42,10 +46,6 @@ namespace Application.Features.Productions.Command.AddProductionReport
             //xử lý xưởng thường
             if (assignment.StepOrder.HasValue)
             {
-                var workflowAssignments = assignmentsOfBatch
-                    .Where(a => a.StepOrder.HasValue)
-                    .ToList();
-
                 // Xác định step đầu tiên của batch (KHÔNG cố định là 1 → đúng theo yêu cầu)
                 int firstStepOrder = assignmentsOfBatch.Min(a => a.StepOrder!.Value);
 
@@ -54,6 +54,14 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
                 // Nếu đây là bước đầu → KHÔNG cần kiểm tra MaterialWorkshop
                 bool isFirstWorkshop = currentStepOrder == firstStepOrder;
+
+                bool hasMaterial = materialRequest != null && (materialRequest.Status != "Confirmed" || materialRequest.Status != "ConfirmedWithDiscrepancy");
+                bool isPlanned = assignment.Status == "Planned";
+
+                if (hasMaterial && isPlanned)
+                {
+                    throw new BadRequestException("Xưởng có sử dụng nguyên vật liệu nhưng chưa được QC tiếp nhận nguyên vật liệu.");
+                }
 
                 if (!isFirstWorkshop)
                 {
@@ -83,6 +91,8 @@ namespace Application.Features.Productions.Command.AddProductionReport
                 }
             }
 
+            var today = DateOnly.FromDateTime(DateTime.Now);
+
             if (assignment.Status == "Reworking")
             {
                 var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == assignment.Id && (r.Status == "InProgress" || r.Status == "Approved" || r.Status == "ReadyForTransfer")).FirstOrDefaultAsync(cancellationToken);
@@ -93,6 +103,11 @@ namespace Application.Features.Productions.Command.AddProductionReport
             {
                 var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, null);
                 await _productionRepository.AddAsync(production);
+
+                if (assignment.Status == "Planned" && today <= assignment.StartDate)
+                {
+                    assignment.UpdateStatus("InProgress");
+                }
             }
 
             if (request.MaterialUsed.Count() > 0)
