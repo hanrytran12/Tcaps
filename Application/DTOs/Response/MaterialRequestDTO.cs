@@ -19,6 +19,7 @@
         public string Type { get; set; }
         public string? NoteFromQC { get; set; } = null;
         public decimal? ActualReceivedQuantity { get; set; }
+        public decimal QuantityFromStock { get; set; }
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
     }
