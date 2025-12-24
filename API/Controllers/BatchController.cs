@@ -53,7 +53,7 @@ namespace API.Controllers
             return await Mediator.Send(new GetBatchByWorkshopIdQuery(CurrentUserId, Status, FromDate, ToDate));
         }
 
-        [HttpGet("staff/bactches")]
+        [HttpGet("staff/batches")]
         public async Task<List<StaffSummaryDashboardDTO>> GetBatchesByStaffIdAsync()
         {
             return await Mediator.Send(new GetBatchesByStaffIdQuery
@@ -62,9 +62,9 @@ namespace API.Controllers
             });
         }
 
-        [HttpGet("qc/bactches")]
+        [HttpGet("qc/batches")]
         [Authorize(Policy = "QC")]
-        public async Task<List<BatchDTO>> GetBatchesByQCIdAsync()
+        public async Task<BatchForQCDTO> GetBatchesByQCIdAsync()
         {
             return await Mediator.Send(new GetBatchesByQCIdQuery
             {
