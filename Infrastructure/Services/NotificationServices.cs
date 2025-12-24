@@ -592,5 +592,22 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task SendUpdateQuantityProductionNotificationAsync(Guid userId, decimal quantity, DateOnly date, TimeOnly time, string batchCode)
+        {
+            var staff = await _userRepository.GetByIdAsync(userId);
+            if (staff is null) return;
+
+            var title = "Cập nhật sản lượng";
+            var message =
+                $"Sản lượng của lô {batchCode} đã được cập nhật.\n" +
+                $"Số lượng: {quantity}\n" +
+                $"Của sản phẩm có thời gian nộp: {date:dd/MM/yyyy} và giờ nộp: {time:HH:mm}.";
+            var type = "Production";
+
+            var notification = Notification.Create(staff.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
