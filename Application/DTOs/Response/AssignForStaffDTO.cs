@@ -5,6 +5,7 @@
         public Guid AssignId { get; set; }
         public string? BatchesCode { get; set; }
         public string? ProductCode { get; set; }
+        public string ProductName { get; set; }
         public Guid BatchId { get; set; }
         public Guid WorkshopId { get; set; }
         public int? StepOrder { get; set; }
