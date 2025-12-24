@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [HttpGet("staff/bactches")]
-        public async Task<List<BatchDTO>> GetBatchesByStaffIdAsync()
+        public async Task<List<StaffSummaryDashboardDTO>> GetBatchesByStaffIdAsync()
         {
             return await Mediator.Send(new GetBatchesByStaffIdQuery
             {
