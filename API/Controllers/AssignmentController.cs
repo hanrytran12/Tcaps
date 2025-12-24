@@ -7,6 +7,7 @@ using Application.Features.Assignments.Queries.GetAllocatedMaterials;
 using Application.Features.Assignments.Queries.GetAssignmentByBatchId;
 using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId;
+using Application.Features.Assignments.Queries.GetTaskProgressByQCId;
 using Application.Features.Assignments.Queries.NewFolder;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +69,15 @@ namespace API.Controllers
             return await Mediator.Send(new GetDetailAssignmentByBatchIdQuery
             {
                 BatchId = batchId
+            });
+        }
+
+        [HttpGet("qc/task-progress")]
+        public async Task<TaskProgressDTO> GetTaskProgressByQcIdAsync()
+        {
+            return await Mediator.Send(new GetTaskProgressByQCIdQuery
+            {
+                QcId = CurrentUserId,
             });
         }
 

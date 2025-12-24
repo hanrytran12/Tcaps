@@ -248,16 +248,16 @@ select * from Evaluates
 INSERT INTO [Evaluates] (Id, ProductionId, UserId, Status, Note, QuantityError, QuantitySuccess, Image, CreatedAt)
 VALUES 
 -- QC kiểm tra Production 1 - Đạt
-('50000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000008', N'Passed', N'Chất lượng tốt, không có lỗi', 0, 100, N'/images/qc/qc_001.jpg', GETDATE()),
+('50000000-0000-0000-0000-000000000001', '40000000-0000-0000-0000-000000000001', 'A0000000-0000-0000-0000-000000000008', N'Passed', N'Chất lượng tốt, không có lỗi', 0, 50, N'/images/qc/qc_001.jpg', GETDATE()),
 -- QC kiểm tra Production 3 - Đạt
-('50000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000008', N'CompleteWithLoss', N'Fullface đạt tiêu chuẩn', 5, 50, N'/images/qc/qc_002.jpg', GETDATE());
+('50000000-0000-0000-0000-000000000002', '40000000-0000-0000-0000-000000000002', 'A0000000-0000-0000-0000-000000000008', N'Failed', N'Fullface đạt tiêu chuẩn', 5, 45, N'/images/qc/qc_002.jpg', GETDATE());
 
 select * from ComponentDefects
 INSERT INTO [ComponentDefects] (Id, EvaluateId, Description, Quantity, CreatedAt, Status)
 VALUES 
 -- Lỗi ở Evaluate 3 (Production 4)
 ('60000000-0000-0000-0000-000000000001', '50000000-0000-0000-0000-000000000002', N'Vết xước nhỏ trên bề mặt nón', 3, GETDATE(), N'Unfixabled'),
-('60000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000002', N'Khóa cài có độ lỏng nhẹ', 2, GETDATE(), N'Confirmed');
+('60000000-0000-0000-0000-000000000002', '50000000-0000-0000-0000-000000000002', N'Khóa cài có độ lỏng nhẹ', 2, GETDATE(), N'Rework');
 
 select * from Incomes
 INSERT INTO [Incomes] (Id, BatchId, ProductionId, UserId, Quantity, TotalPrice, CreatedAt)
@@ -316,6 +316,7 @@ select * from AssignmentTransferRequests
 select * from ReworkRequests
 select * from MaterialUse
 select * from FinalTransferRequests
+select * from ComponentDefects
 
 insert into MaterialWorkshops values 
 ('A0000000-0000-0000-0000-000000000015', 
