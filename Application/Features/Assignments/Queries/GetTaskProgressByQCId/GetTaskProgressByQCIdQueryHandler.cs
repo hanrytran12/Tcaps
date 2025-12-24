@@ -41,6 +41,7 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                                  a.StartDate,
                                  a.EndDate,
                                  a.Status,
+                                 a.UnitPrice,
                                  QuantityRequest = a.Quantity,
 
                                  EvaluateStatus = e.Status,
@@ -66,6 +67,7 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                     x.StartDate,
                     x.EndDate,
                     x.Status,
+                    x.UnitPrice,
                     x.QuantityRequest
                 })
                 .Select(g => new TaskProgressDTO
@@ -78,6 +80,7 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                     StartDate = g.Key.StartDate,
                     EndDate = g.Key.EndDate,
                     Status = g.Key.Status,
+                    UnitPrice = g.Key.UnitPrice,
 
                     TaskMetricsDTO = new TaskMetricsDTO
                     {
