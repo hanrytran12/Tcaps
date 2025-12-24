@@ -61,7 +61,8 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetReconciliati
                         MaterialId = ma.Id,
                         MaterialName = ma.Name,
                         QuantityDivided = mu.QuantityDivide + mu.QuantityRequest,
-                        QuantityStaffUsed = mu.QuantityStaffUse
+                        QuantityStaffUsed = mu.QuantityStaffUse,
+                        QuantityReconciled = mu.ReconciledQuantity
                     })
                 .ToListAsync();
 
