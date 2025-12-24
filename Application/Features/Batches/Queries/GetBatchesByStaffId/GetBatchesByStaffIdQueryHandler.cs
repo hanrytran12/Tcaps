@@ -1,12 +1,11 @@
-﻿using Application.Common.Exceptions;
-using Application.DTOs.Response;
+﻿using Application.DTOs.Response;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Batches.Queries.GetBatchesByStaffId
 {
-    public class GetBatchesByStaffIdQueryHandler : IRequestHandler<GetBatchesByStaffIdQuery, List<BatchDTO>>
+    public class GetBatchesByStaffIdQueryHandler : IRequestHandler<GetBatchesByStaffIdQuery, List<StaffSummaryDashboardDTO>>
     {
         private readonly IAppDbContext _context;
 
@@ -14,44 +13,62 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
         {
             _context = context;
         }
-        public async Task<List<BatchDTO>> Handle(GetBatchesByStaffIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<StaffSummaryDashboardDTO>> Handle(GetBatchesByStaffIdQuery request, CancellationToken cancellationToken)
         {
-            var batches = await (from user in _context.Users.AsNoTracking()
-                                 where user.Id == request.StaffId
-                                 join a in _context.Assignments.AsNoTracking()
-                                     on user.WorkshopId equals a.WorkshopId
-                                 join b in _context.Batches.AsNoTracking()
-                                     on a.BatchId equals b.Id
-                                 join p in _context.Products.AsNoTracking()
-                                     on b.ProductId equals p.Id
-                                 join u in _context.Users.AsNoTracking()
-                                     on b.UserId equals u.Id
-                                 select new BatchDTO
-                                 {
-                                     BatchId = b.Id,
-                                     UserId = b.UserId ?? Guid.Empty,
-                                     LeadName = u.FullName,
-                                     ProductCode = p.Code,
-                                     ProductName = p.Name,
-                                     Code = b.Code,
-                                     Quantity = b.Quantity,
-                                     StartDate = b.StartDate,
-                                     EndDate = b.EndDate,
-                                     Status = b.Status,
-                                     CreatedAt = b.CreatedAt
-                                 })
-                                 .Distinct()
-                                 .ToListAsync(cancellationToken);
+            // 1. Lấy WorkshopId của Staff hiện tại
+            var staffInfo = await _context.Users.AsNoTracking()
+                .Where(u => u.Id == request.StaffId)
+                .Select(u => new { u.WorkshopId })
+                .FirstOrDefaultAsync(cancellationToken);
 
-            if (!batches.Any())
+            if (staffInfo == null || staffInfo.WorkshopId == null)
             {
-                var staffExists = await _context.Users.AnyAsync(u => u.Id == request.StaffId, cancellationToken);
-                if (!staffExists)
-                {
-                    throw new NotFoundException("Staff not found.");
-                }
+                return new List<StaffSummaryDashboardDTO>();
             }
-            return batches;
+
+            // 2. Query chính
+            var query = from a in _context.Assignments.AsNoTracking()
+                        where a.WorkshopId == staffInfo.WorkshopId
+
+                        // Join các bảng cha để lấy thông tin Batch
+                        join b in _context.Batches.AsNoTracking() on a.BatchId equals b.Id
+                        join p in _context.Products.AsNoTracking() on b.ProductId equals p.Id
+                        join lead in _context.Users.AsNoTracking() on b.UserId equals lead.Id
+
+                        select new StaffSummaryDashboardDTO
+                        {
+                            // Thông tin Batch (Giữ nguyên)
+                            Batches = new BatchDTO
+                            {
+                                BatchId = b.Id,
+                                UserId = b.UserId ?? Guid.Empty,
+                                AssignmentId = a.Id,
+                                LeadName = lead.FullName,
+                                ProductCode = p.Code,
+                                ProductName = p.Name,
+                                Code = b.Code,
+                                Quantity = a.Quantity,
+                                StartDate = a.StartDate,
+                                EndDate = a.EndDate,
+                                Status = a.Status,
+                                CreatedAt = b.CreatedAt,
+                                UnitPrice = a.UnitPrice
+                            },
+
+                            // --- PHẦN SỬA ĐỔI ---
+                            // Vì không có prod.User, ta phải JOIN thủ công tables Productions và Users tại đây
+                            Assignments = (from prod in _context.Productions.AsNoTracking()
+                                           join u in _context.Users.AsNoTracking() on prod.UserId equals u.Id
+                                           where prod.AssignId == a.Id // Filter theo Assignment cha
+                                           group prod by u.FullName into g // Group theo tên User
+                                           select new StaffAssignmentDTO
+                                           {
+                                               StaffName = g.Key,                // Key chính là FullName
+                                               Quantity = g.Sum(x => x.Quantity) // Tính tổng Quantity
+                                           }).ToList()
+                        };
+
+            return await query.ToListAsync(cancellationToken);
         }
     }
 }
