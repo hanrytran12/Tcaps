@@ -32,5 +32,6 @@ namespace Application.Interfaces
         Task UpdateQuantityDefectNotificationAsync(decimal quantityReject, Guid qcId, string batchCode);
         Task AssignWorkshopNotificationAsync(Guid userId, string batchCode);
         Task SendAddBatchForAdminNotificationAsync(string batchCode, decimal quantity);
+        Task SendUpdateQuantityProductionNotificationAsync(Guid userId, decimal quantity, DateOnly date, TimeOnly time, string batchCode);
     }
 }
