@@ -3,6 +3,7 @@
     public class AssignmentTransferRequestDTO
     {
         public Guid TransferRequestId { get; set; }
+        public Guid AssignmentId { get; set; }
         public string BatchCode { get; set; } = string.Empty;
         public string ProductCode { get; set; } = string.Empty;
         public string WorkshopName { get; set; } = string.Empty;
