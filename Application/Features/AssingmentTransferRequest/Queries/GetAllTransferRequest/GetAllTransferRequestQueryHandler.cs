@@ -26,6 +26,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                         select new AssignmentTransferRequestDTO
                         {
                             TransferRequestId = tr.Id,
+                            AssignmentId = tr.AssignmentId,
                             UserName = u.FullName,
                             BatchCode = b.Code,
                             ProductCode = p.Code,
