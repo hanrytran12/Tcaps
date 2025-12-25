@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.Response
+﻿namespace Application.DTOs.Response
 {
     public class AssignmentDTO
     {
+        public Guid AssignmentId { get; set; }
         public Guid BatchId { get; set; }
         public Guid WorkshopId { get; set; }
         public string WorkshopName { get; set; } = string.Empty;
