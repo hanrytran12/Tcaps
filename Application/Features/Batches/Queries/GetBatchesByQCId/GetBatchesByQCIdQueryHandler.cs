@@ -48,6 +48,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                     Id = b.Id,
                     ProductId = p.Id,
                     ProductCode = p.Code,
+                    ProductName = p.Name,
                     UserId = b.UserId ?? Guid.Empty,
                     LeadName = u != null ? u.FullName : "Chưa phân công",
                     BatchCode = b.Code,

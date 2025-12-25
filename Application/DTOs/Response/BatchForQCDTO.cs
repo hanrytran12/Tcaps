@@ -5,6 +5,7 @@
         public Guid Id { get; set; }
         public Guid ProductId { get; set; }
         public string ProductCode { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
         public Guid UserId { get; set; }
         public string LeadName { get; set; } = string.Empty;
         public string BatchCode { get; set; } = string.Empty;
