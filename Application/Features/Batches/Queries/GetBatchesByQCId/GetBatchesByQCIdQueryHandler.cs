@@ -59,6 +59,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
 
                     Assignment = new AssignmentDTO
                     {
+                        AssignmentId = a.Id,
                         BatchId = b.Id,
                         WorkshopId = a.WorkshopId,
                         WorkshopName = w.Name,

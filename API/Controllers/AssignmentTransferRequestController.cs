@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "QC")]
+        [Authorize(Roles = "QC,QCK")]
         public async Task<IActionResult> CreateTransferRequest([FromBody] AddAssignmentTransferRequestCommand command)
         {
             command.UserId = CurrentUserId;
