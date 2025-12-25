@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
 {
-    public class GetTaskProgressByQCIdQueryHandler : IRequestHandler<GetTaskProgressByQCIdQuery, TaskProgressDTO>
+    public class GetTaskProgressByQCIdQueryHandler : IRequestHandler<GetTaskProgressByQCIdQuery, List<TaskProgressDTO>>
     {
         private readonly IAppDbContext _context;
 
@@ -18,7 +18,7 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
         {
             _context = context;
         }
-        public async Task<TaskProgressDTO> Handle(GetTaskProgressByQCIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<TaskProgressDTO>> Handle(GetTaskProgressByQCIdQuery request, CancellationToken cancellationToken)
         {
             var rawData = await (from a in _context.Assignments
                              join u in _context.Users on a.WorkshopId equals u.WorkshopId
@@ -112,7 +112,7 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                              .Sum(x => x.ReworkQuantity)
                     }
                 })
-                .FirstOrDefault();
+                .ToList();
 
             return dto!;
         }
