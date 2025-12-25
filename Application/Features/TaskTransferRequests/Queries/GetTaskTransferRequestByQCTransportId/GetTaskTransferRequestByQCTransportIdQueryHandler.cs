@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
-using Application.Common.Exceptions;
+﻿using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
-using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -66,7 +59,10 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             on ttr.AssignmentTransferId equals assignTransfer.Id into assignTransferGroup
                         from assignTransferItem in assignTransferGroup.DefaultIfEmpty()
 
-                            // Ánh xạ trực tiếp sang DTO (Projection)
+                        join p in _context.Products.AsNoTracking()
+                            on batchItem.ProductId equals p.Id into productGroup
+
+                        // Ánh xạ trực tiếp sang DTO (Projection)
                         select new TaskTransferRequestDTO
                         {
                             Id = ttr.Id,
@@ -76,6 +72,9 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
 
                             WorkshopId = ttr.WorkshopId,
                             WorkshopName = workshopItem.Name ?? string.Empty,
+
+                            ProductCode = productGroup.Select(pg => pg.Code).FirstOrDefault() ?? string.Empty,
+                            ProductName = productGroup.Select(pg => pg.Name).FirstOrDefault() ?? string.Empty,
 
                             QcTransportId = ttr.QcTransportId,
                             // Sử dụng tên đã tải ở bước 1 (hoặc tiếp tục dùng JOIN nếu bạn không muốn dùng _userRepository)
