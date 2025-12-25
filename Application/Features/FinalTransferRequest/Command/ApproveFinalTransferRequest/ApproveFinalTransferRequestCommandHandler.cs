@@ -52,7 +52,7 @@ namespace Application.Features.FinalTransferRequest.Command.ApproveFinalTransfer
                 throw new NotFoundException("Không tìm thấy công đoạn");
             }
 
-            var batch = await _context.Batches.FindAsync(assignment.Id);
+            var batch = await _context.Batches.FindAsync(assignment.BatchId);
             if (batch is null)
             {
                 throw new NotFoundException("Không tìm thấy lô hàng");
