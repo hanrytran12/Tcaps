@@ -6,5 +6,6 @@
         public string MaterialName { get; set; } = string.Empty;
         public decimal QuantityDivided { get; set; }
         public decimal QuantityStaffUsed { get; set; }
+        public decimal QuantityReconciled { get; set; }
     }
 }

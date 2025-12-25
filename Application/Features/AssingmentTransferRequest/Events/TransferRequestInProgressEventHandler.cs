@@ -29,19 +29,11 @@ namespace Application.Features.AssingmentTransferRequest.Events
             {
                 var reworkRequest = await _appDbContext.ReworkRequests.Where(rr => rr.AssignmentId == notification.AssignmentId).FirstOrDefaultAsync();
                 reworkRequest.UpdateDefectiveQuantity(
-                    notification.QuantityReject, 
+                    notification.QuantityReject,
                     asignmentTransferRequest.UserId,
                     batch.Code);
 
                 notification.QuantitySend = reworkRequest.DefectiveQuantity;
-            }
-            else
-            {
-                var reworkRequest = await _appDbContext.ReworkRequests.FindAsync(assignment.Id);
-                reworkRequest.UpdateDefectiveQuantity(
-                    notification.QuantityReject,
-                    asignmentTransferRequest.UserId,
-                    batch.Code);
             }
 
             var currentStepOrder = assignment.StepOrder;
