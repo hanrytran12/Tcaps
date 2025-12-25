@@ -73,7 +73,7 @@ namespace API.Controllers
         }
 
         [HttpGet("qc-staff/task-progress")]
-        public async Task<TaskProgressDTO> GetTaskProgressByQcIdAsync()
+        public async Task<List<TaskProgressDTO>> GetTaskProgressByQcIdAsync()
         {
             return await Mediator.Send(new GetTaskProgressByQCIdQuery
             {
