@@ -116,9 +116,8 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 if (batch.UserId == null)
                 {
                     assignmentTransferRequest.MarkAsApproved();
+                    batch.ActiveNextAssignment(assignmentTransferRequest.Id, assignment.Id, quantityToSend);
                 }
-
-                batch.ActiveNextAssignment(assignmentTransferRequest.Id, assignment.Id, quantityToSend);
             }
             else
             {
