@@ -95,7 +95,7 @@ VALUES
 -- Step 16: Gấp cây + đóng bịch
 ('A0000000-0000-0000-0000-000000000021', 'A1C9B3A0-4F12-4E81-B17B-000000000016', 'QC', N'QC Xưởng Đóng Bịch', 'qc.dongbich@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE()),
 -- Xưởng khoán
-('A0000000-0000-0000-0000-000000000056', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'QC', N'QC Xưởng Khoán', 'qc.khoan@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE());
+('A0000000-0000-0000-0000-000000000056', 'A1C9B3A0-4F12-4E81-B17B-000000000017', 'QCK', N'QC Xưởng Khoán', 'qc.khoan@tcaps.com', '$2a$11$tVSQZ.QyXTekMK9jnqwhWuM69Hnwiubpy1whI.uLRR4.HYRaJPwwC', '0901000116', 'Active', 0, GETDATE());
 
 INSERT INTO [Users] (Id, WorkshopId, Role, FullName, Email, PasswordHash, Phone, Status, IsQcTransport, CreatedAt)
 VALUES
