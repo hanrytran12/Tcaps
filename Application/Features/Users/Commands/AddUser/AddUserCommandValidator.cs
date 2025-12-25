@@ -32,7 +32,7 @@ namespace Application.Features.Users.Commands.AddUser
 
             RuleFor(x => x.Role)
                 .NotEmpty().WithMessage("Vai trò là bắt buộc.")
-                .Must(role => new[] { "Staff", "QC", "Lead", "QCTransport" }.Contains(role))
+                .Must(role => new[] { "Staff", "QC", "Lead", "QCTransport", "QCK" }.Contains(role))
                 .WithMessage("Vai trò không hợp lệ. Chỉ chấp nhận: Staff, QC, Lead, QCTransport.");
         }
     }
