@@ -65,16 +65,16 @@ namespace Application.Features.Assignments.Commands.PlanAssignments
                 }
 
                 var assignment = Assignment.Create(
-                    request.BatchId, 
-                    item.WorkshopId, 
-                    stepOrder, 
-                    item.Quantity, 
-                    item.StartDate, 
-                    item.EndDate, 
-                    item.ExpectedDeliveryDate, 
-                    item.UnitPrice, 
+                    request.BatchId,
+                    item.WorkshopId,
+                    stepOrder,
+                    item.Quantity,
+                    item.StartDate,
+                    item.EndDate,
+                    item.ExpectedDeliveryDate,
+                    item.UnitPrice,
                     item.RequiresMaterialDelivery);
-                
+
                 if (i == 0)
                 {
                     if (assignment.RequiresMaterialDelivery == false && workshop.WorkshopType == Domain.Enums.WorkshopType.Internal)

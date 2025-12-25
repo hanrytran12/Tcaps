@@ -609,5 +609,19 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task SendFinalTransferRequestForGuardQCNotificationAsync(decimal quantitySend, string batchCode, string workshopName)
+        {
+            var qcgaccong = await _userRepository.GetByRoleAsync("GuardQC");
+            if (qcgaccong is null) return;
+
+            var title = "Kiểm tra cuối cùng";
+            var message = $"QC của xưởng {workshopName} vừa nộp {quantitySend} sản phẩm thuộc lô hàng {batchCode}. Xin lòng kiểm tra.";
+            var type = "FinalTransferRequest";
+
+            var notification = Notification.Create(qcgaccong.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
