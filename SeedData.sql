@@ -318,11 +318,5 @@ select * from MaterialUse
 select * from FinalTransferRequests
 select * from ComponentDefects
 
-insert into MaterialWorkshops values 
-('A0000000-0000-0000-0000-000000000015', 
-'A1C9B3A0-4F12-4E81-B17B-000000000003',
-'F91BF72A-77D2-4CD5-9DC1-D1E965CDEADC',
-100, 95, '2025-11-22', '2025-11-20', 'Approved');
-
 update MaterialSupplies set WorkshopId = 'A1C9B3A0-4F12-4E81-B17B-000000000003' where Id = '5C7F8137-AF53-4FD3-B9F6-5EE5DEA4A6BE'
 update Users set WorkshopId = '4B8DE283-FE42-4FDF-99B3-22FDE7B99C27' where Id = 'A0000000-0000-0000-0000-000000000056'
