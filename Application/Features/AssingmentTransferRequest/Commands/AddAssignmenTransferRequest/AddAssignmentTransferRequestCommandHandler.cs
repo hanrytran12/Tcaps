@@ -118,6 +118,10 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                     assignmentTransferRequest.MarkAsApproved();
                     batch.ActiveNextAssignment(assignmentTransferRequest.Id, assignment.Id, quantityToSend);
                 }
+                else
+                {
+                    assignmentTransferRequest.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));
+                }
             }
             else
             {
