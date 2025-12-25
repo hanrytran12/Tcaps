@@ -21,39 +21,50 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
         public async Task<List<TaskProgressDTO>> Handle(GetTaskProgressByQCIdQuery request, CancellationToken cancellationToken)
         {
             var rawData = await (from a in _context.Assignments
-                             join u in _context.Users on a.WorkshopId equals u.WorkshopId
-                             join b in _context.Batches on a.BatchId equals b.Id
-                             join p in _context.Products on b.ProductId equals p.Id
-                             join pro in _context.Productions on a.Id equals pro.AssignId
-                             join e in _context.Evaluates on pro.Id equals e.ProductionId
-                             join c in _context.ComponentDefects on e.Id equals c.EvaluateId into defectGroup
-                             from d in defectGroup.DefaultIfEmpty()
-                             join r in _context.ReworkRequests on a.Id equals r.AssignmentId into reworkGroup
-                             from r in reworkGroup.DefaultIfEmpty()
-                             where u.Id == request.QcId
-                             select new
-                             {
-                                 AssignmentId = a.Id,
-                                 a.BatchId,
-                                 BatchCode = b.Code,
-                                 ProductCode = p.Code,
-                                 ProductName = p.Name,
-                                 a.StartDate,
-                                 a.EndDate,
-                                 a.Status,
-                                 a.UnitPrice,
-                                 QuantityRequest = a.Quantity,
+                                 join u in _context.Users on a.WorkshopId equals u.WorkshopId
+                                 join b in _context.Batches on a.BatchId equals b.Id
+                                 join p in _context.Products on b.ProductId equals p.Id
 
-                                 EvaluateStatus = e.Status,
-                                 e.QuantitySuccess,
-                                 e.QuantityError,
+                                 join pro in _context.Productions.AsNoTracking()
+                                    on a.Id equals pro.AssignId into proGroup
+                                 from pro in proGroup.DefaultIfEmpty()
 
-                                 DefectStatus = d != null ? d.Status : null,
-                                 DefectQuantity = d != null ? d.Quantity : 0,
+                                 join e in _context.Evaluates.AsNoTracking()
+                                    on pro.Id equals e.ProductionId into evalGroup
+                                 from e in evalGroup.DefaultIfEmpty()
 
-                                 ReworkStatus = r != null ? r.Status : null,
-                                 ReworkQuantity = r != null ? r.DefectiveQuantity : 0
-                             })
+                                 join c in _context.ComponentDefects.AsNoTracking()
+                                    on e.Id equals c.EvaluateId into defectGroup
+                                 from d in defectGroup.DefaultIfEmpty()
+
+                                 join r in _context.ReworkRequests.AsNoTracking()
+                                    on a.Id equals r.AssignmentId into reworkGroup
+                                 from r in reworkGroup.DefaultIfEmpty()
+
+                                 where u.Id == request.QcId
+                                 select new
+                                 {
+                                     AssignmentId = a.Id,
+                                     a.BatchId,
+                                     BatchCode = b.Code,
+                                     ProductCode = p.Code,
+                                     ProductName = p.Name,
+                                     a.StartDate,
+                                     a.EndDate,
+                                     a.Status,
+                                     a.UnitPrice,
+                                     QuantityRequest = a.Quantity,
+
+                                     EvaluateStatus = e != null ? e.Status : null,
+                                     QuantitySuccess = e != null ? e.QuantitySuccess : 0,
+                                     QuantityError = e != null ? e.QuantityError : 0,
+
+                                     DefectStatus = d != null ? d.Status : null,
+                                     DefectQuantity = d != null ? d.Quantity : 0,
+
+                                     ReworkStatus = r != null ? r.Status : null,
+                                     ReworkQuantity = r != null ? r.DefectiveQuantity : 0
+                                 })
                              .ToListAsync(cancellationToken);
 
             var dto = rawData
