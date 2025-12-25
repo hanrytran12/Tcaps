@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Batches.Queries.GetBatchesByQCId
 {
-    public class GetBatchesByQCIdQueryHandler : IRequestHandler<GetBatchesByQCIdQuery, BatchForQCDTO>
+    public class GetBatchesByQCIdQueryHandler : IRequestHandler<GetBatchesByQCIdQuery, List<BatchForQCDTO>>
     {
         private readonly IAppDbContext _context;
 
@@ -14,7 +14,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
         {
             _context = context;
         }
-        public async Task<BatchForQCDTO> Handle(GetBatchesByQCIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<BatchForQCDTO>> Handle(GetBatchesByQCIdQuery request, CancellationToken cancellationToken)
         {
             var batches = await (from user in _context.Users.AsNoTracking()
                                  where user.Id == request.QcId
@@ -34,7 +34,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                                      ProductId = p.Id,
                                      ProductCode = p.Code,
                                      UserId = b.UserId ?? Guid.Empty,
-                                     LeadName = u.FullName,
+                                     LeadName = u.FullName ?? string.Empty,
                                      BatchCode = b.Code,
                                      Quantity = b.Quantity,
                                      StartDate = b.StartDate,
@@ -56,7 +56,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                                      }
                                  })
                                  .Distinct()
-                                 .FirstOrDefaultAsync(cancellationToken);
+                                 .ToListAsync(cancellationToken);
 
             if (batches == null)
             {

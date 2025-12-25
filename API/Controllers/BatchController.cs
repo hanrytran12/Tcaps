@@ -64,7 +64,7 @@ namespace API.Controllers
 
         [HttpGet("qc/batches")]
         [Authorize(Policy = "QC")]
-        public async Task<BatchForQCDTO> GetBatchesByQCIdAsync()
+        public async Task<List<BatchForQCDTO>> GetBatchesByQCIdAsync()
         {
             return await Mediator.Send(new GetBatchesByQCIdQuery
             {
