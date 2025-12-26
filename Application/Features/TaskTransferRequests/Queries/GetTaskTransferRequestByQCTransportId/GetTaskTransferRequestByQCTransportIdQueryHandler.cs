@@ -21,28 +21,22 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
         }
         public async Task<List<TaskTransferRequestDTO>> Handle(GetTaskTransferRequestByQCTransportIdQuery request, CancellationToken cancellationToken)
         {
-            // 1. Kiểm tra vai trò của QC Transport (Truy vấn bắt buộc)
             var qcTransport = await _userRepository.GetByIdAsync(request.QcTransportId);
             if (qcTransport == null || qcTransport.Role != "QCTransport")
             {
                 throw new NotFoundException("Không tìm thấy QC vận chuyển này.");
             }
 
-            // Lấy Tên QC Transport một lần để sử dụng trong DTO (vì DTO cần FullName)
             var qcTransportName = qcTransport.FullName ?? string.Empty;
 
-            // 2. TỐI ƯU HÓA: SINGLE QUERY (JOIN TaskTransferRequests, Batches, Workshops)
             var query = from ttr in _context.TaskTransferRequests.AsNoTracking()
 
-                            // Lọc theo QC Transport ID ngay từ đầu
                         where ttr.QcTransportId == request.QcTransportId
 
-                        // LEFT JOIN với Batch
                         join batch in _context.Batches.AsNoTracking()
                             on ttr.BatchId equals batch.Id into batchGroup
                         from batchItem in batchGroup.DefaultIfEmpty()
 
-                            // LEFT JOIN với Workshop
                         join workshop in _context.Workshop.AsNoTracking()
                             on ttr.WorkshopId equals workshop.Id into workshopGroup
                         from workshopItem in workshopGroup.DefaultIfEmpty()
@@ -59,15 +53,17 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             on ttr.AssignmentTransferId equals assignTransfer.Id into assignTransferGroup
                         from assignTransferItem in assignTransferGroup.DefaultIfEmpty()
 
+
+                        join currentAssign in _context.Assignments.AsNoTracking()
+                            on assignTransferItem.AssignmentId equals currentAssign.Id
+
                         join p in _context.Products.AsNoTracking()
                             on batchItem.ProductId equals p.Id into productGroup
 
-                        // Ánh xạ trực tiếp sang DTO (Projection)
                         select new TaskTransferRequestDTO
                         {
                             Id = ttr.Id,
                             BatchId = ttr.BatchId,
-                            // Sử dụng toán tử null-coalescing (??) để xử lý LEFT JOIN
                             BatchCode = batchItem.Code ?? string.Empty,
 
                             WorkshopId = ttr.WorkshopId,
@@ -77,7 +73,6 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             ProductName = productGroup.Select(pg => pg.Name).FirstOrDefault() ?? string.Empty,
 
                             QcTransportId = ttr.QcTransportId,
-                            // Sử dụng tên đã tải ở bước 1 (hoặc tiếp tục dùng JOIN nếu bạn không muốn dùng _userRepository)
                             QcTransportName = qcTransportName,
 
                             MaterialRequestId = ttr.MaterialRequestId,
@@ -89,17 +84,22 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             Note = ttr.Note,
                             CreatedAt = ttr.CreatedAt,
                             DateToGo = ttr.DateToGo,
-                            ApprovedAt = ttr.ApprovedAt
+                            ApprovedAt = ttr.ApprovedAt,
+                            NextWorkshopName = _context.Assignments
+                                                    .Where(a => a.BatchId == currentAssign.BatchId && a.StepOrder > currentAssign.StepOrder)
+                                                    .OrderBy(a => a.StepOrder)
+                                                    .Join(_context.Workshop,
+                                                        nextA => nextA.WorkshopId,
+                                                        nextW => nextW.Id,
+                                                        (nextA, nextW) => nextW.Name)
+                                                    .FirstOrDefault() ?? "QC Gác Cổng"
                         };
 
-            // 3. Áp dụng bộ lọc Status (nếu có)
             if (!string.IsNullOrEmpty(request.Status))
             {
-                // Sử dụng Equals để dịch sang SQL và so sánh không phân biệt chữ hoa/thường (OrdinalIgnoreCase)
                 query = query.Where(t => t.Status != null && t.Status.Equals(request.Status, StringComparison.OrdinalIgnoreCase));
             }
 
-            // 4. Thực thi truy vấn
             var dtos = await query.ToListAsync(cancellationToken);
 
             if (!dtos.Any())
