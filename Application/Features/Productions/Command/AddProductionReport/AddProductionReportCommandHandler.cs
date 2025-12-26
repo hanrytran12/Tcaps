@@ -2,6 +2,7 @@
 using Application.Common.Exceptions;
 using Application.Interfaces;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -12,10 +13,15 @@ namespace Application.Features.Productions.Command.AddProductionReport
     {
         private readonly IAppDbContext _appDbContext;
         private readonly IProductionRepository _productionRepository;
-        public AddProductionReportCommandHandler(IAppDbContext appDbContext, IProductionRepository productionRepository)
+        private readonly IMediator _mediator;
+        private readonly IUnitOfWork _unitOfWork;
+
+        public AddProductionReportCommandHandler(IAppDbContext appDbContext, IProductionRepository productionRepository, IMediator mediator, IUnitOfWork unitOfWork)
         {
             _appDbContext = appDbContext;
             _productionRepository = productionRepository;
+            _mediator = mediator;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(AddProductionReportCommand request, CancellationToken cancellationToken)
@@ -104,6 +110,11 @@ namespace Application.Features.Productions.Command.AddProductionReport
                 var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, null);
                 await _productionRepository.AddAsync(production);
 
+                await _mediator.Publish(new ProductionReportedEvent(
+                request.AssignId,
+                request.StaffId,
+                request.Quantity));
+
                 if (assignment.Status == "Planned" && today <= assignment.StartDate)
                 {
                     assignment.UpdateStatus("InProgress");
@@ -142,6 +153,8 @@ namespace Application.Features.Productions.Command.AddProductionReport
                     targetMaterialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
                 }
             }
+            await _unitOfWork.SaveChangesAsync();
+            
 
             return Result.Success();
         }

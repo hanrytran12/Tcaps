@@ -623,5 +623,23 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task SendProductionReportNotificationAsync(Guid assignId, Guid staffId, decimal quantity)
+        {
+            var staff = await _userRepository.GetByIdAsync(staffId);
+            var assignment = await _assignmentRepository.GetByIdAsync(assignId);
+            var qc = await _userRepository.GetQCByWorkshopIdAsync(assignment.WorkshopId);
+            var batch = await _batchRepository.GetByIdAsync(assignment.BatchId);
+
+            if (staff is null || qc is null) return;
+
+            var title = "Nộp sản phẩm";
+            var message = $"Nhân viên {staff.FullName} vừa nộp {quantity} sản phẩm của lô hàng {batch.Code} cho QC đánh giá.";
+            var type = "Production";
+
+            var notification = Notification.Create(qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
