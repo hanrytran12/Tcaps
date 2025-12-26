@@ -58,8 +58,6 @@ namespace Application.Features.AssingmentTransferRequest.Events
                 asignmentTransferRequest.UserId,
                 batch.Code);
 
-            notification.QuantitySend = reworkRequest.DefectiveQuantity;
-
             var currentStepOrder = assignment.StepOrder;
             var nextAssigment = await _appDbContext.Assignments.Where(a => a.StepOrder > currentStepOrder && a.BatchId == assignment.BatchId).OrderBy(a => a.StepOrder).FirstOrDefaultAsync();
 
