@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Domain.Entities;
-using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 
@@ -17,7 +11,7 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMediator _mediator;
 
-        public CreateTaskTransferRequestCommandHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IUnitOfWork unitOfWork, 
+        public CreateTaskTransferRequestCommandHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IUnitOfWork unitOfWork,
             IMediator mediator)
         {
             _taskTransferRequestRepository = taskTransferRequestRepository;
@@ -37,13 +31,6 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
             await _taskTransferRequestRepository.AddAsync(taskTranfer);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-            await _mediator.Publish(new CreateTaskTransferRequestEvent(
-                taskTranfer.BatchId,
-                taskTranfer.WorkshopId,
-                taskTranfer.QcTransportId,
-                taskTranfer.Note ?? string.Empty,
-                taskTranfer.DateToGo));
 
             return Result<Guid>.Success(taskTranfer.Id);
         }
