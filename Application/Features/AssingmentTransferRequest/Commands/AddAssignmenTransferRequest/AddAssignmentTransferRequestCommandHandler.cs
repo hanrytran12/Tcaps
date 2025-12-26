@@ -120,6 +120,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 }
                 else
                 {
+                    assignment.UpdateStatus("ReadyForTransfer");
                     assignmentTransferRequest.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));
                 }
             }
