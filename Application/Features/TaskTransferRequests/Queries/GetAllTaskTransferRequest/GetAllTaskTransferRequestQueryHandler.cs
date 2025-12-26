@@ -48,6 +48,9 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             on ttr.AssignmentTransferId equals assignTransfer.Id into assignTransferGroup
                         from assignTransferItem in assignTransferGroup.DefaultIfEmpty()
 
+                        join assignment in _context.Assignments.AsNoTracking()
+                            on assignTransferItem.AssignmentId equals assignment.Id
+
                         join p in _context.Products.AsNoTracking()
                             on batchItem.ProductId equals p.Id
 
@@ -72,7 +75,14 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             DateToGo = ttr.DateToGo,
                             ApprovedAt = ttr.ApprovedAt,
                             ProductCode = p.Code,
-                            ProductName = p.Name
+                            ProductName = p.Name,
+                            NextWorkshopName = _context.Assignments.Where(a => a.BatchId == ttr.BatchId && a.StepOrder > assignment.StepOrder)
+                                                                    .OrderBy(a => a.StepOrder)
+                                                                    .Join(_context.Workshop,
+                                                                              nextA => nextA.WorkshopId,
+                                                                              nextW => nextW.Id,
+                                                                              (nextA, nextW) => nextW.Name)
+                                                                        .FirstOrDefault() ?? "QC Gác Cổng"
                         };
 
             // Áp dụng bộ lọc Status (nếu có)
