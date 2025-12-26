@@ -87,8 +87,6 @@ namespace Domain.Entities
                 }
             }
             UpdateStatus("Completed");
-
-            AddDomainEvent(new BatchCompletedEvent(Id, Code));
         }
 
         public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
