@@ -99,14 +99,11 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
 
                         // ✔ QuantityCompleted = QuantitySuccess + ComponentDefect(Rework)
                         QuantityCompleted =
-                            g.GroupBy(x => new
-                            {
-                                x.EvaluateStatus,
-                                x.QuantitySuccess
-                            })
-                            .Sum(eg => eg.Key.QuantitySuccess)
-                                + g.Where(x => x.DefectStatus == "Rework")
-                            .Sum(x => x.DefectQuantity),
+                            g.Where(x => x.EvaluateStatus == "Passed" || x.EvaluateStatus == "Rejected")
+                             .Sum(x => x.QuantitySuccess)
+                            + g.Where(x => x.DefectStatus == "Rework")
+                               .Sum(x => x.DefectQuantity),
+
 
 
                         // ✔ QuantityError

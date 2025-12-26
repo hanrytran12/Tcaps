@@ -34,5 +34,6 @@ namespace Application.Interfaces
         Task SendAddBatchForAdminNotificationAsync(string batchCode, decimal quantity);
         Task SendUpdateQuantityProductionNotificationAsync(Guid userId, decimal quantity, DateOnly date, TimeOnly time, string batchCode);
         Task SendFinalTransferRequestForGuardQCNotificationAsync(decimal quantitySend, string batchCode, string workshopName);
+        Task SendProductionReportNotificationAsync(Guid assignId, Guid staffId, decimal quantity);
     }
 }

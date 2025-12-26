@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
@@ -22,19 +23,42 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
         public async Task Handle(TransferRequestInProgressEvent notification, CancellationToken cancellationToken)
         {
-            var asignmentTransferRequest = await _appDbContext.AssignmentTransferRequests.Where(atr => atr.AssignmentId == notification.AssignmentId).FirstOrDefaultAsync();
-            var assignment = await _appDbContext.Assignments.Where(a => a.Id == notification.AssignmentId).FirstOrDefaultAsync();
-            var batch = await _appDbContext.Batches.FindAsync(assignment.BatchId);
-            if (asignmentTransferRequest.ReworkRequestId is not null)
-            {
-                var reworkRequest = await _appDbContext.ReworkRequests.Where(rr => rr.AssignmentId == notification.AssignmentId).FirstOrDefaultAsync();
-                reworkRequest.UpdateDefectiveQuantity(
-                    notification.QuantityReject,
-                    asignmentTransferRequest.UserId,
-                    batch.Code);
+            var asignmentTransferRequest = await _appDbContext.AssignmentTransferRequests
+                .Where(atr => atr.AssignmentId == notification.AssignmentId).FirstOrDefaultAsync();
 
-                notification.QuantitySend = reworkRequest.DefectiveQuantity;
+            if (asignmentTransferRequest is null)
+            {
+                throw new NotFoundException("Không tìm thấy đơn chuyển giao.");
             }
+            var assignment = await _appDbContext.Assignments
+                .Where(a => a.Id == notification.AssignmentId)
+                .FirstOrDefaultAsync();
+
+            if (assignment is null)
+            {
+                throw new NotFoundException("Không tìm thấy công đoạn.");
+            }
+
+            var batch = await _appDbContext.Batches.FindAsync(assignment.BatchId);
+
+            if (batch is null)
+            {
+                throw new NotFoundException("Không tìm thấy lô hàng.");
+            }
+
+            var reworkRequest = await _appDbContext.ReworkRequests
+                .FirstOrDefaultAsync(rr => rr.AssignmentId == notification.AssignmentId, cancellationToken);
+            if (reworkRequest is null)
+            {
+                throw new NotFoundException("Không tìm thấy yêu cầu làm lại");
+            }
+
+            reworkRequest.UpdateDefectiveQuantity(
+                notification.QuantityReject,
+                asignmentTransferRequest.UserId,
+                batch.Code);
+
+            notification.QuantitySend = reworkRequest.DefectiveQuantity;
 
             var currentStepOrder = assignment.StepOrder;
             var nextAssigment = await _appDbContext.Assignments.Where(a => a.StepOrder > currentStepOrder && a.BatchId == assignment.BatchId).OrderBy(a => a.StepOrder).FirstOrDefaultAsync();
