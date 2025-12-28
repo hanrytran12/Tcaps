@@ -38,6 +38,10 @@ namespace Application.Features.ReworkRequest.Commands.ApproveReworkRequest
             var assignment = queryInfo.a;
             assignment.UpdateStatus("Reworking");
             var reworkRequest = queryInfo.rr;
+            if (!assignment.RequiresMaterialDelivery)
+            {
+                reworkRequest.InProgressRequest();
+            }
             reworkRequest.ApproveRequest(request.DeliveryDate, request.EndDate, request.NextStepDeliveryDate);
             reworkRequest.AddDomainEvent(new ReworkRequestApprovedEvent(reworkRequest.QcId, request.DeliveryDate, request.EndDate));
             return Result.Success();
