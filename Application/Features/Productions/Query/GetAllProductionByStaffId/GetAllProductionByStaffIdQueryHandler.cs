@@ -58,6 +58,7 @@ namespace Application.Features.Productions.Query.GetAllProductionByStaffId
                 {
                     Id = p.Id,
                     AssignId = p.AssignId,
+                    ReworkRequestId = p.ReworkRequestId,
                     BatchCode = batch?.Code ?? string.Empty,
                     UserId = p.UserId,
                     FullName = user?.FullName ?? string.Empty,
