@@ -21,7 +21,7 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
         }
 
         public async Task<Result> Handle(ConfirmRequestFromQcCommand request, CancellationToken cancellationToken)
-        {
+        {            
             var materialRequest = await _materialRequestRepository.GetByIdAsync(request.Id);
 
             if (materialRequest is null)
@@ -35,6 +35,11 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
             var qcTransport = taskTransferRequest != null
                 ? await _appDbContext.Users.FindAsync(taskTransferRequest.QcTransportId)
                 : null;
+
+            if (taskTransferRequest is not null && materialRequest.Status != "QCTransportReception")
+            {
+                throw new BadRequestException("QC xưởng chưa thể duyệt vì QC vận chuyển chưa tiếp nhận");
+            }
 
             if (materialRequest.QuantityRequest - request.ActualReceivedQuantity == 0)
             {
