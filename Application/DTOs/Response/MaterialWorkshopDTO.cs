@@ -14,7 +14,7 @@
         public int QuantitySend { get; set; }
         public int QuantityReceive { get; set; }
         public DateOnly ShipDate { get; set; }
-        public DateOnly CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; }
         public string Status { get; set; }
     }
 }

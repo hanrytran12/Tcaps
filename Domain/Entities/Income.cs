@@ -9,7 +9,7 @@ namespace Domain.Entities
         public Guid UserId { get; private set; }
         public int Quantity { get; private set; }
         public decimal TotalPrice { get; private set; }
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         public Income(Guid id, Guid batchId, Guid productionId, Guid userId, int quantity, decimal totalPrice)
             : base(id)
@@ -19,7 +19,7 @@ namespace Domain.Entities
             UserId = userId;
             Quantity = quantity;
             TotalPrice = totalPrice;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
         }
 
         private Income() : base(Guid.NewGuid()) { }

@@ -12,7 +12,7 @@ namespace Domain.Entities
         public decimal QuantityStaffUse { get; private set; }
         public decimal ReconciledQuantity { get; private set; }
         public decimal QuantityRequest { get; private set; }
-        public DateOnly Date { get; private set; }
+        public DateTime Date { get; private set; }
 
         public MaterialUse(Guid id, Guid materialId, Guid batchId, Guid assignId, decimal quantityDivide, Guid? reworkRequestId)
             : base(id)
@@ -21,7 +21,7 @@ namespace Domain.Entities
             BatchId = batchId;
             AssignId = assignId;
             QuantityDivide = quantityDivide;
-            Date = DateOnly.FromDateTime(DateTime.Now);
+            Date = DateTime.Now;
             ReworkRequestId = reworkRequestId;
         }
 
