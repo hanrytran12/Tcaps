@@ -41,9 +41,13 @@ namespace API.Controllers
         }
 
         [HttpGet("by-assignId")]
-        public async Task<List<ProductionDTO>> GetProductionByAssignIdAsync([FromQuery] GetAllProductionByAssignIdQuery query)
+        public async Task<List<ProductionDTO>> GetProductionByAssignIdAsync([FromQuery] Guid assignId)
         {
-            return await Mediator.Send(query);
+            return await Mediator.Send(new GetAllProductionByAssignIdQuery
+            {
+                AssignId = assignId,
+                UserId = CurrentUserId,
+            });
         }
 
         [HttpPost("report-work")]
