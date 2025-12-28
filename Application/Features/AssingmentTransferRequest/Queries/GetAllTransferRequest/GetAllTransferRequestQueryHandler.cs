@@ -27,6 +27,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                         {
                             TransferRequestId = tr.Id,
                             AssignmentId = tr.AssignmentId,
+                            ReworkRequestId = tr.ReworkRequestId ?? null,
                             BatchId = a.BatchId,
                             WorkshopId = a.WorkshopId,
                             UserName = u.FullName,
