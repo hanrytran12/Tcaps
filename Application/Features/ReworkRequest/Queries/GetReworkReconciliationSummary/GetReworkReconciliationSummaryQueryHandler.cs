@@ -64,7 +64,8 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
                           MaterialId = ma.Id,
                           MaterialName = ma.Name,
                           QuantityDivided = mu.QuantityDivide,
-                          QuantityStaffUsed = mu.QuantityStaffUse
+                          QuantityStaffUsed = mu.QuantityStaffUse,
+                          QuantityReconciled = mu.ReconciledQuantity
                       })
                 .ToListAsync(cancellationToken);
 
