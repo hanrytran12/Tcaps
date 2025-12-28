@@ -24,23 +24,10 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                                  join u in _context.Users on a.WorkshopId equals u.WorkshopId
                                  join b in _context.Batches on a.BatchId equals b.Id
                                  join p in _context.Products on b.ProductId equals p.Id
-
-                                 join pro in _context.Productions.AsNoTracking()
-                                    on a.Id equals pro.AssignId into proGroup
+                                 join pro in _context.Productions.AsNoTracking() on a.Id equals pro.AssignId into proGroup
                                  from pro in proGroup.DefaultIfEmpty()
-
-                                 join e in _context.Evaluates.AsNoTracking()
-                                    on pro.Id equals e.ProductionId into evalGroup
+                                 join e in _context.Evaluates.AsNoTracking() on pro.Id equals e.ProductionId into evalGroup
                                  from e in evalGroup.DefaultIfEmpty()
-
-                                 join c in _context.ComponentDefects.AsNoTracking()
-                                    on e.Id equals c.EvaluateId into defectGroup
-                                 from d in defectGroup.DefaultIfEmpty()
-
-                                 join r in _context.ReworkRequests.AsNoTracking()
-                                    on a.Id equals r.AssignmentId into reworkGroup
-                                 from r in reworkGroup.DefaultIfEmpty()
-
                                  where u.Id == request.QcId
                                  select new
                                  {
@@ -54,18 +41,42 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                                      a.Status,
                                      a.UnitPrice,
                                      QuantityRequest = a.Quantity,
-
+                                     ProductionId = pro != null ? pro.Id : (Guid?)null,
+                                     EvaluateId = e != null ? e.Id : (Guid?)null,
                                      EvaluateStatus = e != null ? e.Status : null,
                                      QuantitySuccess = e != null ? e.QuantitySuccess : 0,
-                                     QuantityError = e != null ? e.QuantityError : 0,
-
-                                     DefectStatus = d != null ? d.Status : null,
-                                     DefectQuantity = d != null ? d.Quantity : 0,
-
-                                     ReworkStatus = r != null ? r.Status : null,
-                                     ReworkQuantity = r != null ? r.DefectiveQuantity : 0
+                                     QuantityError = e != null ? e.QuantityError : 0
                                  })
-                             .ToListAsync(cancellationToken);
+        .ToListAsync(cancellationToken);
+
+            var assignmentIds = rawData.Select(x => x.AssignmentId).Distinct().ToList();
+            var evaluateIds = rawData.Where(x => x.EvaluateId.HasValue).Select(x => x.EvaluateId.Value).Distinct().ToList();
+
+            // Lấy ComponentDefects riêng
+            var componentDefects = await _context.ComponentDefects
+                .AsNoTracking()
+                .Where(cd => evaluateIds.Contains(cd.EvaluateId))
+                .GroupBy(cd => cd.EvaluateId)
+                .Select(g => new
+                {
+                    EvaluateId = g.Key,
+                    ConfirmedQuantity = g.Where(x => x.Status == "Confirmed").Sum(x => x.Quantity),
+                    UnfixableQuantity = g.Where(x => x.Status == "Unfixable").Sum(x => x.Quantity),
+                    HasUnfixable = g.Any(x => x.Status == "Unfixable")
+                })
+                .ToListAsync(cancellationToken);
+
+            // Lấy ReworkRequests riêng
+            var reworkRequests = await _context.ReworkRequests
+                .AsNoTracking()
+                .Where(r => assignmentIds.Contains(r.AssignmentId) && r.Status != "PendingLead")
+                .GroupBy(r => r.AssignmentId)
+                .Select(g => new
+                {
+                    AssignmentId = g.Key,
+                    TotalReworkQuantity = g.Sum(x => x.DefectiveQuantity)
+                })
+                .ToListAsync(cancellationToken);
 
             var dto = rawData
                 .GroupBy(x => new
@@ -81,47 +92,74 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                     x.UnitPrice,
                     x.QuantityRequest
                 })
-                .Select(g => new TaskProgressDTO
+                .Select(g =>
                 {
-                    AssignmentId = g.Key.AssignmentId,
-                    BatchId = g.Key.BatchId,
-                    BatchCode = g.Key.BatchCode,
-                    ProductCode = g.Key.ProductCode,
-                    ProductName = g.Key.ProductName,
-                    StartDate = g.Key.StartDate,
-                    EndDate = g.Key.EndDate,
-                    Status = g.Key.Status,
-                    UnitPrice = g.Key.UnitPrice,
+                    var evaluates = g.Where(x => x.EvaluateId.HasValue).ToList();
 
-                    TaskMetricsDTO = new TaskMetricsDTO
+                    int quantityCompleted = 0;
+                    int quantityError = 0;
+
+                    foreach (var eval in evaluates)
                     {
-                        QuantityRequest = g.Key.QuantityRequest,
+                        var defect = componentDefects.FirstOrDefault(cd => cd.EvaluateId == eval.EvaluateId);
 
-                        // ✔ QuantityCompleted = QuantitySuccess + ComponentDefect(Rework)
-                        QuantityCompleted =
-                            g.Where(x => x.EvaluateStatus == "Passed" || x.EvaluateStatus == "Rejected")
-                             .Sum(x => x.QuantitySuccess)
-                            + g.Where(x => x.DefectStatus == "Rework")
-                               .Sum(x => x.DefectQuantity),
+                        if (eval.EvaluateStatus == "Passed" || eval.EvaluateStatus == "Rejected")
+                        {
+                            // Passed hoặc Rejected: lấy QuantitySuccess
+                            quantityCompleted += eval.QuantitySuccess;
 
-
-
-                        // ✔ QuantityError
-                        QuantityError =
-                            g.Where(x => x.EvaluateStatus == "Rejected")
-                             .Sum(x => x.QuantityError)
-                          + g.Where(x => x.EvaluateStatus == "Failed"
-                                      && x.DefectStatus == "Unfixabled")
-                             .Sum(x => x.DefectQuantity),
-
-                        // ✔ QuantityRework
-                        QuantityRework =
-                            g.Where(x => x.ReworkStatus == "Approved")
-                             .Sum(x => x.ReworkQuantity)
+                            if (eval.EvaluateStatus == "Rejected")
+                            {
+                                quantityError += eval.QuantityError;
+                            }
+                        }
+                        else if (eval.EvaluateStatus == "Failed")
+                        {
+                            if (defect != null)
+                            {
+                                if (defect.HasUnfixable)
+                                {
+                                    // CÓ Unfixable: Completed = Success + Confirmed, Error = Unfixable
+                                    quantityCompleted += eval.QuantitySuccess + defect.ConfirmedQuantity;
+                                    quantityError += defect.UnfixableQuantity;
+                                }
+                                else
+                                {
+                                    // KHÔNG có Unfixable: Completed = Success + Confirmed
+                                    quantityCompleted += defect.ConfirmedQuantity + eval.QuantitySuccess;
+                                }
+                            }
+                            else
+                            {
+                                // Chưa có defect: Completed = Success
+                                quantityCompleted += eval.QuantitySuccess;
+                            }
+                        }
                     }
+
+                    var rework = reworkRequests.FirstOrDefault(r => r.AssignmentId == g.Key.AssignmentId);
+
+                    return new TaskProgressDTO
+                    {
+                        AssignmentId = g.Key.AssignmentId,
+                        BatchId = g.Key.BatchId,
+                        BatchCode = g.Key.BatchCode,
+                        ProductCode = g.Key.ProductCode,
+                        ProductName = g.Key.ProductName,
+                        StartDate = g.Key.StartDate,
+                        EndDate = g.Key.EndDate,
+                        Status = g.Key.Status,
+                        UnitPrice = g.Key.UnitPrice,
+                        TaskMetricsDTO = new TaskMetricsDTO
+                        {
+                            QuantityRequest = g.Key.QuantityRequest,
+                            QuantityCompleted = quantityCompleted,
+                            QuantityError = quantityError,
+                            QuantityRework = rework?.TotalReworkQuantity ?? 0
+                        }
+                    };
                 })
                 .ToList();
-
             return dto!;
         }
     }

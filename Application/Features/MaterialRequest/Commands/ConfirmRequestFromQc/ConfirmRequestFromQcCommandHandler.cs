@@ -30,7 +30,8 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
             }
 
             var taskTransferRequest = await _appDbContext.TaskTransferRequests
-                .FindAsync(materialRequest.Id);
+                .Where(ttf => ttf.MaterialRequestId == materialRequest.Id)
+                .FirstOrDefaultAsync();
 
             var qcTransport = taskTransferRequest != null
                 ? await _appDbContext.Users.FindAsync(taskTransferRequest.QcTransportId)

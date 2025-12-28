@@ -20,21 +20,44 @@ namespace Application.Features.Productions.Query.GetAllProductionByAssignId
         }
         public async Task<List<ProductionDTO>> Handle(GetAllProductionByAssignIdQuery request, CancellationToken cancellationToken)
         {
-            var productions = await (from pro in _context.Productions
-                                     join u in _context.Users on pro.UserId equals u.Id
-                                     where pro.AssignId == request.AssignId
-                                     select new ProductionDTO
-                                     {
-                                         Id = pro.Id,
-                                         AssignId = request.AssignId,
-                                         UserId = u.Id,
-                                         FullName = u.FullName,
-                                         Quantity = pro.Quantity,
-                                         Date = pro.Date,
-                                         Time = pro.Time,
-                                         Status = pro.Status
-                                     })
-                                     .ToListAsync();
+            var userRole = await _context.Users
+                .Where(x => x.Id == request.UserId)
+                .Select(x => x.Role)
+                .FirstOrDefaultAsync();
+
+            var query = from pro in _context.Productions
+                        join u in _context.Users on pro.UserId equals u.Id
+                        where pro.AssignId == request.AssignId
+                        select new
+                        {
+                            pro.Id,
+                            pro.AssignId,
+                            UserId = u.Id,
+                            u.FullName,
+                            pro.Quantity,
+                            pro.Date,
+                            pro.Time,
+                            pro.Status
+                        };
+
+            if (userRole == "Staff")
+            {
+                query = query.Where(x => x.UserId == request.UserId);
+            }
+
+            var productions = await query
+                .Select(x => new ProductionDTO
+                {
+                    Id = x.Id,
+                    AssignId = x.AssignId,
+                    UserId = x.UserId,
+                    FullName = x.FullName,
+                    Quantity = x.Quantity,
+                    Date = x.Date,
+                    Time = x.Time,
+                    Status = x.Status
+                })
+                .ToListAsync(cancellationToken);
 
             return productions;
         }
