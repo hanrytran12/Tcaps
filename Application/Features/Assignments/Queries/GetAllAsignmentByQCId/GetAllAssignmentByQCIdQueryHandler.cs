@@ -40,6 +40,9 @@ namespace Application.Features.Assignments.Queries.GetAllAsignmentByQCId
                             ExpectedDeliveryDate = assign.ExpectedDeliveryDate,
                             UnitPrice = assign.UnitPrice,
                             Status = assign.Status,
+                            IsFinalWorkshop = _context.Assignments
+                                                .Where(a => a.BatchId == assign.BatchId)
+                                                .Max(a => a.StepOrder) == assign.StepOrder
                         };
             var result = await query.ToListAsync(cancellationToken);
             return result;

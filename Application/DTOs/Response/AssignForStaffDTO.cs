@@ -15,6 +15,7 @@
         public DateOnly EndDate { get; set; }
         public DateOnly? DateCompleted { get; set; }
         public DateOnly? ExpectedDeliveryDate { get; set; }
+        public bool IsFinalWorkshop { get; set; }
         public string Status { get; set; }
     }
 }
