@@ -32,6 +32,7 @@ namespace Application.Features.Productions.Query.GetAllProductionByAssignId
                         {
                             pro.Id,
                             pro.AssignId,
+                            pro.ReworkRequestId,
                             UserId = u.Id,
                             u.FullName,
                             pro.Quantity,
@@ -50,6 +51,7 @@ namespace Application.Features.Productions.Query.GetAllProductionByAssignId
                 {
                     Id = x.Id,
                     AssignId = x.AssignId,
+                    ReworkRequestId = x.ReworkRequestId,
                     UserId = x.UserId,
                     FullName = x.FullName,
                     Quantity = x.Quantity,
