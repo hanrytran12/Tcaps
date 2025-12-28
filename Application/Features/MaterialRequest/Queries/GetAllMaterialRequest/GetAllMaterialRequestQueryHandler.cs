@@ -53,6 +53,7 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequest
                                             WorkshopId = u.WorkshopId ?? Guid.Empty,
                                             WorkshopName = wItem.Name ?? string.Empty,
                                             BatchId = mr.BatchId,
+                                            BatchCode = b.Code,
                                             AssignId = mr.AssignId,
                                             QuantityRequest = mr.QuantityRequest,
                                             Status = mr.Status,

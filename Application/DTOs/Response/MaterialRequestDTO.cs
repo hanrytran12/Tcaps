@@ -11,6 +11,7 @@
         public Guid WorkshopId { get; set; }
         public string WorkshopName { get; set; }
         public Guid BatchId { get; set; }
+        public string BatchCode { get; set; }
         public Guid AssignId { get; set; }
         public decimal QuantityRequest { get; set; }
         public string Status { get; set; } = string.Empty;
