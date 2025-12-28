@@ -6,6 +6,7 @@
         public Guid AssignmentId { get; set; }
         public Guid BatchId { get; set; }
         public Guid WorkshopId { get; set; }
+        public Guid? ReworkRequestId { get; set; }
         public string BatchCode { get; set; } = string.Empty;
         public string ProductCode { get; set; } = string.Empty;
         public string WorkshopName { get; set; } = string.Empty;
