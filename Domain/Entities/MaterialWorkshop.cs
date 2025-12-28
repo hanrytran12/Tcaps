@@ -11,7 +11,7 @@ namespace Domain.Entities
         public int QuantitySend { get; private set; }
         public int QuantityReceive { get; private set; }
         public DateOnly ShipDate { get; private set; }
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
 
         public MaterialWorkshop(Guid id, Guid workshopId, Guid assignId, Guid assignTransferRequestId, Guid supplierId, int quantitySend) : base(id)
@@ -21,7 +21,7 @@ namespace Domain.Entities
             AssignmentTransferRequestId = assignTransferRequestId;
             SupplierId = supplierId;
             QuantitySend = quantitySend;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
             Status = "Pending";
         }
 

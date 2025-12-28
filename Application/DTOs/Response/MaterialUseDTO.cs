@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.Response
+﻿namespace Application.DTOs.Response
 {
     public class MaterialUseDTO
     {
@@ -16,6 +10,6 @@ namespace Application.DTOs.Response
         public decimal QuantityStaffUse { get; set; }
         public decimal ReconciledQuantity { get; set; }
         public decimal QuantityRequest { get; set; }
-        public DateOnly Date { get; set; }
+        public DateTime Date { get; set; }
     }
 }

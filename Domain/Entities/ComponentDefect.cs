@@ -1,5 +1,4 @@
 ﻿using Domain.Primitives;
-using FluentValidation;
 
 namespace Domain.Entities
 {
@@ -8,7 +7,7 @@ namespace Domain.Entities
         public Guid EvaluateId { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public int Quantity { get; private set; }
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
 
         public ComponentDefect(Guid id, Guid evaluateId, string description, int quantity, string status)
@@ -17,7 +16,7 @@ namespace Domain.Entities
             EvaluateId = evaluateId;
             Description = description;
             Quantity = quantity;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
             Status = status;
         }
 
