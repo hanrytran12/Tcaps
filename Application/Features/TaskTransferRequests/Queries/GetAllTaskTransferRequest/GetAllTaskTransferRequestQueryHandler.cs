@@ -40,6 +40,10 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             on ttr.MaterialRequestId equals mr.Id into mrGroup
                         from mrItem in mrGroup.DefaultIfEmpty()
 
+                        join assignFromMR in _context.Assignments.AsNoTracking()
+                            on mrItem.AssignId equals assignFromMR.Id into assignFromMRGroup
+                        from assignFromMR in assignFromMRGroup.DefaultIfEmpty()
+
                         join m in _context.Materials.AsNoTracking()
                             on mrItem.MaterialId equals m.Id into materialGroup
                         from m in materialGroup.DefaultIfEmpty()
@@ -49,24 +53,37 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                         from assignTransferItem in assignTransferGroup.DefaultIfEmpty()
 
                         join assignment in _context.Assignments.AsNoTracking()
-                            on assignTransferItem.AssignmentId equals assignment.Id
+                            on assignTransferItem.AssignmentId equals assignment.Id into assignmentGroup
+                        from assignment in assignmentGroup.DefaultIfEmpty()
 
                         join p in _context.Products.AsNoTracking()
-                            on batchItem.ProductId equals p.Id
+                            on batchItem.ProductId equals p.Id into productGroup
+                        from p in productGroup.DefaultIfEmpty()
+
+                        let nextWorkshop =
+                            assignment == null
+                                ? null
+                                : (
+                                    from a in _context.Assignments
+                                    where a.StepOrder > assignment.StepOrder
+                                    orderby a.StepOrder
+                                    join w in _context.Workshop on a.WorkshopId equals w.Id
+                                    select w.Name
+                                  ).FirstOrDefault()
 
                         // Ánh xạ trực tiếp sang DTO (Projection)
                         select new TaskTransferRequestDTO
                         {
                             Id = ttr.Id, // FIX LỖI MAPPING Ở ĐÂY
                             BatchId = ttr.BatchId,
-                            BatchCode = batchItem.Code,
+                            BatchCode = batchItem != null ? batchItem.Code : null,
                             WorkshopId = ttr.WorkshopId,
-                            WorkshopName = workshopItem.Name,
+                            WorkshopName = workshopItem != null ? workshopItem.Name : null,
                             QcTransportId = ttr.QcTransportId,
-                            QcTransportName = qcTransportUser.FullName,
+                            QcTransportName = qcTransportUser != null ? qcTransportUser.FullName : null,
                             MaterialRequestId = ttr.MaterialRequestId,
                             AssignmentTransferId = ttr.AssignmentTransferId,
-                            MaterialName = m.Name,
+                            MaterialName = m != null ? m.Name : null,
                             QuantityRequest = mrItem == null ? 0 : (int)mrItem.QuantityRequest,
                             CompleteQuantity = assignTransferItem == null ? 0 : (int)assignTransferItem.CompletedQuantitySend,
                             Status = ttr.Status,
@@ -74,15 +91,12 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             CreatedAt = ttr.CreatedAt,
                             DateToGo = ttr.DateToGo,
                             ApprovedAt = ttr.ApprovedAt,
-                            ProductCode = p.Code,
-                            ProductName = p.Name,
-                            NextWorkshopName = _context.Assignments.Where(a => a.BatchId == ttr.BatchId && a.StepOrder > assignment.StepOrder)
-                                                                    .OrderBy(a => a.StepOrder)
-                                                                    .Join(_context.Workshop,
-                                                                              nextA => nextA.WorkshopId,
-                                                                              nextW => nextW.Id,
-                                                                              (nextA, nextW) => nextW.Name)
-                                                                        .FirstOrDefault() ?? "QC Gác Cổng"
+                            ProductCode = p != null ? p.Code : null,
+                            ProductName = p != null ? p.Name : null,
+                            NextWorkshopName =
+                                ttr.AssignmentTransferId == null
+                                    ? null
+                                    : nextWorkshop ?? "QC Gác Cổng"
                         };
 
             // Áp dụng bộ lọc Status (nếu có)

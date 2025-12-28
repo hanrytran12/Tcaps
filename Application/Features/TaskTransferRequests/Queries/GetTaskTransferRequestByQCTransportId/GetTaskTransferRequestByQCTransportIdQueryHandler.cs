@@ -55,10 +55,24 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
 
 
                         join currentAssign in _context.Assignments.AsNoTracking()
-                            on assignTransferItem.AssignmentId equals currentAssign.Id
+                            on assignTransferItem.AssignmentId equals currentAssign.Id into currentAssignGroup
+                        from currentAssign in currentAssignGroup.DefaultIfEmpty()
 
                         join p in _context.Products.AsNoTracking()
                             on batchItem.ProductId equals p.Id into productGroup
+                        from p in productGroup.DefaultIfEmpty()
+
+                        let nextWorkshop =
+                            currentAssign == null
+                                ? null
+                                : (
+                                    from a in _context.Assignments
+                                    where a.BatchId == currentAssign.BatchId
+                                       && a.StepOrder > currentAssign.StepOrder
+                                    orderby a.StepOrder
+                                    join w in _context.Workshop on a.WorkshopId equals w.Id
+                                    select w.Name
+                                ).FirstOrDefault()
 
                         select new TaskTransferRequestDTO
                         {
@@ -69,8 +83,8 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             WorkshopId = ttr.WorkshopId,
                             WorkshopName = workshopItem.Name ?? string.Empty,
 
-                            ProductCode = productGroup.Select(pg => pg.Code).FirstOrDefault() ?? string.Empty,
-                            ProductName = productGroup.Select(pg => pg.Name).FirstOrDefault() ?? string.Empty,
+                            ProductCode = p != null ? p.Code : null,
+                            ProductName = p != null ? p.Name : null,
 
                             QcTransportId = ttr.QcTransportId,
                             QcTransportName = qcTransportName,
@@ -85,14 +99,10 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             CreatedAt = ttr.CreatedAt,
                             DateToGo = ttr.DateToGo,
                             ApprovedAt = ttr.ApprovedAt,
-                            NextWorkshopName = _context.Assignments
-                                                    .Where(a => a.BatchId == currentAssign.BatchId && a.StepOrder > currentAssign.StepOrder)
-                                                    .OrderBy(a => a.StepOrder)
-                                                    .Join(_context.Workshop,
-                                                        nextA => nextA.WorkshopId,
-                                                        nextW => nextW.Id,
-                                                        (nextA, nextW) => nextW.Name)
-                                                    .FirstOrDefault() ?? "QC Gác Cổng"
+                            NextWorkshopName =
+                                ttr.AssignmentTransferId == null
+                                    ? null
+                                    : nextWorkshop ?? "QC Gác Cổng"
                         };
 
             if (!string.IsNullOrEmpty(request.Status))
