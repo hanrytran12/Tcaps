@@ -49,6 +49,7 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequest
                                             ProductName = p.Name,
                                             UserId = mr.UserId,
                                             UserName = u.FullName,
+                                            LeadId = b.UserId,
                                             UserCreate = uu.FullName,
                                             WorkshopId = u.WorkshopId ?? Guid.Empty,
                                             WorkshopName = wItem.Name ?? string.Empty,
