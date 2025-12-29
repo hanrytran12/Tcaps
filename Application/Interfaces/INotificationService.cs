@@ -15,14 +15,14 @@ namespace Application.Interfaces
         Task SendSubmitProductionNotification(Guid assignId, Guid userId, int quantity);
         Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status);
         Task SendComponentConfirmNotification(Guid componentId, Guid evaluateId, int quantity, string status);
-        Task CreateStockUpdateNotificationForRoleAsync(string role, string materialName, int newStock, int change);
+        Task CreateStockUpdateNotificationForRoleAsync(Guid userId, string materialName, int newStock, int change);
         Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive);
         Task SendCreateTaskTransferRequestNotificationAsync(Guid batchId, Guid workshopId, Guid qcTransportId, string note);
         Task SendApproveTaskTransferRequestNotificationAsync(Guid taskTransferRequestId, Guid qcTransportId);
         Task SendCreateMaterialRequestNotificationAsync(Guid qcId, Guid batchId, Guid assignId);
         Task AdminAssignForQCTransportToTransferMaterialSupplyNotificationAsync(Guid qcTransportId, Guid requestId, Guid materialId, int quantity);
         Task SendAddMaterialSupplyForQcWorkshopNotification(Guid qcworkshopId, Guid requestId, Guid materialId, int quantity);
-        Task SendCompletedMaterialSupplyNotificationAsync(Guid supplyId, Guid materialId, int quantity);
+        Task SendCompletedMaterialSupplyNotificationAsync(Guid userId, Guid materialId, string batchCode, int quantity);
         Task SendQCTransportApproveMaterialSupplyNotificationAsync(Guid qcTransportId, Guid materialSupplyId);
         Task SendQCTransportReceptionAssignmentTransferNotificationAsync(Guid qcTransportId, Guid assignTransferRequestId, Guid assignId);
         Task SendQCTransportReceptionMaterialRequestNotificationAsync(Guid qcTransportId, Guid materialRequestId, Guid assignId);
