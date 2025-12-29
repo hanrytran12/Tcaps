@@ -26,6 +26,7 @@ namespace Application.Features.ReworkRequest.Queries.GetAllReworkRequest
                             Id = rr.Id,
                             BatchCode = b.Code,
                             QcName = u.FullName,
+                            LeadId = b.UserId,
                             WorkshopId = w.Id,
                             WorkshopName = w.Name,
                             AssignmentId = a.Id,

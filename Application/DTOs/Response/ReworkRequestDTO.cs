@@ -5,6 +5,7 @@
         public Guid Id { get; set; }
         public string BatchCode { get; set; } = string.Empty;
         public string QcName { get; set; } = string.Empty;
+        public Guid? LeadId { get; set; }
         public Guid WorkshopId { get; set; }
         public string WorkshopName { get; set; } = string.Empty;
         public Guid AssignmentId { get; set; }
