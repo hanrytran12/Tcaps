@@ -1,4 +1,5 @@
-﻿using Application.Interfaces;
+﻿using Application.Common.Exceptions;
+using Application.Interfaces;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -48,8 +49,17 @@ namespace Application.Features.MaterialRequest.Events
                 await _materialUseRepository.AddAsync(materialUse);
             }
 
+            var batch = await _appDbContext.Batches
+                .Where(b => b.Id == notification.BatchId)
+                .FirstOrDefaultAsync();
+
+            if (batch is null)
+            {
+                throw new NotFoundException("Không tìm thấy lô hàng.");
+            }
+
             var material = await _materialRepository.GetByIdAsync(notification.MaterialId);
-            material?.DecreaseQuantity((int)notification.QuantityRequest);
+            material?.DecreaseQuantity((int)notification.QuantityRequest, batch.UserId ?? Guid.Empty);
         }
     }
 }

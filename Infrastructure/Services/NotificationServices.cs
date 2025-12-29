@@ -300,9 +300,9 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
         }
 
-        public async Task CreateStockUpdateNotificationForRoleAsync(string role, string materialName, int newStock, int change)
+        public async Task CreateStockUpdateNotificationForRoleAsync(Guid userId, string materialName, int newStock, int change)
         {
-            var users = await _userRepository.GetByRoleAsync(role);
+            var users = await _userRepository.GetByIdAsync(userId);
             if (users is null) return;
 
             var title = "Cập nhật Tồn kho Nguyên vật liệu";
@@ -425,13 +425,13 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task SendCompletedMaterialSupplyNotificationAsync(Guid supplyId, Guid materialId, int quantity)
+        public async Task SendCompletedMaterialSupplyNotificationAsync(Guid userId, Guid materialId, string batchCode, int quantity)
         {
             var material = await _materialRepository.GetByIdAsync(materialId);
-            var lead = await _userRepository.GetByRoleAsync("Lead");
+            var lead = await _userRepository.GetByIdAsync(userId);
 
-            var title = "Hoàn tất cung cấp vật liệu";
-            var message = $"QC đã nhận đủ {quantity} {material.Unit} vật liệu **{material.Name}** của đơn cung cấp {supplyId}.";
+            var title = "Hoàn tất cung cấp thêm vật liệu";
+            var message = $"QC đã nhận {quantity} {material.Unit} vật liệu **{material.Name}** của đơn yêu cầu thêm NVL của lô hàng {batchCode}.";
             var type = "MaterialSupply";
 
             var notification = Notification.Create(lead.Id, title, message, type);

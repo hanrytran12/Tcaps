@@ -45,10 +45,10 @@ namespace Domain.Entities
             }
             Quantity += amount;
 
-            AddDomainEvent(new MaterialStockUpdatedEvent(Name, Quantity, amount));
+            AddDomainEvent(new MaterialStockUpdatedEvent(Guid.Empty, Name, Quantity, amount));
         }
 
-        public void DecreaseQuantity(int amount)
+        public void DecreaseQuantity(int amount, Guid userId)
         {
             if (amount <= 0)
             {
@@ -56,7 +56,7 @@ namespace Domain.Entities
             }
             Quantity -= amount;
 
-            AddDomainEvent(new MaterialStockUpdatedEvent(Name, Quantity, amount * -1));
+            AddDomainEvent(new MaterialStockUpdatedEvent(userId, Name, Quantity, amount * -1));
         }
     }
 }

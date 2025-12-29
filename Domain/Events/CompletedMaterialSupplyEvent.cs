@@ -9,13 +9,15 @@ namespace Domain.Events
 {
     public class CompletedMaterialSupplyEvent : INotification
     {
-        public Guid SupplyId { get; set; }
+        public Guid UserId  { get; set; }
         public Guid MaterialId { get; set; }
+        public string BatchCode { get; set; }
         public int Quantity { get; set; }
-        public CompletedMaterialSupplyEvent(Guid supplyId, Guid materialId, int quantity)
+        public CompletedMaterialSupplyEvent(Guid userId, Guid materialId, string batchCode, int quantity)
         {
-            SupplyId = supplyId;
+            UserId = userId;
             MaterialId = materialId;
+            BatchCode = batchCode;
             Quantity = quantity;
         }
     }

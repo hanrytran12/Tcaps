@@ -75,11 +75,29 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
                 _context.Users.Update(supplier);
             }
 
+            var batch = await (from m in _context.MaterialRequests
+                               join ms in _context.MaterialSupplies on m.Id equals ms.RequestId
+                               join b in _context.Batches on m.BatchId equals b.Id
+                               where ms.Id == materialSupply.Id
+                               select b).FirstOrDefaultAsync();
+
+            if (batch is null)
+            {
+                throw new NotFoundException("Không tìm thấy lô hàng.");
+            }
+
+            var material = await _context.Materials
+                .Where(m => m.Id == materialSupply.MaterialId)
+                .FirstOrDefaultAsync();
+
+            material?.DecreaseQuantity(materialSupply.QuantitySend, batch.UserId ?? Guid.Empty);
+
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
             await _mediator.Publish(new CompletedMaterialSupplyEvent(
-                request.SupplyId,
+                batch.UserId ?? Guid.Empty,
                 materialSupply.MaterialId,
+                batch.Code,
                 materialSupply.QuantityReceive ?? 0));
             return Result<Guid>.Success(materialSupply.Id);
         }
