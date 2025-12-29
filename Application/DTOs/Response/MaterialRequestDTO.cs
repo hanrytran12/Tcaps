@@ -7,6 +7,7 @@
         public string MaterialName { get; set; }
         public Guid UserId { get; set; }
         public string UserName { get; set; }
+        public Guid? LeadId { get; set; }
         public string UserCreate { get; set; }
         public Guid WorkshopId { get; set; }
         public string WorkshopName { get; set; }
