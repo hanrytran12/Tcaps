@@ -54,6 +54,8 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             materialSupply.MarkAsCompleted(request.QuantityReceive);
             _context.MaterialSupplies.Update(materialSupply);
 
+            materialRequest.IncreaseQuantityActual(request.QuantityReceive);
+
             var materialUse = await _context.MaterialUse
                 .FirstOrDefaultAsync(m => m.BatchId == materialRequest.BatchId
                                        && m.MaterialId == materialSupply.MaterialId);

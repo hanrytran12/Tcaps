@@ -17,6 +17,7 @@ namespace Application.DTOs.Response
         public DateOnly EndDate { get; set; }
         public string Status { get; set; } = string.Empty;
         public decimal UnitPrice { get; set; }
+        public DateTime CreatedAt { get; set; }
         public TaskMetricsDTO TaskMetricsDTO { get; set; } = new TaskMetricsDTO();
     }
 }

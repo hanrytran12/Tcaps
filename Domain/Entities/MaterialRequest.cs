@@ -86,5 +86,12 @@ namespace Domain.Entities
                 throw new ArgumentException("Quantity to increase must be non-negative.", nameof(quantity));
             QuantityFromStock += quantity;
         }
+
+        public void IncreaseQuantityActual(decimal quantity)
+        {
+            if (quantity < 0)
+                throw new ArgumentException("Quantity to increase must be non-negative.", nameof(quantity));
+            ActualReceivedQuantity += quantity;
+        }
     }
 }
