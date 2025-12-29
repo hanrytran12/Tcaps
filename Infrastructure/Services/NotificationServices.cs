@@ -641,5 +641,21 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateOnly dateShip)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            if (admin is null) return;
+
+            var material = await _materialRepository.GetByIdAsync(materialId);
+
+            var title = "Duyệt yêu cầu cung cấp vật liệu cho QC vận chuyển.";
+            var message = $"Vật liệu {material?.Name} được gửi với số lượng {quantitySend}, ngày giao {dateShip}.";
+            var type = "MaterialSupply";
+
+            var notification = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
     }
 }
