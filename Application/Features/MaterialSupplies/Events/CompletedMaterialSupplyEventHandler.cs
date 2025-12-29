@@ -19,7 +19,11 @@ namespace Application.Features.MaterialSupplies.Events
         }
         public async Task Handle(CompletedMaterialSupplyEvent notification, CancellationToken cancellationToken)
         {
-            await _notificationService.SendCompletedMaterialSupplyNotificationAsync(notification.SupplyId, notification.MaterialId, notification.Quantity);
+            await _notificationService.SendCompletedMaterialSupplyNotificationAsync(
+                notification.UserId, 
+                notification.MaterialId,
+                notification.BatchCode,
+                notification.Quantity);
         }
     }
 }

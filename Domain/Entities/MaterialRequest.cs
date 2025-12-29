@@ -55,6 +55,7 @@ namespace Domain.Entities
             ActualReceivedQuantity = actualReceivedQuantity;
             NoteFromQC = noteFromQC;
             AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, AssignId, QuantityRequest, actualReceivedQuantity));
+            AddDomainEvent(new NotificationForStaffEvent(UserId, BatchId, ActualReceivedQuantity));
         }
 
         public void MarkAsConfirmedWithDiscrepancy(decimal actualReceivedQuantity, string noteFromQC)
