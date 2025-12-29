@@ -35,6 +35,7 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                                      a.EndDate,
                                      a.Status,
                                      a.UnitPrice,
+                                     a.CreatedAt,
                                      QuantityRequest = a.Quantity,
                                      ProductionId = pro != null ? pro.Id : (Guid?)null,
                                      EvaluateId = e != null ? e.Id : (Guid?)null,
@@ -85,6 +86,7 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                     x.EndDate,
                     x.Status,
                     x.UnitPrice,
+                    x.CreatedAt,
                     x.QuantityRequest
                 })
                 .Select(g =>
@@ -145,6 +147,7 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                         EndDate = g.Key.EndDate,
                         Status = g.Key.Status,
                         UnitPrice = g.Key.UnitPrice,
+                        CreatedAt = g.Key.CreatedAt,
                         TaskMetricsDTO = new TaskMetricsDTO
                         {
                             QuantityRequest = g.Key.QuantityRequest,
