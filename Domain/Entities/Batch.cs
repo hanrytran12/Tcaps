@@ -87,8 +87,6 @@ namespace Domain.Entities
                 }
             }
             UpdateStatus("Completed");
-
-            AddDomainEvent(new BatchCompletedEvent(Id, Code));
         }
 
         public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)
@@ -203,7 +201,7 @@ namespace Domain.Entities
             else
             {
                 var currentMaterialUsage = this.MaterialUses.FirstOrDefault(m => m.AssignId == assignmentId && m.MaterialId == materialId);
-                if (reconciledQuantity > currentMaterialUsage.QuantityDivide)
+                if (reconciledQuantity > currentMaterialUsage.QuantityDivide + currentMaterialUsage.QuantityRequest)
                 {
                     throw new InvalidOperationException("Số lượng ghi nhận không được lớn hơn số lượng yêu cầu.");
                 }

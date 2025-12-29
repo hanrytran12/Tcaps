@@ -15,7 +15,7 @@ namespace Domain.Entities
         public DateOnly? DateCompleted { get; private set; }
         public bool RequiresMaterialDelivery { get; private set; }
         public string Status { get; private set; } = string.Empty;
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         public Assignment(Guid id, Guid batchId, Guid workshopId, int? stepOrder, int quantity, DateOnly startDate, DateOnly endDate, DateOnly? expectedDeliveryDate, decimal unitPrice, bool requiresMaterialDelivery)
             : base(id)
@@ -27,7 +27,7 @@ namespace Domain.Entities
             EndDate = endDate;
             StepOrder = stepOrder;
             Status = "Planned";
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
             ExpectedDeliveryDate = expectedDeliveryDate;
             UnitPrice = unitPrice;
             RequiresMaterialDelivery = requiresMaterialDelivery;

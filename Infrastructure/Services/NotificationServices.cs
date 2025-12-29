@@ -300,9 +300,9 @@ namespace Infrastructure.Services
             await _notificationRepository.AddAsync(notification);
         }
 
-        public async Task CreateStockUpdateNotificationForRoleAsync(string role, string materialName, int newStock, int change)
+        public async Task CreateStockUpdateNotificationForRoleAsync(Guid userId, string materialName, int newStock, int change)
         {
-            var users = await _userRepository.GetByRoleAsync(role);
+            var users = await _userRepository.GetByIdAsync(userId);
             if (users is null) return;
 
             var title = "Cập nhật Tồn kho Nguyên vật liệu";
@@ -396,7 +396,7 @@ namespace Infrastructure.Services
             var material = await _materialRepository.GetByIdAsync(materialId);
 
             var title = "Admin phân công đi giao NVL";
-            var message = $"Admin phân công cho {qcTransport.FullName} cung cấp thêm {quantity} {material.Unit} vật liệu **{material.Name}** cho lô hàng **{batch.Code}** tại xưởng **{workshop.Name}**.";
+            var message = $"Admin đã duyệt yêu cầu cho {qcTransport.FullName} cung cấp thêm {quantity} {material.Unit} vật liệu {material.Name} cho lô hàng {batch.Code} tại xưởng {workshop.Name}.";
             var type = "MaterialSupply";
 
             var notification = Notification.Create(qcTransport.Id, title, message, type);
@@ -425,13 +425,13 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task SendCompletedMaterialSupplyNotificationAsync(Guid supplyId, Guid materialId, int quantity)
+        public async Task SendCompletedMaterialSupplyNotificationAsync(Guid userId, Guid materialId, string batchCode, int quantity)
         {
             var material = await _materialRepository.GetByIdAsync(materialId);
-            var lead = await _userRepository.GetByRoleAsync("Lead");
+            var lead = await _userRepository.GetByIdAsync(userId);
 
-            var title = "Hoàn tất cung cấp vật liệu";
-            var message = $"QC đã nhận đủ {quantity} {material.Unit} vật liệu **{material.Name}** của đơn cung cấp {supplyId}.";
+            var title = "Hoàn tất cung cấp thêm vật liệu";
+            var message = $"QC đã nhận {quantity} {material.Unit} vật liệu **{material.Name}** của đơn yêu cầu thêm NVL của lô hàng {batchCode}.";
             var type = "MaterialSupply";
 
             var notification = Notification.Create(lead.Id, title, message, type);
@@ -607,6 +607,80 @@ namespace Infrastructure.Services
 
             var notification = Notification.Create(staff.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendFinalTransferRequestForGuardQCNotificationAsync(decimal quantitySend, string batchCode, string workshopName)
+        {
+            var qcgaccong = await _userRepository.GetByRoleAsync("GuardQC");
+            if (qcgaccong is null) return;
+
+            var title = "Kiểm tra cuối cùng";
+            var message = $"QC của xưởng {workshopName} vừa nộp {quantitySend} sản phẩm thuộc lô hàng {batchCode}. Xin lòng kiểm tra.";
+            var type = "FinalTransferRequest";
+
+            var notification = Notification.Create(qcgaccong.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendProductionReportNotificationAsync(Guid assignId, Guid staffId, decimal quantity)
+        {
+            var staff = await _userRepository.GetByIdAsync(staffId);
+            var assignment = await _assignmentRepository.GetByIdAsync(assignId);
+            var qc = await _userRepository.GetQCByWorkshopIdAsync(assignment.WorkshopId);
+            var batch = await _batchRepository.GetByIdAsync(assignment.BatchId);
+
+            if (staff is null || qc is null) return;
+
+            var title = "Nộp sản phẩm";
+            var message = $"Nhân viên {staff.FullName} vừa nộp {quantity} sản phẩm của lô hàng {batch.Code} cho QC đánh giá.";
+            var type = "Production";
+
+            var notification = Notification.Create(qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateOnly dateShip)
+        {
+            var admin = await _userRepository.GetByRoleAsync("Admin");
+            if (admin is null) return;
+
+            var material = await _materialRepository.GetByIdAsync(materialId);
+
+            var title = "Duyệt yêu cầu cung cấp vật liệu cho QC vận chuyển.";
+            var message = $"Vật liệu {material?.Name} được gửi với số lượng {quantitySend}, ngày giao {dateShip}.";
+            var type = "MaterialSupply";
+
+            var notification = Notification.Create(admin.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendNotificationForStaffNotificationAsync(Guid userId, Guid batchId, decimal? quantity)
+        {
+            var batchCode = await _batchRepository.GetByIdAsync(batchId);
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user is null) return;
+
+            if (user.WorkshopId == null)
+                return;
+
+            var staff = await _userRepository.GetUsersByWorkshopIdAsync(user.WorkshopId.Value);
+
+            if (!staff.Any()) return;
+
+            var title = "Xác nhận nhận vật liệu";
+            var message = $"Batch {batchId} đã được xác nhận nhận {quantity} vật liệu.";
+            var type = "MaterialRequest";
+
+            foreach (var item in staff)
+            {
+                var notification = Notification.Create(item.Id, title, message, type);
+                await _notificationRepository.AddAsync(notification);
+            }
+
             await _unitOfWork.SaveChangesAsync();
         }
     }

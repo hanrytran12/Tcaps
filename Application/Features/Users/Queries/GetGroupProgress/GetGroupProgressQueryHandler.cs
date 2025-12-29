@@ -43,8 +43,13 @@ namespace Application.Features.Users.Queries.GetGroupProgress
 
             // Tổng sản lượng nhóm cho assignment này
             var totalProduction = await _context.Productions
-                .Where(p => p.AssignId == request.AssignId)
+                .Where(p => p.AssignId == request.AssignId && p.ReworkRequestId == null)
                 .SumAsync(p => p.Quantity);
+
+            // Tổng sản lượng rework (CÓ ReworkRequestId)
+            var productionRework = await _context.Productions
+                .Where(p => p.AssignId == request.AssignId && p.ReworkRequestId == reworkRequest.Id)
+                .SumAsync(p => p.Quantity, cancellationToken);
 
             // 🔹 Tính tổng sản phẩm Unfixable của toàn nhóm trong assignment này
             var totalUnfixable = await (from a in _context.Assignments
@@ -57,14 +62,13 @@ namespace Application.Features.Users.Queries.GetGroupProgress
             // Tiến độ
             var target = assignment.Quantity; // 100
 
-            var productionRework = 0;
             var targetRework = 0;
             var remainingRework = 0;
 
             if (assignment.Status == "Reworking" && reworkRequest != null)
             {
                 targetRework = (int)reworkRequest.DefectiveQuantity;
-                productionRework = Math.Max(totalProduction - target, 0);
+                //productionRework = Math.Max(totalProduction - target, 0);
                 remainingRework = Math.Max(targetRework - productionRework, 0);
             }
 

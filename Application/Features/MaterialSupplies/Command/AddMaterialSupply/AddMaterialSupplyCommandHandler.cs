@@ -63,6 +63,14 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
                 request.MaterialId,
                 request.QuantitySend));
 
+            if (qcTransport is not null)
+            {
+                await _mediator.Publish(new AddMaterialSupplyForAdminEvent(
+                    request.MaterialId,
+                    request.QuantitySend,
+                    request.DateShip));
+            }
+
             return Result.Success();
         }
     }

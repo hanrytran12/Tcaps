@@ -30,6 +30,7 @@ namespace Application.Features.Assignments.Queries.GetAllAsignmentByQCId
                             BatchId = assign.BatchId,
                             BatchesCode = batch.Code,
                             ProductCode = product.Code,
+                            ProductName = product.Name,
                             WorkshopId = assign.WorkshopId,
                             StepOrder = assign.StepOrder,
                             Quantity = assign.Quantity,
@@ -38,7 +39,10 @@ namespace Application.Features.Assignments.Queries.GetAllAsignmentByQCId
                             DateCompleted = assign.DateCompleted,
                             ExpectedDeliveryDate = assign.ExpectedDeliveryDate,
                             UnitPrice = assign.UnitPrice,
-                            Status = assign.Status
+                            Status = assign.Status,
+                            IsFinalWorkshop = _context.Assignments
+                                                .Where(a => a.BatchId == assign.BatchId)
+                                                .Max(a => a.StepOrder) == assign.StepOrder
                         };
             var result = await query.ToListAsync(cancellationToken);
             return result;

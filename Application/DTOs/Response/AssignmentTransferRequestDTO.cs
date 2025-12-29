@@ -3,6 +3,10 @@
     public class AssignmentTransferRequestDTO
     {
         public Guid TransferRequestId { get; set; }
+        public Guid AssignmentId { get; set; }
+        public Guid BatchId { get; set; }
+        public Guid WorkshopId { get; set; }
+        public Guid? ReworkRequestId { get; set; }
         public string BatchCode { get; set; } = string.Empty;
         public string ProductCode { get; set; } = string.Empty;
         public string WorkshopName { get; set; } = string.Empty;
@@ -12,6 +16,7 @@
         public string Note { get; set; } = string.Empty;
         public string NoteLead { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
+        public string NextWorkshopName { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; }
     }
 }

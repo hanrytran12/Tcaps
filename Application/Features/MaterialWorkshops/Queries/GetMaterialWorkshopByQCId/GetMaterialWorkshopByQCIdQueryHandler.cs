@@ -16,7 +16,7 @@ namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQC
         public async Task<List<MaterialWorkshopDTO>> Handle(GetMaterialWorkshopByQCIdQuery request, CancellationToken cancellationToken)
         {
             var query = from mw in _appDbContext.MaterialWorkshops
-                        where mw.WorkshopId == request.WorkshopId && mw.Status == "Pending"
+                        where mw.WorkshopId == request.WorkshopId
                         join a in _appDbContext.Assignments on mw.AssignId equals a.Id
                         join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
                         join b in _appDbContext.Batches on a.BatchId equals b.Id
@@ -29,6 +29,7 @@ namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQC
                             WorkshopName = w.Name,
                             BatchCode = b.Code,
                             ProductCode = p.Code,
+                            ProductName = p.Name,
                             SupplierId = mw.SupplierId,
                             SupplierName = u.FullName,
                             AssignId = a.Id,
@@ -36,6 +37,7 @@ namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQC
                             QuantityReceive = mw.QuantityReceive,
                             ShipDate = mw.ShipDate,
                             CreatedAt = mw.CreatedAt,
+                            Status = mw.Status,
                         };
             return await query.ToListAsync(cancellationToken);
         }

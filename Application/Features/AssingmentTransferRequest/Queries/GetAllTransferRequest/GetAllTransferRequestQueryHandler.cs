@@ -26,6 +26,10 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                         select new AssignmentTransferRequestDTO
                         {
                             TransferRequestId = tr.Id,
+                            AssignmentId = tr.AssignmentId,
+                            ReworkRequestId = tr.ReworkRequestId ?? null,
+                            BatchId = a.BatchId,
+                            WorkshopId = a.WorkshopId,
                             UserName = u.FullName,
                             BatchCode = b.Code,
                             ProductCode = p.Code,
@@ -35,7 +39,15 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                             Note = tr.Note ?? string.Empty,
                             NoteLead = tr.NoteLead ?? string.Empty,
                             Status = tr.Status,
-                            CreatedAt = tr.CreatedAt
+                            CreatedAt = tr.CreatedAt,
+                            NextWorkshopName = _appDbContext.Assignments
+                                .Where(nextA => nextA.BatchId == a.BatchId && nextA.StepOrder > a.StepOrder)
+                                .OrderBy(nextA => nextA.StepOrder)
+                                .Join(_appDbContext.Workshop,
+                                      nextA => nextA.WorkshopId,
+                                      nextW => nextW.Id,
+                                      (nextA, nextW) => nextW.Name)
+                                .FirstOrDefault() ?? "QC Gác Cổng"
                         };
 
             return await query.AsNoTracking().ToListAsync();

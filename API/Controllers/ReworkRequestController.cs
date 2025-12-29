@@ -5,6 +5,7 @@ using Application.Features.ReworkRequest.Commands.RejectReworkRequest;
 using Application.Features.ReworkRequest.Queries.GetAllReworkRequest;
 using Application.Features.ReworkRequest.Queries.GetRequestById;
 using Application.Features.ReworkRequest.Queries.GetReworkByAssignId;
+using Application.Features.ReworkRequest.Queries.GetReworkByQcId;
 using Application.Features.ReworkRequest.Queries.GetReworkForDashboard;
 using Application.Features.ReworkRequest.Queries.GetReworkReconciliationSummary;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,15 @@ namespace API.Controllers
         public async Task<ReworkRequestDTO> GetReworkForDashboard(Guid assignId)
         {
             return await Mediator.Send(new GetReworkForDashboardQuery(assignId));
+        }
+
+        [HttpGet("by-qc")]
+        public async Task<List<ReworkRequestDTO>> GetReworkByQcId()
+        {
+            return await Mediator.Send(new GetReworkByQcIdQuery
+            {
+                QcId = CurrentUserId
+            });
         }
 
         [HttpPost]

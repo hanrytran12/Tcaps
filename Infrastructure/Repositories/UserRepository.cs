@@ -76,7 +76,7 @@ namespace Infrastructure.Repositories
 
         public async Task<List<User>> GetQcsByWorkshopIdsAsync(List<Guid> workshopId)
         {
-            return await _context.Users.AsNoTracking().Where(u => u.WorkshopId.HasValue && workshopId.Contains(u.WorkshopId.Value) && u.Role == "QC").ToListAsync();
+            return await _context.Users.AsNoTracking().Where(u => u.WorkshopId.HasValue && workshopId.Contains(u.WorkshopId.Value) && (u.Role == "QC" || u.Role == "QCK")).ToListAsync();
         }
 
         public async Task<IEnumerable<User>> GetUsersByWorkshopIdAsync(Guid workshopId)

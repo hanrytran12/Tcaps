@@ -12,7 +12,7 @@ namespace Domain.Entities
         public int QuantityError { get; private set; }
         public int QuantitySuccess { get; private set; }
         public string Image { get; private set; } = string.Empty;
-        public DateOnly CreatedAt { get; private set; }
+        public DateTime CreatedAt { get; private set; }
 
         private readonly List<ComponentDefect> _componentDefects = new();
         public IReadOnlyCollection<ComponentDefect> ComponentDefects => _componentDefects.AsReadOnly();
@@ -26,7 +26,7 @@ namespace Domain.Entities
             QuantityError = quantityError;
             QuantitySuccess = quantitySucess;
             Image = image;
-            CreatedAt = DateOnly.FromDateTime(DateTime.Now);
+            CreatedAt = DateTime.Now;
             Status = status;
 
             //AddDomainEvent(new EvaluateCreatedEvent(Id, productionId, userId.Value, quantityError, note, status));

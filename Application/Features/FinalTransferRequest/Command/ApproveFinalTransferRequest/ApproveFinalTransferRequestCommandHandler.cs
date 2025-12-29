@@ -46,7 +46,13 @@ namespace Application.Features.FinalTransferRequest.Command.ApproveFinalTransfer
                 throw new NotFoundException("Không tìm thấy yêu cầu chuyển giao");
             }
 
-            var batch = await _batchRepository.GetByAssignmentIdAsync(assignTransfer.AssignmentId);
+            var assignment = await _context.Assignments.FindAsync(assignTransfer.AssignmentId);
+            if (assignment is null)
+            {
+                throw new NotFoundException("Không tìm thấy công đoạn");
+            }
+
+            var batch = await _context.Batches.FindAsync(assignment.BatchId);
             if (batch is null)
             {
                 throw new NotFoundException("Không tìm thấy lô hàng");
@@ -56,10 +62,7 @@ namespace Application.Features.FinalTransferRequest.Command.ApproveFinalTransfer
                            join w in _context.Workshop
                            on a.WorkshopId equals w.Id
                            where a.Id == assignTransfer.AssignmentId
-                           select new
-                           {
-                               IsOutSource = w.WorkshopType == Domain.Enums.WorkshopType.Outsource
-                           }).FirstOrDefaultAsync();
+                           select w).FirstOrDefaultAsync();
 
             if (workshop is null)
             {
@@ -67,7 +70,7 @@ namespace Application.Features.FinalTransferRequest.Command.ApproveFinalTransfer
             }
 
             decimal quantityError;
-            if (workshop.IsOutSource)
+            if (workshop.WorkshopType == Domain.Enums.WorkshopType.Outsource)
             {
                 quantityError = finalRequest.QuantityFinalSend - request.QuantityFinalReceive;
             }

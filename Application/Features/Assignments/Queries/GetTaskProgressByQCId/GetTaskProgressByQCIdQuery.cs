@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
 {
-    public class GetTaskProgressByQCIdQuery : IRequest<TaskProgressDTO>
+    public class GetTaskProgressByQCIdQuery : IRequest<List<TaskProgressDTO>>
     {
         [JsonIgnore]
         public Guid QcId { get; set; }

@@ -14,8 +14,8 @@ namespace Application.Features.Inventories.Events
 
         public async Task Handle(MaterialStockUpdatedEvent notification, CancellationToken cancellationToken)
         {
-            await _notificationService.CreateStockUpdateNotificationForRoleAsync("Admin", notification.MaterialName, notification.NewStockQuantity, notification.QuantityChange);
-            await _notificationService.CreateStockUpdateNotificationForRoleAsync("Lead", notification.MaterialName, notification.NewStockQuantity, notification.QuantityChange);
+            //await _notificationService.CreateStockUpdateNotificationForRoleAsync("Admin", notification.MaterialName, notification.NewStockQuantity, notification.QuantityChange);
+            await _notificationService.CreateStockUpdateNotificationForRoleAsync(notification.UserId ?? Guid.Empty, notification.MaterialName, notification.NewStockQuantity, notification.QuantityChange);
         }
     }
 }

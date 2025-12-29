@@ -57,6 +57,7 @@ namespace Domain.Entities
             ActualReceivedQuantity = actualReceivedQuantity;
             NoteFromQC = noteFromQC;
             AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, AssignId, QuantityRequest, actualReceivedQuantity));
+            AddDomainEvent(new NotificationForStaffEvent(UserId, BatchId, ActualReceivedQuantity));
         }
 
         public void MarkAsConfirmedWithDiscrepancy(decimal actualReceivedQuantity, string noteFromQC)
@@ -87,6 +88,13 @@ namespace Domain.Entities
             if (quantity < 0)
                 throw new ArgumentException("Quantity to increase must be non-negative.", nameof(quantity));
             QuantityFromStock += quantity;
+        }
+
+        public void IncreaseQuantityActual(decimal quantity)
+        {
+            if (quantity < 0)
+                throw new ArgumentException("Quantity to increase must be non-negative.", nameof(quantity));
+            ActualReceivedQuantity += quantity;
         }
     }
 }

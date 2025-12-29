@@ -81,7 +81,7 @@ namespace Infrastructure.Migrations
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     TotalPrice = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -176,7 +176,7 @@ namespace Infrastructure.Migrations
                     QuantitySend = table.Column<int>(type: "int", nullable: false),
                     QuantityReceive = table.Column<int>(type: "int", nullable: false),
                     ShipDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
@@ -327,7 +327,7 @@ namespace Infrastructure.Migrations
                     DateCompleted = table.Column<DateOnly>(type: "date", nullable: true),
                     RequiresMaterialDelivery = table.Column<bool>(type: "bit", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -352,7 +352,7 @@ namespace Infrastructure.Migrations
                     QuantityError = table.Column<int>(type: "int", nullable: false),
                     QuantitySuccess = table.Column<int>(type: "int", nullable: false),
                     Image = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BatchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -378,7 +378,7 @@ namespace Infrastructure.Migrations
                     QuantityStaffUse = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ReconciledQuantity = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     QuantityRequest = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    Date = table.Column<DateOnly>(type: "date", nullable: false)
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -429,7 +429,7 @@ namespace Infrastructure.Migrations
                     EvaluateId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateOnly>(type: "date", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>

@@ -10,12 +10,14 @@ namespace Application.Features.Assignments.Events
         private readonly INotificationRepository _notificationRepository;
         private readonly IUserRepository _userRepository;
         private readonly IWorkshopRepository _workshopRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public AssignmentsPlannedEventHandler(INotificationRepository notificationRepository, IUserRepository userRepository, IWorkshopRepository workshopRepository)
+        public AssignmentsPlannedEventHandler(INotificationRepository notificationRepository, IUserRepository userRepository, IWorkshopRepository workshopRepository, IUnitOfWork unitOfWork)
         {
             _notificationRepository = notificationRepository;
             _userRepository = userRepository;
             _workshopRepository = workshopRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task Handle(AssignmentsPlannedEvent notification, CancellationToken cancellationToken)
@@ -50,6 +52,7 @@ namespace Application.Features.Assignments.Events
 
                 var noti = Notification.Create(qc.Id, title, message, type);
                 await _notificationRepository.AddAsync(noti);
+                await _unitOfWork.SaveChangesAsync();
             }
         }
     }

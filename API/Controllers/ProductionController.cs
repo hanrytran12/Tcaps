@@ -2,6 +2,7 @@
 using Application.Features.Productions.Command.AddProductionReport;
 using Application.Features.Productions.Command.UpdateProduction;
 using Application.Features.Productions.Query.GetAllProduction;
+using Application.Features.Productions.Query.GetAllProductionByAssignId;
 using Application.Features.Productions.Query.GetAllProductionByQCId;
 using Application.Features.Productions.Query.GetAllProductionByStaffId;
 using Microsoft.AspNetCore.Authorization;
@@ -36,6 +37,16 @@ namespace API.Controllers
             {
                 QC_Id = CurrentUserId,
                 Status = status
+            });
+        }
+
+        [HttpGet("by-assignId")]
+        public async Task<List<ProductionDTO>> GetProductionByAssignIdAsync([FromQuery] Guid assignId)
+        {
+            return await Mediator.Send(new GetAllProductionByAssignIdQuery
+            {
+                AssignId = assignId,
+                UserId = CurrentUserId,
             });
         }
 
