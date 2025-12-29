@@ -660,7 +660,7 @@ namespace Infrastructure.Services
 
         public async Task SendNotificationForStaffNotificationAsync(Guid userId, Guid batchId, decimal? quantity)
         {
-            var batchCode = await _batchRepository.GetByIdAsync(batchId);
+            var batch = await _batchRepository.GetByIdAsync(batchId);
             var user = await _userRepository.GetByIdAsync(userId);
             if (user is null) return;
 
@@ -672,7 +672,8 @@ namespace Infrastructure.Services
             if (!staff.Any()) return;
 
             var title = "Xác nhận nhận vật liệu";
-            var message = $"Batch {batchId} đã được xác nhận nhận {quantity} vật liệu.";
+            var message = $"QC đã tiếp nhận NVL giao xuống với số lượng {quantity} của lô hàng {batch.Code}." +
+                $"Nhân viên có thể bắt đầu làm việc.";
             var type = "MaterialRequest";
 
             foreach (var item in staff)
