@@ -52,11 +52,42 @@ namespace Infrastructure.Persistence
 
             modelBuilder.Entity<Batch>(builder =>
             {
-                builder.HasMany(o => o.Assignments)
-                          .WithOne()
-                          .HasForeignKey(a => a.BatchId)
-                          .OnDelete(DeleteBehavior.Cascade);
+                builder.ToTable("Batches");
+
+                // PK map đúng cột DB
+                builder.HasKey(b => b.Id);
+
+                builder.Property(b => b.Id)
+                       .HasColumnName("Id");
+
+                // Batch - Assignment
+                builder.HasMany(b => b.Assignments)
+                       .WithOne(a => a.Batch)
+                       .HasForeignKey(a => a.BatchId)
+                       .OnDelete(DeleteBehavior.Cascade);
+
+                builder.HasOne(b => b.Product)
+                       .WithMany(p => p.Batches)
+                       .HasForeignKey(b => b.ProductId);
             });
+
+            modelBuilder.Entity<Assignment>(builder =>
+            {
+                builder.ToTable("Assignments");
+                builder.HasKey(a => a.Id);
+
+                // Đảm bảo FK được map đúng
+                builder.Property(a => a.BatchId)
+                       .HasColumnName("BatchId")
+                       .IsRequired(); // ✅ Thêm này để chắc chắn
+
+                //// Relationship
+                //builder.HasOne(a => a.Batch)
+                //       .WithMany(b => b.Assignments)
+                //       .HasForeignKey(a => a.BatchId)
+                //       .OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<Income>()
                 .Property(x => x.TotalPrice)
                 .HasPrecision(18, 2);
