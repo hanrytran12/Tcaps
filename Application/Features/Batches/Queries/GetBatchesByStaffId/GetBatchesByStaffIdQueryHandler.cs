@@ -64,7 +64,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByStaffId
                                            select new StaffAssignmentDTO
                                            {
                                                StaffName = g.Key,                // Key chính là FullName
-                                               Quantity = g.Sum(x => x.QuantityReceive) // Tính tổng Quantity
+                                               Quantity = g.Sum(x => x.QuantityReceive > 0 ? x.QuantityReceive : x.QuantitySend) // Tính tổng Quantity
                                            }).ToList()
                         };
 
