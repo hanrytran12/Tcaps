@@ -24,5 +24,6 @@
         public decimal QuantityFromStock { get; set; }
         public string ProductCode { get; set; }
         public string ProductName { get; set; }
+        public DateOnly? ExpectedDeliveryDate { get; set; }
     }
 }
