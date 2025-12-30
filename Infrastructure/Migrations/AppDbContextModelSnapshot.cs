@@ -605,7 +605,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("date");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("QuantityReceive")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantitySend")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("ReworkRequestId")
