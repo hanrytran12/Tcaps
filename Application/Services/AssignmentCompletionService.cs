@@ -23,7 +23,7 @@ namespace Application.Services
                 {
                     TotalSubmitted = _context.Productions
                     .Where(p => p.AssignId == a.Id)
-                    .Sum(p => p.Quantity),
+                    .Sum(p => p.QuantityReceive),
 
                     TotalRejected = _context.Productions
                     .Where(p => p.AssignId == a.Id)
@@ -63,7 +63,7 @@ namespace Application.Services
                 {
                     TotalSubmitted = _context.Productions
                     .Where(p => p.AssignId == a.Id && p.ReworkRequestId == reworkRequestId)
-                    .Sum(p => p.Quantity),
+                    .Sum(p => p.QuantityReceive),
 
                     TotalRejected = _context.Productions
                     .Where(p => p.AssignId == a.Id && p.ReworkRequestId == reworkRequestId)

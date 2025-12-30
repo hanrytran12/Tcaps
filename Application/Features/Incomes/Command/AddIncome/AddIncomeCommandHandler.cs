@@ -61,18 +61,18 @@ namespace Application.Features.Incomes.Command.AddIncome
             int quantity = 0;
             if (evaluate.Status == "Passed")
             {
-                quantity = production.Quantity;
+                quantity = production.QuantityReceive;
             }
             else if (evaluate.Status == "Rejected")
             {
-                quantity = production.Quantity - evaluate.QuantityError;
+                quantity = production.QuantityReceive - evaluate.QuantityError;
             }
             else if (evaluate.Status == "Failed")
             {
                 if (unfixableSum > 0)
-                    quantity = production.Quantity - unfixableSum;
+                    quantity = production.QuantityReceive - unfixableSum;
                 else
-                    quantity = production.Quantity;
+                    quantity = production.QuantityReceive;
             }
 
             var income = Income.Create

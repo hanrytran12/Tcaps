@@ -62,7 +62,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.Productions
                 .Where(p => p.AssignId == assignId)
-                .SumAsync(p => p.Quantity);
+                .SumAsync(p => p.QuantityReceive > 0 ? p.QuantityReceive : p.QuantitySend);
         }
 
         public void Update(Production production)

@@ -62,7 +62,8 @@ namespace Application.Features.Productions.Query.GetAllProductionByStaffId
                     BatchCode = batch?.Code ?? string.Empty,
                     UserId = p.UserId,
                     FullName = user?.FullName ?? string.Empty,
-                    Quantity = p.Quantity,
+                    QuantitySend = p.QuantitySend,
+                    QuantityReceive = p.QuantityReceive,
                     Date = p.Date,
                     Time = p.Time,
                     Status = p.Status

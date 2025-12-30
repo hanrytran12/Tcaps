@@ -52,7 +52,7 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
                     ProductionId = prod != null ? prod.Id : (Guid?)null,
                     StaffId = userStaff != null ? userStaff.Id : Guid.Empty,
                     StaffName = userStaff != null ? userStaff.FullName : null,
-                    QuantityWork = prod != null ? prod.Quantity : 0,
+                    QuantityWork = prod != null ? prod.QuantityReceive : 0,
 
                     QuantityError = prod == null
                         ? 0m
