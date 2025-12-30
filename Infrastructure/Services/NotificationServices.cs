@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Response;
+﻿using Application.Common.Exceptions;
+using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
@@ -18,6 +19,7 @@ namespace Infrastructure.Services
         private readonly IComponentDefectRepository _componentDefectRepository;
         private readonly IMaterialRequestRepository _materialRequestRepository;
         private readonly IAssignmentRepository _assignmentRepository;
+        private readonly IMaterialSupplyRepository _materialSupplyRepository;
         private readonly IMapper _mapper;
         private readonly IProductionRepository _productionRepository;
         private readonly IIncomeRepository _incomeRepository;
@@ -27,7 +29,8 @@ namespace Infrastructure.Services
         public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
             , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository,
             IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository, IComponentDefectRepository componentDefectRepository,
-            IMaterialRequestRepository materialRequestRepository, IAssignmentRepository assignmentRepository)
+            IMaterialRequestRepository materialRequestRepository, IAssignmentRepository assignmentRepository,
+            IMaterialSupplyRepository materialSupplyRepository)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -38,6 +41,7 @@ namespace Infrastructure.Services
             _componentDefectRepository = componentDefectRepository;
             _materialRequestRepository = materialRequestRepository;
             _assignmentRepository = assignmentRepository;
+            _materialSupplyRepository = materialSupplyRepository;
             _mapper = mapper;
             _productionRepository = productionRepository;
             _incomeRepository = incomeRepository;
@@ -80,7 +84,7 @@ namespace Infrastructure.Services
             var admin = await _userRepository.GetByRoleAsync("Admin");
 
             var title = "Material Request Approved";
-            var message = $"Lead {user?.FullName} is approve request for {quantityRequest} of material {material?.Name} for batch {batch?.Code}.";
+            var message = $"Lead {user?.FullName} is approve request for {(int)quantityRequest} of material {material?.Name} for batch {batch?.Code}.";
             var type = "MaterialRequest";
             var notificationAdmin = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
 
@@ -443,8 +447,18 @@ namespace Infrastructure.Services
         {
             var qcTransport = await _userRepository.GetByIdAsync(qcTransportId);
 
-            var lead = await _userRepository.GetByRoleAsync("Lead");
             var admin = await _userRepository.GetByRoleAsync("Admin");
+
+            var materialSupply = await _materialSupplyRepository.GetByIdAsync(materialSupplyId);
+
+            var materialRequest = await _materialRequestRepository.GetByIdAsync(materialSupply.RequestId);
+
+            var batch = await _batchRepository.GetByIdAsync(materialRequest.BatchId);
+
+            if (batch.UserId == null)
+                throw new NotFoundException("Batch chưa gán Lead");
+
+            var lead = await _userRepository.GetByIdAsync(batch.UserId.Value);
 
             var title = "QC vận chuyển tiếp nhận";
             var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn yêu cầu cung cấp thêm NVL có mã đơn là {materialSupplyId}.";
@@ -462,10 +476,15 @@ namespace Infrastructure.Services
         {
             var qcTransport = await _userRepository.GetByIdAsync(qcTransportId);
 
-            var lead = await _userRepository.GetByRoleAsync("Lead");
             var admin = await _userRepository.GetByRoleAsync("Admin");
 
             var assignment = await _assignmentRepository.GetByIdAsync(assignId);
+            var batch = await _batchRepository.GetByIdAsync(assignment.BatchId);
+
+            if (batch.UserId == null)
+                throw new NotFoundException("Batch chưa gán Lead");
+
+            var lead = await _userRepository.GetByIdAsync(batch.UserId.Value);
 
             var workshop = await _workshopRepository.GetByIdAsync(assignment.WorkshopId);
 
@@ -485,12 +504,20 @@ namespace Infrastructure.Services
         {
             var qcTransport = await _userRepository.GetByIdAsync(qcTransportId);
 
-            var lead = await _userRepository.GetByRoleAsync("Lead");
             var admin = await _userRepository.GetByRoleAsync("Admin");
 
             var assignment = await _assignmentRepository.GetByIdAsync(assignId);
 
             var workshop = await _workshopRepository.GetByIdAsync(assignment.WorkshopId);
+
+            var materialRequest = await _materialRequestRepository.GetByIdAsync(materialRequestId);
+
+            var batch = await _batchRepository.GetByIdAsync(materialRequest.BatchId);
+
+            if (batch.UserId == null)
+                throw new NotFoundException("Batch chưa gán Lead");
+
+            var lead = await _userRepository.GetByIdAsync(batch.UserId.Value);
 
             var title = "QC vận chuyển tiếp nhận";
             var message = $"QC vận chuyển {qcTransport.FullName} đã tiếp nhận đơn xuất kho để giao NVL xuống xưởng {workshop.Name}.";
@@ -526,7 +553,7 @@ namespace Infrastructure.Services
             if (lead is null || lead.Role != "Lead") return;
 
             var title = "Thêm lô hàng mới";
-            var message = $"Lô hàng mới với mã lô {batchCode} và số lượng {quantity} đã được thêm vào hệ thống.";
+            var message = $"Lô hàng mới với mã lô {batchCode} và số lượng {(int)quantity} đã được thêm vào hệ thống.";
             var type = "Batch";
 
             var notification = Notification.Create(lead.Id, title, message, type);
