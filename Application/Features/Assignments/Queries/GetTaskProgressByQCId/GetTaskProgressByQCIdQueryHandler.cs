@@ -19,10 +19,15 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                                  join u in _context.Users on a.WorkshopId equals u.WorkshopId
                                  join b in _context.Batches on a.BatchId equals b.Id
                                  join p in _context.Products on b.ProductId equals p.Id
-                                 join pro in _context.Productions.AsNoTracking() on a.Id equals pro.AssignId into proGroup
+                                 join pro in _context.Productions.AsNoTracking() 
+                                    on a.Id equals pro.AssignId into proGroup
                                  from pro in proGroup.DefaultIfEmpty()
-                                 join e in _context.Evaluates.AsNoTracking() on pro.Id equals e.ProductionId into evalGroup
+                                 join e in _context.Evaluates.AsNoTracking() 
+                                    on pro.Id equals e.ProductionId into evalGroup
                                  from e in evalGroup.DefaultIfEmpty()
+                                 join assignTransfer in _context.AssignmentTransferRequests
+                                    on a.Id equals assignTransfer.AssignmentId into atrGroup
+                                 from atr in atrGroup.DefaultIfEmpty()
                                  where u.Id == request.QcId
                                  select new
                                  {
@@ -41,7 +46,10 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
                                      EvaluateId = e != null ? e.Id : (Guid?)null,
                                      EvaluateStatus = e != null ? e.Status : null,
                                      QuantitySuccess = e != null ? e.QuantitySuccess : 0,
-                                     QuantityError = e != null ? e.QuantityError : 0
+                                     QuantityError = e != null ? e.QuantityError : 0,
+
+                                     QuantitySend = atr != null ? atr.CompletedQuantitySend : 0,
+                                     QuantityReceive = atr != null ? atr.CompletedQuantityReceive : 0
                                  })
         .ToListAsync(cancellationToken);
 
@@ -136,6 +144,12 @@ namespace Application.Features.Assignments.Queries.GetTaskProgressByQCId
 
                     var rework = reworkRequests.FirstOrDefault(r => r.AssignmentId == g.Key.AssignmentId);
 
+                    var transferDiff = g.Sum(x =>
+                    {
+                        var diff = x.QuantitySend - x.QuantityReceive;
+                        return diff > 0 ? diff : 0;
+                    });
+                    quantityCompleted = (int)Math.Max(quantityCompleted - transferDiff, 0);
                     return new TaskProgressDTO
                     {
                         AssignmentId = g.Key.AssignmentId,
