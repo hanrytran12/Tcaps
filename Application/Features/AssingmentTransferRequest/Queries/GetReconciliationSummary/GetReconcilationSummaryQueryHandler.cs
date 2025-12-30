@@ -24,7 +24,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetReconciliati
 
                     TotalSubmitted = _context.Productions
                     .Where(p => p.AssignId == a.Id)
-                    .Sum(p => p.Quantity),
+                    .Sum(p => p.QuantityReceive),
 
                     TotalRejected = _context.Productions
                     .Where(p => p.AssignId == a.Id)

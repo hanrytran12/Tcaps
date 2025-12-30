@@ -27,7 +27,7 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
 
                     TotalSubmitted = _appDbContext.Productions
                         .Where(p => p.ReworkRequestId == r.Id)
-                        .Sum(p => p.Quantity),
+                        .Sum(p => p.QuantityReceive),
 
                     TotalRejected = _appDbContext.Productions
                         .Where(p => p.ReworkRequestId == r.Id)

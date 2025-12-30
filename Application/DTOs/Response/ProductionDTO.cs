@@ -14,7 +14,8 @@ namespace Application.DTOs.Response
         public string BatchCode { get; set; } = string.Empty;
         public Guid UserId { get; set; }
         public string? FullName { get; set; }
-        public int Quantity { get; set; }
+        public int QuantitySend { get; set; }
+        public int QuantityReceive { get; set; }
         public DateOnly Date { get; set; }
         public TimeOnly Time { get; set; }
         public string Status { get; set; } = string.Empty;

@@ -35,7 +35,8 @@ namespace Application.Features.Productions.Query.GetAllProductionByAssignId
                             pro.ReworkRequestId,
                             UserId = u.Id,
                             u.FullName,
-                            pro.Quantity,
+                            pro.QuantitySend,
+                            pro.QuantityReceive,
                             pro.Date,
                             pro.Time,
                             pro.Status
@@ -54,7 +55,8 @@ namespace Application.Features.Productions.Query.GetAllProductionByAssignId
                     ReworkRequestId = x.ReworkRequestId,
                     UserId = x.UserId,
                     FullName = x.FullName,
-                    Quantity = x.Quantity,
+                    QuantitySend = x.QuantitySend,
+                    QuantityReceive = x.QuantityReceive,
                     Date = x.Date,
                     Time = x.Time,
                     Status = x.Status

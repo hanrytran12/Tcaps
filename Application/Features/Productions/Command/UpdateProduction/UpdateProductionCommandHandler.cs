@@ -44,7 +44,8 @@ namespace Application.Features.Productions.Command.UpdateProduction
 
             await _mediator.Publish(new UpdateQuantityProductionEvent
             (
-                production.UserId, 
+                production.UserId,
+                production.QuantitySend,
                 request.Quantity, 
                 production.Date, 
                 production.Time, 

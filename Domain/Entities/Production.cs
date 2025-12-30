@@ -6,18 +6,19 @@ namespace Domain.Entities
     {
         public Guid AssignId { get; private set; }
         public Guid UserId { get; private set; }
-        public int Quantity { get; private set; }
+        public int QuantitySend { get; private set; }
+        public int QuantityReceive { get; private set; }
         public DateOnly Date { get; private set; }
         public TimeOnly Time { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public Guid? ReworkRequestId { get; private set; }
 
-        public Production(Guid id, Guid assignId, Guid userId, int quantity, Guid? reworkRequestId)
+        public Production(Guid id, Guid assignId, Guid userId, int quantitySend, Guid? reworkRequestId)
             : base(id)
         {
             AssignId = assignId;
             UserId = userId;
-            Quantity = quantity;
+            QuantitySend = quantitySend;
             Date = DateOnly.FromDateTime(DateTime.Now);
             Time = TimeOnly.FromDateTime(DateTime.Now);
             Status = "PendingQC";
@@ -33,36 +34,12 @@ namespace Domain.Entities
             return new Production(Guid.NewGuid(), assignId, userId, quantity, reworkRequestId);
         }
 
-        public void IncreaseQuantity()
-        {
-            Quantity += 1;
-        }
-
-        public void DecreaseQuantity()
-        {
-            if (Quantity <= 0)
-                throw new InvalidOperationException("Quantity cannot be negative.");
-
-            Quantity -= 1;
-        }
-
         public void SetQuantity(int newQuantity)
         {
             if (newQuantity < 0)
                 throw new ArgumentException("Quantity cannot be negative.");
 
-            Quantity = newQuantity;
-        }
-
-        public void ReduceQuantity(int quantityError)
-        {
-            if (quantityError <= 0)
-                return;
-
-            if (Quantity < quantityError)
-                throw new InvalidOperationException("Không thể giảm số lượng vượt quá số lượng hiện tại.");
-
-            Quantity -= quantityError;
+            QuantityReceive = newQuantity;
         }
 
         public void MarkAsCompleted()

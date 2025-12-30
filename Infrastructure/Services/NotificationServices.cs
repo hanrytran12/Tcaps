@@ -569,7 +569,7 @@ namespace Infrastructure.Services
             var batch = await _batchRepository.GetByIdAsync(batchId);
 
             var title = "Lô hàng hoàn thành";
-            var message = $"Lô hàng với mã lô {batch.Code} đã hoàn thành với số lượng đạt là {quantityComplete} và số lượng lỗi là {quantityError}.";
+            var message = $"Lô hàng với mã lô {batch.Code} đã hoàn thành với số lượng đạt là {(int)quantityComplete} và số lượng lỗi là {(int)quantityError}.";
             var type = "FinalTransferRequest";
 
             var notification = Notification.Create(admin.Id, title, message, type);
@@ -583,7 +583,7 @@ namespace Infrastructure.Services
             if (qc is null) return;
 
             var title = "Cập nhật số lượng yêu cầu làm lại";
-            var message = $"Lead đã cập nhật số lượng yêu cầu làm lại vì phát hiện thêm {quantityReject} lỗi của lô hàng {batchCode}.";
+            var message = $"Lead đã cập nhật số lượng yêu cầu làm lại vì phát hiện thêm {(int)quantityReject} lỗi của lô hàng {batchCode}.";
             var type = "AssignmentTransferRequest";
 
             var notification = Notification.Create(qc.Id, title, message, type);
@@ -612,7 +612,7 @@ namespace Infrastructure.Services
             if (admin is null) return;
 
             var title = "Admin tạo lô hàng";
-            var message = $"Lô hàng {batchCode} mới được tạo với số lượng yêu cầu là {quantity}.";
+            var message = $"Lô hàng {batchCode} mới được tạo với số lượng yêu cầu là {(int)quantity}.";
             var type = "Batch";
 
             var notification = Notification.Create(admin.Id, title, message, type);
@@ -620,7 +620,7 @@ namespace Infrastructure.Services
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task SendUpdateQuantityProductionNotificationAsync(Guid userId, decimal quantity, DateOnly date, TimeOnly time, string batchCode)
+        public async Task SendUpdateQuantityProductionNotificationAsync(Guid userId, decimal quantitySend, decimal quantityReceive, DateOnly date, TimeOnly time, string batchCode)
         {
             var staff = await _userRepository.GetByIdAsync(userId);
             if (staff is null) return;
@@ -628,7 +628,8 @@ namespace Infrastructure.Services
             var title = "Cập nhật sản lượng";
             var message =
                 $"Sản lượng của lô {batchCode} đã được cập nhật.\n" +
-                $"Số lượng: {quantity}\n" +
+                $"Số lượng bạn gửi: {(int)quantitySend}\n" +
+                $"Số lượng QC đã kiểm tra: {(int)quantityReceive}\n" +
                 $"Của sản phẩm có thời gian nộp: {date:dd/MM/yyyy} và giờ nộp: {time:HH:mm}.";
             var type = "Production";
 
@@ -643,7 +644,7 @@ namespace Infrastructure.Services
             if (qcgaccong is null) return;
 
             var title = "Kiểm tra cuối cùng";
-            var message = $"QC của xưởng {workshopName} vừa nộp {quantitySend} sản phẩm thuộc lô hàng {batchCode}. Xin lòng kiểm tra.";
+            var message = $"QC của xưởng {workshopName} vừa nộp {(int)quantitySend} sản phẩm thuộc lô hàng {batchCode}. Xin lòng kiểm tra.";
             var type = "FinalTransferRequest";
 
             var notification = Notification.Create(qcgaccong.Id, title, message, type);
@@ -661,7 +662,7 @@ namespace Infrastructure.Services
             if (staff is null || qc is null) return;
 
             var title = "Nộp sản phẩm";
-            var message = $"Nhân viên {staff.FullName} vừa nộp {quantity} sản phẩm của lô hàng {batch.Code} cho QC đánh giá.";
+            var message = $"Nhân viên {staff.FullName} vừa nộp {(int)quantity} sản phẩm của lô hàng {batch.Code} cho QC đánh giá.";
             var type = "Production";
 
             var notification = Notification.Create(qc.Id, title, message, type);
@@ -677,7 +678,7 @@ namespace Infrastructure.Services
             var material = await _materialRepository.GetByIdAsync(materialId);
 
             var title = "Duyệt yêu cầu cung cấp vật liệu cho QC vận chuyển.";
-            var message = $"Vật liệu {material?.Name} được gửi với số lượng {quantitySend}, ngày giao {dateShip}.";
+            var message = $"Vật liệu {material?.Name} được gửi với số lượng {(int)quantitySend}, ngày giao {dateShip}.";
             var type = "MaterialSupply";
 
             var notification = Notification.Create(admin.Id, title, message, type);
@@ -699,7 +700,7 @@ namespace Infrastructure.Services
             if (!staff.Any()) return;
 
             var title = "Xác nhận nhận vật liệu";
-            var message = $"QC đã tiếp nhận NVL giao xuống với số lượng {quantity} của lô hàng {batch.Code}." +
+            var message = $"QC đã tiếp nhận NVL giao xuống với số lượng {(int)quantity} của lô hàng {batch.Code}." +
                 $"Nhân viên có thể bắt đầu làm việc.";
             var type = "MaterialRequest";
 

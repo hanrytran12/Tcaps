@@ -21,7 +21,8 @@ namespace Application.Features.Productions.Events
         {
             await _notificationService.SendUpdateQuantityProductionNotificationAsync(
                 notification.UserId,
-                notification.Quantity,
+                notification.QuantitySend,
+                notification.QuantityReceive,
                 notification.Date,
                 notification.Time,
                 notification.BatchCode);
