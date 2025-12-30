@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251230054545_Init")]
+    [Migration("20251230124238_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -608,7 +608,10 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("date");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("QuantityReceive")
+                        .HasColumnType("int");
+
+                    b.Property<int>("QuantitySend")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("ReworkRequestId")
