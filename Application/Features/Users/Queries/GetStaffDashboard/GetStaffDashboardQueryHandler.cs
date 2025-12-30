@@ -37,7 +37,9 @@ namespace Application.Features.Users.Queries.GetStaffDashboard
                                                         .Where(p => p.AssignId == currentAssignment.Id
                                                         && p.UserId == user.Id
                                                         && p.Date == today)
-                                                        .SumAsync(p => p.Quantity);
+                                                        .SumAsync(p => p.QuantityReceive > 0
+                                                                    ? p.QuantityReceive 
+                                                                    : p.QuantitySend);
 
             var dashboard = new StaffDashboardDTO
             {
