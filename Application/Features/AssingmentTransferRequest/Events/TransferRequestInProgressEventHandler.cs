@@ -50,13 +50,11 @@ namespace Application.Features.AssingmentTransferRequest.Events
                 .FirstOrDefaultAsync(rr => rr.AssignmentId == notification.AssignmentId, cancellationToken);
             if (reworkRequest is null)
             {
-                throw new NotFoundException("Không tìm thấy yêu cầu làm lại");
-            }
-
-            reworkRequest.UpdateDefectiveQuantity(
+                reworkRequest.UpdateDefectiveQuantity(
                 notification.QuantityReject,
                 asignmentTransferRequest.UserId,
                 batch.Code);
+            }
 
             var currentStepOrder = assignment.StepOrder;
             var nextAssigment = await _appDbContext.Assignments.Where(a => a.StepOrder > currentStepOrder && a.BatchId == assignment.BatchId).OrderBy(a => a.StepOrder).FirstOrDefaultAsync();
