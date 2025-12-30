@@ -23,13 +23,13 @@ namespace Application.Features.Incomes.Queries.GetTotalIncomeExpected
                                 production.Date == today
                          select new
                          {
-                             production.QuantityReceive,
+                             production.QuantitySend,
                              assign.UnitPrice
                          };
 
-            var totalQuantity = result.Sum(x => x.QuantityReceive);
+            var totalQuantity = result.Sum(x => x.QuantitySend);
 
-            var totalIncomeExpected = result.Sum(x => x.QuantityReceive * x.UnitPrice);
+            var totalIncomeExpected = result.Sum(x => x.QuantitySend * x.UnitPrice);
 
             var dto = new IncomeExpectedDTO
             {
