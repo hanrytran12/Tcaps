@@ -26,7 +26,9 @@ namespace Domain.Entities
         public IReadOnlyCollection<Evaluate> Evaluates => _evaluates.AsReadOnly();
 
         private readonly List<Production> _productions = new();
-        public IReadOnlyCollection<Production> Productions => _productions.AsReadOnly();
+        public Product Product { get; private set; }
+
+        public ICollection<Product> Products { get; private set; } = new List<Product>();
 
         //private readonly List<MaterialUse> _materialUses = new();
         //public IReadOnlyCollection<MaterialUse> Materials => _materialUses.AsReadOnly();

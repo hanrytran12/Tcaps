@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251229060438_Init")]
+    [Migration("20251230054545_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -31,7 +31,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BatchId")
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("BatchId");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -71,7 +72,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("BatchId");
 
-                    b.ToTable("Assignments");
+                    b.ToTable("Assignments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.AssignmentTransferRequest", b =>
@@ -117,7 +118,8 @@ namespace Infrastructure.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("Id");
 
                     b.Property<decimal>("ActualQuantity")
                         .HasColumnType("decimal(18,2)");
@@ -156,7 +158,9 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Batches");
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Batches", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Entities.ComponentDefect", b =>
@@ -560,6 +564,9 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("BatchId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -584,6 +591,8 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BatchId");
+
                     b.ToTable("Products");
                 });
 
@@ -594,9 +603,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("AssignId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("BatchId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Date")
@@ -619,8 +625,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BatchId");
 
                     b.HasIndex("UserId");
 
@@ -809,11 +813,24 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Assignment", b =>
                 {
-                    b.HasOne("Domain.Entities.Batch", null)
+                    b.HasOne("Domain.Entities.Batch", "Batch")
                         .WithMany("Assignments")
                         .HasForeignKey("BatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Batch");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Batch", b =>
+                {
+                    b.HasOne("Domain.Entities.Product", "Product")
+                        .WithMany("Batches")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Domain.Entities.ComponentDefect", b =>
@@ -841,12 +858,15 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Domain.Entities.Production", b =>
+            modelBuilder.Entity("Domain.Entities.Product", b =>
                 {
                     b.HasOne("Domain.Entities.Batch", null)
-                        .WithMany("Productions")
+                        .WithMany("Products")
                         .HasForeignKey("BatchId");
+                });
 
+            modelBuilder.Entity("Domain.Entities.Production", b =>
+                {
                     b.HasOne("Domain.Entities.User", null)
                         .WithMany("Productions")
                         .HasForeignKey("UserId")
@@ -862,12 +882,17 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("MaterialUses");
 
-                    b.Navigation("Productions");
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("Domain.Entities.Evaluate", b =>
                 {
                     b.Navigation("ComponentDefects");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Batches");
                 });
 
             modelBuilder.Entity("Domain.Entities.User", b =>
