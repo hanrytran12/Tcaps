@@ -48,7 +48,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
             var reworkRequest = await _appDbContext.ReworkRequests
                 .FirstOrDefaultAsync(rr => rr.AssignmentId == notification.AssignmentId, cancellationToken);
-            if (reworkRequest is null)
+            if (reworkRequest is not null)
             {
                 reworkRequest.UpdateDefectiveQuantity(
                 notification.QuantityReject,
