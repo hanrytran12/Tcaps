@@ -63,7 +63,8 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequest
                                             Type = mr.Type,
                                             NoteFromQC = mr.NoteFromQC,
                                             ActualReceivedQuantity = mr.ActualReceivedQuantity,
-                                            QuantityFromStock = mr.QuantityFromStock
+                                            QuantityFromStock = mr.QuantityFromStock,
+                                            ExpectedDeliveryDate = a.ExpectedDeliveryDate
                                         };
 
             return Result<List<MaterialRequestDTO>>.Success(materialRequestsQuery.ToList());
