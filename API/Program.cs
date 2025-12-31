@@ -150,18 +150,17 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 
-long limitSize = 10485760;
+long limitSize = 20971520;
 
 builder.Services.Configure<FormOptions>(o =>
 {
     o.ValueLengthLimit = int.MaxValue;
-    o.MultipartBodyLengthLimit = limitSize; // Giới hạn 10MB cho Form
+    o.MultipartBodyLengthLimit = limitSize;
     o.MemoryBufferThreshold = int.MaxValue;
 });
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    // Giới hạn 10MB cho Server Kestrel
     serverOptions.Limits.MaxRequestBodySize = limitSize;
 });
 
