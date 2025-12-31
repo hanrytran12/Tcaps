@@ -1,7 +1,6 @@
 ﻿using API.Hubs;
 using API.Middlewares;
 using Application;
-using FluentValidation;
 using DotNetEnv;
 using Infrastructure;
 using Infrastructure.Persistence;
@@ -151,16 +150,19 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 
+long limitSize = 10485760;
+
 builder.Services.Configure<FormOptions>(o =>
 {
     o.ValueLengthLimit = int.MaxValue;
-    o.MultipartBodyLengthLimit = 104857600; // 100MB
+    o.MultipartBodyLengthLimit = limitSize; // Giới hạn 10MB cho Form
     o.MemoryBufferThreshold = int.MaxValue;
 });
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    serverOptions.Limits.MaxRequestBodySize = 104857600; // 100MB
+    // Giới hạn 10MB cho Server Kestrel
+    serverOptions.Limits.MaxRequestBodySize = limitSize;
 });
 
 var app = builder.Build();
