@@ -44,7 +44,8 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                 from u in leadGroup.DefaultIfEmpty()
 
                 join ttr in _context.AssignmentTransferRequests.AsNoTracking()
-                    on a.Id equals ttr.AssignmentId
+                    on a.Id equals ttr.AssignmentId into ttrGroup
+                from ttr in ttrGroup.DefaultIfEmpty()
 
                 select new BatchForQCDTO
                 {
@@ -73,7 +74,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                         UnitPrice = a.UnitPrice,
                         Status = a.Status,
                         CreatedAt = a.CreatedAt,
-                        CompletedQuantitySend = (a.StepOrder == null) ? ttr.CompletedQuantitySend : null,
+                        CompletedQuantitySend = (a.StepOrder == null && ttr != null) ? ttr.CompletedQuantitySend : null,
                     }
                 }
             )
