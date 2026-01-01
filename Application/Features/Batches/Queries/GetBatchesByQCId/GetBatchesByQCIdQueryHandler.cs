@@ -43,6 +43,9 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                     on b.UserId equals u.Id into leadGroup
                 from u in leadGroup.DefaultIfEmpty()
 
+                join ttr in _context.AssignmentTransferRequests.AsNoTracking()
+                    on a.Id equals ttr.AssignmentId
+
                 select new BatchForQCDTO
                 {
                     Id = b.Id,
@@ -69,7 +72,8 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                         EndDate = a.EndDate,
                         UnitPrice = a.UnitPrice,
                         Status = a.Status,
-                        CreatedAt = a.CreatedAt
+                        CreatedAt = a.CreatedAt,
+                        CompletedQuantitySend = (a.StepOrder == null) ? ttr.CompletedQuantitySend : null,
                     }
                 }
             )
