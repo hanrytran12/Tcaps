@@ -11,6 +11,7 @@
         public DateOnly EndDate { get; set; }
         public decimal UnitPrice { get; set; }
         public string Status { get; set; } = string.Empty;
+        public decimal? CompletedQuantitySend { get; set; }
         public DateTime CreatedAt { get; set; }
     }
 }
