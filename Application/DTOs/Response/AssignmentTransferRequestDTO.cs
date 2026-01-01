@@ -9,6 +9,7 @@
         public Guid? ReworkRequestId { get; set; }
         public string BatchCode { get; set; } = string.Empty;
         public string ProductCode { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
         public string WorkshopName { get; set; } = string.Empty;
         public string UserName { get; set; } = string.Empty;
         public decimal CompletedQuantitySend { get; set; }

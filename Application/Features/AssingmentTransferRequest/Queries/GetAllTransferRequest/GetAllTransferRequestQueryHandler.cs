@@ -33,6 +33,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                             UserName = u.FullName,
                             BatchCode = b.Code,
                             ProductCode = p.Code,
+                            ProductName = p.Name,
                             WorkshopName = w.Name,
                             CompletedQuantitySend = tr.CompletedQuantitySend,
                             CompletedQuantityReceive = tr.CompletedQuantityReceive,
