@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Response;
 using Application.Features.Auth.Queries;
 using Application.Interfaces;
+using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,13 @@ namespace API.Controllers
     {
         private readonly IMediator _mediator;
         private readonly IEmailService _emailService;
+        private readonly IUserRepository _userRepository;
 
-        public AuthController(IMediator mediator, IEmailService emailService)
+        public AuthController(IMediator mediator, IEmailService emailService, IUserRepository userRepository)
         {
             _mediator = mediator;
             _emailService = emailService;
+            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -32,6 +35,11 @@ namespace API.Controllers
             // 1. Kiểm tra email có tồn tại trong DB không
             // var user = await _userService.FindByEmailAsync(request.Email);
             // if (user == null) return NotFound("Email không tồn tại");
+            var user = await _userRepository.GetByEmailAsync(request.Email);
+            if (user is null)
+            {
+                return NotFound("Email không tồn tại");
+            }
 
             // 2. Tạo mã OTP (ví dụ 6 số)
             string otpCode = new Random().Next(100000, 999999).ToString();
@@ -41,7 +49,7 @@ namespace API.Controllers
 
             // 4. Gửi Email qua Brevo
             // Giả sử tên user là "Nguyen Van A"
-            bool isSent = await _emailService.SendOtplEmailAsync(request.Email, "Trần Hoàng Huy", otpCode);
+            bool isSent = await _emailService.SendOtplEmailAsync(request.Email, user.FullName, otpCode);
 
             if (isSent)
             {

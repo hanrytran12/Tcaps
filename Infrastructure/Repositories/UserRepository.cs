@@ -52,6 +52,11 @@ namespace Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<User?> GetByEmailAsync(string email)
+        {
+            return await _context.Users.FirstOrDefaultAsync(p => p.Email == email);
+        }
+
         public async Task<User?> GetByIdAsync(Guid id)
         {
             return await _context.Users.FirstOrDefaultAsync(p => p.Id == id);
