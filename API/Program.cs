@@ -1,7 +1,6 @@
 ﻿using API.Hubs;
 using API.Middlewares;
 using Application;
-using FluentValidation;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

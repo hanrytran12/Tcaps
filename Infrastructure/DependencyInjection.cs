@@ -1,4 +1,5 @@
 ﻿using Application.Common.Behaviors;
+using Application.DTOs.Request;
 using Application.Interfaces;
 using Azure.Storage.Blobs;
 using Domain.Interfaces;
@@ -66,6 +67,10 @@ namespace Infrastructure
             services.AddScoped<IReworkRequestRepository, ReworkRequestRepository>();
             services.AddScoped<IMaterialSupplyRepository, MaterialSupplyRepository>();
             services.AddScoped<IFinalTransferRequestRepository, FinalTransferRequestRepository>();
+
+            services.Configure<BrevoSettingsDTO>(configuration.GetSection("BrevoSettings"));
+
+            services.AddHttpClient<IEmailService, EmailService>();
 
             return services;
         }
