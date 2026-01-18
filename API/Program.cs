@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
@@ -128,6 +129,20 @@ builder.Services.AddProblemDetails();
 
 var redisConnection = builder.Configuration.GetConnectionString("RedisConnection");
 
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("OtpPolicy", context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.Connection.RemoteIpAddress?.ToString(),
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 1,
+                Window = TimeSpan.FromMinutes(5),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+});
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redisConnection;
@@ -167,5 +182,6 @@ app.UseAuthorization();
 app.UseExceptionHandler();
 app.MapControllers();
 app.MapHub<NotificationHub>("/notificationHub");
+app.UseRateLimiter();
 
 app.Run();

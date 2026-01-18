@@ -6,6 +6,7 @@ using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace API.Controllers
 {
@@ -77,6 +78,7 @@ namespace API.Controllers
         }
 
         [HttpPost("reset-password")]
+        [EnableRateLimiting("OtpPolicy")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO request)
         {
             string? userEmail = await _otpService.GetEmailByResetTokenAsync(request.Token);
