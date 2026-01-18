@@ -40,5 +40,29 @@ namespace Infrastructure.Services
 
             return false;
         }
+
+        public async Task<string> CreateResetTokenAsync(string email)
+        {
+            string token = Guid.NewGuid().ToString();
+
+            await _distributedCache.SetStringAsync($"reset_token:{token}", email, new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(15)
+            });
+
+            return token;
+        }
+
+        public async Task<string?> GetEmailByResetTokenAsync(string token)
+        {
+            var key = $"reset_token:{token}";
+            return await _distributedCache.GetStringAsync(key);
+        }
+
+        public async Task RevokeResetTokenAsync(string token)
+        {
+            var key = $"reset_token:{token}";
+            await _distributedCache.RemoveAsync(key);
+        }
     }
 }

@@ -67,7 +67,35 @@ namespace API.Controllers
                 return BadRequest("Mã OTP không đúng hoặc đã hết hạn.");
             }
 
-            return Ok("Xác thực thành công.");
+            string resetToken = await _otpService.CreateResetTokenAsync(request.Email);
+
+            return Ok(new
+            {
+                message = "Xác thực thành công.",
+                token = resetToken
+            });
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO request)
+        {
+            string? userEmail = await _otpService.GetEmailByResetTokenAsync(request.Token);
+
+            if (userEmail == null)
+            {
+                return BadRequest("Phiên đổi mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng thử lại từ đầu.");
+            }
+
+            await _mediator.Send(new Application.Features.Auth.Commands.ResetPassword.ResetPasswordCommand
+            {
+                Email = userEmail,
+                NewPassword = request.NewPassword,
+                ConfirmPassword = request.ConfirmPassword
+            });
+
+            await _otpService.RevokeResetTokenAsync(request.Token);
+
+            return Ok(new { message = "Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại." });
         }
     }
 }
