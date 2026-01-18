@@ -43,6 +43,7 @@ namespace Infrastructure
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<INotificationService, NotificationServices>();
             services.AddScoped<INotificationRealtimeService, SignalRNotificationService>();
+            services.AddScoped<IOtpService, OtpService>();
 
             // Đăng ký Repositories 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

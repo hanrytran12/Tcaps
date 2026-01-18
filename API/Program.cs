@@ -126,6 +126,14 @@ builder.Services.AddSignalR();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
+var redisConnection = builder.Configuration.GetConnectionString("RedisConnection");
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConnection;
+    options.InstanceName = "Tcaps_";
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())

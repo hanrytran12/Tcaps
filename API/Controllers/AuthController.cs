@@ -1,4 +1,5 @@
-﻿using Application.DTOs.Response;
+﻿using Application.DTOs.Request;
+using Application.DTOs.Response;
 using Application.Features.Auth.Queries;
 using Application.Interfaces;
 using Domain.Interfaces;
@@ -15,12 +16,14 @@ namespace API.Controllers
         private readonly IMediator _mediator;
         private readonly IEmailService _emailService;
         private readonly IUserRepository _userRepository;
+        private readonly IOtpService _otpService;
 
-        public AuthController(IMediator mediator, IEmailService emailService, IUserRepository userRepository)
+        public AuthController(IMediator mediator, IEmailService emailService, IUserRepository userRepository, IOtpService otpService)
         {
             _mediator = mediator;
             _emailService = emailService;
             _userRepository = userRepository;
+            _otpService = otpService;
         }
 
         [HttpGet]
@@ -32,23 +35,16 @@ namespace API.Controllers
         [HttpPost("forgot-password")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-            // 1. Kiểm tra email có tồn tại trong DB không
-            // var user = await _userService.FindByEmailAsync(request.Email);
-            // if (user == null) return NotFound("Email không tồn tại");
             var user = await _userRepository.GetByEmailAsync(request.Email);
             if (user is null)
             {
                 return NotFound("Email không tồn tại");
             }
 
-            // 2. Tạo mã OTP (ví dụ 6 số)
             string otpCode = new Random().Next(100000, 999999).ToString();
 
-            // 3. Lưu OTP vào Cache/DB (Code này bạn tự xử lý logic lưu nhé)
-            // await _otpService.SaveOtpAsync(request.Email, otpCode);
+            await _otpService.SaveOtpAsync(request.Email, otpCode);
 
-            // 4. Gửi Email qua Brevo
-            // Giả sử tên user là "Nguyen Van A"
             bool isSent = await _emailService.SendOtplEmailAsync(request.Email, user.FullName, otpCode);
 
             if (isSent)
@@ -59,6 +55,19 @@ namespace API.Controllers
             {
                 return StatusCode(500, "Có lỗi xảy ra khi gửi email.");
             }
+        }
+
+        [HttpPost("verify-otp")]
+        public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequestDTO request)
+        {
+            bool isValid = await _otpService.VerifyOtpAsync(request.Email, request.OtpCode);
+
+            if (!isValid)
+            {
+                return BadRequest("Mã OTP không đúng hoặc đã hết hạn.");
+            }
+
+            return Ok("Xác thực thành công.");
         }
     }
 }
