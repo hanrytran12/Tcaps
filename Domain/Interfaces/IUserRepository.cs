@@ -21,5 +21,6 @@ namespace Domain.Interfaces
         Task<IEnumerable<User>> GetAllQCTransportAsync();
         Task<List<User>> GetQcsByWorkshopIdsAsync(List<Guid> workshopId);
         Task<IEnumerable<User>> GetLeadsAsync();
+        Task<User?> GetByEmailAsync(string email);
     }
 }
