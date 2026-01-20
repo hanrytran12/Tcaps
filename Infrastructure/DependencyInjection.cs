@@ -1,4 +1,5 @@
 ﻿using Application.Common.Behaviors;
+using Application.DTOs.Request;
 using Application.Interfaces;
 using Azure.Storage.Blobs;
 using Domain.Interfaces;
@@ -42,6 +43,7 @@ namespace Infrastructure
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<INotificationService, NotificationServices>();
             services.AddScoped<INotificationRealtimeService, SignalRNotificationService>();
+            services.AddScoped<IOtpService, OtpService>();
 
             // Đăng ký Repositories 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
@@ -66,6 +68,10 @@ namespace Infrastructure
             services.AddScoped<IReworkRequestRepository, ReworkRequestRepository>();
             services.AddScoped<IMaterialSupplyRepository, MaterialSupplyRepository>();
             services.AddScoped<IFinalTransferRequestRepository, FinalTransferRequestRepository>();
+
+            services.Configure<BrevoSettingsDTO>(configuration.GetSection("BrevoSettings"));
+
+            services.AddHttpClient<IEmailService, EmailService>();
 
             return services;
         }
