@@ -74,6 +74,11 @@ namespace Domain.Entities
             PasswordHash = newPasswordHash;
         }
 
+        public void SetPassword(string newPasswordHash)
+        {
+            PasswordHash = newPasswordHash;
+        }
+
         public void MarkAsQcTransport()
         {
             IsQcTransport = true;
