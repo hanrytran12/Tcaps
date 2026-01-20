@@ -4,6 +4,7 @@ services:
   tcaps:
     image: hanryhuy/tcaps:latest
     container_name: tcaps
+    restart: always
     ports:
       - "5000:5000"
       - "5001:5001"
@@ -11,10 +12,17 @@ services:
       - .env
     depends_on:
       - tcapdb
+      - tcaps_redis
     networks:
       - tcap
     environment:
       - TZ=Asia/Ho_Chi_Minh
+
+      - BrevoSettings__ApiKey=${BREVO_API_KEY}
+      - BrevoSettings__SenderName=${BREVO_SENDER_NAME}
+      - BrevoSettings__SenderEmail=${BREVO_SENDER_EMAIL}
+
+      - ConnectionStrings__RedisConnection=tcaps_redis:6379,password=${REDIS_PASSWORD}
 
   tcapdb:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -31,8 +39,25 @@ services:
       - TZ=Asia/Ho_Chi_Minh
       - ACCEPT_EULA=Y
 
+  tcaps_redis:
+    image: redis:alpine
+    container_name: tcaps_redis
+    restart: always
+    env_file:
+      - .env
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - tcap
+    environment:
+      - TZ=Asia/Ho_Chi_Minh
+
 volumes:
   tcapdbdata:
+  redisdata:
 
 
 networks:
