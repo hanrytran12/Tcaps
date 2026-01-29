@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Response;
+using Domain.Events;
 
 namespace Application.Interfaces
 {
@@ -37,5 +38,6 @@ namespace Application.Interfaces
         Task SendProductionReportNotificationAsync(Guid assignId, Guid staffId, decimal quantity);
         Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateOnly dateShip);
         Task SendNotificationForStaffNotificationAsync(Guid userId, Guid batchId, decimal? quantity);
+        Task SendAssignmentsPlannedNotificationAsync(List<AssignmentsInfo> assignments, string batchCode);
     }
 }

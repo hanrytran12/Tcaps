@@ -4,6 +4,7 @@ using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using System.Data;
@@ -725,6 +726,57 @@ namespace Infrastructure.Services
             }
 
             await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task SendAssignmentsPlannedNotificationAsync(List<AssignmentsInfo> assignments, string batchCode)
+        {
+            var workshopIds = assignments.Select(a => a.WorkshopId).ToList();
+            var workshops = await _workshopRepository.GetByIdsAsync(workshopIds);
+            var qcUsers = await _userRepository.GetQcsByWorkshopIdsAsync(workshopIds);
+
+            var notificationsToSend = new List<Notification>();
+
+            foreach (var assignmentInfo in assignments)
+            {
+                var workshop = workshops.FirstOrDefault(w => w.Id == assignmentInfo.WorkshopId);
+                var qc = qcUsers.FirstOrDefault(u => u.WorkshopId == assignmentInfo.WorkshopId);
+
+                if (qc is null || workshop is null) continue;
+
+                var title = "Kế hoạch sản xuất mới";
+                var message = string.Empty;
+
+                if (assignmentInfo.ExpectedDeliveryDate.HasValue)
+                {
+                    string formattedDate = assignmentInfo.ExpectedDeliveryDate.Value.ToString("dd/MM/yyyy");
+                    message = $"Xưởng của bạn ({workshop.Name}) vừa được phân công cho lô hàng {batchCode}. " +
+                              $"Dự kiến nguyên vật liệu sẽ được giao vào ngày {formattedDate}.";
+                }
+                else
+                {
+                    message = $"Xưởng của bạn ({workshop.Name}) vừa được phân công cho lô hàng {batchCode}. " +
+                              $"Vui lòng kiểm tra kế hoạch và chuẩn bị nhân lực.";
+                }
+
+                var noti = Notification.Create(qc.Id, title, message, "NEW_ASSIGNMENT");
+
+                await _notificationRepository.AddAsync(noti);
+                notificationsToSend.Add(noti);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            foreach (var noti in notificationsToSend)
+            {
+                await _hubContext.Clients.User(noti.UserId.ToString()).SendAsync("ReceiveNotification", new
+                {
+                    Id = noti.Id,
+                    Title = noti.Title,
+                    Message = noti.Message,
+                    Type = noti.Type,
+                    CreatedAt = DateTime.Now
+                });
+            }
         }
     }
 }
