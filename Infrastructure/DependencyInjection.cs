@@ -3,6 +3,7 @@ using Application.DTOs.Request;
 using Application.Interfaces;
 using Azure.Storage.Blobs;
 using Domain.Interfaces;
+using Infrastructure.BackgroundServices;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -34,7 +35,7 @@ namespace Infrastructure
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
             // Đăng ký Background Service
-            //services.AddHostedService<DeadlineCheckerService>();
+            services.AddHostedService<DeadlineCheckerService>();
 
             // Đăng ký các Service của Infrastructure
             services.AddScoped<IFileStorageService, AzureBlobStorageService>();
