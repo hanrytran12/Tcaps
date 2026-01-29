@@ -1,9 +1,11 @@
-﻿using Application.Common.Exceptions;
+﻿using API.Hubs;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using System.Data;
 
 namespace Infrastructure.Services
@@ -26,11 +28,13 @@ namespace Infrastructure.Services
         private readonly IEvaluateRepository _evaluateRepository;
         private readonly ResponseDTO _responseDTO;
 
+        private readonly IHubContext<NotificationHub> _hubContext;
+
         public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
             , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository,
             IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository, IComponentDefectRepository componentDefectRepository,
             IMaterialRequestRepository materialRequestRepository, IAssignmentRepository assignmentRepository,
-            IMaterialSupplyRepository materialSupplyRepository)
+            IMaterialSupplyRepository materialSupplyRepository, IHubContext<NotificationHub> hubContext)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -47,6 +51,7 @@ namespace Infrastructure.Services
             _incomeRepository = incomeRepository;
             _evaluateRepository = evaluateRepository;
             _responseDTO = new ResponseDTO();
+            _hubContext = hubContext;
         }
 
         public async Task<ResponseDTO> MarkAsReadAsync(Guid notificationId)
@@ -119,7 +124,7 @@ namespace Infrastructure.Services
 
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
-                _responseDTO.Data = new 
+                _responseDTO.Data = new
                 {
                     Items = dto,
                     notifications.TotalCount,
@@ -559,6 +564,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.Group(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task ApproveFinalTransferRequestNotificationAsync(Guid batchId, decimal quantityComplete, decimal quantityError)
