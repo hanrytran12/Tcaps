@@ -628,6 +628,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendAddBatchForAdminNotificationAsync(string batchCode, decimal quantity)
