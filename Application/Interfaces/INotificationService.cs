@@ -39,5 +39,6 @@ namespace Application.Interfaces
         Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateOnly dateShip);
         Task SendNotificationForStaffNotificationAsync(Guid userId, Guid batchId, decimal? quantity);
         Task SendAssignmentsPlannedNotificationAsync(List<AssignmentsInfo> assignments, string batchCode);
+        Task SendTransferRequestNotificationAsync(Guid userId, Guid assignmentId);
     }
 }
