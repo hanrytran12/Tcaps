@@ -7,6 +7,7 @@ using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace Infrastructure.Services
@@ -27,6 +28,7 @@ namespace Infrastructure.Services
         private readonly IProductionRepository _productionRepository;
         private readonly IIncomeRepository _incomeRepository;
         private readonly IEvaluateRepository _evaluateRepository;
+        private readonly IAppDbContext _context;
         private readonly ResponseDTO _responseDTO;
 
         private readonly IHubContext<NotificationHub> _hubContext;
@@ -35,7 +37,7 @@ namespace Infrastructure.Services
             , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository,
             IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository, IComponentDefectRepository componentDefectRepository,
             IMaterialRequestRepository materialRequestRepository, IAssignmentRepository assignmentRepository,
-            IMaterialSupplyRepository materialSupplyRepository, IHubContext<NotificationHub> hubContext)
+            IMaterialSupplyRepository materialSupplyRepository, IHubContext<NotificationHub> hubContext, IAppDbContext context)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -53,6 +55,7 @@ namespace Infrastructure.Services
             _evaluateRepository = evaluateRepository;
             _responseDTO = new ResponseDTO();
             _hubContext = hubContext;
+            _context = context;
         }
 
         public async Task<ResponseDTO> MarkAsReadAsync(Guid notificationId)
@@ -371,6 +374,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qcTransport.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.Group(qcTransport.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendCreateMaterialRequestNotificationAsync(Guid qcId, Guid batchId, Guid assignId)
@@ -804,6 +816,34 @@ namespace Infrastructure.Services
                     CreatedAt = DateTime.Now
                 });
             }
+        }
+
+        public async Task SendTransferRequestNotificationAsync(Guid userId, Guid assignmentId)
+        {
+            var userQc = await _userRepository.GetByIdAsync(userId);
+            var workshop = await _workshopRepository.GetByIdAsync(userQc.WorkshopId);
+            var user = await (from a in _context.Assignments
+                              join b in _context.Batches on a.BatchId equals b.Id
+                              join u in _context.Users on b.UserId equals u.Id
+                              where a.Id == assignmentId
+                              select u)
+                              .FirstOrDefaultAsync();
+
+            var title = "Yêu cầu duyệt chuyển giao mới";
+            var message = $"QC {userQc.FullName} ở xưởng {workshop.Name} vừa gửi một yêu cầu duyệt công đoạn. Vui lòng kiểm tra.";
+            var type = "TRANSFER_REQUEST";
+
+            var noti = Notification.Create(user.Id, title, message, type);
+            await _notificationRepository.AddAsync(noti);
+
+            await _hubContext.Clients.User(user.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = noti.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
     }
 }
