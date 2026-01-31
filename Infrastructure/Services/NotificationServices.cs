@@ -324,6 +324,15 @@ namespace Infrastructure.Services
 
             var notification = Notification.Create(users.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _hubContext.Clients.User(users.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive)
@@ -852,6 +861,46 @@ namespace Infrastructure.Services
             await _hubContext.Clients.User(user.Id.ToString()).SendAsync("RefreshDashboard", new
             {
                 RequestId = requestId
+            });
+        }
+
+        public async Task SendIncomingMaterialNotificationAsync(decimal quantity, Guid assignmentId, string materialName, string unitMaterial)
+        {
+            var query = from a in _context.Assignments
+                        where a.Id == assignmentId
+                        join u in _context.Users on a.WorkshopId equals u.WorkshopId
+                        where u.Role == "QC"
+                        join b in _context.Batches on a.BatchId equals b.Id
+                        select new { a, b.Code, u.Id };
+
+            var queryInfo = await query.FirstOrDefaultAsync();
+
+            var assignment = queryInfo.a;
+            DateOnly? expectedDeliveryDate;
+            if (assignment.Status != "Reworking")
+            {
+                expectedDeliveryDate = assignment.ExpectedDeliveryDate;
+            }
+            else
+            {
+                var reworkRequest = await _context.ReworkRequests.Where(rr => rr.AssignmentId == assignment.Id).FirstOrDefaultAsync();
+                expectedDeliveryDate = reworkRequest?.DeliveryDate;
+            }
+
+            var type = "MATERIAL_DELIVERY_INCOMING";
+            var title = "Thông báo nhận nguyên vật liệu";
+            var message = $"Nguyên vật liệu {materialName} với số lượng {quantity} {unitMaterial} sẽ được giao tới xưởng bạn vào ngày {expectedDeliveryDate.Value.ToString("dd/MM/yyyy")} để làm sản phẩm cho lô hàng {queryInfo.Code}.";
+
+            var noti = Notification.Create(queryInfo.Id, title, message, type);
+            await _notificationRepository.AddAsync(noti);
+
+            await _hubContext.Clients.User(queryInfo.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = noti.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
             });
         }
     }

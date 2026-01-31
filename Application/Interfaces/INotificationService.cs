@@ -41,5 +41,6 @@ namespace Application.Interfaces
         Task SendAssignmentsPlannedNotificationAsync(List<AssignmentsInfo> assignments, string batchCode);
         Task SendTransferRequestNotificationAsync(Guid userId, Guid assignmentId);
         Task NotifyAdminDashboardRefreshAsync(Guid requestId);
+        Task SendIncomingMaterialNotificationAsync(decimal quantity, Guid assignmentId, string materialName, string unitMaterial);
     }
 }
