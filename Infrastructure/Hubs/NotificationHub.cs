@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace API.Hubs

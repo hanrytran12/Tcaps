@@ -1,4 +1,5 @@
 ﻿using Application.Common;
+using Application.Interfaces;
 using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
@@ -9,14 +10,13 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
     {
         private readonly ITaskTransferRequestRepository _taskTransferRequestRepository;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IMediator _mediator;
+        private readonly INotificationService _notificationService;
 
-        public CreateTaskTransferRequestCommandHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IUnitOfWork unitOfWork,
-            IMediator mediator)
+        public CreateTaskTransferRequestCommandHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IUnitOfWork unitOfWork, INotificationService notificationService)
         {
             _taskTransferRequestRepository = taskTransferRequestRepository;
             _unitOfWork = unitOfWork;
-            _mediator = mediator;
+            _notificationService = notificationService;
         }
         public async Task<Result<Guid>> Handle(CreateTaskTransferRequestCommand request, CancellationToken cancellationToken)
         {
@@ -31,6 +31,8 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
             await _taskTransferRequestRepository.AddAsync(taskTranfer);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await _notificationService.NotifyAdminDashboardRefreshAsync(taskTranfer.Id);
 
             return Result<Guid>.Success(taskTranfer.Id);
         }
