@@ -845,5 +845,14 @@ namespace Infrastructure.Services
                 CreatedAt = DateTime.Now
             });
         }
+
+        public async Task NotifyAdminDashboardRefreshAsync(Guid requestId)
+        {
+            var user = await _userRepository.GetByRoleAsync("Admin");
+            await _hubContext.Clients.User(user.Id.ToString()).SendAsync("RefreshDashboard", new
+            {
+                RequestId = requestId
+            });
+        }
     }
 }
