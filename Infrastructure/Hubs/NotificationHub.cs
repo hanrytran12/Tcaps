@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
 namespace API.Hubs
@@ -7,18 +8,24 @@ namespace API.Hubs
     {
         public override async Task OnConnectedAsync()
         {
-            var userId = Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Console.WriteLine($"🔔 SignalR Connected: UserId = {userId}");
-            if (!string.IsNullOrEmpty(userId))
-            {
-                await Groups.AddToGroupAsync(Context.ConnectionId, userId);
-                Console.WriteLine($"✅ User {userId} added to SignalR group");
-            }
-            else
-            {
-                Console.WriteLine("❌ No userId found in JWT token!");
-            }
+            // Lấy User ID từ claim "sub"
+            var userId = Context.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
+                      ?? Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            var userName = Context.User?.FindFirst("fullname")?.Value;
+            var role = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
+            Console.WriteLine($"✅ SignalR Connected:");
+            Console.WriteLine($"   - User ID: {userId}");
+            Console.WriteLine($"   - Name: {userName}");
+            Console.WriteLine($"   - Role: {role}");
+            Console.WriteLine($"   - Connection ID: {Context.ConnectionId}");
             await base.OnConnectedAsync();
+        }
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            var userId = Context.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            Console.WriteLine($"❌ SignalR Disconnected - User ID: {userId}");
+            await base.OnDisconnectedAsync(exception);
         }
     }
 }
