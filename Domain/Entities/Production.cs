@@ -24,7 +24,7 @@ namespace Domain.Entities
             Status = "PendingQC";
             ReworkRequestId = reworkRequestId;
 
-            //AddDomainEvent(new ProductionCreatedEvent(assignId, userId, quantity));
+            //AddDomainEvent(new ProductionCreatedEvent(assignId, userId, quantitySend));
         }
 
         private Production() : base(Guid.NewGuid()) { }

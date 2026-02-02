@@ -4,6 +4,8 @@ using Application;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
@@ -144,7 +146,13 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin", "Lead"));
 });
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.ClaimsIdentity.UserIdClaimType = JwtRegisteredClaimNames.Sub;
+});
+
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, Infrastructure.Hubs.CustomUserIdProvider>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
