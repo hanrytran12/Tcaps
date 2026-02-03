@@ -941,5 +941,25 @@ namespace Infrastructure.Services
                 CreatedAt = DateTime.Now
             });
         }
+
+        public async Task BroadcastContributionUpdateAsync(Guid assignId, Guid staffId, decimal quantity)
+        {
+            var assignment = await _assignmentRepository.GetByIdAsync(assignId);
+            var staff = await _userRepository.GetByIdAsync(staffId);
+
+            string groupName = $"Workshop_{assignment.WorkshopId}";
+
+            await _hubContext.Clients.Group(groupName).SendAsync("ReceiveContributionUpdate", new
+            {
+                AssignmentId = assignId,
+                BatchId = assignment.BatchId,
+                Contributor = new
+                {
+                    Id = staff.Id,
+                    Name = staff.FullName,
+                    QuantityJustDone = quantity,
+                }
+            });
+        }
     }
 }

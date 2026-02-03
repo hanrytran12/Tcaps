@@ -42,5 +42,6 @@ namespace Application.Interfaces
         Task SendTransferRequestNotificationAsync(Guid userId, Guid assignmentId);
         Task NotifyAdminDashboardRefreshAsync(Guid requestId);
         Task SendIncomingMaterialNotificationAsync(decimal quantity, Guid assignmentId, string materialName, string unitMaterial);
+        Task BroadcastContributionUpdateAsync(Guid assignId, Guid staffId, decimal quantity);
     }
 }

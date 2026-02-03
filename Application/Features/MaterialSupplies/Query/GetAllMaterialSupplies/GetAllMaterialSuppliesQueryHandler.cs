@@ -57,6 +57,20 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
             {
                 // Lead/Admin xem toàn bộ → không filter
             }
+            else if (role.Equals("Staff", StringComparison.OrdinalIgnoreCase))
+            {
+                var staffUser = await _context.Users.AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+
+                if (staffUser?.WorkshopId != null)
+                {
+                    query = query.Where(x => x.receiverUser.WorkshopId == staffUser.WorkshopId);
+                }
+                else
+                {
+                    return Result<List<MaterialSupplyDTO>>.Success(new List<MaterialSupplyDTO>());
+                }
+            }
             else
             {
                 throw new BadRequestException("Vai trò người dùng không hợp lệ.");
