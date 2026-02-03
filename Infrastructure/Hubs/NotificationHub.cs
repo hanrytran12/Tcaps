@@ -8,19 +8,32 @@ namespace API.Hubs
     {
         public override async Task OnConnectedAsync()
         {
-            // Lấy User ID từ claim "sub"
             var userId = Context.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
                       ?? Context.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             var userName = Context.User?.FindFirst("fullname")?.Value;
             var role = Context.User?.FindFirst(ClaimTypes.Role)?.Value;
+
+            var workshopId = Context.User?.FindFirst("WorkshopId")?.Value;
+
             Console.WriteLine($"✅ SignalR Connected:");
             Console.WriteLine($"   - User ID: {userId}");
-            Console.WriteLine($"   - Name: {userName}");
-            Console.WriteLine($"   - Role: {role}");
-            Console.WriteLine($"   - Connection ID: {Context.ConnectionId}");
+            Console.WriteLine($"   - Workshop ID: {workshopId ?? "None"}");
+
+            if (!string.IsNullOrEmpty(workshopId))
+            {
+                var groupName = $"Workshop_{workshopId}";
+                await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+                Console.WriteLine($"   -> Added to Group: {groupName}");
+            }
+
+            if (role == "Admin")
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, "Admins");
+            }
+
             await base.OnConnectedAsync();
         }
+
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             var userId = Context.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
