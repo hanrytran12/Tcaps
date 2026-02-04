@@ -432,6 +432,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task AdminAssignForQCTransportToTransferMaterialSupplyNotificationAsync(Guid qcTransportId, Guid requestId, Guid materialId, int quantity)
@@ -455,6 +464,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qcTransport.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qcTransport.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendAddMaterialSupplyForQcWorkshopNotification(Guid qcworkshopId, Guid requestId, Guid materialId, int quantity)
@@ -476,6 +494,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendCompletedMaterialSupplyNotificationAsync(Guid userId, Guid materialId, string batchCode, int quantity)
@@ -490,6 +517,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendQCTransportApproveMaterialSupplyNotificationAsync(Guid qcTransportId, Guid materialSupplyId)
@@ -519,6 +555,24 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationLead.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationAdmin.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendQCTransportReceptionAssignmentTransferNotificationAsync(Guid qcTransportId, Guid assignTransferRequestId, Guid assignId)
@@ -593,6 +647,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task AddBatchNotificationAsync(Guid? userId, string batchCode, decimal quantity)
@@ -794,6 +857,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendNotificationForStaffNotificationAsync(Guid userId, Guid batchId, decimal? quantity)
