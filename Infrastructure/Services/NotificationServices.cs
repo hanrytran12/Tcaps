@@ -604,6 +604,24 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationLead.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationAdmin.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendQCTransportReceptionMaterialRequestNotificationAsync(Guid qcTransportId, Guid materialRequestId, Guid assignId)
@@ -635,6 +653,24 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationLead.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationAdmin.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendConfirmRequestFromLeadNotificationAsync(Guid materialRequestId, Guid qcId)
@@ -1056,3 +1092,4 @@ namespace Infrastructure.Services
         }
     }
 }
+
