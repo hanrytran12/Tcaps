@@ -63,7 +63,7 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
                 request.MaterialId,
                 request.QuantitySend));
 
-            if (qcTransport is not null)
+            if (qcTransport.Role == "QCTransport")
             {
                 await _mediator.Publish(new AddMaterialSupplyForAdminEvent(
                     request.MaterialId,
