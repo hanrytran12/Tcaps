@@ -418,12 +418,15 @@ namespace Infrastructure.Services
 
         public async Task SendCreateMaterialRequestNotificationAsync(Guid qcId, Guid batchId, Guid assignId)
         {
-            var lead = await _userRepository.GetByRoleAsync("Lead");
             var qc = await _userRepository.GetByIdAsync(qcId);
-            if (lead is null || qc is null) return;
-
+            
             var batch = await _batchRepository.GetByIdAsync(batchId);
             var workshop = await _workshopRepository.GetByIdAsync(qc.WorkshopId);
+
+            if (batch.UserId is null) return;
+
+            var lead = await _userRepository.GetByIdAsync(batch.UserId.Value);
+            if (lead is null || qc is null) return;
 
             var title = "Yêu cầu cung cấp thêm vật liệu";
             var message = $"Yêu cầu cung cấp thêm vật liệu cho lô hàng {batch.Code} tại xưởng {workshop.Name}.";
