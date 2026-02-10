@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Application.Common;
 using Application.Common.Exceptions;
+using Application.Interfaces;
 using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
@@ -18,15 +19,18 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
         private readonly IMediator _mediator;
         private readonly IUserRepository _userRepository;
         private readonly IAssignmentTransferRequestRepository _assignmentTransferRequestRepository;
+        private readonly IAppDbContext _context;
 
         public UpdateConfirmMaterialWorkshopCommandHandler(IMaterialWorkshopRepository materialWorkshopRepository, 
-            IUnitOfWork unitOfWork, IMediator mediator, IUserRepository userRepository, IAssignmentTransferRequestRepository assignmentTransferRequestRepository)
+            IUnitOfWork unitOfWork, IMediator mediator, IUserRepository userRepository, IAssignmentTransferRequestRepository assignmentTransferRequestRepository,
+            IAppDbContext context)
         {
             _materialWorkshopRepository = materialWorkshopRepository;
             _unitOfWork = unitOfWork;
             _mediator = mediator;
             _userRepository = userRepository;
             _assignmentTransferRequestRepository = assignmentTransferRequestRepository;
+            _context = context;
         }
         public async Task<Result<Guid>> Handle(UpdateConfirmMaterialWorkshopCommand request, CancellationToken cancellationToken)
         {
@@ -55,11 +59,23 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
 
+            var assignment = await _context.Assignments.FindAsync(materialWorkshop.AssignId);
+            if (assignment is null)
+            {
+                throw new NotFoundException("Không tìm thấy phân công.");
+            }
+
+            var batch = await _context.Batches.FindAsync(assignment.BatchId);
+            if (batch is null)
+            {
+                throw new NotFoundException("Không tìm thấy lô hàng.");
+            }
+
             await _mediator.Publish(new MaterialWorkshopConfirmEvent(
                 materialWorkshop.WorkshopId,
                 materialWorkshop.QuantitySend,
                 materialWorkshop.QuantityReceive,
-                materialWorkshop.ShipDate), cancellationToken);
+                batch.UserId), cancellationToken);
 
             return Result<Guid>.Success(materialWorkshop.Id);
         }
