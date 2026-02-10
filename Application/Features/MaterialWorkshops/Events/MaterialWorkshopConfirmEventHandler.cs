@@ -22,7 +22,8 @@ namespace Application.Features.MaterialWorkshops.Events
             await _notificationService.SendMaterialWorkshopConfirmNotificationAsync(
                 notification.WorkshopId,
                 notification.QuantitySend,
-                notification.QuantityReceive);
+                notification.QuantityReceive,
+                notification.UserId);
         }
     }
 }

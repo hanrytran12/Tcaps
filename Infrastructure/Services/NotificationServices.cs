@@ -6,6 +6,7 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
+using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -186,6 +187,15 @@ namespace Infrastructure.Services
             var type = "MaterialStockUpdate";
             var notification = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
 
@@ -273,6 +283,15 @@ namespace Infrastructure.Services
 
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status)
@@ -291,6 +310,15 @@ namespace Infrastructure.Services
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendComponentConfirmNotification(Guid componentId, Guid evaluateId, int quantity, string status)
@@ -323,6 +351,15 @@ namespace Infrastructure.Services
             var notification = new Notification(Guid.NewGuid(), user.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(user.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendStockUpdateNotificationToLeadAsync(string name, int newStockQuantity, int stockChange)
@@ -333,6 +370,15 @@ namespace Infrastructure.Services
             var type = "MaterialStockUpdate";
             var notification = new Notification(Guid.NewGuid(), lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task CreateStockUpdateNotificationForRoleAsync(Guid userId, string materialName, int newStock, int change)
@@ -357,9 +403,10 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive)
+        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive, Guid? userId)
         {
-            var lead = await _userRepository.GetByRoleAsync("Lead");
+            if (userId == null) return;
+            var lead = await _userRepository.GetByIdAsync(userId.Value);
             var admin = await _userRepository.GetByRoleAsync("Admin");
             if (lead is null || admin is null) return;
 
@@ -373,6 +420,24 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationAdmin.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationLead.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendCreateTaskTransferRequestNotificationAsync(Guid batchId, Guid workshopId, Guid qcTransportId, string note)
@@ -391,6 +456,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendApproveTaskTransferRequestNotificationAsync(Guid taskTransferRequestId, Guid qcTransportId)
@@ -758,6 +832,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task AssignWorkshopNotificationAsync(Guid userId, string batchCode)
@@ -796,6 +879,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendUpdateQuantityProductionNotificationAsync(Guid userId, decimal quantitySend, decimal quantityReceive, DateOnly date, TimeOnly time, string batchCode)
@@ -864,13 +956,6 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
-
-            Console.WriteLine($"🔔 Sending notification to QC User ID: {qc.Id}");
-            Console.WriteLine($"   - QC Name: {qc.FullName}");
-            Console.WriteLine($"   - Staff Name: {staff.FullName}");
-            Console.WriteLine($"   - Batch Code: {batch.Code}");
-            Console.WriteLine($"   - Quantity: {(int)quantity}");
-            Console.WriteLine($"   - Message: {message}");
 
             await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
             {
