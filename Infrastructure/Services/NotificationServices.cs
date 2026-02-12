@@ -403,15 +403,21 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive, Guid? userId)
+        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive, Guid? userId, string batchCode)
         {
             if (userId == null) return;
             var lead = await _userRepository.GetByIdAsync(userId.Value);
             var admin = await _userRepository.GetByRoleAsync("Admin");
-            if (lead is null || admin is null) return;
+
+            var qc = await _userRepository.GetQCByWorkshopIdAsync(workshopId);
+            if (lead is null || admin is null || qc is null) return;
+
+            var workshop = await _workshopRepository.GetByIdAsync(workshopId);
 
             var title = "Chấp nhận đơn hàng";
-            var message = $"Đã xác nhận đơn gửi {quantitySend} vật liệu và nhận {quantityReceive}.";
+            var message = $"QC {qc.FullName} của xưởng {workshop.Name} đã tiếp nhận " +
+                $"{quantitySend} sản phẩm và nhận {quantityReceive}" +
+                $"từ xưởng trước thuộc lô hàng {batchCode}.";
             var type = "MaterialWorkshop";
 
             var notificationLead = Notification.Create(lead.Id, title, message, type);

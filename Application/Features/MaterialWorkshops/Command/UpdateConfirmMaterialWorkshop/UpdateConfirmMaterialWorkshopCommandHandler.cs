@@ -75,7 +75,8 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
                 materialWorkshop.WorkshopId,
                 materialWorkshop.QuantitySend,
                 materialWorkshop.QuantityReceive,
-                batch.UserId), cancellationToken);
+                batch.UserId,
+                batch.Code), cancellationToken);
 
             return Result<Guid>.Success(materialWorkshop.Id);
         }

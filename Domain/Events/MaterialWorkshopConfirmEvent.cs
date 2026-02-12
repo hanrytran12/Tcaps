@@ -12,14 +12,16 @@ namespace Domain.Events
         public Guid WorkshopId { get; set; }
         public int QuantitySend { get; set; }
         public int QuantityReceive { get; set; }
+        public string BatchCode { get; set; }
         public Guid? UserId { get; set; }
 
-        public MaterialWorkshopConfirmEvent(Guid workshopId, int quantitySend, int quantityReceive, Guid? userId)
+        public MaterialWorkshopConfirmEvent(Guid workshopId, int quantitySend, int quantityReceive, Guid? userId, string batchCode)
         {
             WorkshopId = workshopId;
             QuantitySend = quantitySend;
             QuantityReceive = quantityReceive;
             UserId = userId;
+            BatchCode = batchCode;
         }
     }
 }
