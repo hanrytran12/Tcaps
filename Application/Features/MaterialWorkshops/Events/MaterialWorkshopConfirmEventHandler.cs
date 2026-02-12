@@ -23,7 +23,8 @@ namespace Application.Features.MaterialWorkshops.Events
                 notification.WorkshopId,
                 notification.QuantitySend,
                 notification.QuantityReceive,
-                notification.UserId);
+                notification.UserId,
+                notification.BatchCode);
         }
     }
 }
