@@ -20,25 +20,25 @@ namespace Application.Features.AssingmentTransferRequest.Events
             _notificationService = notificationService;
             _logger = logger;
         }
-        public Task Handle(QCTransportReceptionAssignmentTransferEvent notification, CancellationToken cancellationToken)
+        public async Task Handle(QCTransportReceptionAssignmentTransferEvent notification, CancellationToken cancellationToken)
         {
-            //await _notificationService.SendQCTransportReceptionAssignmentTransferNotificationAsync(notification.QcTransportId, notification.AssignmentTransferRequestId, notification.AssignId);
+            await _notificationService.SendQCTransportReceptionAssignmentTransferNotificationAsync(notification.QcTransportId, notification.AssignmentTransferRequestId, notification.AssignId);
 
-            _ = Task.Run(async () =>
-            {
-                try
-                {
-                    await _notificationService.SendQCTransportReceptionAssignmentTransferNotificationAsync(
-                        notification.QcTransportId,
-                        notification.AssignmentTransferRequestId,
-                        notification.AssignId);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, "Lỗi gửi notification cho AssignmentTransfer {Id}", notification.AssignmentTransferRequestId);
-                }
-            }, cancellationToken);
-            return Task.CompletedTask;
+            //_ = Task.Run(async () =>
+            //{
+            //    try
+            //    {
+            //        await _notificationService.SendQCTransportReceptionAssignmentTransferNotificationAsync(
+            //            notification.QcTransportId,
+            //            notification.AssignmentTransferRequestId,
+            //            notification.AssignId);
+            //    }
+            //    catch (Exception ex)
+            //    {
+            //        _logger.LogError(ex, "Lỗi gửi notification cho AssignmentTransfer {Id}", notification.AssignmentTransferRequestId);
+            //    }
+            //}, cancellationToken);
+            //return Task.CompletedTask;
         }
     }
 }

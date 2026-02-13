@@ -6,10 +6,12 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
+using Infrastructure.Persistence;
 using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Threading;
 
 namespace Infrastructure.Services
 {
@@ -1179,6 +1181,105 @@ namespace Infrastructure.Services
                     Name = staff.FullName,
                     QuantityJustDone = quantity,
                 }
+            });
+        }
+
+        public async Task QCOnReworkRequestApproveNotificationAsync(Guid qcId, DateOnly deliveryDate, DateOnly endDate)
+        {
+            var qc = await _userRepository.GetByIdAsync(qcId);
+            if (qc.WorkshopId == null) return;
+
+            var usersToNotify = await _context.Users
+                .AsNoTracking()
+                .Where(u => u.WorkshopId == qc.WorkshopId || u.Id == qc.Id)
+                .Distinct()
+                .ToListAsync();
+
+            var type = "REWORK_REQUEST_APPROVED";
+            var title = "Yêu cầu làm lại sản phẩm lỗi";
+            var message = $"Xưởng bạn sẽ làm lại sản phẩm lỗi. Nhận nguyên vật liệu vào ngày {deliveryDate.ToString("dd/MM/yyyy")} và hoàn thành trước ngày {endDate.ToString("dd/MM/yyyy")}";
+
+            var notificationsToSend = new List<Notification>();
+
+            foreach (var user in usersToNotify)
+            {
+                if (user.Role == "QC" || user.Role == "Staff")
+                {
+                    var noti = Notification.Create(user.Id, title, message, type);
+                    await _notificationRepository.AddAsync(noti);
+                    notificationsToSend.Add(noti);
+                }
+            }
+
+            foreach (var notification in notificationsToSend)
+            {
+                await _hubContext.Clients.User(notification.UserId.ToString()).SendAsync("ReceiveNotification", new
+                {
+                    Id = notification.Id,
+                    Title = notification.Title,
+                    Message = notification.Message,
+                    Type = notification.Type,
+                    CreatedAt = DateTime.Now
+                });
+            }
+        }
+
+        public async Task LeadOnReworkRequestAddedNotificationAsync(Guid assignmentId, Guid qcId, decimal defectiveQuantity, string noteQC)
+        {
+            var qcUser = await _context.Users.Where(u => u.Id == qcId).FirstOrDefaultAsync();
+
+            var query = from a in _context.Assignments
+                        where a.Id == assignmentId
+                        join b in _context.Batches on a.BatchId equals b.Id
+                        join w in _context.Workshop on a.WorkshopId equals w.Id
+                        select new { batchCode = b.Code, workshopName = w.Name, LeadId = b.UserId };
+
+            var assignmentInfo = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (assignmentInfo.LeadId == null) return;
+            var leadUser = await _userRepository.GetByIdAsync(assignmentInfo.LeadId.Value);
+            var batchCode = assignmentInfo.batchCode;
+            var workshopName = assignmentInfo.workshopName;
+
+            var type = "REWORK_REQUEST_CREATED";
+            var title = "Yêu cầu thông báo có sản phẩm lỗi khi chuyển giao";
+            var message = $"Lô hàng thuộc lô {batchCode} ở xưởng {workshopName} của QC {qcUser.FullName} hiện tại đang có {defectiveQuantity} sản phẩm lỗi, ghi chú từ QC: {noteQC}";
+
+            var noti = Notification.Create(leadUser.Id, title, message, type);
+            await _notificationRepository.AddAsync(noti);
+
+            await _hubContext.Clients.User(leadUser.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = noti.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+        }
+
+        public async Task CreateMaterialWorkshopNotificationAsync(Guid workshopPreviousId, Guid workshopAfterId, decimal quantitySend, string batchCode)
+        {
+            var nextQc = await _userRepository.GetQCByWorkshopIdAsync(workshopAfterId);
+            if (nextQc is null) return;
+
+            var workshop = await _workshopRepository.GetByIdAsync(workshopPreviousId);
+
+            var type = "MaterialWorkshop";
+            var title = "Xưởng trước gửi sản phẩm";
+            var message = $"QC xưởng {workshop.Name} đã gửi sản phẩm đến xưởng của bạn với số lượng: {quantitySend}" +
+                $"thuộc lô hàng {batchCode}";
+
+            var noti = Notification.Create(nextQc.Id, title, message, type);
+            await _notificationRepository.AddAsync(noti);
+
+            await _hubContext.Clients.User(nextQc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = noti.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
             });
         }
     }

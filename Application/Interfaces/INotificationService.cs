@@ -43,5 +43,8 @@ namespace Application.Interfaces
         Task NotifyAdminDashboardRefreshAsync(Guid requestId);
         Task SendIncomingMaterialNotificationAsync(decimal quantity, Guid assignmentId, string materialName, string unitMaterial);
         Task BroadcastContributionUpdateAsync(Guid assignId, Guid staffId, decimal quantity);
+        Task QCOnReworkRequestApproveNotificationAsync(Guid qcId, DateOnly deliveryDate, DateOnly endDate);
+        Task LeadOnReworkRequestAddedNotificationAsync(Guid assignmentId, Guid qcId, decimal defectiveQuantity, string noteQC);
+        Task CreateMaterialWorkshopNotificationAsync(Guid workshopPreviousId, Guid workshopAfterId, decimal quantitySend, string batchCode);
     }
 }
