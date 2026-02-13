@@ -104,6 +104,11 @@ namespace Application.Features.Productions.Command.AddProductionReport
                 var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == assignment.Id && (r.Status == "InProgress" || r.Status == "Approved" || r.Status == "ReadyForTransfer")).FirstOrDefaultAsync(cancellationToken);
                 var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, reworkRequest?.Id);
                 await _productionRepository.AddAsync(production);
+
+                await _mediator.Publish(new ProductionReportedEvent(
+                    request.AssignId,
+                    request.StaffId,
+                    request.Quantity));
             }
             else
             {

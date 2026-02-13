@@ -63,6 +63,12 @@ namespace Application.Features.AssingmentTransferRequest.Events
             {
                 var materialWorkshop = MaterialWorkshop.Create(nextAssigment.WorkshopId, notification.AssignmentId, notification.AssignmentTransferRequestId, notification.SupplierId, (int)notification.QuantitySend);
                 await _materialWorkshopRepository.AddAsync(materialWorkshop);
+
+                await _mediator.Publish(new CreateMaterialWorkshopEvent(
+                    assignment.WorkshopId,
+                    nextAssigment.WorkshopId,
+                    notification.QuantitySend,
+                    batch.Code));
             }
         }
     }

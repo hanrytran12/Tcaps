@@ -9,34 +9,19 @@ namespace Application.Features.ReworkRequest.Events
 {
     public class NotifyQcOnReworkRequestApprovedHandler : INotificationHandler<ReworkRequestApprovedEvent>
     {
-        private readonly IAppDbContext _appDbContext;
-        private readonly INotificationRepository _notificationRepository;
+        private readonly INotificationService _notificationService;
 
-        public NotifyQcOnReworkRequestApprovedHandler(IAppDbContext appDbContext, INotificationRepository notificationRepository)
+        public NotifyQcOnReworkRequestApprovedHandler(INotificationService notificationService)
         {
-            _appDbContext = appDbContext;
-            _notificationRepository = notificationRepository;
+            _notificationService = notificationService;
         }
 
         public async Task Handle(ReworkRequestApprovedEvent notification, CancellationToken cancellationToken)
         {
-            var qcUser = await _appDbContext.Users.AsNoTracking().Where(u => u.Id == notification.QcId).FirstOrDefaultAsync(cancellationToken);
-
-            var usersToNotify = await _appDbContext.Users
-                .AsNoTracking()
-                .Where(u => u.WorkshopId == qcUser.WorkshopId || u.Id == qcUser.Id)
-                .Distinct()
-                .ToListAsync();
-
-            var type = "REWORK_REQUEST_APPROVED";
-            var title = "Yêu cầu làm lại sản phẩm lỗi";
-            var message = $"Xưởng bạn sẽ làm lại sản phẩm lỗi. Nhận nguyên vật liệu vào ngày {notification.DeliveryDate.ToString("dd/MM/yyyy")} và hoàn thành trước ngày {notification.EndDate.ToString("dd/MM/yyyy")}";
-
-            foreach (var user in usersToNotify)
-            {
-                var noti = Notification.Create(user.Id, title, message, type);
-                await _notificationRepository.AddAsync(noti);
-            }
+            await _notificationService.QCOnReworkRequestApproveNotificationAsync(
+                notification.QcId,
+                notification.DeliveryDate,
+                notification.EndDate);
         }
     }
 }
