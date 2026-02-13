@@ -9,7 +9,7 @@ namespace Infrastructure.BackgroundService
         private readonly ILogger<DeadlineCheckerService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
 
-        private readonly TimeSpan _period = TimeSpan.FromHours(1);
+        private readonly TimeSpan _period = TimeSpan.FromSeconds(1);
 
         public DeadlineCheckerService(ILogger<DeadlineCheckerService> logger, IServiceScopeFactory scopeFactory)
         {
