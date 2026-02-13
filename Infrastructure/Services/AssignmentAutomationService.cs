@@ -41,6 +41,7 @@ namespace Infrastructure.Services
         private async Task CheckDueAssignmentsAsync(DateOnly today, CancellationToken token)
         {
             var assignments = await _context.Assignments
+                .Include(a => a.Batch)
                 .Where(a => a.EndDate == today && a.Status == "InProgress")
                 .ToListAsync(token);
 
