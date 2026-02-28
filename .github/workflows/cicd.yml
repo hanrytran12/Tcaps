@@ -21,10 +21,10 @@ jobs:
         run: echo "${{ secrets.DOCKER_HUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
       - name: Build image
-        run: docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/tcaps:${{ github.sha }} .
+        run: docker build -t hanryhuy/tcaps:latest .
 
       - name: Push image
-        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/tcaps:${{ github.sha }}
+        run: docker push hanryhuy/tcaps:latest
 
   deploy:
     if: github.ref == 'refs/heads/deploy'
@@ -33,15 +33,15 @@ jobs:
 
     steps:
       - name: Deploy to VPS
-        uses: appleboy/ssh-action@v0.1.10
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.VPS_SSH_KEY }}
-          script: |
-            docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/tcaps:${{ github.sha }}
-            docker rm -f tcaps || true
-            docker run -d -p 3000:3000 --name tcaps ${{ secrets.DOCKER_HUB_USERNAME }}/tcaps:${{ github.sha }}
+  uses: appleboy/ssh-action@v0.1.10
+  with:
+    host: ${{ secrets.VPS_HOST }}
+    username: ${{ secrets.VPS_USER }}
+    key: ${{ secrets.VPS_SSH_KEY }}
+    script: |
+      cd /root
+      docker compose pull
+      docker compose up -d --force-recreate
 
   notification:
     needs: deploy
