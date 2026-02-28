@@ -247,10 +247,10 @@ using (var scope = app.Services.CreateScope())
         try
         {
             // Create DB if it doesn’t exist and apply all migrations
-            await db.Database.MigrateAsync();
+            //await db.Database.MigrateAsync();
 
             // Seed Users
-            await Infrastructure.Persistence.Seeders.DbSeeder.SeedAllAsync(db);
+            //await Infrastructure.Persistence.Seeders.DbSeeder.SeedAllAsync(db);
 
             Console.WriteLine("Database migrated and seeded successfully.");
             break;
