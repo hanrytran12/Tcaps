@@ -52,7 +52,7 @@ jobs:
 
     steps:
       - name: Send Telegram
-        uses: appleboy/telegram-action@master
+        uses: appleboy/telegram-action@v0.1.7
         with:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
