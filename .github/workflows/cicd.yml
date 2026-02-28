@@ -12,7 +12,8 @@ jobs:
     environment: ENV
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout source
+        uses: actions/checkout@v4
 
       - name: Create .env
         run: echo "${{ secrets.PROD_ENV }}" > .env
@@ -27,23 +28,25 @@ jobs:
         run: docker push hanryhuy/tcaps:latest
 
   deploy:
-    if: github.ref == 'refs/heads/deploy'
+    if: github.ref == 'refs/heads/feature/db-seeder'
     needs: build
     runs-on: ubuntu-latest
+    environment: ENV
 
     steps:
       - name: Deploy to VPS
-  uses: appleboy/ssh-action@v0.1.10
-  with:
-    host: ${{ secrets.VPS_HOST }}
-    username: ${{ secrets.VPS_USER }}
-    key: ${{ secrets.VPS_SSH_KEY }}
-    script: |
-      cd /root
-      docker compose pull
-      docker compose up -d --force-recreate
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /root
+            docker compose pull
+            docker compose up -d --force-recreate
 
   notification:
+    if: github.ref == 'refs/heads/feature/db-seeder'
     needs: deploy
     runs-on: ubuntu-latest
 
