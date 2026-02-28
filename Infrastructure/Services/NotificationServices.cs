@@ -1,10 +1,17 @@
-﻿using Application.Common.Exceptions;
+﻿using API.Hubs;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
+using Infrastructure.Persistence;
+using MediatR;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
+using System.Threading;
 
 namespace Infrastructure.Services
 {
@@ -24,13 +31,16 @@ namespace Infrastructure.Services
         private readonly IProductionRepository _productionRepository;
         private readonly IIncomeRepository _incomeRepository;
         private readonly IEvaluateRepository _evaluateRepository;
+        private readonly IAppDbContext _context;
         private readonly ResponseDTO _responseDTO;
+
+        private readonly IHubContext<NotificationHub> _hubContext;
 
         public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
             , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository,
             IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository, IComponentDefectRepository componentDefectRepository,
             IMaterialRequestRepository materialRequestRepository, IAssignmentRepository assignmentRepository,
-            IMaterialSupplyRepository materialSupplyRepository)
+            IMaterialSupplyRepository materialSupplyRepository, IHubContext<NotificationHub> hubContext, IAppDbContext context)
         {
             _userRepository = userRepository;
             _unitOfWork = unitOfWork;
@@ -47,6 +57,8 @@ namespace Infrastructure.Services
             _incomeRepository = incomeRepository;
             _evaluateRepository = evaluateRepository;
             _responseDTO = new ResponseDTO();
+            _hubContext = hubContext;
+            _context = context;
         }
 
         public async Task<ResponseDTO> MarkAsReadAsync(Guid notificationId)
@@ -119,7 +131,7 @@ namespace Infrastructure.Services
 
                 _responseDTO.StatusCode = 200;
                 _responseDTO.Message = "Success";
-                _responseDTO.Data = new 
+                _responseDTO.Data = new
                 {
                     Items = dto,
                     notifications.TotalCount,
@@ -177,6 +189,15 @@ namespace Infrastructure.Services
             var type = "MaterialStockUpdate";
             var notification = new Notification(Guid.NewGuid(), admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
 
@@ -217,19 +238,41 @@ namespace Infrastructure.Services
             var notification = new Notification(Guid.NewGuid(), staff.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(staff.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendSubmitProductionNotification(Guid assignId, Guid userId, int quantity)
         {
-            var user = await _userRepository.GetByIdAsync(userId);
-            var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId);
+            //var user = await _userRepository.GetByIdAsync(userId);
+            //var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId);
 
-            var title = "Nộp sản phẩm";
-            var message = $"Nhân viên {user.FullName} nộp {quantity} sản phẩm để QC kiểm tra.";
-            var type = "Production";
-            var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
-            await _notificationRepository.AddAsync(notification);
-            await _unitOfWork.SaveChangesAsync();
+            //var title = "Nộp sản phẩm";
+            //var message = $"Nhân viên {user.FullName} nộp {quantity} sản phẩm để QC kiểm tra.";
+            //var type = "Production";
+            //var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
+            //await _notificationRepository.AddAsync(notification);
+            //await _unitOfWork.SaveChangesAsync();
+
+            //Console.WriteLine($"🔔 Sending notification to QC User ID: {qc.Id}");
+            //Console.WriteLine($"   - QC Name: {qc.FullName}");
+            //Console.WriteLine($"   - Message: {message}");
+
+            //await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            //{
+            //    Id = notification.Id,
+            //    Title = title,
+            //    Message = message,
+            //    Type = type,
+            //    CreatedAt = DateTime.Now
+            //});
         }
 
         public async Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate)
@@ -242,6 +285,15 @@ namespace Infrastructure.Services
 
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status)
@@ -260,6 +312,15 @@ namespace Infrastructure.Services
             var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendComponentConfirmNotification(Guid componentId, Guid evaluateId, int quantity, string status)
@@ -292,6 +353,15 @@ namespace Infrastructure.Services
             var notification = new Notification(Guid.NewGuid(), user.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(user.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendStockUpdateNotificationToLeadAsync(string name, int newStockQuantity, int stockChange)
@@ -302,6 +372,15 @@ namespace Infrastructure.Services
             var type = "MaterialStockUpdate";
             var notification = new Notification(Guid.NewGuid(), lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task CreateStockUpdateNotificationForRoleAsync(Guid userId, string materialName, int newStock, int change)
@@ -315,16 +394,32 @@ namespace Infrastructure.Services
 
             var notification = Notification.Create(users.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
+
+            await _hubContext.Clients.User(users.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
-        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive)
+        public async Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive, Guid? userId, string batchCode)
         {
-            var lead = await _userRepository.GetByRoleAsync("Lead");
+            if (userId == null) return;
+            var lead = await _userRepository.GetByIdAsync(userId.Value);
             var admin = await _userRepository.GetByRoleAsync("Admin");
-            if (lead is null || admin is null) return;
+
+            var qc = await _userRepository.GetQCByWorkshopIdAsync(workshopId);
+            if (lead is null || admin is null || qc is null) return;
+
+            var workshop = await _workshopRepository.GetByIdAsync(workshopId);
 
             var title = "Chấp nhận đơn hàng";
-            var message = $"Đã xác nhận đơn gửi {quantitySend} vật liệu và nhận {quantityReceive}.";
+            var message = $"QC {qc.FullName} của xưởng {workshop.Name} đã tiếp nhận " +
+                $"{quantitySend} sản phẩm và nhận {quantityReceive}" +
+                $"từ xưởng trước thuộc lô hàng {batchCode}.";
             var type = "MaterialWorkshop";
 
             var notificationLead = Notification.Create(lead.Id, title, message, type);
@@ -333,6 +428,24 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationAdmin.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationLead.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendCreateTaskTransferRequestNotificationAsync(Guid batchId, Guid workshopId, Guid qcTransportId, string note)
@@ -351,6 +464,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendApproveTaskTransferRequestNotificationAsync(Guid taskTransferRequestId, Guid qcTransportId)
@@ -365,16 +487,28 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qcTransport.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qcTransport.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendCreateMaterialRequestNotificationAsync(Guid qcId, Guid batchId, Guid assignId)
         {
-            var lead = await _userRepository.GetByRoleAsync("Lead");
             var qc = await _userRepository.GetByIdAsync(qcId);
-            if (lead is null || qc is null) return;
-
+            
             var batch = await _batchRepository.GetByIdAsync(batchId);
             var workshop = await _workshopRepository.GetByIdAsync(qc.WorkshopId);
+
+            if (batch.UserId is null) return;
+
+            var lead = await _userRepository.GetByIdAsync(batch.UserId.Value);
+            if (lead is null || qc is null) return;
 
             var title = "Yêu cầu cung cấp thêm vật liệu";
             var message = $"Yêu cầu cung cấp thêm vật liệu cho lô hàng {batch.Code} tại xưởng {workshop.Name}.";
@@ -383,6 +517,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task AdminAssignForQCTransportToTransferMaterialSupplyNotificationAsync(Guid qcTransportId, Guid requestId, Guid materialId, int quantity)
@@ -406,6 +549,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qcTransport.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qcTransport.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendAddMaterialSupplyForQcWorkshopNotification(Guid qcworkshopId, Guid requestId, Guid materialId, int quantity)
@@ -427,6 +579,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendCompletedMaterialSupplyNotificationAsync(Guid userId, Guid materialId, string batchCode, int quantity)
@@ -441,6 +602,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendQCTransportApproveMaterialSupplyNotificationAsync(Guid qcTransportId, Guid materialSupplyId)
@@ -470,6 +640,24 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationLead.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationAdmin.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendQCTransportReceptionAssignmentTransferNotificationAsync(Guid qcTransportId, Guid assignTransferRequestId, Guid assignId)
@@ -498,6 +686,24 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationLead.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationAdmin.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendQCTransportReceptionMaterialRequestNotificationAsync(Guid qcTransportId, Guid materialRequestId, Guid assignId)
@@ -529,6 +735,24 @@ namespace Infrastructure.Services
             var notificationAdmin = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notificationAdmin);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationLead.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notificationAdmin.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendConfirmRequestFromLeadNotificationAsync(Guid materialRequestId, Guid qcId)
@@ -544,6 +768,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task AddBatchNotificationAsync(Guid? userId, string batchCode, decimal quantity)
@@ -559,6 +792,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(lead.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(lead.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task ApproveFinalTransferRequestNotificationAsync(Guid batchId, decimal quantityComplete, decimal quantityError)
@@ -575,6 +817,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task UpdateQuantityDefectNotificationAsync(decimal quantityReject, Guid qcId, string batchCode)
@@ -589,6 +840,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task AssignWorkshopNotificationAsync(Guid userId, string batchCode)
@@ -604,6 +864,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendAddBatchForAdminNotificationAsync(string batchCode, decimal quantity)
@@ -618,6 +887,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendUpdateQuantityProductionNotificationAsync(Guid userId, decimal quantitySend, decimal quantityReceive, DateOnly date, TimeOnly time, string batchCode)
@@ -636,6 +914,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(staff.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(staff.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendFinalTransferRequestForGuardQCNotificationAsync(decimal quantitySend, string batchCode, string workshopName)
@@ -650,6 +937,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qcgaccong.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qcgaccong.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendProductionReportNotificationAsync(Guid assignId, Guid staffId, decimal quantity)
@@ -668,6 +964,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(qc.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateOnly dateShip)
@@ -684,6 +989,15 @@ namespace Infrastructure.Services
             var notification = Notification.Create(admin.Id, title, message, type);
             await _notificationRepository.AddAsync(notification);
             await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(admin.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendNotificationForStaffNotificationAsync(Guid userId, Guid batchId, decimal? quantity)
@@ -708,9 +1022,266 @@ namespace Infrastructure.Services
             {
                 var notification = Notification.Create(item.Id, title, message, type);
                 await _notificationRepository.AddAsync(notification);
+
+                await _hubContext.Clients.User(item.Id.ToString()).SendAsync("ReceiveNotification", new
+                {
+                    Id = notification.Id,
+                    Title = title,
+                    Message = message,
+                    Type = type,
+                    CreatedAt = DateTime.Now
+                });
             }
 
             await _unitOfWork.SaveChangesAsync();
         }
+
+        public async Task SendAssignmentsPlannedNotificationAsync(List<AssignmentsInfo> assignments, string batchCode)
+        {
+            var workshopIds = assignments.Select(a => a.WorkshopId).ToList();
+            var workshops = await _workshopRepository.GetByIdsAsync(workshopIds);
+            var qcUsers = await _userRepository.GetQcsByWorkshopIdsAsync(workshopIds);
+
+            var notificationsToSend = new List<Notification>();
+
+            foreach (var assignmentInfo in assignments)
+            {
+                var workshop = workshops.FirstOrDefault(w => w.Id == assignmentInfo.WorkshopId);
+                var qc = qcUsers.FirstOrDefault(u => u.WorkshopId == assignmentInfo.WorkshopId);
+
+                if (qc is null || workshop is null) continue;
+
+                var title = "Kế hoạch sản xuất mới";
+                var message = string.Empty;
+
+                if (assignmentInfo.ExpectedDeliveryDate.HasValue)
+                {
+                    string formattedDate = assignmentInfo.ExpectedDeliveryDate.Value.ToString("dd/MM/yyyy");
+                    message = $"Xưởng của bạn ({workshop.Name}) vừa được phân công cho lô hàng {batchCode}. " +
+                              $"Dự kiến nguyên vật liệu sẽ được giao vào ngày {formattedDate}.";
+                }
+                else
+                {
+                    message = $"Xưởng của bạn ({workshop.Name}) vừa được phân công cho lô hàng {batchCode}. " +
+                              $"Vui lòng kiểm tra kế hoạch và chuẩn bị nhân lực.";
+                }
+
+                var noti = Notification.Create(qc.Id, title, message, "NEW_ASSIGNMENT");
+
+                await _notificationRepository.AddAsync(noti);
+                notificationsToSend.Add(noti);
+            }
+
+            await _unitOfWork.SaveChangesAsync();
+
+            foreach (var noti in notificationsToSend)
+            {
+                await _hubContext.Clients.User(noti.UserId.ToString()).SendAsync("ReceiveNotification", new
+                {
+                    Id = noti.Id,
+                    Title = noti.Title,
+                    Message = noti.Message,
+                    Type = noti.Type,
+                    CreatedAt = DateTime.Now
+                });
+            }
+        }
+
+        public async Task SendTransferRequestNotificationAsync(Guid userId, Guid assignmentId)
+        {
+            var userQc = await _userRepository.GetByIdAsync(userId);
+            var workshop = await _workshopRepository.GetByIdAsync(userQc.WorkshopId);
+            var user = await (from a in _context.Assignments
+                              join b in _context.Batches on a.BatchId equals b.Id
+                              join u in _context.Users on b.UserId equals u.Id
+                              where a.Id == assignmentId
+                              select u)
+                              .FirstOrDefaultAsync();
+
+            var title = "Yêu cầu duyệt chuyển giao mới";
+            var message = $"QC {userQc.FullName} ở xưởng {workshop.Name} vừa gửi một yêu cầu duyệt công đoạn. Vui lòng kiểm tra.";
+            var type = "TRANSFER_REQUEST";
+
+            var noti = Notification.Create(user.Id, title, message, type);
+            await _notificationRepository.AddAsync(noti);
+
+            await _hubContext.Clients.User(user.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = noti.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+        }
+
+        public async Task NotifyAdminDashboardRefreshAsync(Guid requestId)
+        {
+            var user = await _userRepository.GetByRoleAsync("Admin");
+            await _hubContext.Clients.User(user.Id.ToString()).SendAsync("RefreshDashboard", new
+            {
+                RequestId = requestId
+            });
+        }
+
+        public async Task SendIncomingMaterialNotificationAsync(decimal quantity, Guid assignmentId, string materialName, string unitMaterial)
+        {
+            var query = from a in _context.Assignments
+                        where a.Id == assignmentId
+                        join u in _context.Users on a.WorkshopId equals u.WorkshopId
+                        where u.Role == "QC"
+                        join b in _context.Batches on a.BatchId equals b.Id
+                        select new { a, b.Code, u.Id };
+
+            var queryInfo = await query.FirstOrDefaultAsync();
+
+            var assignment = queryInfo.a;
+            DateOnly? expectedDeliveryDate;
+            if (assignment.Status != "Reworking")
+            {
+                expectedDeliveryDate = assignment.ExpectedDeliveryDate;
+            }
+            else
+            {
+                var reworkRequest = await _context.ReworkRequests.Where(rr => rr.AssignmentId == assignment.Id).FirstOrDefaultAsync();
+                expectedDeliveryDate = reworkRequest?.DeliveryDate;
+            }
+
+            var type = "MATERIAL_DELIVERY_INCOMING";
+            var title = "Thông báo nhận nguyên vật liệu";
+            var message = $"Nguyên vật liệu {materialName} với số lượng {quantity} {unitMaterial} sẽ được giao tới xưởng bạn vào ngày {expectedDeliveryDate.Value.ToString("dd/MM/yyyy")} để làm sản phẩm cho lô hàng {queryInfo.Code}.";
+
+            var noti = Notification.Create(queryInfo.Id, title, message, type);
+            await _notificationRepository.AddAsync(noti);
+
+            await _hubContext.Clients.User(queryInfo.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = noti.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+        }
+
+        public async Task BroadcastContributionUpdateAsync(Guid assignId, Guid staffId, decimal quantity)
+        {
+            var assignment = await _assignmentRepository.GetByIdAsync(assignId);
+            var staff = await _userRepository.GetByIdAsync(staffId);
+
+            string groupName = $"Workshop_{assignment.WorkshopId}";
+
+            await _hubContext.Clients.Group(groupName).SendAsync("ReceiveContributionUpdate", new
+            {
+                AssignmentId = assignId,
+                BatchId = assignment.BatchId,
+                Contributor = new
+                {
+                    Id = staff.Id,
+                    Name = staff.FullName,
+                    QuantityJustDone = quantity,
+                }
+            });
+        }
+
+        public async Task QCOnReworkRequestApproveNotificationAsync(Guid qcId, DateOnly deliveryDate, DateOnly endDate)
+        {
+            var qc = await _userRepository.GetByIdAsync(qcId);
+            if (qc.WorkshopId == null) return;
+
+            var usersToNotify = await _context.Users
+                .AsNoTracking()
+                .Where(u => u.WorkshopId == qc.WorkshopId || u.Id == qc.Id)
+                .Distinct()
+                .ToListAsync();
+
+            var type = "REWORK_REQUEST_APPROVED";
+            var title = "Yêu cầu làm lại sản phẩm lỗi";
+            var message = $"Xưởng bạn sẽ làm lại sản phẩm lỗi. Nhận nguyên vật liệu vào ngày {deliveryDate.ToString("dd/MM/yyyy")} và hoàn thành trước ngày {endDate.ToString("dd/MM/yyyy")}";
+
+            var notificationsToSend = new List<Notification>();
+
+            foreach (var user in usersToNotify)
+            {
+                if (user.Role == "QC" || user.Role == "Staff")
+                {
+                    var noti = Notification.Create(user.Id, title, message, type);
+                    await _notificationRepository.AddAsync(noti);
+                    notificationsToSend.Add(noti);
+                }
+            }
+
+            foreach (var notification in notificationsToSend)
+            {
+                await _hubContext.Clients.User(notification.UserId.ToString()).SendAsync("ReceiveNotification", new
+                {
+                    Id = notification.Id,
+                    Title = notification.Title,
+                    Message = notification.Message,
+                    Type = notification.Type,
+                    CreatedAt = DateTime.Now
+                });
+            }
+        }
+
+        public async Task LeadOnReworkRequestAddedNotificationAsync(Guid assignmentId, Guid qcId, decimal defectiveQuantity, string noteQC)
+        {
+            var qcUser = await _context.Users.Where(u => u.Id == qcId).FirstOrDefaultAsync();
+
+            var query = from a in _context.Assignments
+                        where a.Id == assignmentId
+                        join b in _context.Batches on a.BatchId equals b.Id
+                        join w in _context.Workshop on a.WorkshopId equals w.Id
+                        select new { batchCode = b.Code, workshopName = w.Name, LeadId = b.UserId };
+
+            var assignmentInfo = await query.AsNoTracking().FirstOrDefaultAsync();
+
+            if (assignmentInfo.LeadId == null) return;
+            var leadUser = await _userRepository.GetByIdAsync(assignmentInfo.LeadId.Value);
+            var batchCode = assignmentInfo.batchCode;
+            var workshopName = assignmentInfo.workshopName;
+
+            var type = "REWORK_REQUEST_CREATED";
+            var title = "Yêu cầu thông báo có sản phẩm lỗi khi chuyển giao";
+            var message = $"Lô hàng thuộc lô {batchCode} ở xưởng {workshopName} của QC {qcUser.FullName} hiện tại đang có {defectiveQuantity} sản phẩm lỗi, ghi chú từ QC: {noteQC}";
+
+            var noti = Notification.Create(leadUser.Id, title, message, type);
+            await _notificationRepository.AddAsync(noti);
+
+            await _hubContext.Clients.User(leadUser.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = noti.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+        }
+
+        public async Task CreateMaterialWorkshopNotificationAsync(Guid workshopPreviousId, Guid workshopAfterId, decimal quantitySend, string batchCode)
+        {
+            var nextQc = await _userRepository.GetQCByWorkshopIdAsync(workshopAfterId);
+            if (nextQc is null) return;
+
+            var workshop = await _workshopRepository.GetByIdAsync(workshopPreviousId);
+
+            var type = "MaterialWorkshop";
+            var title = "Xưởng trước gửi sản phẩm";
+            var message = $"QC xưởng {workshop.Name} đã gửi sản phẩm đến xưởng của bạn với số lượng: {quantitySend}" +
+                $"thuộc lô hàng {batchCode}";
+
+            var noti = Notification.Create(nextQc.Id, title, message, type);
+            await _notificationRepository.AddAsync(noti);
+
+            await _hubContext.Clients.User(nextQc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = noti.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+        }
     }
 }
+

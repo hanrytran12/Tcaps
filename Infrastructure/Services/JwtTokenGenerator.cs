@@ -28,6 +28,11 @@ namespace Infrastructure.Services
                 new Claim(JwtRegisteredClaimNames.Aud, _configuration["JwtSettings:Audience"])
             };
 
+            if (user.WorkshopId.HasValue)
+            {
+                claims.Add(new Claim("WorkshopId", user.WorkshopId.Value.ToString()));
+            }
+
             if (user.IsQcTransport)
             {
                 claims.Add(new Claim("isQcTransport", "true"));

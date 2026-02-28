@@ -1,5 +1,7 @@
 ﻿using Application.Common;
+using Application.Interfaces;
 using Domain.Entities;
+using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 
@@ -9,13 +11,14 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
     {
         private readonly ITaskTransferRequestRepository _taskTransferRequestRepository;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly INotificationService _notificationService;
         private readonly IMediator _mediator;
 
-        public CreateTaskTransferRequestCommandHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IUnitOfWork unitOfWork,
-            IMediator mediator)
+        public CreateTaskTransferRequestCommandHandler(ITaskTransferRequestRepository taskTransferRequestRepository, IUnitOfWork unitOfWork, INotificationService notificationService, IMediator mediator)
         {
             _taskTransferRequestRepository = taskTransferRequestRepository;
             _unitOfWork = unitOfWork;
+            _notificationService = notificationService;
             _mediator = mediator;
         }
         public async Task<Result<Guid>> Handle(CreateTaskTransferRequestCommand request, CancellationToken cancellationToken)
@@ -31,6 +34,15 @@ namespace Application.Features.TaskTransferRequests.Command.CreateTaskTransferRe
             await _taskTransferRequestRepository.AddAsync(taskTranfer);
 
             await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+            await _mediator.Publish(new CreateTaskTransferRequestEvent(
+                taskTranfer.BatchId,
+                taskTranfer.WorkshopId,
+                taskTranfer.QcTransportId,
+                taskTranfer.Note ?? string.Empty,
+                taskTranfer.DateToGo));
+
+            await _notificationService.NotifyAdminDashboardRefreshAsync(taskTranfer.Id);
 
             return Result<Guid>.Success(taskTranfer.Id);
         }

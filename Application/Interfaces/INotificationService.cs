@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Response;
+using Domain.Events;
 
 namespace Application.Interfaces
 {
@@ -16,7 +17,7 @@ namespace Application.Interfaces
         Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status);
         Task SendComponentConfirmNotification(Guid componentId, Guid evaluateId, int quantity, string status);
         Task CreateStockUpdateNotificationForRoleAsync(Guid userId, string materialName, int newStock, int change);
-        Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive);
+        Task SendMaterialWorkshopConfirmNotificationAsync(Guid workshopId, int quantitySend, int quantityReceive, Guid? userId, string batchCode);
         Task SendCreateTaskTransferRequestNotificationAsync(Guid batchId, Guid workshopId, Guid qcTransportId, string note);
         Task SendApproveTaskTransferRequestNotificationAsync(Guid taskTransferRequestId, Guid qcTransportId);
         Task SendCreateMaterialRequestNotificationAsync(Guid qcId, Guid batchId, Guid assignId);
@@ -37,5 +38,13 @@ namespace Application.Interfaces
         Task SendProductionReportNotificationAsync(Guid assignId, Guid staffId, decimal quantity);
         Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateOnly dateShip);
         Task SendNotificationForStaffNotificationAsync(Guid userId, Guid batchId, decimal? quantity);
+        Task SendAssignmentsPlannedNotificationAsync(List<AssignmentsInfo> assignments, string batchCode);
+        Task SendTransferRequestNotificationAsync(Guid userId, Guid assignmentId);
+        Task NotifyAdminDashboardRefreshAsync(Guid requestId);
+        Task SendIncomingMaterialNotificationAsync(decimal quantity, Guid assignmentId, string materialName, string unitMaterial);
+        Task BroadcastContributionUpdateAsync(Guid assignId, Guid staffId, decimal quantity);
+        Task QCOnReworkRequestApproveNotificationAsync(Guid qcId, DateOnly deliveryDate, DateOnly endDate);
+        Task LeadOnReworkRequestAddedNotificationAsync(Guid assignmentId, Guid qcId, decimal defectiveQuantity, string noteQC);
+        Task CreateMaterialWorkshopNotificationAsync(Guid workshopPreviousId, Guid workshopAfterId, decimal quantitySend, string batchCode);
     }
 }

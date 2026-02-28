@@ -3,7 +3,7 @@ using Application.DTOs.Request;
 using Application.Interfaces;
 using Azure.Storage.Blobs;
 using Domain.Interfaces;
-using Infrastructure.BackgroundServices;
+using Infrastructure.BackgroundService;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -42,8 +42,8 @@ namespace Infrastructure
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
             services.AddScoped<INotificationService, NotificationServices>();
-            services.AddScoped<INotificationRealtimeService, SignalRNotificationService>();
             services.AddScoped<IOtpService, OtpService>();
+            services.AddScoped<IAssignmentAutomationService, AssignmentAutomationService>();
 
             // Đăng ký Repositories 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));

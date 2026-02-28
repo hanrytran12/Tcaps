@@ -49,11 +49,13 @@ namespace Application.Features.Users.Queries.GetGroupProgress
                             : p.QuantitySend, cancellationToken);
 
             // Tổng sản lượng rework (CÓ ReworkRequestId)
-            var productionRework = await _context.Productions
-                .Where(p => p.AssignId == request.AssignId && p.ReworkRequestId == reworkRequest.Id)
-                .SumAsync(p => p.QuantityReceive > 0
-                            ? p.QuantityReceive
-                            : p.QuantitySend, cancellationToken);
+            var productionRework = reworkRequest != null 
+                ? await _context.Productions
+                    .Where(p => p.AssignId == request.AssignId && p.ReworkRequestId == reworkRequest.Id)
+                    .SumAsync(p => p.QuantityReceive > 0
+                                ? p.QuantityReceive
+                                : p.QuantitySend, cancellationToken)
+                : 0;
 
             // 🔹 Tính tổng sản phẩm Unfixable của toàn nhóm trong assignment này
             var totalUnfixable = await (from a in _context.Assignments

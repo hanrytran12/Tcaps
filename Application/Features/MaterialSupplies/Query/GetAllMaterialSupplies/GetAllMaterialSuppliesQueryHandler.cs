@@ -52,10 +52,33 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
             {
                 query = query.Where(x => x.r.UserId == request.UserId);
             }
-            else if (role.Equals("Lead", StringComparison.OrdinalIgnoreCase) ||
-                     role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            else if (role.Equals("Lead", StringComparison.OrdinalIgnoreCase))
             {
                 // Lead/Admin xem toàn bộ → không filter
+            }
+            else if (role.Equals("Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                var qcTransportUserIds = await _context.Users
+                    .AsNoTracking()
+                    .Where(u => u.Role == "QCTransport")
+                    .Select(u => u.Id)
+                    .ToListAsync(cancellationToken);
+
+                query = query.Where(q => qcTransportUserIds.Contains(q.s.SupplierId));
+            }
+            else if (role.Equals("Staff", StringComparison.OrdinalIgnoreCase))
+            {
+                var staffUser = await _context.Users.AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.Id == request.UserId, cancellationToken);
+
+                if (staffUser?.WorkshopId != null)
+                {
+                    query = query.Where(x => x.receiverUser.WorkshopId == staffUser.WorkshopId);
+                }
+                else
+                {
+                    return Result<List<MaterialSupplyDTO>>.Success(new List<MaterialSupplyDTO>());
+                }
             }
             else
             {

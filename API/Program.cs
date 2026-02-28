@@ -5,10 +5,11 @@ using DotNetEnv;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
@@ -56,7 +57,8 @@ builder.Services.AddCors(options =>
     {
         policy.AllowAnyOrigin()
         .AllowAnyHeader()
-        .AllowAnyMethod();
+        .AllowAnyMethod()
+        .AllowCredentials();
     });
 });
 
@@ -76,7 +78,26 @@ builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.Authenticati
 
             ValidateLifetime = true,
 
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
+
+            // Map the 'sub' claim to ClaimTypes.NameIdentifier
+            NameClaimType = JwtRegisteredClaimNames.Sub
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnMessageReceived = context =>
+            {
+                var accessToken = context.Request.Query["access_token"];
+
+                // Nếu request đến đường dẫn Hubs thì lấy token từ query string
+                var path = context.HttpContext.Request.Path;
+                if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs"))
+                {
+                    context.Token = accessToken;
+                }
+                return Task.CompletedTask;
+            }
         };
     });
 
@@ -128,7 +149,13 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin", "Lead"));
 });
 
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.ClaimsIdentity.UserIdClaimType = JwtRegisteredClaimNames.Sub;
+});
+
 builder.Services.AddSignalR();
+builder.Services.AddSingleton<IUserIdProvider, Infrastructure.Hubs.CustomUserIdProvider>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
@@ -258,7 +285,7 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<NotificationHub>("/notificationHub");
+app.MapHub<NotificationHub>("/hubs/notificationHub");
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
