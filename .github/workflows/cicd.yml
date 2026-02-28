@@ -46,7 +46,7 @@ jobs:
             docker compose up -d --force-recreate
 
   notification:
-    if: github.ref == 'refs/heads/deploy'
+    if: github.ref == 'refs/heads/feature/db-seeder'
     needs: deploy
     runs-on: ubuntu-latest
     environment: ENV
