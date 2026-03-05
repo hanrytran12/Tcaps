@@ -335,6 +335,7 @@ namespace Infrastructure.Migrations
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Note = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     isDeleted = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>

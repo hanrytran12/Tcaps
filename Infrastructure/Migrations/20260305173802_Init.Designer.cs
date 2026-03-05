@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260131030212_Init")]
+    [Migration("20260305173802_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -136,6 +136,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<decimal>("LostQuantity")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uniqueidentifier");
