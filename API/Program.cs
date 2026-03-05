@@ -191,6 +191,12 @@ builder.Services.AddStackExchangeRedisCache(options =>
 
 var app = builder.Build();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
+                       Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+});
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -217,16 +223,12 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseCors("AllowedFrontend");
+app.UseWebSockets();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
 app.UseExceptionHandler();
 app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notificationHub");
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
-                       Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
-});
-app.UseRateLimiter();
 
 app.Run();
