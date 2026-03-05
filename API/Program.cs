@@ -229,10 +229,16 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 
 var app = builder.Build();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
+                                   Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+});
+
 app.UseSwagger();
 app.UseSwaggerUI();
+
 app.UseCors("AllowedFrontend");
-app.UseExceptionHandler();
 
 // -----------------------------
 // DB migration & seeding
@@ -260,7 +266,6 @@ using (var scope = app.Services.CreateScope())
             Console.WriteLine($"Database not ready, retrying in 5s... ({i + 1}/{retries})");
             Console.WriteLine($"Error: {ex.Message}");
             await Task.Delay(5000);
-
             if (i == retries - 1)
                 throw; // rethrow last exception if retries exhausted
         }
@@ -284,15 +289,12 @@ app.UseStaticFiles(new StaticFileOptions
     ServeUnknownFileTypes = true
 });
 
+app.UseWebSockets();
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseRateLimiter();
+app.UseExceptionHandler();
 app.MapControllers();
 app.MapHub<NotificationHub>("/hubs/notificationHub");
-app.UseForwardedHeaders(new ForwardedHeadersOptions
-{
-    ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
-                       Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
-});
-app.UseRateLimiter();
 
 app.Run();
