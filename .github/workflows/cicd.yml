@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - feature/db-seeder
+      - deploy  
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
         run: docker push hanryhuy/tcaps:latest
 
   deploy:
-    if: github.ref == 'refs/heads/feature/db-seeder'
+    if: github.ref == 'refs/heads/deploy'
     needs: build
     runs-on: ubuntu-latest
     environment: ENV
@@ -46,7 +46,7 @@ jobs:
             docker compose up -d --force-recreate
 
   notification:
-    if: github.ref == 'refs/heads/feature/db-seeder'
+    if: github.ref == 'refs/heads/deploy'
     needs: deploy
     runs-on: ubuntu-latest
     environment: ENV
