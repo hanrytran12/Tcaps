@@ -17,17 +17,18 @@ namespace Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime ApprovedAt { get; private set; }
         
-        public FinalTransferRequest(Guid id,  Guid assignTransferRequestId, decimal quantityFinalSend) : base(id)
+        public FinalTransferRequest(Guid id,  Guid assignTransferRequestId, decimal quantityFinalSend, string? note) : base(id)
         {
             AssignTransferRequestId = assignTransferRequestId;
             QuantityFinalSend = quantityFinalSend;
             Status = "Pending";
+            Note = note;
             CreatedAt = DateTime.Now;
         }
         
-        public static FinalTransferRequest Create(Guid assignTransferRequestId, decimal quantityFinalSend)
+        public static FinalTransferRequest Create(Guid assignTransferRequestId, decimal quantityFinalSend, string? note)
         {
-            return new FinalTransferRequest(Guid.NewGuid(), assignTransferRequestId, quantityFinalSend);
+            return new FinalTransferRequest(Guid.NewGuid(), assignTransferRequestId, quantityFinalSend, note);
         }
 
         public void Approve(decimal quantityFinalReceive, string note)

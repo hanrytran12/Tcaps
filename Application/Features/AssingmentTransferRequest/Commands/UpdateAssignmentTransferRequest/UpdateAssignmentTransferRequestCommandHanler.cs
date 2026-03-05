@@ -63,7 +63,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                 }
 
                 var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assigment.Id, null);
-                bool check = batch.ActiveNextAssignment(transferRequest.Id, assigment.Id, request.CompleteQuantityReceive);
+                bool check = batch.ActiveNextAssignment(transferRequest.Id, assigment.Id, request.CompleteQuantityReceive, request.NoteLead);
 
                 if (check)
                 {

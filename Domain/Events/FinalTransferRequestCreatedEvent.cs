@@ -12,12 +12,14 @@ namespace Domain.Events
         public Guid Id { get; }
         public Guid AssignTransferRequestId { get; }
         public decimal QuantityFinalSend { get; }
+        public string? Note { get; }
 
-        public FinalTransferRequestCreatedEvent(Guid id, Guid assignTransferRequestId, decimal quantityFinalSend)
+        public FinalTransferRequestCreatedEvent(Guid id, Guid assignTransferRequestId, decimal quantityFinalSend, string? note)
         {
             Id = id;
             AssignTransferRequestId = assignTransferRequestId;
             QuantityFinalSend = quantityFinalSend;
+            Note = note;
         }
     }
 }
