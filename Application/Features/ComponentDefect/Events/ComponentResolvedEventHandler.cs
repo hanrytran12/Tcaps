@@ -19,7 +19,23 @@ namespace Application.Features.ComponentDefect.Events
         }
         public async Task Handle(ComponentResolvedEvent notification, CancellationToken cancellationToken)
         {
-            await _notificationService.SendComponentResolvedNotification(notification.Id, notification.EvaluateId, notification.Quantity, notification.Status);
+            if (notification.WasRejected)
+            {
+                // Staff đã sửa xong lỗi Reject -> thông báo cho QC vào confirm lại
+                await _notificationService.SendComponentRejectResolvedNotificationAsync(
+                    notification.Id,
+                    notification.EvaluateId,
+                    notification.Quantity,
+                    notification.QuantityReject);
+            }
+            else
+            {
+                await _notificationService.SendComponentResolvedNotification(
+                    notification.Id,
+                    notification.EvaluateId,
+                    notification.Quantity,
+                    notification.Status);
+            }
         }
     }
 }

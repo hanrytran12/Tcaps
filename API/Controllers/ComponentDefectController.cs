@@ -1,4 +1,5 @@
 ﻿using Application.DTOs.Response;
+using Application.Features.ComponentDefect.Commands.RejectComponentFromQC;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectConfirm;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
 using Application.Features.ComponentDefect.Query.GetComponentByEvaluateId;
@@ -44,6 +45,14 @@ namespace API.Controllers
             command.ComponentId = componentId;
             await _mediator.Send(command);
             return Ok("Chấp nhận đã sửa thành công.");
+        }
+
+        [HttpPut("reject/{componentId}")]
+        public async Task<IActionResult> RejectComponentAsync(Guid componentId, [FromQuery] RejectComponentFromQCCommand command)
+        {
+            command.Id = componentId;
+            await _mediator.Send(command);
+            return Ok("Từ chối từ QC.");
         }
     }
 }

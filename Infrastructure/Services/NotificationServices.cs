@@ -1282,6 +1282,98 @@ namespace Infrastructure.Services
                 CreatedAt = DateTime.Now
             });
         }
+
+        public async Task RejectComponentDefectNotificationAsync(Guid componentId, Guid evaluateId, int quantity, int quantityReject)
+        {
+            var evaluate = await _evaluateRepository.GetByIdAsync(evaluateId);
+
+            var qc = await _userRepository.GetByIdAsync(evaluate.UserId.Value);
+
+            var production = await _productionRepository.GetByIdAsync(evaluate.ProductionId);
+
+            var user = await _userRepository.GetByIdAsync(production.UserId);
+
+            var title = "Nộp sản phẩm đã sửa lỗi bị QC từ chối.";
+            var message = $"QC chấp nhận {quantity - quantityReject} sản phẩm đạt và có {quantityReject} chưa đạt. Vui lòng kiểm tra và sửa chữa lại.";
+            var type = "Production";
+            var notification = new Notification(Guid.NewGuid(), user.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+        }
+
+        public async Task SendComponentRejectResolvedNotificationAsync(Guid componentId, Guid evaluateId, int quantity, int quantityReject)
+        {
+            var evaluate = await _evaluateRepository.GetByIdAsync(evaluateId);
+
+            var qc = await _userRepository.GetByIdAsync(evaluate.UserId.Value);
+
+            var production = await _productionRepository.GetByIdAsync(evaluate.ProductionId);
+
+            var user = await _userRepository.GetByIdAsync(production.UserId);
+
+            var title = "Nhân viên đã sửa xong lỗi bị từ chối.";
+            var message = $"Nhân viên {user.FullName} đã sửa xong {quantityReject} sản phẩm bị từ chối trước đó. Vui lòng vào xác nhận (confirm) lại.";
+            var type = "Production";
+            var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+        }
+
+        public async Task SendMaterialShortageNotificationAsync(
+            Guid assignId,
+            Guid staffId,
+            Guid materialId,
+            string materialName,
+            string materialUnit,
+            decimal quantityRemaining,
+            Guid workshopId)
+        {
+            var staff = await _userRepository.GetByIdAsync(staffId);
+            if (staff is null) return;
+
+            var qc = await _userRepository.GetQCByWorkshopIdAsync(workshopId);
+            if (qc is null) return;
+
+            var assignment = await _assignmentRepository.GetByIdAsync(assignId);
+            var batch = await _batchRepository.GetByIdAsync(assignment.BatchId);
+
+            var title = "Cảnh báo: Hết nguyên vật liệu";
+            var message = $"Nhân viên {staff.FullName} báo cáo đã hết vật liệu \"{materialName}\" " +
+                          $"(còn lại: {quantityRemaining} {materialUnit}) cho lô hàng {batch.Code}. " +
+                          $"Vui lòng cung cấp thêm nguyên vật liệu.";
+            var type = "MaterialShortage";
+
+            var notification = Notification.Create(qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
+
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
+        }
     }
 }
 
