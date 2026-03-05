@@ -15,6 +15,7 @@ namespace Domain.Entities
         public DateOnly EndDate { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
+        public string? Note { get; private set; }
         public bool isDeleted { get; private set; }
 
         //private readonly List<Assignment> _assignments = new();
@@ -71,7 +72,7 @@ namespace Domain.Entities
             Status = status;
         }
 
-        public void CompleteBatch(decimal completedQuantity, decimal rejectedQuantity)
+        public void CompleteBatch(decimal completedQuantity, decimal rejectedQuantity, string? note = null)
         {
             this.ActualQuantity = completedQuantity;
             if (completedQuantity <= Quantity)
@@ -89,6 +90,7 @@ namespace Domain.Entities
                 }
             }
             UpdateStatus("Completed");
+            Note = note;
         }
 
         public void UpdateDetails(decimal quantity, DateOnly startDate, DateOnly endDate)

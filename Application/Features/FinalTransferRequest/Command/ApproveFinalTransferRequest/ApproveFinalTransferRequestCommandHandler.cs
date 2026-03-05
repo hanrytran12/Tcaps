@@ -83,7 +83,7 @@ namespace Application.Features.FinalTransferRequest.Command.ApproveFinalTransfer
 
             finalRequest.Approve(request.QuantityFinalReceive, request.Note);
 
-            batch.CompleteBatch(request.QuantityFinalReceive, quantityError);
+            batch.CompleteBatch(request.QuantityFinalReceive, quantityError, request.Note);
 
             await _mediator.Publish(new ApproveFinalTransferRequestEvent(
                 batch.Id,
