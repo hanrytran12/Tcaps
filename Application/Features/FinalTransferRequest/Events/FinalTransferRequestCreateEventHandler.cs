@@ -25,7 +25,8 @@ namespace Application.Features.FinalTransferRequest.Events
             var finalTransfer = new Domain.Entities.FinalTransferRequest(
                 notification.Id,
                 notification.AssignTransferRequestId,
-                notification.QuantityFinalSend);
+                notification.QuantityFinalSend,
+                notification.Note);
 
             await _finalTransferRequestRepository.AddAsync(finalTransfer);
             await _unitOfWork.SaveChangesAsync();
