@@ -33,6 +33,7 @@ namespace Application.Features.ComponentDefects.Query.GetComponentDefects
                 Id = q.defect.Id,
                 Description = q.defect.Description,
                 Quantity = q.defect.Quantity,
+                QuantityReject = q.defect.QuantityReject,
                 NameStaff = q.staff.FullName,
                 Status = q.defect.Status,
             });

@@ -99,34 +99,8 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
             var today = DateOnly.FromDateTime(DateTime.Now);
 
-            if (assignment.Status == "Reworking")
-            {
-                var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == assignment.Id && (r.Status == "InProgress" || r.Status == "Approved" || r.Status == "ReadyForTransfer")).FirstOrDefaultAsync(cancellationToken);
-                var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, reworkRequest?.Id);
-                await _productionRepository.AddAsync(production);
-
-                await _mediator.Publish(new ProductionReportedEvent(
-                    request.AssignId,
-                    request.StaffId,
-                    request.Quantity));
-            }
-            else
-            {
-                var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, null);
-                await _productionRepository.AddAsync(production);
-
-                await _mediator.Publish(new ProductionReportedEvent(
-                request.AssignId,
-                request.StaffId,
-                request.Quantity));
-
-                if (assignment.Status == "Planned" && today <= assignment.StartDate)
-                {
-                    assignment.UpdateStatus("InProgress");
-                }
-            }
-
-            if (request.MaterialUsed.Count() > 0)
+            // Kiểm tra NVL TRƯỚC khi tạo Production
+            if (request.MaterialUsed != null && request.MaterialUsed.Count > 0)
             {
                 foreach (var items in request.MaterialUsed)
                 {
@@ -135,7 +109,7 @@ namespace Application.Features.Productions.Command.AddProductionReport
 
                     var listMaterialUse = await _appDbContext.MaterialUse.Where(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId).ToListAsync();
 
-                    if (listMaterialUse is null)
+                    if (listMaterialUse is null || listMaterialUse.Count == 0)
                     {
                         throw new NotFoundException("Không tìm thấy MaterailUse");
                     }
@@ -155,9 +129,60 @@ namespace Application.Features.Productions.Command.AddProductionReport
                             throw new NotFoundException("Không tìm thấy MaterialUse của Assignment bình thường.");
                     }
 
-                    targetMaterialUse.IncreaseQuantityStaffUse(items.QuantityUsed);
+                    var remaining = (targetMaterialUse.QuantityDivide + targetMaterialUse.QuantityRequest) - targetMaterialUse.QuantityStaffUse;
+                    if ((decimal)items.QuantityUsed > remaining)
+                    {
+                        throw new ConflictException($"Xưởng của bạn đã hết NVL. Số lượng còn lại: {remaining}, bạn nhập: {items.QuantityUsed}. Hãy báo với QC để cung cấp thêm NVL.");
+                    }
                 }
             }
+
+            // Tạo Production sau khi đã validate xong
+            if (assignment.Status == "Reworking")
+            {
+                var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.AssignmentId == assignment.Id && (r.Status == "InProgress" || r.Status == "Approved" || r.Status == "ReadyForTransfer")).FirstOrDefaultAsync(cancellationToken);
+                var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, reworkRequest?.Id);
+                await _productionRepository.AddAsync(production);
+
+                await _mediator.Publish(new ProductionReportedEvent(
+                    request.AssignId,
+                    request.StaffId,
+                    request.Quantity));
+            }
+            else
+            {
+                var production = Production.Create(request.AssignId, request.StaffId, request.Quantity, null);
+                await _productionRepository.AddAsync(production);
+
+                await _mediator.Publish(new ProductionReportedEvent(
+                    request.AssignId,
+                    request.StaffId,
+                    request.Quantity));
+
+                if (assignment.Status == "Planned" && today <= assignment.StartDate)
+                {
+                    assignment.UpdateStatus("InProgress");
+                }
+            }
+
+            // Cộng QuantityStaffUse sau khi Production đã được tạo
+            if (request.MaterialUsed != null && request.MaterialUsed.Count > 0)
+            {
+                foreach (var items in request.MaterialUsed)
+                {
+                    var listMaterialUse = await _appDbContext.MaterialUse.Where(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId).ToListAsync();
+
+                    MaterialUse? targetMaterialUse;
+
+                    if (assignment.Status == "Reworking")
+                        targetMaterialUse = listMaterialUse.FirstOrDefault(m => m.ReworkRequestId != null);
+                    else
+                        targetMaterialUse = listMaterialUse.FirstOrDefault(m => m.ReworkRequestId == null);
+
+                    targetMaterialUse!.IncreaseQuantityStaffUse(items.QuantityUsed);
+                }
+            }
+
             await _unitOfWork.SaveChangesAsync();
             
 

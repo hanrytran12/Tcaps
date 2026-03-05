@@ -1,5 +1,6 @@
 ﻿using Application.DTOs.Response;
 using Application.Features.Productions.Command.AddProductionReport;
+using Application.Features.Productions.Command.NotifyQCMaterialShortage;
 using Application.Features.Productions.Command.UpdateProduction;
 using Application.Features.Productions.Query.GetAllProduction;
 using Application.Features.Productions.Query.GetAllProductionByAssignId;
@@ -54,8 +55,20 @@ namespace API.Controllers
         public async Task<IActionResult> ReportWork([FromBody] AddProductionReportCommand command)
         {
             command.StaffId = CurrentUserId;
-            await Mediator.Send(command);
+            var result = await Mediator.Send(command);
+            if (result.IsFailure)
+                return BadRequest(result.error);
             return Ok("Nộp sản phẩm thành công.");
+        }
+
+        [HttpPost("notify-material-shortage")]
+        public async Task<IActionResult> NotifyMaterialShortage([FromBody] NotifyQCMaterialShortageCommand command)
+        {
+            command.StaffId = CurrentUserId;
+            var result = await Mediator.Send(command);
+            if (result.IsFailure)
+                return BadRequest(result.error);
+            return Ok("Đã gửi thông báo hết NVL đến QC thành công.");
         }
 
         [HttpPut("for-qc/reduce-quantity")]

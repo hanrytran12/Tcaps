@@ -7,6 +7,7 @@ namespace Domain.Entities
         public Guid EvaluateId { get; private set; }
         public string Description { get; private set; } = string.Empty;
         public int Quantity { get; private set; }
+        public int QuantityReject { get; private set; } = 0;
         public DateTime CreatedAt { get; private set; }
         public string Status { get; private set; } = string.Empty;
 
@@ -38,5 +39,15 @@ namespace Domain.Entities
         public void Resolve(string status) => Status = status;
         public void Confirmed(string status) => Status = status;
         public void Unfixable() => Status = "Unfixabled";
+        public void Rejected(int quantityReject)
+        {
+            QuantityReject = quantityReject;
+            Status = "Rejected";
+        }
+        public void ResolveRejected(string status)
+        {
+            QuantityReject = 0;
+            Status = status;
+        }
     }
 }
