@@ -290,6 +290,7 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 app.UseWebSockets();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseRateLimiter();
