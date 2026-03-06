@@ -36,7 +36,7 @@ namespace Application.Interfaces
         Task SendUpdateQuantityProductionNotificationAsync(Guid userId, decimal quantitySend, decimal quantityReceive, DateOnly date, TimeOnly time, string batchCode);
         Task SendFinalTransferRequestForGuardQCNotificationAsync(decimal quantitySend, string batchCode, string workshopName);
         Task SendProductionReportNotificationAsync(Guid assignId, Guid staffId, decimal quantity);
-        Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateOnly dateShip);
+        Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateTime dateShip);
         Task SendNotificationForStaffNotificationAsync(Guid userId, Guid batchId, decimal? quantity);
         Task SendAssignmentsPlannedNotificationAsync(List<AssignmentsInfo> assignments, string batchCode);
         Task SendTransferRequestNotificationAsync(Guid userId, Guid assignmentId);

@@ -100,6 +100,7 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                 QuantityReceive = x.s.QuantityReceive ?? 0,
                 Unit = x.s.Unit,
                 DateShip = x.s.DateShip,
+                DateReceive = x.s.DateReceive,
                 Status = x.s.Status,
                 Note = x.s.Note
             }).ToListAsync(cancellationToken);

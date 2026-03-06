@@ -31,13 +31,13 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             if (qc == null)
                 throw new NotFoundException("Người dùng không tồn tại");
 
-            var today = DateOnly.FromDateTime(DateTime.Now);
+            var today = DateTime.Now.Date;
 
             var materialSupply = await _context.MaterialSupplies.FindAsync(request.SupplyId);
             if (materialSupply == null)
                 throw new NotFoundException("Không tìm thấy phiếu cung cấp vật liệu.");
 
-            if (today < materialSupply.DateShip)
+            if (today < materialSupply.DateShip.Date)
             {
                 throw new BadRequestException("Chưa tới ngày nhận vì chưa đến thời gian giao NVL.");
             }

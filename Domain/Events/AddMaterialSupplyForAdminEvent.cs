@@ -11,9 +11,9 @@ namespace Domain.Events
     {
         public Guid MaterialId { get; set; }
         public decimal QuantitySend { get; set; }
-        public DateOnly DateShip { get; set; }
+        public DateTime DateShip { get; set; }
 
-        public AddMaterialSupplyForAdminEvent(Guid materialId, decimal quantitySend, DateOnly dateShip)
+        public AddMaterialSupplyForAdminEvent(Guid materialId, decimal quantitySend, DateTime dateShip)
         {
             MaterialId = materialId;
             QuantitySend = quantitySend;

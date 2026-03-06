@@ -15,7 +15,8 @@
         public int QuantitySend { get; set; }
         public int QuantityReceive { get; set; }
         public string Unit { get; set; }
-        public DateOnly DateShip { get; set; }
+        public DateTime DateShip { get; set; }
+        public DateTime? DateReceive { get; set; }
         public string Status { get; set; }
         public string Note { get; set; }
     }
