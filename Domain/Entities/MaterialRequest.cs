@@ -94,5 +94,7 @@ namespace Domain.Entities
                 throw new ArgumentException("Quantity to increase must be non-negative.", nameof(quantity));
             ActualReceivedQuantity = (ActualReceivedQuantity ?? 0) + quantity;
         }
+
+        public void UpdateNoteFromQC(string? note) => NoteFromQC = note;
     }
 }

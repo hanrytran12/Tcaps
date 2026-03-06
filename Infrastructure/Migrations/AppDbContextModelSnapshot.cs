@@ -426,6 +426,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("QuantityReceive")
                         .HasColumnType("int");
 
