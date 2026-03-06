@@ -51,10 +51,11 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
                 throw new ForbiddenException("Bạn không có quyền cập nhật");
             }
 
-            materialSupply.MarkAsCompleted(request.QuantityReceive);
+            materialSupply.MarkAsCompleted(request.QuantityReceive, request.Note);
             _context.MaterialSupplies.Update(materialSupply);
 
             materialRequest.IncreaseQuantityActual(request.QuantityReceive);
+            materialRequest.UpdateNoteFromQC(request.Note);
 
             var materialUse = await _context.MaterialUse
                 .FirstOrDefaultAsync(m => m.BatchId == materialRequest.BatchId

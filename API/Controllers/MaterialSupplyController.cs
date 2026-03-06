@@ -49,13 +49,14 @@ namespace API.Controllers
 
         [HttpPut("qc/Completed/{supplyId}")]
         [Authorize(Roles = "QC")]
-        public async Task<IActionResult> UpdateCompletedAsync(Guid supplyId, int quantityReceive)
+        public async Task<IActionResult> UpdateCompletedAsync(Guid supplyId, int quantityReceive, string? note)
         {
             await Mediator.Send(new CompletedMaterialSupplyCommand
             {
                 QcId = CurrentUserId,
                 SupplyId = supplyId,
-                QuantityReceive = quantityReceive
+                QuantityReceive = quantityReceive,
+                Note = note
             });
             return Ok("Cập nhật trạng thái thành công");
         }
