@@ -417,14 +417,17 @@ namespace Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateOnly?>("DateReceive")
-                        .HasColumnType("date");
+                    b.Property<DateTime?>("DateReceive")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateOnly>("DateShip")
-                        .HasColumnType("date");
+                    b.Property<DateTime>("DateShip")
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("QuantityReceive")
                         .HasColumnType("int");

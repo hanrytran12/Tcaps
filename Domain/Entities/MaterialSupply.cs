@@ -11,11 +11,12 @@ namespace Domain.Entities
         public int QuantitySend { get; private set; }
         public int? QuantityReceive { get; private set; }
         public string Unit { get; private set; }
-        public DateOnly DateShip { get; private set; }
-        public DateOnly? DateReceive { get; private set; }
+        public DateTime DateShip { get; private set; }
+        public DateTime? DateReceive { get; private set; }
         public string Status { get; private set; } = "Pending";
+        public string? Note { get; private set; }
 
-        public MaterialSupply(Guid id, Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantitySend, string unit, DateOnly dateShip, string? status) : base(id)
+        public MaterialSupply(Guid id, Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantitySend, string unit, DateTime dateShip, string? status) : base(id)
         {
             RequestId = requestId;
             MaterialId = materialId;
@@ -27,20 +28,19 @@ namespace Domain.Entities
             Status = status;
         }
 
-        private MaterialSupply() : base(Guid.NewGuid()) { }
-
-        public static MaterialSupply Create(Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantity, string unit, DateOnly dateShip, Guid leadId)
+        public static MaterialSupply Create(Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantitySend, string unit, DateTime dateShip, Guid leadId)
         {
             var status = supplierId == leadId ? "InProgress" : "Pending";
             return new MaterialSupply(Guid.NewGuid(), requestId, materialId, supplierId, workshopId, quantity, unit, dateShip, status);
         }
 
         public void MarkAsInProgress() => Status = "InProgress";
-        public void MarkAsCompleted(int quantityReceive)
+        public void MarkAsCompleted(int quantityReceive, string? note)
         {
             QuantityReceive = quantityReceive;
             Status = "Completed";
-            DateReceive = DateOnly.FromDateTime(DateTime.Now);
+            Note = note;
+            DateReceive = DateTime.Now;
         }
 
         public void MarkAsApprovedByAdmin() => Status = "Approved";

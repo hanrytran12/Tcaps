@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Application.DTOs.Response
+﻿namespace Application.DTOs.Response
 {
     public class MaterialSupplyDTO
     {
@@ -21,7 +15,9 @@ namespace Application.DTOs.Response
         public int QuantitySend { get; set; }
         public int QuantityReceive { get; set; }
         public string Unit { get; set; }
-        public DateOnly DateShip { get; set; }
+        public DateTime DateShip { get; set; }
+        public DateTime? DateReceive { get; set; }
         public string Status { get; set; }
+        public string Note { get; set; }
     }
 }

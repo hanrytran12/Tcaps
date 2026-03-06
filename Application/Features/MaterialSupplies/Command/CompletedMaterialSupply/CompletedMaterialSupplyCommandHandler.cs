@@ -31,13 +31,13 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             if (qc == null)
                 throw new NotFoundException("Người dùng không tồn tại");
 
-            var today = DateOnly.FromDateTime(DateTime.Now);
+            var today = DateTime.Now.Date;
 
             var materialSupply = await _context.MaterialSupplies.FindAsync(request.SupplyId);
             if (materialSupply == null)
                 throw new NotFoundException("Không tìm thấy phiếu cung cấp vật liệu.");
 
-            if (today < materialSupply.DateShip)
+            if (today < materialSupply.DateShip.Date)
             {
                 throw new BadRequestException("Chưa tới ngày nhận vì chưa đến thời gian giao NVL.");
             }
@@ -51,10 +51,11 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
                 throw new ForbiddenException("Bạn không có quyền cập nhật");
             }
 
-            materialSupply.MarkAsCompleted(request.QuantityReceive);
+            materialSupply.MarkAsCompleted(request.QuantityReceive, request.Note);
             _context.MaterialSupplies.Update(materialSupply);
 
             materialRequest.IncreaseQuantityActual(request.QuantityReceive);
+            materialRequest.UpdateNoteFromQC(request.Note);
 
             var materialUse = await _context.MaterialUse
                 .FirstOrDefaultAsync(m => m.BatchId == materialRequest.BatchId

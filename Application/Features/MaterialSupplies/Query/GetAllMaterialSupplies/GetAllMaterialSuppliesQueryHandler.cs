@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
@@ -50,7 +45,7 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
             }
             else if (role.Equals("QC", StringComparison.OrdinalIgnoreCase))
             {
-                query = query.Where(x => x.r.UserId == request.UserId);
+
             }
             else if (role.Equals("Lead", StringComparison.OrdinalIgnoreCase))
             {
@@ -105,7 +100,9 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                 QuantityReceive = x.s.QuantityReceive ?? 0,
                 Unit = x.s.Unit,
                 DateShip = x.s.DateShip,
-                Status = x.s.Status
+                DateReceive = x.s.DateReceive,
+                Status = x.s.Status,
+                Note = x.s.Note
             }).ToListAsync(cancellationToken);
 
             return Result<List<MaterialSupplyDTO>>.Success(list);

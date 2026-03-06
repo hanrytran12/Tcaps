@@ -13,5 +13,6 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
         public Guid QcId { get; set; }
         public Guid SupplyId { get; set; }
         public int QuantityReceive { get; set; }
+        public string? Note { get; set; }
     }
 }
