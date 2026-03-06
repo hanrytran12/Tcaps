@@ -14,6 +14,7 @@ namespace Domain.Entities
         public decimal? QuantityFinalReceive { get; private set; }
         public string Status { get; private set; }
         public string? Note { get; private set; }
+        public string? ApprovedNote { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime ApprovedAt { get; private set; }
         
@@ -31,11 +32,11 @@ namespace Domain.Entities
             return new FinalTransferRequest(Guid.NewGuid(), assignTransferRequestId, quantityFinalSend, note);
         }
 
-        public void Approve(decimal quantityFinalReceive, string note)
+        public void Approve(decimal quantityFinalReceive, string? approvedNote)
         {
             Status = "Approved";
             QuantityFinalReceive = quantityFinalReceive;
-            Note = note;
+            ApprovedNote = approvedNote;
             ApprovedAt = DateTime.Now;
         }
     }
