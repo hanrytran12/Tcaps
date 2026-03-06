@@ -6,12 +6,9 @@ using AutoMapper;
 using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
-using Infrastructure.Persistence;
-using MediatR;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.Threading;
 
 namespace Infrastructure.Services
 {
@@ -501,7 +498,7 @@ namespace Infrastructure.Services
         public async Task SendCreateMaterialRequestNotificationAsync(Guid qcId, Guid batchId, Guid assignId)
         {
             var qc = await _userRepository.GetByIdAsync(qcId);
-            
+
             var batch = await _batchRepository.GetByIdAsync(batchId);
             var workshop = await _workshopRepository.GetByIdAsync(qc.WorkshopId);
 
@@ -975,7 +972,7 @@ namespace Infrastructure.Services
             });
         }
 
-        public async Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateOnly dateShip)
+        public async Task SendAddMaterialSupplyForAdminNotification(Guid materialId, decimal quantitySend, DateTime dateShip)
         {
             var admin = await _userRepository.GetByRoleAsync("Admin");
             if (admin is null) return;
