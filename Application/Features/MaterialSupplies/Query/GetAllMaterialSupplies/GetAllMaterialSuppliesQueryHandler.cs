@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Application.Common;
+﻿using Application.Common;
 using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
@@ -50,7 +45,7 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
             }
             else if (role.Equals("QC", StringComparison.OrdinalIgnoreCase))
             {
-                query = query.Where(x => x.r.UserId == request.UserId);
+
             }
             else if (role.Equals("Lead", StringComparison.OrdinalIgnoreCase))
             {
