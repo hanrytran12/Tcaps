@@ -256,7 +256,7 @@ using (var scope = app.Services.CreateScope())
             await db.Database.MigrateAsync();
 
             // Seed Users
-            //await Infrastructure.Persistence.Seeders.DbSeeder.SeedAllAsync(db);
+            await Infrastructure.Persistence.Seeders.DbSeeder.SeedAllAsync(db);
 
             Console.WriteLine("Database migrated and seeded successfully.");
             break;
