@@ -37,6 +37,7 @@ namespace Application.Features.FinalTransferRequest.Queries.GetAllFinalTransferR
                            QuantityFinalReceive = f.QuantityFinalReceive,
                            Status = f.Status,
                            Note = f.Note,
+                           ApprovedNote = f.ApprovedNote,
                            CreatedAt = f.CreatedAt,
                            ApprovedAt = f.ApprovedAt
                        })
