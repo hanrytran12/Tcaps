@@ -92,7 +92,7 @@ namespace Domain.Entities
         {
             if (quantity < 0)
                 throw new ArgumentException("Quantity to increase must be non-negative.", nameof(quantity));
-            ActualReceivedQuantity += quantity;
+            ActualReceivedQuantity = (ActualReceivedQuantity ?? 0) + quantity;
         }
     }
 }
