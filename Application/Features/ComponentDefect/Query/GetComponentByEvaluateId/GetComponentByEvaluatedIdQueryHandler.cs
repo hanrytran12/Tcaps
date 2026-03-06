@@ -33,6 +33,7 @@ namespace Application.Features.ComponentDefect.Query.GetComponentByEvaluateId
                 Id = c.defect.Id,
                 Description = c.defect.Description,
                 Quantity = c.defect.Quantity,
+                QuantityReject = c.defect.QuantityReject,
                 NameStaff = c.staff.FullName,
                 Status = c.defect.Status,
             });

@@ -55,8 +55,15 @@ namespace Domain.Entities
             if (component == null)
                 throw new Exception($"Không tìm thấy ComponentDefect với Id = {componentId}");
 
-            component.Resolve(status);
-            AddDomainEvent(new ComponentResolvedEvent(componentId, component.EvaluateId, component.Quantity, status));
+            bool wasRejected = component.Status == "Rejected";
+            int previousQuantityReject = component.QuantityReject;
+
+            if (wasRejected)
+                component.ResolveRejected(status);
+            else
+                component.Resolve(status);
+
+            AddDomainEvent(new ComponentResolvedEvent(componentId, component.EvaluateId, component.Quantity, status, wasRejected, previousQuantityReject));
         }
 
         public void UpdateConfirmComponent(Guid componentId, string status)
@@ -70,6 +77,18 @@ namespace Domain.Entities
 
             component.Confirmed(status);
             AddDomainEvent(new ComponentConfirmEvent(componentId, component.EvaluateId, component.Quantity, status));
+        }
+
+        public void RejectComponent(Guid componentId, int quantityReject)
+        {
+            var component = _componentDefects.FirstOrDefault(x => x.Id == componentId);
+            if (component is null)
+            {
+                throw new Exception($"Không tìm thấy ComponentDefect với Id = {componentId}");
+            }
+
+            component.Rejected(quantityReject);
+            AddDomainEvent(new RejectComponentEvent(componentId, component.EvaluateId, component.Quantity, component.QuantityReject));
         }
 
         public void AddDefects(List<ComponentDefect> componentDefects)

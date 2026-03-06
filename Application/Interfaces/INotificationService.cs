@@ -46,5 +46,8 @@ namespace Application.Interfaces
         Task QCOnReworkRequestApproveNotificationAsync(Guid qcId, DateOnly deliveryDate, DateOnly endDate);
         Task LeadOnReworkRequestAddedNotificationAsync(Guid assignmentId, Guid qcId, decimal defectiveQuantity, string noteQC);
         Task CreateMaterialWorkshopNotificationAsync(Guid workshopPreviousId, Guid workshopAfterId, decimal quantitySend, string batchCode);
+        Task RejectComponentDefectNotificationAsync(Guid componentId, Guid evaluateId, int quantity, int quantityReject);
+        Task SendComponentRejectResolvedNotificationAsync(Guid componentId, Guid evaluateId, int quantity, int quantityReject);
+        Task SendMaterialShortageNotificationAsync(Guid assignId, Guid staffId, Guid materialId, string materialName, string materialUnit, decimal quantityRemaining, Guid workshopId);
     }
 }

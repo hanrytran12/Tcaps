@@ -182,6 +182,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<int>("QuantityReject")
+                        .HasColumnType("int");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -244,6 +247,9 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime>("ApprovedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("ApprovedNote")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid>("AssignTransferRequestId")
                         .HasColumnType("uniqueidentifier");

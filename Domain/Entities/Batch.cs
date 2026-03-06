@@ -145,7 +145,7 @@ namespace Domain.Entities
             assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
         }
 
-        public bool ActiveNextAssignment(Guid assignTransferRequestId, Guid completedAssignmentId, decimal quantityCompleted)
+        public bool ActiveNextAssignment(Guid assignTransferRequestId, Guid completedAssignmentId, decimal quantityCompleted, string? noteForFinal = null)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
 
@@ -155,7 +155,8 @@ namespace Domain.Entities
                 AddDomainEvent(new FinalTransferRequestCreatedEvent(
                     Guid.NewGuid(),
                     assignTransferRequestId,
-                    quantityCompleted));
+                    quantityCompleted,
+                    noteForFinal));
 
                 currentAssignment.UpdateStatus("Completed");
                 currentAssignment.UpdateDateComplete();
@@ -178,7 +179,8 @@ namespace Domain.Entities
                 AddDomainEvent(new FinalTransferRequestCreatedEvent(
                     Guid.NewGuid(),
                     assignTransferRequestId,
-                    quantityCompleted));
+                    quantityCompleted,
+                    noteForFinal));
 
                 //this.CompleteBatch(quantityCompleted, rejectedQuantity);
                 currentAssignment.UpdateStatus("Completed");
