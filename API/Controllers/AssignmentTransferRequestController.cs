@@ -58,7 +58,9 @@ namespace API.Controllers
         public async Task<IActionResult> CreateTransferRequest([FromBody] AddAssignmentTransferRequestCommand command)
         {
             command.UserId = CurrentUserId;
-            await Mediator.Send(command);
+            var result = await Mediator.Send(command);
+            if (result.IsFailure)
+                return BadRequest(result.Error);
             return Ok("Yêu cầu chuyển giao đã được tạo thành công.");
         }
 

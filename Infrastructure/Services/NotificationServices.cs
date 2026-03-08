@@ -1354,7 +1354,7 @@ namespace Infrastructure.Services
 
             var title = "Cảnh báo: Hết nguyên vật liệu";
             var message = $"Nhân viên {staff.FullName} báo cáo đã hết vật liệu \"{materialName}\" " +
-                          $"(còn lại: {quantityRemaining} {materialUnit}) cho lô hàng {batch.Code}. " +
+                          $"(yêu cầu thêm: {quantityRemaining} {materialUnit}) cho lô hàng {batch.Code}. " +
                           $"Vui lòng cung cấp thêm nguyên vật liệu.";
             var type = "MaterialShortage";
 
