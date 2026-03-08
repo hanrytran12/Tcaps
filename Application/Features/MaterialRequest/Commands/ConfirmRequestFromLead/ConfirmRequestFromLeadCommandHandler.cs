@@ -45,7 +45,7 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromLead
             {
                 throw new BadRequestException(
                     $"Kho không đủ nguyên vật liệu \"{material.Name}\" để duyệt. " +
-                    $"Cần thêm: {quantityNeededFromWarehouse} {material.Unit}, " +
+                    $"Cần thêm: {(int)quantityNeededFromWarehouse} {material.Unit}, " +
                     $"Tồn kho hiện tại: {material.Quantity} {material.Unit}. " +
                     $"Vui lòng nhập thêm NVL vào kho trước khi duyệt.");
             }

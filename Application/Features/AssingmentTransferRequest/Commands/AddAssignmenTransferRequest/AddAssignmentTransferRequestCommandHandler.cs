@@ -96,6 +96,11 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, null);
                 completedQuantitySend = summary.TotalCompleted;
             }
+
+            if (isOutsource && request.QuantityCompletedSend!.Value > completedQuantitySend)
+            {
+                throw new BadRequestException($"Số lượng nhập ({request.QuantityCompletedSend.Value}) vượt quá số lượng hoàn thành thực tế ({completedQuantitySend}).");
+            }
             //var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
 
             decimal quantityToSend = isOutsource
