@@ -76,6 +76,7 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
 
             if (request.ReconciliationMaterials.Count > 0)
             {
+                // Validate toàn bộ trước khi update, tránh partial update khi có lỗi
                 foreach (var item in request.ReconciliationMaterials)
                 {
                     batch.UpdateMaterialUsage(request.AssignmentId, item.MaterialId, item.ReconciliationQuantity, request.UserId);

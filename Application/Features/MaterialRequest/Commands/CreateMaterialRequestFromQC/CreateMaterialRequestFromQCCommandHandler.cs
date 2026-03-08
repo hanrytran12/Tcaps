@@ -27,17 +27,17 @@ namespace Application.Features.MaterialRequest.Commands.CreateMaterialRequestFro
             if (assignment == null)
                 throw new NotFoundException("không tìm thấy phân công này.");
 
-            var today = DateOnly.FromDateTime(DateTime.Now);
+            //var today = DateOnly.FromDateTime(DateTime.Now);
 
-            if (today < assignment.StartDate || today > assignment.EndDate)
-            {
-                throw new BadRequestException($"Ngày yêu cầu ({today:dd/MM/yyyy}) phải nằm trong khoảng từ {assignment.StartDate:dd/MM/yyyy} đến {assignment.EndDate:dd/MM/yyyy}.");
-            }
+            //if (today < assignment.StartDate || today > assignment.EndDate)
+            //{
+            //    throw new BadRequestException($"Ngày yêu cầu ({today:dd/MM/yyyy}) phải nằm trong khoảng từ {assignment.StartDate:dd/MM/yyyy} đến {assignment.EndDate:dd/MM/yyyy}.");
+            //}
 
-            if (today > assignment.EndDate.AddDays(-2))
-            {
-                throw new BadRequestException("Không thể tạo yêu cầu vật liệu vì đã quá sát ngày kết thúc (trước EndDate dưới 2 ngày).");
-            }
+            //if (today > assignment.EndDate.AddDays(-2))
+            //{
+            //    throw new BadRequestException("Không thể tạo yêu cầu vật liệu vì đã quá sát ngày kết thúc (trước EndDate dưới 2 ngày).");
+            //}
 
             foreach (var item in request.Items)
             {
