@@ -11,6 +11,8 @@ namespace Application.DTOs.Response
         public Guid Id { get; set; }
         public Guid AssignTransferRequestId { get; set; }
         public string BatchCode { get; set; } = string.Empty;
+        public string ProductCode { get; set; } = string.Empty;
+        public string ProductName { get; set; } = string.Empty;
         public decimal QuantityFinalSend { get; set; }
         public decimal? QuantityFinalReceive { get; set; }
         public string Status { get; set; }
