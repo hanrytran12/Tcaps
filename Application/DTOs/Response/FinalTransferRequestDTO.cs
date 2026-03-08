@@ -16,6 +16,11 @@ namespace Application.DTOs.Response
         public string Status { get; set; }
         public string? Note { get; set; }
         public string? ApprovedNote { get; set; }
+        public string? NoteQC { get; set; }
+        public DateTime? DateQC { get; set; }
+        public string? NoteStep { get; set; }
+        public DateTime? DateStep { get; set; }
+        public string? NoteStepOrigin { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ApprovedAt { get; set; }
     }
