@@ -28,6 +28,8 @@ namespace Application.Features.FinalTransferRequest.Queries.GetAllFinalTransferR
                              on a.AssignmentId equals assign.Id
                         join b in _context.Batches
                              on assign.BatchId equals b.Id
+                        join p in _context.Products
+                             on b.ProductId equals p.Id
                         // Left join with TaskTransferRequest to check if it's from QC Transport
                         join ttr in _context.TaskTransferRequests.DefaultIfEmpty() 
                              on a.Id equals ttr.AssignmentTransferId into ttrs
@@ -37,6 +39,8 @@ namespace Application.Features.FinalTransferRequest.Queries.GetAllFinalTransferR
                             Id = f.Id,
                             AssignTransferRequestId = f.AssignTransferRequestId,
                             BatchCode = b.Code,
+                            ProductCode = p.Code,
+                            ProductName = p.Name,
                             QuantityFinalSend = f.QuantityFinalSend,
                             QuantityFinalReceive = f.QuantityFinalReceive,
                             Status = f.Status,
