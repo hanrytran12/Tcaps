@@ -145,27 +145,19 @@ namespace Domain.Entities
             assignmentToConfirm.UpdateWhenQcConfirmed(isFirstStep);
         }
 
-        public bool ActiveNextAssignment(Guid assignTransferRequestId, Guid completedAssignmentId, decimal quantityCompleted, string? noteForFinal = null)
+          public bool ActiveNextAssignment(Guid assignTransferRequestId, Guid completedAssignmentId, decimal quantityCompleted, string? noteForFinal = null)
         {
             var currentAssignment = this.Assignments.FirstOrDefault(a => a.Id == completedAssignmentId);
+            if (currentAssignment == null) return false;
 
-            //nếu là xưởng khoán
-            if (!currentAssignment.StepOrder.HasValue)
+            Assignment nextAssignment = null;
+            if (currentAssignment.StepOrder.HasValue)
             {
-                AddDomainEvent(new FinalTransferRequestCreatedEvent(
-                    Guid.NewGuid(),
-                    assignTransferRequestId,
-                    quantityCompleted,
-                    noteForFinal));
-
-                currentAssignment.UpdateStatus("Completed");
-                currentAssignment.UpdateDateComplete();
-
-                return false;
+                nextAssignment = this.Assignments
+                    .Where(a => a.StepOrder > currentAssignment.StepOrder)
+                    .OrderBy(a => a.StepOrder)
+                    .FirstOrDefault();
             }
-
-            var currentSteporder = currentAssignment.StepOrder;
-            var nextAssignment = this.Assignments.Where(a => a.StepOrder > currentSteporder).OrderBy(a => a.StepOrder).FirstOrDefault();
 
             if (nextAssignment is not null)
             {
@@ -173,7 +165,6 @@ namespace Domain.Entities
                 AddDomainEvent(new AssignmentActivedEvent(Code, currentAssignment.WorkshopId, nextAssignment.StartDate, nextAssignment.WorkshopId));
                 return true;
             }
-
             else
             {
                 AddDomainEvent(new FinalTransferRequestCreatedEvent(
@@ -182,7 +173,6 @@ namespace Domain.Entities
                     quantityCompleted,
                     noteForFinal));
 
-                //this.CompleteBatch(quantityCompleted, rejectedQuantity);
                 currentAssignment.UpdateStatus("Completed");
                 currentAssignment.UpdateDateComplete();
                 return false;

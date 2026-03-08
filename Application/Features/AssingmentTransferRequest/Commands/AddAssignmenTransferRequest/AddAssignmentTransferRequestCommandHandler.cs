@@ -83,59 +83,42 @@ namespace Application.Features.AssingmentTransferRequest.Commands.AddAssignmenTr
                 }
             }
 
-            decimal completedQuantitySend = 0;
-
-            if (assignment.Status == "Reworking")
-            {
-                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, request.ReworkRequestId);
-                completedQuantitySend = summary.TotalCompleted;
-            }
-
-            else
-            {
-                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId, null);
-                completedQuantitySend = summary.TotalCompleted;
-            }
-
-            if (isOutsource && request.QuantityCompletedSend!.Value > completedQuantitySend)
-            {
-                throw new BadRequestException($"Số lượng nhập ({request.QuantityCompletedSend.Value}) vượt quá số lượng hoàn thành thực tế ({completedQuantitySend}).");
-            }
-            //var completedQuantity = await _assignmentCompletionService.CalculateCompetedQuantityAsync(request.AssignmentId);
-
-            decimal quantityToSend = isOutsource
-                ? request.QuantityCompletedSend!.Value
-                : completedQuantitySend;
-
-            AssignmentTransferRequest assignmentTransferRequest;
+            decimal quantityToSend = 0;
             if (isOutsource)
             {
-                assignmentTransferRequest = AssignmentTransferRequest.Create(
-                    assignment.Id,
-                    request.UserId,
-                    quantityToSend,
-                    request.Note,
-                    null);
-
-                await _assignmentTransferRequestRepository.AddAsync(assignmentTransferRequest);
-
-                if (batch.UserId == null)
-                {
-                    assignmentTransferRequest.MarkAsApproved();
-                    batch.ActiveNextAssignment(assignmentTransferRequest.Id, assignment.Id, quantityToSend, request.Note);
-                }
-                else
-                {
-                    assignment.UpdateStatus("ReadyForTransfer");
-                    assignmentTransferRequest.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));
-                }
+                quantityToSend = request.QuantityCompletedSend!.Value;
             }
             else
             {
-                assignmentTransferRequest = AssignmentTransferRequest.Create(request.AssignmentId, request.UserId, quantityToSend, request.Note, (assignment.Status == "Reworking" ? request.ReworkRequestId : null));
-                await _assignmentTransferRequestRepository.AddAsync(assignmentTransferRequest);
+                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(
+                    request.AssignmentId, 
+                    assignment.Status == "Reworking" ? request.ReworkRequestId : null);
+                
+                quantityToSend = summary.TotalCompleted;
+            }
 
-                assignmentTransferRequest.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, request.AssignmentId));
+            var reworkRequestId = !isOutsource && assignment.Status == "Reworking" ? request.ReworkRequestId : null;
+            var assignmentTransferRequest = AssignmentTransferRequest.Create(
+                assignment.Id,
+                request.UserId,
+                quantityToSend,
+                request.Note,
+                reworkRequestId);
+
+            await _assignmentTransferRequestRepository.AddAsync(assignmentTransferRequest);
+
+            if (isOutsource && batch.UserId == null)
+            {
+                assignmentTransferRequest.MarkAsApproved();
+                batch.ActiveNextAssignment(assignmentTransferRequest.Id, assignment.Id, quantityToSend, request.Note);
+            }
+            else
+            {
+                if (isOutsource)
+                {
+                    assignment.UpdateStatus("ReadyForTransfer");
+                }
+                assignmentTransferRequest.AddDomainEvent(new TransferRequestAddedEvent(request.UserId, assignment.Id));
             }
             
 
