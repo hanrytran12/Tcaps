@@ -67,7 +67,6 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     throw new NotFoundException("Không tìm thấy lô hàng");
                 }
 
-                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assigment.Id, null);
                 bool check = batch.ActiveNextAssignment(transferRequest.Id, assigment.Id, request.CompleteQuantityReceive, request.NoteLead);
 
                 if (check)
