@@ -716,6 +716,9 @@ namespace Infrastructure.Migrations
                     b.Property<Guid>("QcTransportId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime?>("ReceivedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
