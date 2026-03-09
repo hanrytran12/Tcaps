@@ -73,7 +73,8 @@ namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequest
                             Note = ttr.Note,
                             CreatedAt = ttr.CreatedAt,
                             DateToGo = ttr.DateToGo,
-                            ApprovedAt = ttr.ApprovedAt
+                            ApprovedAt = ttr.ApprovedAt,
+                            ReceivedAt = ttr.ReceivedAt
                         };
 
             var dto = await query.FirstOrDefaultAsync(cancellationToken);

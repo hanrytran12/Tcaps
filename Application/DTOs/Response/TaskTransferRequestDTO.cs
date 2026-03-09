@@ -21,6 +21,7 @@
         public DateTime CreatedAt { get; set; }
         public DateTime DateToGo { get; set; }
         public DateTime? ApprovedAt { get; set; }
+        public DateTime? ReceivedAt { get; set; }
         public string NextWorkshopName { get; set; }
     }
 }
