@@ -19,5 +19,6 @@
         public DateTime? DateReceive { get; set; }
         public string Status { get; set; }
         public string Note { get; set; }
+        public string? LeadNote { get; set; }
     }
 }

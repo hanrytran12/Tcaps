@@ -102,7 +102,8 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                 DateShip = x.s.DateShip,
                 DateReceive = x.s.DateReceive,
                 Status = x.s.Status,
-                Note = x.s.Note
+                Note = x.s.Note,
+                LeadNote = x.s.LeadNote
             }).ToListAsync(cancellationToken);
 
             return Result<List<MaterialSupplyDTO>>.Success(list);

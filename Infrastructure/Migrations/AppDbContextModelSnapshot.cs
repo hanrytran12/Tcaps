@@ -423,6 +423,9 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("DateShip")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("LeadNote")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<Guid>("MaterialId")
                         .HasColumnType("uniqueidentifier");
 
