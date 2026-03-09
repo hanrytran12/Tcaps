@@ -99,6 +99,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             CreatedAt = ttr.CreatedAt,
                             DateToGo = ttr.DateToGo,
                             ApprovedAt = ttr.ApprovedAt,
+                            ReceivedAt = ttr.ReceivedAt,
                             NextWorkshopName =
                                 ttr.AssignmentTransferId == null
                                     ? null

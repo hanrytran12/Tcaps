@@ -91,6 +91,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                             CreatedAt = ttr.CreatedAt,
                             DateToGo = ttr.DateToGo,
                             ApprovedAt = ttr.ApprovedAt,
+                            ReceivedAt = ttr.ReceivedAt,
                             ProductCode = p != null ? p.Code : null,
                             ProductName = p != null ? p.Name : null,
                             NextWorkshopName =

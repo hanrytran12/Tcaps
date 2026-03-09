@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -19,6 +14,7 @@ namespace Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime DateToGo { get; private set; }
         public DateTime? ApprovedAt { get; private set; }
+        public DateTime? ReceivedAt { get; private set; }
         public TaskTransferRequest(Guid id, Guid batchId, Guid workshopId, Guid qcTransportId, Guid? materialRequestId, Guid? assignmentTransferId, string? note, DateTime dateToGo) : base(id)
         {
             BatchId = batchId;
@@ -40,7 +36,12 @@ namespace Domain.Entities
         public void UpdateApproveStatus()
         {
             Status = "Approved";
-            ApprovedAt = DateTime.UtcNow;
+            ApprovedAt = DateTime.Now;
+        }
+
+        public void MarkAsReceived()
+        {
+            ReceivedAt = DateTime.Now;
         }
     }
 }
