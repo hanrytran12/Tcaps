@@ -50,7 +50,8 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
                 request.QuantitySend,
                 request.Unit,
                 request.DateShip,
-                request.LeadId // để xác định ai là lead duyệt
+                request.LeadId, // để xác định ai là lead duyệt
+                request.LeadNote
             );
 
             await _context.MaterialSupplies.AddAsync(supply, cancellationToken);

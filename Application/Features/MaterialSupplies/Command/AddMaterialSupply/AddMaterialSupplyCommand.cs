@@ -21,5 +21,6 @@ namespace Application.Features.MaterialSupplies.Command.AddMaterialSupply
         public Guid MaterialId { get; set; }
         public int QuantitySend { get; set; }
         public string Unit { get; set; }
+        public string? LeadNote { get; set; }
     }
 }
