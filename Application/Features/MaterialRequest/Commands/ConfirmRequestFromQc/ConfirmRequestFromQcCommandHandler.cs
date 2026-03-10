@@ -69,6 +69,12 @@ namespace Application.Features.MaterialRequest.Commands.ConfirmRequestFromQc
                 _appDbContext.Users.Update(qcTransport);
             }
 
+            if (taskTransferRequest != null)
+            {
+                taskTransferRequest.MarkAsReceived();
+                _appDbContext.TaskTransferRequests.Update(taskTransferRequest);
+            }
+
             return Result.Success();
         }
     }

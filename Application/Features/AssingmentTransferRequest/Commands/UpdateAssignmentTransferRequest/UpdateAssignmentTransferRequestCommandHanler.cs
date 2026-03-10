@@ -44,6 +44,11 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     throw new BadRequestException("Yêu cầu không hợp lệ hoặc đã được duyệt");
                 }
 
+                if (request.CompleteQuantityReceive > transferRequest.CompletedQuantitySend)
+                {
+                    throw new BadRequestException($"Số lượng thực nhận ({request.CompleteQuantityReceive}) không được lớn hơn số lượng QC đưa lên ({(int)transferRequest.CompletedQuantitySend}).");
+                }
+
                 var assigment = await _assignmentRepository.GetByIdAsync(transferRequest.AssignmentId);
                 if (assigment is null)
                 {
@@ -62,7 +67,6 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
                     throw new NotFoundException("Không tìm thấy lô hàng");
                 }
 
-                var summary = await _assignmentCompletionService.CalculateCompetedQuantityAsync(assigment.Id, null);
                 bool check = batch.ActiveNextAssignment(transferRequest.Id, assigment.Id, request.CompleteQuantityReceive, request.NoteLead);
 
                 if (check)
@@ -76,6 +80,11 @@ namespace Application.Features.AssingmentTransferRequest.Commands.UpdateAssignme
             }
             else
             {
+                if (request.CompleteQuantityReceive > transferRequest.CompletedQuantitySend)
+                {
+                    throw new BadRequestException($"Số lượng thực nhận ({request.CompleteQuantityReceive}) không được lớn hơn số lượng QC đưa lên ({(int)transferRequest.CompletedQuantitySend}).");
+                }
+
                 var reworkRequest = await _appDbContext.ReworkRequests.Where(r => r.Id == transferRequest.ReworkRequestId).FirstOrDefaultAsync();
                 reworkRequest.Completed();
 

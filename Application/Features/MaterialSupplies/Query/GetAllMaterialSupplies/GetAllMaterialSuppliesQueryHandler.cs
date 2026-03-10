@@ -21,6 +21,7 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                         join m in _context.Materials on s.MaterialId equals m.Id
                         join r in _context.MaterialRequests on s.RequestId equals r.Id
                         join b in _context.Batches on r.BatchId equals b.Id
+                        join p in _context.Products on b.ProductId equals p.Id
 
                         // 💡 JOIN 1: Lấy thông tin Người Cung cấp (Supplier)
                         join su in _context.Users.AsNoTracking() on s.SupplierId equals su.Id into supplierGroup
@@ -33,7 +34,7 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                             // 💡 JOIN 3: Workshop (dựa trên người yêu cầu, thường là QC Workshop)
                         join w in _context.Workshop.AsNoTracking() on receiverUser.WorkshopId equals w.Id into workshopGroup
                         from wItem in workshopGroup.DefaultIfEmpty() // Thêm DefaultIfEmpty()
-                        select new { s, m, r, b, supplierUser, receiverUser, wItem };
+                        select new { s, m, r, b, p, supplierUser, receiverUser, wItem };
 
             // Normalize role
             string role = request.Role?.Trim() ?? "";
@@ -91,6 +92,8 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                 MaterialId = x.s.MaterialId,
                 MaterialName = x.m.Name,
                 BatchCode = x.b.Code,
+                ProductCode = x.p.Code,
+                ProductName = x.p.Name,
                 WorkshopId = x.receiverUser.WorkshopId ?? Guid.Empty,
                 WorkshopName = x.wItem.Name,
                 SupplierId = x.s.SupplierId,
@@ -102,7 +105,8 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                 DateShip = x.s.DateShip,
                 DateReceive = x.s.DateReceive,
                 Status = x.s.Status,
-                Note = x.s.Note
+                Note = x.s.Note,
+                LeadNote = x.s.LeadNote
             }).ToListAsync(cancellationToken);
 
             return Result<List<MaterialSupplyDTO>>.Success(list);

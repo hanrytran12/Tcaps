@@ -100,6 +100,11 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
                 materialSupply.MaterialId,
                 batch.Code,
                 materialSupply.QuantityReceive ?? 0));
+
+            await _mediator.Publish(new NotificationForStaffEvent(
+                qc.Id,
+                batch.Id,
+                request.QuantityReceive));
             return Result<Guid>.Success(materialSupply.Id);
         }
     }

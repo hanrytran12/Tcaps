@@ -15,8 +15,9 @@ namespace Domain.Entities
         public DateTime? DateReceive { get; private set; }
         public string Status { get; private set; } = "Pending";
         public string? Note { get; private set; }
+        public string? LeadNote { get; private set; }
 
-        public MaterialSupply(Guid id, Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantitySend, string unit, DateTime dateShip, string? status) : base(id)
+        public MaterialSupply(Guid id, Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantitySend, string unit, DateTime dateShip, string? status, string? leadNote) : base(id)
         {
             RequestId = requestId;
             MaterialId = materialId;
@@ -26,12 +27,13 @@ namespace Domain.Entities
             Unit = unit;
             DateShip = dateShip;
             Status = status;
+            LeadNote = leadNote;
         }
 
-        public static MaterialSupply Create(Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantitySend, string unit, DateTime dateShip, Guid leadId)
+        public static MaterialSupply Create(Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantitySend, string unit, DateTime dateShip, Guid leadId, string? leadNote)
         {
             var status = supplierId == leadId ? "InProgress" : "Pending";
-            return new MaterialSupply(Guid.NewGuid(), requestId, materialId, supplierId, workshopId, quantitySend, unit, dateShip, status);
+            return new MaterialSupply(Guid.NewGuid(), requestId, materialId, supplierId, workshopId, quantitySend, unit, dateShip, status, leadNote);
         }
 
         public void MarkAsInProgress() => Status = "InProgress";
