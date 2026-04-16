@@ -13,7 +13,7 @@ namespace Application
         public static IServiceCollection AddApplicationServices(this IServiceCollection services, Assembly apiAssembly, Assembly infrastructureAssembly)
         {
             // Đăng ký AutoMapper
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(_ => { }, AppDomain.CurrentDomain.GetAssemblies());
 
             // Đăng ký FluentValidator
             services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
