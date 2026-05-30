@@ -28,6 +28,8 @@ namespace Domain.Entities
             CreatedAt = DateTime.Now;
         }
 
+        private TaskTransferRequest() : base(Guid.NewGuid()) { }
+
         public static TaskTransferRequest Create(Guid batchId, Guid workshopId, Guid qcTransportId, Guid? requestId, Guid? assignmentTransferId, string? note, DateTime dateToGo)
         {
             return new TaskTransferRequest(Guid.NewGuid(), batchId, workshopId, qcTransportId, requestId, assignmentTransferId, note, dateToGo);
