@@ -5,6 +5,7 @@ using DotNetEnv;
 using Infrastructure;
 using Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -16,10 +17,39 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
 
-Env.Load();
+LoadDotEnvFromCurrentOrParentDirectory();
 
 var builder = WebApplication.CreateBuilder(args);
 var conf = builder.Configuration;
+
+if (builder.Environment.IsDevelopment())
+{
+    var dataProtectionKeysDirectory = Path.Combine(
+        builder.Environment.ContentRootPath,
+        ".aspnet",
+        "DataProtection-Keys");
+
+    Directory.CreateDirectory(dataProtectionKeysDirectory);
+    builder.Services.AddDataProtection()
+        .PersistKeysToFileSystem(new DirectoryInfo(dataProtectionKeysDirectory));
+}
+
+static void LoadDotEnvFromCurrentOrParentDirectory()
+{
+    var directory = new DirectoryInfo(Directory.GetCurrentDirectory());
+
+    while (directory is not null)
+    {
+        var envPath = Path.Combine(directory.FullName, ".env");
+        if (File.Exists(envPath))
+        {
+            Env.Load(envPath);
+            return;
+        }
+
+        directory = directory.Parent;
+    }
+}
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

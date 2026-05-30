@@ -118,11 +118,33 @@ namespace Infrastructure.Persistence
                 .Property(a => a.ReworkRequestId)
                 .IsRequired(false);
 
+            modelBuilder.Entity<WorkshopInventory>(entity =>
+            {
+                entity.Property(wi => wi.Quantity)
+                    .HasPrecision(18, 2);
+
+                entity.Property(wi => wi.HoldingQuantity)
+                    .HasPrecision(18, 2);
+            });
+
             modelBuilder.Entity<Evaluate>()
                 .HasMany(e => e.ComponentDefects) // Tên thuộc tính trong Evaluate Entity (ví dụ: public ICollection<ComponentDefect> ComponentDefects)
                 .WithOne() // Hoặc WithOne(cd => cd.Evaluate) nếu có navigation property ngược
                 .HasForeignKey(cd => cd.EvaluateId);
 
+            ConfigureDecimalPrecision(modelBuilder);
+        }
+
+        private static void ConfigureDecimalPrecision(ModelBuilder modelBuilder)
+        {
+            foreach (var property in modelBuilder.Model.GetEntityTypes()
+                         .SelectMany(entityType => entityType.GetProperties())
+                         .Where(property => property.ClrType == typeof(decimal) ||
+                                            property.ClrType == typeof(decimal?)))
+            {
+                property.SetPrecision(18);
+                property.SetScale(2);
+            }
         }
 
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken)

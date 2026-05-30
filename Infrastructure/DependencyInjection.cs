@@ -19,9 +19,38 @@ namespace Infrastructure
         public static IServiceCollection AddInfrastructureServices(
             this IServiceCollection services, IConfiguration configuration)
         {
+            var environmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            var isDevelopment = string.Equals(environmentName, "Development", StringComparison.OrdinalIgnoreCase);
+            var isRunningInContainer = string.Equals(
+                Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"),
+                "true",
+                StringComparison.OrdinalIgnoreCase);
+
+            var configuredDbConnectionString = configuration.GetConnectionString("DefaultConnection");
+            var environmentDbConnectionString = Environment.GetEnvironmentVariable("TCAPS_DB_CONNECTION");
+
+            var dbConnectionString = isDevelopment && !isRunningInContainer
+                ? configuredDbConnectionString ?? environmentDbConnectionString
+                : environmentDbConnectionString ?? configuredDbConnectionString;
+
+            if (string.IsNullOrWhiteSpace(dbConnectionString))
+            {
+                throw new InvalidOperationException(
+                    "Missing database connection string. Set TCAPS_DB_CONNECTION or ConnectionStrings:DefaultConnection.");
+            }
+
+            var blobConnectionString = Environment.GetEnvironmentVariable("BLOB_STORAGE_SETTINGS")
+                ?? configuration["BlobStorageSettings:ConnectionString"];
+
+            if (string.IsNullOrWhiteSpace(blobConnectionString))
+            {
+                throw new InvalidOperationException(
+                    "Missing blob storage connection string. Set BLOB_STORAGE_SETTINGS or BlobStorageSettings:ConnectionString.");
+            }
+
             // Đăng ký DbContext
             services.AddDbContext<AppDbContext>(options =>
-                options.UseSqlServer(Environment.GetEnvironmentVariable("TCAPS_DB_CONNECTION")));
+                options.UseSqlServer(dbConnectionString, sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
             // Đăng ký các interface của DbContext
             services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
@@ -29,7 +58,7 @@ namespace Infrastructure
 
             // Đăng ký Azure Blob Service
             services.AddSingleton(x =>
-                new BlobServiceClient(Environment.GetEnvironmentVariable("BLOB_STORAGE_SETTINGS")));
+                new BlobServiceClient(blobConnectionString));
 
             // Đăng ký Behavior của Infrastructure
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
