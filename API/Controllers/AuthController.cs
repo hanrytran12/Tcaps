@@ -1,9 +1,11 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
+using Application.Features.Auth.Commands.Register;
 using Application.Features.Auth.Queries;
 using Application.Interfaces;
 using Domain.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
@@ -31,6 +33,14 @@ namespace API.Controllers
         public async Task<AuthRepsponseDTO> LoginAsync([FromQuery] LoginQuery query)
         {
             return await _mediator.Send(query);
+        }
+
+        [HttpPost("register")]
+        [AllowAnonymous]
+        public async Task<ActionResult<AuthRepsponseDTO>> RegisterAsync([FromBody] RegisterCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return Ok(result.Value);
         }
 
         [HttpPost("forgot-password")]
