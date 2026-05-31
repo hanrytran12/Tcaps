@@ -1,6 +1,7 @@
 ﻿using Domain.Interfaces;
 using Infrastructure.Persistence;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Common.Behaviors
 {
@@ -25,21 +26,30 @@ namespace Application.Common.Behaviors
                 // Chạy request trong transaction hiện có
                 return await next();
             }
-            await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
 
-            try
-            {
-                var response = await next();
-                await _unitOfWork.SaveChangesAsync();
-                await transaction.CommitAsync();
+            // Khi bật EnableRetryOnFailure, EF Core dùng SqlServerRetryingExecutionStrategy.
+            // Strategy này không cho phép tự mở transaction (BeginTransaction) trực tiếp,
+            // nên phải bọc toàn bộ transaction trong execution strategy để retry như một đơn vị.
+            var strategy = _context.Database.CreateExecutionStrategy();
 
-                return response;
-            }
-            catch (Exception ex)
+            return await strategy.ExecuteAsync(async () =>
             {
-                await transaction.RollbackAsync();
-                throw;
-            }
+                await using var transaction = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+                try
+                {
+                    var response = await next();
+                    await _unitOfWork.SaveChangesAsync();
+                    await transaction.CommitAsync(cancellationToken);
+
+                    return response;
+                }
+                catch (Exception)
+                {
+                    await transaction.RollbackAsync(cancellationToken);
+                    throw;
+                }
+            });
         }
     }
 }
