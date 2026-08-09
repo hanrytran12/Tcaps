@@ -71,4 +71,4 @@ AppDbContext implements the application database abstraction and unit-of-work co
 - Named policies restrict operations such as admin, lead, QC, QC transport, and dashboard access.
 - OTP requests are rate-limited by remote IP.
 - File/static content handling and upload size limits are configured in the host.
-- Secret values must remain outside source and documentation. The tracked .env is a known repository risk requiring separate remediation.
+- Secret values must remain outside source and documentation. Historical revisions exposed .env/configuration credentials; rotate them and keep local copies ignored.

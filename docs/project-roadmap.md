@@ -19,7 +19,7 @@
 
 ### P0 — Security hygiene
 
-- Rotate any credentials exposed through the tracked .env.
+- Rotate any credentials exposed through the historical tracked .env and appsettings files.
 - Remove secret material from tracking/history according to repository policy.
 - Add safe ignore rules and a non-secret configuration example.
 - Confirm CI secrets and local setup after rotation.

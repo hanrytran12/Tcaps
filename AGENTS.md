@@ -60,13 +60,13 @@ The current Compose file pulls hanryhuy/tcaps:latest; source changes require a n
 - Swagger is enabled by the current host and supports the Bearer security scheme.
 - SignalR notifications use /hubs/notificationHub; hub token handling is configured in the JWT events.
 - OTP endpoints use the OtpPolicy rate limiter. Do not weaken limits without a security review.
-- Never print, commit, copy, or document secret values. The tracked .env file is a known security risk; use variable names only and handle rotation/removal separately.
+- Never print, commit, copy, or document secret values. Historical revisions contained a tracked .env; current and future work must keep it ignored and rotate every exposed value.
 
 ## Configuration
 
-Important names include TCAPS_DB_CONNECTION, BLOB_STORAGE_SETTINGS, JWT_KEY, ISSUER, AUDIENCE, REDIS_PASSWORD, BREVO_API_KEY, BREVO_SENDER_NAME, and BREVO_SENDER_EMAIL. Read [docs/deployment-guide.md](./docs/deployment-guide.md) for the complete mapping.
+Important names include TCAPS_DB_CONNECTION, TCAPS_SEED_PASSWORD, BLOB_STORAGE_SETTINGS, JWT_KEY, ISSUER, AUDIENCE, REDIS_PASSWORD, BREVO_API_KEY, BREVO_SENDER_NAME, and BREVO_SENDER_EMAIL. Read [docs/deployment-guide.md](./docs/deployment-guide.md) for the complete mapping.
 
-Program.cs currently reads JWT values from environment variables. Do not assume the similarly named JwtSettings section in appsettings.json is the active source without verifying the code path.
+The host and JwtTokenGenerator read JWT values from environment variables first. The JwtSettings configuration paths remain only as a fallback for controlled non-secret configuration; never put real keys in appsettings files.
 
 ## Verification before handoff
 

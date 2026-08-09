@@ -19,13 +19,17 @@ namespace Infrastructure.Services
 
         public AuthRepsponseDTO GenerateToken(User user)
         {
+            var issuer = GetRequiredSetting("ISSUER", "JwtSettings:Issuer");
+            var audience = GetRequiredSetting("AUDIENCE", "JwtSettings:Audience");
+            var secretKeyValue = GetRequiredSetting("JWT_KEY", "JwtSettings:SecretKey");
+
             var claims = new List<Claim>
             {
                 new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
                 new Claim(ClaimTypes.Role, user.Role),
                 new Claim("fullname", user.FullName),
-                new Claim(JwtRegisteredClaimNames.Iss, _configuration["JwtSettings:Issuer"]),
-                new Claim(JwtRegisteredClaimNames.Aud, _configuration["JwtSettings:Audience"])
+                new Claim(JwtRegisteredClaimNames.Iss, issuer),
+                new Claim(JwtRegisteredClaimNames.Aud, audience)
             };
 
             if (user.WorkshopId.HasValue)
@@ -38,7 +42,7 @@ namespace Infrastructure.Services
                 claims.Add(new Claim("isQcTransport", "true"));
             }
 
-            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtSettings:SecretKey"]));
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKeyValue));
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -56,6 +60,20 @@ namespace Infrastructure.Services
                 Token = tokenString,
                 ExpiresAt = tokenDescriptor.Expires.Value,
             };
+        }
+
+        private string GetRequiredSetting(string environmentName, string configurationPath)
+        {
+            var value = Environment.GetEnvironmentVariable(environmentName)
+                ?? _configuration[configurationPath];
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new InvalidOperationException(
+                    $"Missing JWT configuration. Set {environmentName}.");
+            }
+
+            return value;
         }
     }
 }

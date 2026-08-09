@@ -20,6 +20,7 @@ Provide values through a secure local environment, CI secret store, or deploymen
 |---|---|
 | TCAPS_DB_CONNECTION | Primary SQL Server connection string; preferred in container mode |
 | ConnectionStrings__DefaultConnection | Fallback/configuration-based SQL connection string |
+| TCAPS_SEED_PASSWORD | Password used to hash startup seed users |
 | BLOB_STORAGE_SETTINGS | Azure Blob Storage connection string |
 | JWT_KEY | JWT signing key |
 | ISSUER | JWT issuer |
@@ -33,7 +34,7 @@ Provide values through a secure local environment, CI secret store, or deploymen
 | ACCEPT_EULA | SQL Server container license acceptance |
 | ASPNETCORE_ENVIRONMENT | ASP.NET environment selection |
 
-Program.cs currently reads JWT environment variables directly. The parallel JwtSettings appsettings section should not be treated as active until verified in code.
+The host and JwtTokenGenerator read JWT environment variables first. Keep real JWT values out of appsettings files; the configuration paths are only a controlled fallback.
 
 ## Local .NET workflow
 
@@ -43,7 +44,7 @@ dotnet build Tcaps.sln
 dotnet run --project API/API.csproj --environment Development
 ~~~
 
-The host searches the current and parent directories for .env. Do not commit or copy real credentials. The repository currently has a tracked .env; secret rotation/removal is a separate security task.
+The host searches the current and parent directories for .env. Do not commit or copy real credentials. Historical revisions contained a tracked .env; keep local copies ignored and rotate every exposed value.
 
 ## Compose workflow
 
@@ -93,7 +94,7 @@ Before relying on this workflow, verify branch protection, GitHub environment EN
 
 - Check docker compose ps and docker compose logs -f tcaps tcapdb tcaps_redis.
 - Confirm the API can resolve tcapdb and tcaps_redis from the Compose network.
-- Confirm TCAPS_DB_CONNECTION, Blob Storage, JWT, Redis, and email settings are present.
+- Confirm TCAPS_DB_CONNECTION, TCAPS_SEED_PASSWORD, Blob Storage, JWT, Redis, and email settings are present.
 - If startup retries are exhausted, inspect SQL Server readiness, credentials, and migration compatibility.
 - If clients cannot authenticate, verify issuer, audience, signing key, clock skew, and role/claim values.
 - If clients cannot connect to SignalR, verify the hub path and token transport behavior.

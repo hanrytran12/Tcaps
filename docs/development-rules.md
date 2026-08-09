@@ -36,7 +36,7 @@ Dependency direction should point inward toward Domain abstractions. New busines
 - Use AppDbContext and existing repository/unit-of-work abstractions.
 - Review entity configuration and migration impact together.
 - Generate migrations with EF tooling; do not hand-edit generated designer/snapshot files.
-- Treat startup migration and DbSeeder as deployment behavior. Test against a disposable database before production use.
+- Treat startup migration and DbSeeder as deployment behavior. The seed password must come from TCAPS_SEED_PASSWORD; never hardcode it. Test against a disposable database before production use.
 
 ## API and security
 

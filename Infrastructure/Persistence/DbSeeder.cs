@@ -87,7 +87,14 @@ namespace Infrastructure.Persistence.Seeders
             if (await context.Users.AnyAsync()) return;
 
             var ph = new PasswordHasher();
-            var pass = ph.Hash("123");
+            var seedPassword = Environment.GetEnvironmentVariable("TCAPS_SEED_PASSWORD");
+            if (string.IsNullOrWhiteSpace(seedPassword))
+            {
+                throw new InvalidOperationException(
+                    "Missing TCAPS_SEED_PASSWORD. Configure it before running database seeding.");
+            }
+
+            var pass = ph.Hash(seedPassword);
 
             var users = new List<User>();
 

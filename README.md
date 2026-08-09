@@ -42,11 +42,12 @@ See [AGENTS.md](./AGENTS.md) for repository rules and [docs/codebase-summary.md]
 
 ## Configuration
 
-The host searches the current directory and parent directories for .env. Do not commit or share secret values. The repository currently contains a tracked .env; treat this as a known security issue and follow the separate secret-rotation/removal process.
+The host searches the current directory and parent directories for .env. Do not commit or share secret values. Historical revisions contained a tracked .env; keep local copies ignored and rotate every exposed value.
 
 | Purpose | Configuration names |
 |---|---|
 | SQL Server | TCAPS_DB_CONNECTION, ConnectionStrings__DefaultConnection |
+| Startup seed account password | TCAPS_SEED_PASSWORD |
 | Redis | ConnectionStrings__RedisConnection, REDIS_PASSWORD (Compose expansion) |
 | JWT | JWT_KEY, ISSUER, AUDIENCE |
 | Azure Blob | BLOB_STORAGE_SETTINGS or BlobStorageSettings__ConnectionString |
@@ -115,5 +116,5 @@ No test project was identified in the current source baseline. Run any tests add
 ## Known issues to confirm
 
 - CI/CD triggers main and feature/db-seeder, while the current canonical source is master.
-- .env is tracked and must be handled as a separate security remediation.
-- Program.cs consumes environment JWT names; verify whether the parallel JwtSettings appsettings section is legacy before changing configuration.
+- Historical revisions exposed .env and configuration credentials; rotate them and keep local .env files ignored.
+- JWT signing and startup seeding require environment variables; do not restore secrets to appsettings files.
