@@ -1,0 +1,48 @@
+# Project Roadmap
+
+> This is an engineering roadmap based on the current repository. It is not a committed release schedule.
+>
+> Last verified: 2026-08-09 against master at 24ddaf8.
+
+## Current baseline
+
+| Milestone | Status | Evidence |
+|---|---|---|
+| Layered .NET 8 backend | Complete baseline | Four projects in Tcaps.sln |
+| API/auth/authorization | Active baseline | API/Program.cs, controllers, policies |
+| SQL Server persistence | Active baseline | EF Core context, migrations, repositories |
+| Startup migration/seeding | Active baseline | Program.cs, DbSeeder |
+| Docker/Compose runtime | Active baseline | Dockerfile, compose.yml |
+| Initial repository documentation | Complete in this change | README.md, AGENTS.md, docs/ |
+
+## Recommended next steps
+
+### P0 — Security hygiene
+
+- Rotate any credentials exposed through the tracked .env.
+- Remove secret material from tracking/history according to repository policy.
+- Add safe ignore rules and a non-secret configuration example.
+- Confirm CI secrets and local setup after rotation.
+
+### P1 — Delivery reliability
+
+- Confirm the canonical release/deployment branch (master, main, or feature/db-seeder).
+- Align .github/workflows/cicd.yml, protected branches, and deployment documentation.
+- Add readiness/health checks for SQL Server and Redis instead of relying only on startup timing/retries.
+- Define rollback and database migration recovery procedures.
+
+### P1 — Quality and contracts
+
+- Add unit/integration tests for auth, authorization policies, state transitions, seeding, and critical repositories.
+- Establish API contract checks for the mobile/frontend consumers.
+- Add structured logging and correlation IDs for workflow failures and background jobs.
+
+### P2 — Maintainability
+
+- Review inconsistent legacy naming and duplicate package/configuration patterns incrementally.
+- Document domain state machines for material, assignment, QC, transfer, and rework workflows.
+- Add automated Markdown/link and documentation freshness checks.
+
+## Roadmap maintenance
+
+Update this page when a milestone changes status, a major dependency changes, or a security/deployment decision is made. Do not add dates or release promises without an owner-approved plan.
