@@ -18,6 +18,7 @@
 - Restored mobile-compatible read access for Lead batch distribution, QC inventory views, and QCTransport request-tab lookups without broadening protected write actions.
 - Updated QC authorization to include the supported QCK role and synchronized the contract matrix with the resulting role markers.
 - Migrated WorkshopInventory list and material lookup responses to `WorkshopInventoryDTO` while preserving the mobile-consumed fields and routes.
+- Migrated the staff income history response to `IncomeHistoryDTO` with the legacy JSON fields preserved.
 
 ### Verification
 

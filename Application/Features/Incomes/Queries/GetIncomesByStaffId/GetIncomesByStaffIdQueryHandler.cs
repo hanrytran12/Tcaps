@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Incomes.Queries.GetIncomesByStaffId
 {
-    public class GetIncomesByStaffIdQueryHandler : IRequestHandler<GetIncomesByStaffIdQuery, List<Income>>
+    public class GetIncomesByStaffIdQueryHandler : IRequestHandler<GetIncomesByStaffIdQuery, List<Application.DTOs.Response.IncomeHistoryDTO>>
     {
         private readonly IIncomeRepository _incomeRepository;
 
@@ -12,7 +12,7 @@ namespace Application.Features.Incomes.Queries.GetIncomesByStaffId
         {
             _incomeRepository = incomeRepository;
         }
-        public async Task<List<Income>> Handle(GetIncomesByStaffIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<Application.DTOs.Response.IncomeHistoryDTO>> Handle(GetIncomesByStaffIdQuery request, CancellationToken cancellationToken)
         {
             var incomes = await _incomeRepository.GetIncomeHistoryAsync(request.StaffId);
 
@@ -25,6 +25,16 @@ namespace Application.Features.Incomes.Queries.GetIncomesByStaffId
 
             return incomes
                 .OrderByDescending(i => i.CreatedAt)
+                .Select(i => new Application.DTOs.Response.IncomeHistoryDTO
+                {
+                    Id = i.Id,
+                    BatchId = i.BatchId,
+                    ProductionId = i.ProductionId,
+                    UserId = i.UserId,
+                    Quantity = i.Quantity,
+                    TotalPrice = i.TotalPrice,
+                    CreatedAt = i.CreatedAt
+                })
                 .ToList();
         }
     }

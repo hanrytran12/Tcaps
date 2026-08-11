@@ -72,7 +72,7 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | Evaluate | `CreateEvaluate` | POST `api/Evaluate` | form | `IActionResult` | `Policy=QC` |
 | FinalTransferRequest | `GetAllAsync` | GET `api/FinalTransferRequest/all` | none | `List<FinalTransferRequestDTO>` | `Roles=GuardQC` |
 | FinalTransferRequest | `UpdateApproveAsync` | PUT `api/FinalTransferRequest/approve-finalTransfer` | query | `IActionResult` | `Roles=GuardQC` |
-| Income | `GetIncomesByStaffId` | GET `api/Income/by-staff` | query | `List<Income>` | `Roles=Staff` |
+| Income | `GetIncomesByStaffId` | GET `api/Income/by-staff` | query | `List<IncomeHistoryDTO>` | `Roles=Staff` |
 | Income | `GetMonthlyIncome` | GET `api/Income/total-monthly` | query | `MonthlyIncomeDTO` | `Roles=Staff` |
 | Income | `GetIncomeExpected` | GET `api/Income/income-expected` | none | `IncomeExpectedDTO` | `Roles=Staff` |
 | Inventory | `GetInventoryByMaterialId` | GET `api/Inventory/from-{materialId:guid}` | query | `InventoryHistoryDTO` | `Roles=Admin,Lead,QC,QCK` |

@@ -19,7 +19,7 @@ namespace API.Controllers
 
         [HttpGet("by-staff")]
         [Authorize(Roles = "Staff")]
-        public async Task<List<Income>> GetIncomesByStaffId([FromQuery] DateOnly? date)
+        public async Task<List<IncomeHistoryDTO>> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
             return await Mediator.Send(new GetIncomesByStaffIdQuery
             {
