@@ -1,12 +1,12 @@
 # System Architecture
 
-> Last verified: 2026-08-11 against the current API refactor worktree.
+> Last verified: 2026-08-12 against the current API refactor worktree.
 
 ## High-level topology
 
 ~~~mermaid
 flowchart LR
-    Client["Web/mobile clients"] --> Api["ASP.NET Core API\nAPI/Program.cs"]
+    Client["Web/mobile clients"] --> Api["ASP.NET Core API\nAPI/Program.cs + Extensions"]
     Api --> Controllers["Controllers\napi/[controller]"]
     Api --> Hub["SignalR hub\n/hubs/notificationHub"]
     Controllers --> Pipeline["MediatR pipeline\nvalidation + transaction"]
@@ -28,13 +28,13 @@ flowchart LR
 3. The controller dispatches a MediatR request through constructor-injected `ISender`.
 4. Application validation and transaction behaviors run around the handler.
 5. The handler uses Domain objects and Infrastructure abstractions for persistence/integrations.
-6. EF Core persists changes to SQL Server; API-safe results are mapped to DTOs while legacy entity responses are being migrated feature by feature.
+6. EF Core persists changes to SQL Server; API-safe results are mapped to DTOs at the API boundary.
 7. Domain events can invoke notification, inventory, production, or follow-up handlers.
 8. The API returns a result/error response through the existing middleware conventions.
 
 ## Host responsibilities
 
-API/Program.cs configures:
+`API/Program.cs` is the composition root. Host responsibilities are implemented through `API/Extensions/ApiServiceExtensions.cs` and `API/Extensions/HostExtensions.cs`:
 
 - environment loading from .env in the current or parent directory;
 - controllers and Swagger with Bearer authentication;

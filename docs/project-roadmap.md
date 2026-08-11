@@ -12,7 +12,7 @@
 | API/auth/authorization | Phase 1 complete; Phase 2 hardening in progress | API/Program.cs, controllers, policies, api-contract-matrix.md |
 | API controller composition | Phase 3 complete | Constructor-injected ISender across API controllers |
 | API response contracts | Phase 4 complete | User, WorkshopInventory, Income, MaterialWorkshop, ReworkRequest, Inventory, and Batch DTO boundaries completed |
-| Host/dependencies | Phase 5 active | Duplicate exception branch removed; DI package constraints aligned |
+| Host/dependencies | Phase 5 complete | Service registration, host limits, middleware pipeline, and database initialization are composed through focused API extensions |
 | SQL Server persistence | Active baseline | EF Core context, migrations, repositories |
 | Startup migration/seeding | Active baseline | Program.cs, DbSeeder |
 | Docker/Compose runtime | Active baseline | Dockerfile, compose.yml |

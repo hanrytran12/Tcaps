@@ -23,6 +23,7 @@
 - Migrated ReworkRequest detail and assignment lookup responses to `ReworkRequestResponseDTO` while preserving the mobile-consumed scalar fields.
 - Migrated the Inventory detail response to `InventoryResponseDTO` while preserving its scalar entity fields.
 - Migrated Batch all and Lead lookup responses to `BatchResponseDTO` with assignment summaries, removing aggregate navigation data from the API contract.
+- Extracted API service registration, host limits, middleware composition, and database initialization from `Program.cs` into focused extensions while preserving runtime order and retry behavior.
 
 ### Verification
 
@@ -32,4 +33,5 @@
 - Static verification found no controller service-locator usage, no unmarked API matrix rows, and only `.env.example` tracked as an environment file.
 - Added focused handler coverage for MaterialWorkshop status filtering, ordering, and DTO field parity.
 - Added Batch response contract coverage for field parity, navigation-data exclusion, lead filtering, route templates, and authorization metadata.
+- Verified the host extraction with `dotnet build` (0 errors) and 12 passing API tests; dedicated host configuration integration coverage remains a follow-up.
 - Installed mobile dependencies from the existing lockfile. FE typecheck remains failing on pre-existing type/model issues; lint reports 4 errors and 105 warnings. No FE source or lockfile changes were made.

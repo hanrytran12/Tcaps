@@ -1,6 +1,6 @@
 # Code Standards
 
-> Last verified: 2026-08-11 against the current API refactor worktree.
+> Last verified: 2026-08-12 against the current API refactor worktree.
 
 ## Architectural standards
 
@@ -54,6 +54,7 @@ For a new use case, follow the surrounding feature pattern:
 
 - Routes use api/[controller] and existing HTTP verb conventions.
 - Controllers use constructor-injected `ISender`; do not resolve MediatR through `RequestServices`.
+- Keep `API/Program.cs` as a small composition root; place host service registration and middleware composition in focused extension classes.
 - Use explicit `[FromBody]` for complex JSON writes and `[FromQuery]` for filter/query objects when the binding is part of the contract.
 - Do not return Domain entities from new API actions; use response DTOs and document any compatibility exception in the API contract matrix.
 - Use existing JWT roles/policies instead of duplicating authorization logic in handlers.
