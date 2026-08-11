@@ -1,9 +1,9 @@
-﻿using Domain.Entities;
+using Application.DTOs.Response;
 using MediatR;
 
 namespace Application.Features.Users.Queries.GetUserByWorkshopId
 {
-    public class GetUserByWorkshopIdQuery : IRequest<User>
+    public class GetUserByWorkshopIdQuery : IRequest<UserDTO>
     {
         public Guid WorkshopId { get; set; }
 
