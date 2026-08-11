@@ -1,10 +1,12 @@
 ﻿using Domain.Entities;
 using Domain.Interfaces;
 using MediatR;
+using Application.Features.Batches.Mapping;
+using Application.DTOs.Response;
 
 namespace Application.Features.Batches.Queries.GetAllBatch
 {
-    public class GetAllBatchQueryHandler : IRequestHandler<GetAllBatchQuery, List<Batch>>
+    public class GetAllBatchQueryHandler : IRequestHandler<GetAllBatchQuery, List<BatchResponseDTO>>
     {
         private readonly IBatchRepository _batchRepository;
 
@@ -13,10 +15,10 @@ namespace Application.Features.Batches.Queries.GetAllBatch
             _batchRepository = batchRepository;
         }
 
-        public async Task<List<Batch>> Handle(GetAllBatchQuery request, CancellationToken cancellationToken)
+        public async Task<List<BatchResponseDTO>> Handle(GetAllBatchQuery request, CancellationToken cancellationToken)
         {
             var batches = await _batchRepository.GetAllAsync();
-            return batches.ToList();
+            return batches.Select(BatchResponseMapper.ToResponse).ToList();
         }
     }
 }

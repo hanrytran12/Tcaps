@@ -11,7 +11,6 @@ using Application.Features.Batches.Queries.GetBatchesByStaffId;
 using Application.Features.Batches.Queries.GetBatchForLead;
 using Application.Features.Batches.Queries.GetBatchForManagement;
 using Application.Features.Batches.Queries.GetDashboardStats;
-using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +27,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
-        public async Task<List<Batch>> GetAllBatch()
+        public async Task<List<BatchResponseDTO>> GetAllBatch()
         {
             return await Mediator.Send(new GetAllBatchQuery());
         }
@@ -83,7 +82,7 @@ namespace API.Controllers
 
         [HttpGet("lead/batches")]
         [Authorize(Policy = "Lead")]
-        public async Task<List<Batch>> GetBatchesByLeadIdAsync()
+        public async Task<List<BatchResponseDTO>> GetBatchesByLeadIdAsync()
         {
             return await Mediator.Send(new GetBatchForLeadQuery
             {

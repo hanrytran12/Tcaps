@@ -108,7 +108,6 @@ namespace Infrastructure.Repositories
         {
             return await _context.Batches
                                  .Include(b => b.Assignments)
-                                 .Include(b => b.Product)
                                  .Where(b => b.UserId == userId && !b.isDeleted)
                                  .ToListAsync();
         }
