@@ -2,7 +2,7 @@
 
 namespace Application.Features.ReworkRequest.Queries.GetReworkByAssignId
 {
-    public class GetReworkByAssignIdQuery : IRequest<Domain.Entities.ReworkRequest>
+    public class GetReworkByAssignIdQuery : IRequest<Application.DTOs.Response.ReworkRequestResponseDTO>
     {
         public Guid AssignId { get; set; }
     }

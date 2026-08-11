@@ -20,6 +20,7 @@
 - Migrated WorkshopInventory list and material lookup responses to `WorkshopInventoryDTO` while preserving the mobile-consumed fields and routes.
 - Migrated the staff income history response to `IncomeHistoryDTO` with the legacy JSON fields preserved.
 - Migrated `MaterialWorkshop/all` to `MaterialWorkshopSummaryDTO`; the QC-specific DTO route remains unchanged.
+- Migrated ReworkRequest detail and assignment lookup responses to `ReworkRequestResponseDTO` while preserving the mobile-consumed scalar fields.
 
 ### Verification
 

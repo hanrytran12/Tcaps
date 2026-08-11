@@ -30,7 +30,7 @@ namespace API.Controllers
 
         [HttpGet("{reworkRequestId:guid}")]
         [Authorize(Roles = "Lead,QC,QCK,Staff")]
-        public async Task<Domain.Entities.ReworkRequest> GetReworkRequestById(Guid reworkRequestId)
+        public async Task<ReworkRequestResponseDTO> GetReworkRequestById(Guid reworkRequestId)
         {
             return await Mediator.Send(new GetRequestByIdQuery(reworkRequestId));
         }
@@ -44,7 +44,7 @@ namespace API.Controllers
 
         [HttpGet("by-assignId")]
         [Authorize(Roles = "Lead,QC,QCK,Staff")]
-        public async Task<Domain.Entities.ReworkRequest> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
+        public async Task<ReworkRequestResponseDTO> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
         {
             return await Mediator.Send(query);
         }

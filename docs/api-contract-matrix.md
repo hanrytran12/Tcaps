@@ -120,9 +120,9 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | Production | `UpdateQuantity` | PUT `api/production/for-qc/reduce-quantity` | query | `IActionResult` | `Policy=QC` |
 | QC | `GetAllComponentDefect` | GET `api/QC/rework-requests` | query | `List<ComponentDefectsDTO>` | `Policy=QC` (class) |
 | ReworkRequest | `GetAllReworkRequest` | GET `api/ReworkRequest` | none | `List<ReworkRequestDTO>` | `Policy=Lead` |
-| ReworkRequest | `GetReworkRequestById` | GET `api/ReworkRequest/{reworkRequestId:guid}` | inferred | `Domain.Entities.ReworkRequest` | `Roles=Lead,QC,QCK,Staff` |
+| ReworkRequest | `GetReworkRequestById` | GET `api/ReworkRequest/{reworkRequestId:guid}` | inferred | `ReworkRequestResponseDTO` | `Roles=Lead,QC,QCK,Staff` |
 | ReworkRequest | `GetReworkReconciliationSummary` | GET `api/ReworkRequest/{assignmentId:guid}/summary` | inferred | `ReconcilationSummaryDTO` | `Roles=Lead,QC,QCK,Staff` |
-| ReworkRequest | `GetByAssignId` | GET `api/ReworkRequest/by-assignId` | query | `Domain.Entities.ReworkRequest` | `Roles=Lead,QC,QCK,Staff` |
+| ReworkRequest | `GetByAssignId` | GET `api/ReworkRequest/by-assignId` | query | `ReworkRequestResponseDTO` | `Roles=Lead,QC,QCK,Staff` |
 | ReworkRequest | `GetReworkForDashboard` | GET `api/ReworkRequest/{assignId:guid}/for-dashboard` | inferred | `ReworkRequestDTO` | `Roles=Lead,QC,QCK,Staff` |
 | ReworkRequest | `GetReworkByQcId` | GET `api/ReworkRequest/by-qc` | none | `List<ReworkRequestDTO>` | `Policy=QC` |
 | ReworkRequest | `CreateReworkRequest` | POST `api/ReworkRequest` | body | `IActionResult` | `Policy=QC` |
