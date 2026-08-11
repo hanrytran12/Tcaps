@@ -2,7 +2,7 @@
 
 > Status: current API refactor verification matrix.
 >
-> Last verified: 2026-08-11 against `master`.
+> Last verified: 2026-08-12 against `master`.
 
 This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\API`. `UNMARKED` means the action has no explicit `[Authorize]` or `[AllowAnonymous]` marker at source level. It is not an approval that the endpoint should be public. The current matrix has no remaining `UNMARKED` rows after the authorization pass.
 
@@ -21,7 +21,7 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 - `TaskTransferRequestController.GetByQcTransportAsync` now uses `Policy=QCTransportOnly`; its previous authorization marker was commented out.
 - The initial fallback policy is not treated as sufficient authorization. Sensitive user, inventory, production, component-defect, assignment, and rework actions now have explicit role/policy markers.
 - `User.UpdateUser`, `User.ReactiveUser`, and `User.DeleteUser` are restricted to Admin to prevent privilege escalation.
-- QCK is normalized as a role policy (`RequireRole("QCK")`); QCTransport still uses its role plus the existing `isQcTransport=true` assertion where required. Representative-token verification and automated authorization tests remain pending.
+- QCK is normalized as a role policy (`RequireRole("QCK")`); QCTransport still uses its role plus the existing `isQcTransport=true` assertion where required. Runtime authorization policy tests now cover Lead, QCK, QCTransport, and denial cases; representative deployed-token verification remains a release follow-up.
 
 ## Controller actions
 

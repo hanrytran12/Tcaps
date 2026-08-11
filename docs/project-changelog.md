@@ -36,3 +36,15 @@
 - Verified the host extraction with `dotnet build` (0 errors) and 13 passing API tests; dedicated host configuration integration coverage remains a follow-up.
 - Completed a focused mobile consumer scan for the migrated DTO endpoints; no reads of removed Batch navigation data were found, while existing FE typecheck/lint failures remain unchanged.
 - Installed mobile dependencies from the existing lockfile. FE typecheck remains failing on pre-existing type/model issues; lint reports 4 errors and 105 warnings. No FE source or lockfile changes were made.
+
+## 2026-08-12 — Cross-repository contract cleanup
+
+- Normalized FE assignment-history state and service return types to the BE list contract.
+- Aligned FE material-supply creation and display with the BE `quantitySend`, `quantityReceive`, and `dateReceive` fields.
+- Harmonized FE product identity, batch/sample assignment models, auth identity, theme aliases, and QCTransport route permissions.
+- Fixed FE TypeScript drift and lint blockers without weakening required stock-out identifiers or adding credential material.
+
+### Verification
+
+- FE `npx tsc --noEmit` passed with 0 errors.
+- FE `npm run lint` passed with 0 errors; 105 legacy warnings remain for a separate cleanup pass.
