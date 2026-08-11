@@ -24,7 +24,7 @@ flowchart LR
 ## Request flow
 
 1. A client calls a controller route under api/[controller].
-2. ASP.NET authentication validates the JWT; authorization checks roles or named policies.
+2. ASP.NET authentication validates the JWT; authorization policies are registered through `API/Extensions/AuthorizationExtensions.cs` and check roles or named claims.
 3. The controller dispatches a MediatR request through constructor-injected `ISender`.
 4. Application validation and transaction behaviors run around the handler.
 5. The handler uses Domain objects and Infrastructure abstractions for persistence/integrations.
