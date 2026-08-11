@@ -42,9 +42,6 @@ namespace API.Middlewares
 
             (int statusCode, string title, string detail) = exception switch
             {
-                FluentValidation.ValidationException =>
-                    (StatusCodes.Status400BadRequest, "Dữ liệu không hợp lệ", exception.Message),
-
                 NotFoundException =>
                     (StatusCodes.Status404NotFound, "Không tìm thấy tài nguyên", exception.Message),
 
