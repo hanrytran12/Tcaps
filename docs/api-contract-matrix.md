@@ -155,10 +155,10 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | Workshop | `UpdateAsync` | PUT `api/Workshop/update` | query | `IActionResult` | `Roles=Admin` |
 | Workshop | `SwapAsync` | PUT `api/Workshop/swap-workshop` | query | `IActionResult` | `Roles=Admin` |
 | Workshop | `DeleteAsync` | DELETE `api/Workshop` | query | `IActionResult` | `Roles=Admin` |
-| WorkshopInventory | `GetAllWorkshopInventory` | GET `api/WorkshopInventory` | none | `List<Domain.Entities.WorkshopInventory>` | `Roles=Admin,Lead,QC,QCK` |
+| WorkshopInventory | `GetAllWorkshopInventory` | GET `api/WorkshopInventory` | none | `List<WorkshopInventoryDTO>` | `Roles=Admin,Lead,QC,QCK` |
 | WorkshopInventory | `GetWorkshopInvenntoryByWorkshopId` | GET `api/WorkshopInventory/{workshopId:guid}` | inferred | `List<WorkshopInventoryForExportDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport` |
 | WorkshopInventory | `GetWorkshopInventoryForQC` | GET `api/WorkshopInventory/for-qc` | none | `List<WorkshopInventoryForQCDTO>` | `Policy=QC` |
-| WorkshopInventory | `GetByMaterialId` | GET `api/WorkshopInventory/by-material` | query | `Domain.Entities.WorkshopInventory` | `Roles=Admin,Lead,QC,QCK,Staff` |
+| WorkshopInventory | `GetByMaterialId` | GET `api/WorkshopInventory/by-material` | query | `WorkshopInventoryDTO` | `Roles=Admin,Lead,QC,QCK,Staff` |
 
 ## Mobile consumer index
 

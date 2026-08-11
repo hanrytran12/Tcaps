@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByMaterialId
 {
-    public class GetWorkshopInventoryByMaterialIdQueryHandler : IRequestHandler<GetWorkshopInventoryByMaterialIdQuery, Domain.Entities.WorkshopInventory>
+    public class GetWorkshopInventoryByMaterialIdQueryHandler : IRequestHandler<GetWorkshopInventoryByMaterialIdQuery, Application.DTOs.Response.WorkshopInventoryDTO>
     {
         private readonly IWorkshopInventoryRepository _repository;
 
@@ -13,7 +13,7 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByM
             _repository = repository;
         }
 
-        public async Task<Domain.Entities.WorkshopInventory> Handle(GetWorkshopInventoryByMaterialIdQuery request, CancellationToken cancellationToken)
+        public async Task<Application.DTOs.Response.WorkshopInventoryDTO> Handle(GetWorkshopInventoryByMaterialIdQuery request, CancellationToken cancellationToken)
         {
             var workshopInventory = await _repository.GetByMaterialIdAsync(request.MaterialId);
             if (workshopInventory is null)
@@ -21,7 +21,15 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByM
                 throw new NotFoundException("Workshop inventory not found.");
             }
 
-            return workshopInventory;
+            return new Application.DTOs.Response.WorkshopInventoryDTO
+            {
+                Id = workshopInventory.Id,
+                WorkshopId = workshopInventory.WorkshopId,
+                MaterialId = workshopInventory.MaterialId,
+                Quantity = workshopInventory.Quantity,
+                HoldingQuantity = workshopInventory.HoldingQuantity,
+                AvailableQuantity = workshopInventory.AvailableQuantity
+            };
         }
     }
 }

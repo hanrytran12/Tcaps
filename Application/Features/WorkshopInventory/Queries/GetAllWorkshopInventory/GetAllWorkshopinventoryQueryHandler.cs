@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory
 {
-    public class GetAllWorkshopinventoryQueryHandler : IRequestHandler<GetAllWorkshopInventoryQuery, List<Domain.Entities.WorkshopInventory>>
+    public class GetAllWorkshopinventoryQueryHandler : IRequestHandler<GetAllWorkshopInventoryQuery, List<Application.DTOs.Response.WorkshopInventoryDTO>>
     {
         private readonly IAppDbContext _appDbContext;
 
@@ -13,9 +13,20 @@ namespace Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory
             _appDbContext = appDbContext;
         }
 
-        public async Task<List<Domain.Entities.WorkshopInventory>> Handle(GetAllWorkshopInventoryQuery request, CancellationToken cancellationToken)
+        public async Task<List<Application.DTOs.Response.WorkshopInventoryDTO>> Handle(GetAllWorkshopInventoryQuery request, CancellationToken cancellationToken)
         {
-            return await _appDbContext.WorkshopInventory.ToListAsync();
+            return await _appDbContext.WorkshopInventory
+                .AsNoTracking()
+                .Select(inventory => new Application.DTOs.Response.WorkshopInventoryDTO
+                {
+                    Id = inventory.Id,
+                    WorkshopId = inventory.WorkshopId,
+                    MaterialId = inventory.MaterialId,
+                    Quantity = inventory.Quantity,
+                    HoldingQuantity = inventory.HoldingQuantity,
+                    AvailableQuantity = inventory.AvailableQuantity
+                })
+                .ToListAsync(cancellationToken);
         }
     }
 }

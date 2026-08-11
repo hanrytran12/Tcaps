@@ -18,7 +18,7 @@ namespace API.Controllers
         }
         [HttpGet]
         [Authorize(Roles = "Admin,Lead,QC,QCK")]
-        public async Task<List<Domain.Entities.WorkshopInventory>> GetAllWorkshopInventory()
+        public async Task<List<WorkshopInventoryDTO>> GetAllWorkshopInventory()
         {
             return await Mediator.Send(new GetAllWorkshopInventoryQuery());
         }
@@ -39,7 +39,7 @@ namespace API.Controllers
 
         [HttpGet("by-material")]
         [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
-        public async Task<Domain.Entities.WorkshopInventory> GetByMaterialId([FromQuery] GetWorkshopInventoryByMaterialIdQuery query)
+        public async Task<WorkshopInventoryDTO> GetByMaterialId([FromQuery] GetWorkshopInventoryByMaterialIdQuery query)
         {
             return await Mediator.Send(query);
         }
