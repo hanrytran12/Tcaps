@@ -1,6 +1,6 @@
 # Code Standards
 
-> Last verified: 2026-08-09 against master at 24ddaf8.
+> Last verified: 2026-08-11 against the current API refactor worktree.
 
 ## Architectural standards
 
@@ -53,6 +53,9 @@ For a new use case, follow the surrounding feature pattern:
 ## API and integration standards
 
 - Routes use api/[controller] and existing HTTP verb conventions.
+- Controllers use constructor-injected `ISender`; do not resolve MediatR through `RequestServices`.
+- Use explicit `[FromBody]` for complex JSON writes and `[FromQuery]` for filter/query objects when the binding is part of the contract.
+- Do not return Domain entities from new API actions; use response DTOs and document any compatibility exception in the API contract matrix.
 - Use existing JWT roles/policies instead of duplicating authorization logic in handlers.
 - Treat Blob Storage, email, Redis, and SignalR as external boundaries with clear failure behavior.
 - Review CORS, upload size limits, rate limiting, forwarded headers, and hub token handling when changing Program.cs.

@@ -2,7 +2,7 @@
 
 Backend API for the TCAPS production, material, inventory, quality-control, transfer, notification, and user workflows.
 
-> Last verified: 2026-08-09 against master at 24ddaf8. Operational settings can change; verify API/Program.cs, compose.yml, and the CI workflow before deployment.
+> Last verified: 2026-08-11 against the current API refactor worktree. Operational settings can change; verify API/Program.cs, compose.yml, and the CI workflow before deployment.
 
 ## Capabilities
 
@@ -90,14 +90,15 @@ Compose defines tcaps, tcapdb (SQL Server), and tcaps_redis (Redis), with persis
 
 Use Swagger to inspect the current controller contract and authorize with a Bearer JWT. Controllers are grouped by resource under api/[controller]; authorization requirements are defined in source and can differ by action.
 
-For architecture and request flow, read [docs/system-architecture.md](./docs/system-architecture.md). For environment, Docker, and CI/CD details, read [docs/deployment-guide.md](./docs/deployment-guide.md).
+For architecture and request flow, read [docs/system-architecture.md](./docs/system-architecture.md). For the route, binding, response, and authorization inventory, read [docs/api-contract-matrix.md](./docs/api-contract-matrix.md). For environment, Docker, and CI/CD details, read [docs/deployment-guide.md](./docs/deployment-guide.md).
 
 ## Verification
 
 ~~~powershell
 dotnet build Tcaps.sln
+dotnet test Tcaps.sln --no-build
 git status --short
-git diff --check
+git -c core.autocrlf=false diff --check
 ~~~
 
 No test project was identified in the current source baseline. Run any tests added later and report their actual result; do not infer coverage from a successful build.

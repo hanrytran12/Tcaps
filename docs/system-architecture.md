@@ -1,6 +1,6 @@
 # System Architecture
 
-> Last verified: 2026-08-09 against master at 24ddaf8.
+> Last verified: 2026-08-11 against the current API refactor worktree.
 
 ## High-level topology
 
@@ -25,10 +25,10 @@ flowchart LR
 
 1. A client calls a controller route under api/[controller].
 2. ASP.NET authentication validates the JWT; authorization checks roles or named policies.
-3. The controller dispatches a MediatR request.
+3. The controller dispatches a MediatR request through constructor-injected `ISender`.
 4. Application validation and transaction behaviors run around the handler.
 5. The handler uses Domain objects and Infrastructure abstractions for persistence/integrations.
-6. EF Core persists changes to SQL Server; results are mapped to DTOs.
+6. EF Core persists changes to SQL Server; API-safe results are mapped to DTOs while legacy entity responses are being migrated feature by feature.
 7. Domain events can invoke notification, inventory, production, or follow-up handlers.
 8. The API returns a result/error response through the existing middleware conventions.
 
@@ -41,7 +41,7 @@ API/Program.cs configures:
 - Application and Infrastructure dependency injection;
 - CORS for the configured frontend origins;
 - JWT validation using JWT_KEY, ISSUER, and AUDIENCE environment variables;
-- role/policy authorization;
+- role/policy authorization with an authenticated-user fallback policy and explicit anonymous auth/recovery actions;
 - SignalR and hub user ID mapping;
 - Redis distributed caching;
 - OTP rate limiting;
@@ -68,7 +68,9 @@ AppDbContext implements the application database abstraction and unit-of-work co
 ## Security boundaries
 
 - JWT tokens are validated before protected controller actions.
+- The fallback authorization policy requires authentication unless an action explicitly opts into anonymous access.
 - Named policies restrict operations such as admin, lead, QC, QC transport, and dashboard access.
+- User lookup responses use DTO projection and do not expose `PasswordHash`.
 - OTP requests are rate-limited by remote IP.
 - File/static content handling and upload size limits are configured in the host.
 - Secret values must remain outside source and documentation. Historical revisions exposed .env/configuration credentials; rotate them and keep local copies ignored.
