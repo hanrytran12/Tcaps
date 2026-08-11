@@ -3,7 +3,6 @@ using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorksh
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive;
-using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +19,7 @@ namespace API.Controllers
 
         [HttpGet("all")]
         [Authorize(Roles = "Admin,Lead,QC,QCK")]
-        public async Task<List<MaterialWorkshop>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
+        public async Task<List<MaterialWorkshopSummaryDTO>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
         {
             return await Mediator.Send(query);
         }

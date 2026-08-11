@@ -100,7 +100,7 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | MaterialSupply | `UpdateCompletedAsync` | PUT `api/MaterialSupply/qc/Completed/{supplyId}` | inferred | `IActionResult` | `Policy=QC` |
 | MaterialSupply | `ApproveByAdminAsync` | PUT `api/MaterialSupply/admin/Approve/{supplyId}` | inferred | `IActionResult` | `Roles=Admin` |
 | MaterialUse | `GetByAssignIdAsync` | GET `api/MaterialUse/qc/materials/request` | query | `List<MaterialUseDTO>` | `Policy=QC` |
-| MaterialWorkshop | `GetAllAsync` | GET `api/MaterialWorkshop/all` | query | `List<MaterialWorkshop>` | `Roles=Admin,Lead,QC,QCK` |
+| MaterialWorkshop | `GetAllAsync` | GET `api/MaterialWorkshop/all` | query | `List<MaterialWorkshopSummaryDTO>` | `Roles=Admin,Lead,QC,QCK` |
 | MaterialWorkshop | `GetByQCIdAsync` | GET `api/MaterialWorkshop/for-qc` | query | `List<MaterialWorkshopDTO>` | `Policy=QC` |
 | MaterialWorkshop | `GetTotalQuantityReceive` | GET `api/MaterialWorkshop/total-quantity-receive` | query | `int` | `Roles=QC,QCK,Lead` |
 | MaterialWorkshop | `UpdateConfirmAsync` | PUT `api/MaterialWorkshop/update-confirm` | query | `IActionResult` | `Policy=QC` |

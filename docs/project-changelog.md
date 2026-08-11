@@ -19,6 +19,7 @@
 - Updated QC authorization to include the supported QCK role and synchronized the contract matrix with the resulting role markers.
 - Migrated WorkshopInventory list and material lookup responses to `WorkshopInventoryDTO` while preserving the mobile-consumed fields and routes.
 - Migrated the staff income history response to `IncomeHistoryDTO` with the legacy JSON fields preserved.
+- Migrated `MaterialWorkshop/all` to `MaterialWorkshopSummaryDTO`; the QC-specific DTO route remains unchanged.
 
 ### Verification
 
