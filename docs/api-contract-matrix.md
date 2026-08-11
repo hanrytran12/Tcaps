@@ -194,6 +194,12 @@ These are the consumer files found during the baseline scan. This is not a claim
 - WorkshopInventory, Income, MaterialWorkshop, ReworkRequest, Inventory, and Batch response boundaries now use DTOs while preserving the mobile-facing routes and scalar fields.
 - The direct entity-response migration for the scoped Phase 4 endpoints is complete; future changes should extend DTOs deliberately and keep domain navigation data out of API contracts.
 
+## Mobile compatibility verification — 2026-08-12
+
+- Batch consumers use the preserved root fields and `assignments`; the scan found no reads of removed aggregate navigation data such as `product`, `evaluates`, `productions`, or `materialUses`.
+- Rework consumers use the preserved scalar fields in `ReworkRequestResponseDTO`; the direct Inventory detail endpoint is not called by the current mobile services.
+- Full FE typecheck/lint remains a separate baseline issue: existing model/sample-data errors and lint findings remain outside this BE contract migration.
+
 ## Known contract issues
 
 - The mobile client references legacy route spellings and some route names that do not exactly match current controller attributes. These must be verified per flow before renaming.

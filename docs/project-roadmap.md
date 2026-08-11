@@ -38,7 +38,7 @@
 
 - Add unit/integration tests for auth, authorization policies, state transitions, seeding, and critical repositories.
 - Verify role/claim semantics for QCK and QCTransport with representative JWTs before release; mobile-compatible read permissions are now aligned in source.
-- Establish API contract checks for the mobile/frontend consumers and add integration coverage for effective route authorization.
+- Establish API contract checks for the mobile/frontend consumers and add integration coverage for effective route authorization; the focused DTO consumer scan is complete, while the existing full FE typecheck/lint baseline remains unresolved.
 - Add structured logging and correlation IDs for workflow failures and background jobs.
 
 ### P2 — Maintainability

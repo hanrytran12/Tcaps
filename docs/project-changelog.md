@@ -34,4 +34,5 @@
 - Added focused handler coverage for MaterialWorkshop status filtering, ordering, and DTO field parity.
 - Added Batch response contract coverage for field parity, navigation-data exclusion, lead filtering, route templates, and authorization metadata.
 - Verified the host extraction with `dotnet build` (0 errors) and 12 passing API tests; dedicated host configuration integration coverage remains a follow-up.
+- Completed a focused mobile consumer scan for the migrated DTO endpoints; no reads of removed Batch navigation data were found, while existing FE typecheck/lint failures remain unchanged.
 - Installed mobile dependencies from the existing lockfile. FE typecheck remains failing on pre-existing type/model issues; lint reports 4 errors and 105 warnings. No FE source or lockfile changes were made.
