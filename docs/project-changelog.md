@@ -25,8 +25,7 @@
 
 - `dotnet restore Tcaps.sln` passed.
 - `dotnet build Tcaps.sln --no-restore` passed with 0 errors; legacy nullability warnings remain outside this change.
-- `dotnet test Tcaps.sln --no-build` exited successfully; the solution currently contains no test project.
-- Mobile lint/typecheck was not runnable because dependencies are not installed and the current `expo lint` script is not recognized by the available Expo CLI.
+- `dotnet test Tcaps.sln --no-build` passed with 9 focused API tests.
 - Static verification found no controller service-locator usage, no unmarked API matrix rows, and only `.env.example` tracked as an environment file.
-- Added a focused API test project; backend test execution now passes 7 metadata/DTO/policy tests.
+- Added focused handler coverage for MaterialWorkshop status filtering, ordering, and DTO field parity.
 - Installed mobile dependencies from the existing lockfile. FE typecheck remains failing on pre-existing type/model issues; lint reports 4 errors and 105 warnings. No FE source or lockfile changes were made.

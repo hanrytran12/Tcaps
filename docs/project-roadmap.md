@@ -11,7 +11,7 @@
 | Layered .NET 8 backend | Complete baseline | Four projects in Tcaps.sln |
 | API/auth/authorization | Phase 1 complete; Phase 2 hardening in progress | API/Program.cs, controllers, policies, api-contract-matrix.md |
 | API controller composition | Phase 3 complete | Constructor-injected ISender across API controllers |
-| API response contracts | Phase 4 active | User DTO boundary completed; legacy entity responses remain compatibility-sensitive |
+| API response contracts | Phase 4 active | User, WorkshopInventory, Income, and MaterialWorkshop DTO boundaries completed; remaining entity responses are compatibility-sensitive |
 | Host/dependencies | Phase 5 active | Duplicate exception branch removed; DI package constraints aligned |
 | SQL Server persistence | Active baseline | EF Core context, migrations, repositories |
 | Startup migration/seeding | Active baseline | Program.cs, DbSeeder |
@@ -39,7 +39,7 @@
 - Add unit/integration tests for auth, authorization policies, state transitions, seeding, and critical repositories.
 - Verify role/claim semantics for QCK and QCTransport with representative JWTs before release; mobile-compatible read permissions are now aligned in source.
 - Establish API contract checks for the mobile/frontend consumers.
-- Complete feature-by-feature DTO migration for legacy Batch, Inventory, MaterialWorkshop, and Rework responses.
+- Complete feature-by-feature DTO migration for legacy Batch, Inventory, and Rework responses.
 - Add structured logging and correlation IDs for workflow failures and background jobs.
 
 ### P2 — Maintainability

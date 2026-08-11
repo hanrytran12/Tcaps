@@ -191,7 +191,8 @@ These are the consumer files found during the baseline scan. This is not a claim
 
 - `GET api/User/{workshopId:guid}` now returns `UserDTO`, excluding `PasswordHash` and other domain-only fields.
 - `POST api/User` and `PUT api/User/change-password` explicitly bind JSON request bodies; route strings and success payloads are unchanged.
-- Batch/Inventory/MaterialWorkshop/Rework entity responses remain compatibility-sensitive and are scheduled for feature-by-feature DTO migration.
+- WorkshopInventory, Income, and MaterialWorkshop response boundaries now use DTOs while preserving the mobile-facing routes and scalar fields.
+- Batch/Inventory/Rework entity responses remain compatibility-sensitive and are scheduled for feature-by-feature DTO migration.
 
 ## Known contract issues
 
