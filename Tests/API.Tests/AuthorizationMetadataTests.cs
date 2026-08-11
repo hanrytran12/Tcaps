@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using System.Security.Claims;
 using Xunit;
 
 namespace API.Tests;
@@ -71,6 +72,31 @@ public class AuthorizationMetadataTests
     }
 
     [Fact]
+    public async Task Authorization_policies_evaluate_roles_and_transport_claims()
+    {
+        using var provider = new ServiceCollection()
+            .AddLogging()
+            .AddApiAuthorization()
+            .BuildServiceProvider();
+
+        var authorization = provider.GetRequiredService<IAuthorizationService>();
+        var lead = PrincipalWithRole("Lead");
+        var qck = PrincipalWithRole("QCK");
+        var staff = PrincipalWithRole("Staff");
+        var validQcTransport = PrincipalWithRole("QCTransport", ("isQcTransport", "true"));
+        var invalidQcTransport = PrincipalWithRole("QCTransport");
+
+        Assert.True((await authorization.AuthorizeAsync(lead, null, "LeadOrValidQCTransport")).Succeeded);
+        Assert.True((await authorization.AuthorizeAsync(validQcTransport, null, "LeadOrValidQCTransport")).Succeeded);
+        Assert.False((await authorization.AuthorizeAsync(invalidQcTransport, null, "LeadOrValidQCTransport")).Succeeded);
+        Assert.True((await authorization.AuthorizeAsync(qck, null, "QC")).Succeeded);
+        Assert.True((await authorization.AuthorizeAsync(qck, null, "QCK")).Succeeded);
+        Assert.False((await authorization.AuthorizeAsync(staff, null, "QC")).Succeeded);
+        Assert.True((await authorization.AuthorizeAsync(validQcTransport, null, "QCTransportOnly")).Succeeded);
+        Assert.False((await authorization.AuthorizeAsync(lead, null, "QCTransportOnly")).Succeeded);
+    }
+
+    [Fact]
     public void Every_controller_action_has_explicit_auth_metadata()
     {
         var controllerTypes = typeof(AuthController).Assembly
@@ -119,5 +145,12 @@ public class AuthorizationMetadataTests
             .Single()
             .AllowedRoles
             .ToArray();
+    }
+
+    private static ClaimsPrincipal PrincipalWithRole(string role, params (string Type, string Value)[] extraClaims)
+    {
+        var claims = new List<Claim> { new(ClaimTypes.Role, role) };
+        claims.AddRange(extraClaims.Select(claim => new Claim(claim.Type, claim.Value)));
+        return new ClaimsPrincipal(new ClaimsIdentity(claims, "test"));
     }
 }
