@@ -24,7 +24,7 @@ namespace API.Controllers
         }
 
         [HttpGet("{assignmentId:guid}/allocated-materials")]
-        [Authorize(Roles = "Admin,Lead,QC,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,Staff")]
         public async Task<List<AllocatedMaterialDto>> GetAllocatedMaterials(Guid assignmentId)
         {
             return await Mediator.Send(new GetAllocatedMaterialsQuery(assignmentId));
@@ -62,7 +62,7 @@ namespace API.Controllers
         }
 
         [HttpGet("qc-lead-admin/assign-history/{batchId}")]
-        [Authorize(Roles = "QC,Admin,Lead")]
+        [Authorize(Roles = "QC,QCK,Admin,Lead")]
         public async Task<List<AssignmentHistoryDTO>> GetAssignmentHistoryForQCAsync(Guid batchId)
         {
             return await Mediator.Send(new GetAssignmentForHistoryByBatchIdQuery

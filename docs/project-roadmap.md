@@ -37,7 +37,7 @@
 ### P1 — Quality and contracts
 
 - Add unit/integration tests for auth, authorization policies, state transitions, seeding, and critical repositories.
-- Verify role/claim semantics for QCK and QCTransport with representative JWTs before release.
+- Verify role/claim semantics for QCK and QCTransport with representative JWTs before release; mobile-compatible read permissions are now aligned in source.
 - Establish API contract checks for the mobile/frontend consumers.
 - Complete feature-by-feature DTO migration for legacy Batch, Income, Inventory, MaterialWorkshop, Rework, and WorkshopInventory responses.
 - Add structured logging and correlation IDs for workflow failures and background jobs.

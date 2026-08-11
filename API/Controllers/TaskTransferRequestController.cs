@@ -25,7 +25,7 @@ namespace API.Controllers
         }
 
         [HttpGet("materialRequestId-assignmentTransferId")]
-        [Authorize(Roles = "Admin,Lead,QC,QCTransport")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport")]
         public async Task<TaskTransferRequestDTO> GetById([FromQuery] GetByMaterialRequestIdOrAssignTransferIdQuery query)
         {
             return await Mediator.Send(query);

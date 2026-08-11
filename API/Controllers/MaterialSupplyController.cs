@@ -21,7 +21,7 @@ namespace API.Controllers
         }
 
         [HttpGet()]
-        [Authorize(Roles = "Admin,Lead,QC,QCTransport")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport")]
         public async Task<Result<List<MaterialSupplyDTO>>> GetAllAsync([FromQuery] string? status)
         {
             return await Mediator.Send(new GetAllMaterialSuppliesQuery
@@ -54,7 +54,7 @@ namespace API.Controllers
         }
 
         [HttpPut("qc/Completed/{supplyId}")]
-        [Authorize(Roles = "QC")]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateCompletedAsync(Guid supplyId, int quantityReceive, string? note)
         {
             await Mediator.Send(new CompletedMaterialSupplyCommand

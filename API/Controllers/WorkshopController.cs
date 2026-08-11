@@ -22,7 +22,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Lead,QC,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,Staff")]
         public async Task<List<WorkshopsDTO>> GetWorkshopsTemplate()
         {
             return await _sender.Send(new GetWorkshopTemplateQuery());

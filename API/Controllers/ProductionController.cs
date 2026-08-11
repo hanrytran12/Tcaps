@@ -20,7 +20,7 @@ namespace API.Controllers
         {
         }
         [HttpGet("all")]
-        [Authorize(Roles = "Admin,Lead,QC")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK")]
         public async Task<List<ProductionDTO>> GetAllAsync()
         {
             return await Mediator.Send(new GetAllProductionQuery());
@@ -82,7 +82,7 @@ namespace API.Controllers
         }
 
         [HttpPut("for-qc/reduce-quantity")]
-        [Authorize(Roles = "QC")]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateQuantity([FromQuery] UpdateProductionCommand command)
         {
             await Mediator.Send(command);

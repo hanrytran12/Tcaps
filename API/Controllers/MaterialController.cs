@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Lead,QC,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
         public async Task<List<MaterialToWatchDTO>> GetAllMaterialsAsync()
         {
             return await _sender.Send(new GetAllMaterialToWatchQuery());
@@ -28,7 +28,7 @@ namespace API.Controllers
 
 
         [HttpGet("all")]
-        [Authorize(Roles = "Admin,Lead,QC,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
         public async Task<List<MaterialDTO>> GetAllAsync([FromQuery] GetAllMaterialQuery query)
         {
             return await _sender.Send(query);

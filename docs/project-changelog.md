@@ -15,6 +15,8 @@
 - Recorded the current role/claim verification gap for QCK and QCTransport; automated authorization tests remain pending.
 - Normalized the QCK policy to the role claim emitted by the JWT generator instead of requiring an unavailable standalone `QCK` claim.
 - Refreshed README, code standards, deployment guidance, roadmap, architecture notes, and the API contract matrix for the current refactor state.
+- Restored mobile-compatible read access for Lead batch distribution, QC inventory views, and QCTransport request-tab lookups without broadening protected write actions.
+- Updated QC authorization to include the supported QCK role and synchronized the contract matrix with the resulting role markers.
 
 ### Verification
 

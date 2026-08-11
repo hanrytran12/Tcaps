@@ -20,7 +20,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Lead,QC,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,Staff")]
         public async Task<List<ProductsDTO>> GetAllProduct()
         {
             return await _sender.Send(new GetAllProductQuery());

@@ -29,28 +29,28 @@ namespace API.Controllers
         }
 
         [HttpGet("{reworkRequestId:guid}")]
-        [Authorize(Roles = "Lead,QC,Staff")]
+        [Authorize(Roles = "Lead,QC,QCK,Staff")]
         public async Task<Domain.Entities.ReworkRequest> GetReworkRequestById(Guid reworkRequestId)
         {
             return await Mediator.Send(new GetRequestByIdQuery(reworkRequestId));
         }
 
         [HttpGet("{assignmentId:guid}/summary")]
-        [Authorize(Roles = "Lead,QC,Staff")]
+        [Authorize(Roles = "Lead,QC,QCK,Staff")]
         public async Task<ReconcilationSummaryDTO> GetReworkReconciliationSummary(Guid assignmentId)
         {
             return await Mediator.Send(new GetReworkReconciliationSummaryQuery(assignmentId));
         }
 
         [HttpGet("by-assignId")]
-        [Authorize(Roles = "Lead,QC,Staff")]
+        [Authorize(Roles = "Lead,QC,QCK,Staff")]
         public async Task<Domain.Entities.ReworkRequest> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
         {
             return await Mediator.Send(query);
         }
 
         [HttpGet("{assignId:guid}/for-dashboard")]
-        [Authorize(Roles = "Lead,QC,Staff")]
+        [Authorize(Roles = "Lead,QC,QCK,Staff")]
         public async Task<ReworkRequestDTO> GetReworkForDashboard(Guid assignId)
         {
             return await Mediator.Send(new GetReworkForDashboardQuery(assignId));

@@ -30,14 +30,14 @@ namespace API.Controllers
         }
 
         [HttpGet("{assignmentId:guid}/reconcilliation-summary")]
-        [Authorize(Roles = "Admin,Lead,QC,QCTransport,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
         public async Task<ReconcilationSummaryDTO> GetReconciliationSummary(Guid assignmentId)
         {
             return await Mediator.Send(new GetReconciliationSummaryQuery(assignmentId));
         }
 
         [HttpGet("by-assignment/{assignmentId:guid}")]
-        [Authorize(Roles = "Admin,Lead,QC,QCTransport,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
         public async Task<TransferRequestDTO> GetTransferRequestByAssignmentId(Guid assignmentId)
         {
             return await Mediator.Send(new GetTransferRequestByAssignmentIdQuery(assignmentId));

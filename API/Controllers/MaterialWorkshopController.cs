@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet("all")]
-        [Authorize(Roles = "Admin,Lead,QC")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK")]
         public async Task<List<MaterialWorkshop>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
         {
             return await Mediator.Send(query);
@@ -33,7 +33,7 @@ namespace API.Controllers
         }
 
         [HttpGet("total-quantity-receive")]
-        [Authorize(Roles = "QC,Lead")]
+        [Authorize(Roles = "QC,QCK,Lead")]
         public async Task<int> GetTotalQuantityReceive([FromQuery] Guid batchId)
         {
             return await Mediator.Send(new TotalQuantityReceiveQuery { BatchId = batchId, QcId = CurrentUserId });

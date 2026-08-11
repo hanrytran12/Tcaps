@@ -146,7 +146,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Lead"));
 
     options.AddPolicy("QC", policy =>
-        policy.RequireRole("QC"));
+        policy.RequireRole("QC", "QCK"));
 
     options.AddPolicy("GuardQC", policy =>
         policy.RequireRole("GuardQC"));

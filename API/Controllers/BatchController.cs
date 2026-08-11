@@ -27,21 +27,21 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Lead,QC,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
         public async Task<List<Batch>> GetAllBatch()
         {
             return await Mediator.Send(new GetAllBatchQuery());
         }
 
         [HttpGet("management")]
-        [Authorize(Policy = "Admin")]
+        [Authorize(Roles = "Admin,Lead")]
         public async Task<List<BatchDTO>> GetBatchForManagement()
         {
             return await Mediator.Send(new GetBatchForManagementQuery());
         }
 
         [HttpGet("{batchId:guid}")]
-        [Authorize(Roles = "Admin,Lead,QC,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
         public async Task<BatchDetailResponseDTO> GetBatchById(Guid batchId)
         {
             return await Mediator.Send(new GetBatchByIdQuery(batchId));

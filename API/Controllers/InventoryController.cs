@@ -19,7 +19,7 @@ namespace API.Controllers
         }
 
         [HttpGet("from-{materialId:guid}")]
-        [Authorize(Roles = "Admin,Lead")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK")]
         public async Task<InventoryHistoryDTO> GetInventoryByMaterialId(Guid materialId, [FromQuery] int month, [FromQuery] int year)
         {
             return await _sender.Send(new Application.Features.Inventories.Queries.GetInventoryByMaterialId.GetInventoryByMaterialIdQuery(materialId, month, year));

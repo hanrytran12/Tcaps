@@ -29,7 +29,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Lead,QC,QCTransport,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
         public async Task<IActionResult> GetAllRequest()
         {
             var query = new GetAllMaterialRequestQuery();
@@ -73,7 +73,7 @@ namespace API.Controllers
         }
 
         [HttpGet("assignment-dashboard")]
-        [Authorize(Roles = "Lead,QC,Staff")]
+        [Authorize(Roles = "Lead,QC,QCK,Staff")]
         public async Task<List<MaterialRequestForAssignmentDashboardDTO>> GetForAssignmentDashboard([FromQuery] GetForAssignmentDashboardQuery query)
         {
             return await Mediator.Send(query);
@@ -113,7 +113,7 @@ namespace API.Controllers
         }
 
         [HttpPut("confirmed/{id:guid}")]
-        [Authorize(Roles = "QC,Lead")]
+        [Authorize(Roles = "QC,QCK,Lead")]
         public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id, [FromBody] ConfirmRequestFromQcCommand command)
         {
             command.Id = id;

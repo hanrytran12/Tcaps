@@ -18,7 +18,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,Lead,QC,Staff")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,Staff")]
         public async Task<List<EvaluateDTO>> GetAll()
         {
             return await Mediator.Send(new GetAllEvaluateQuery());
