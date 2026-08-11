@@ -76,7 +76,7 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | Income | `GetMonthlyIncome` | GET `api/Income/total-monthly` | query | `MonthlyIncomeDTO` | `Roles=Staff` |
 | Income | `GetIncomeExpected` | GET `api/Income/income-expected` | none | `IncomeExpectedDTO` | `Roles=Staff` |
 | Inventory | `GetInventoryByMaterialId` | GET `api/Inventory/from-{materialId:guid}` | query | `InventoryHistoryDTO` | `Roles=Admin,Lead,QC,QCK` |
-| Inventory | `GetInventoryById` | GET `api/Inventory/{id:guid}` | inferred | `Inventory` | `Roles=Admin,Lead` |
+| Inventory | `GetInventoryById` | GET `api/Inventory/{id:guid}` | inferred | `InventoryResponseDTO` | `Roles=Admin,Lead` |
 | Inventory | `AddInventory` | POST `api/Inventory` | form | `IActionResult` | `Roles=Admin,Lead` |
 | Material | `GetAllMaterialsAsync` | GET `api/Material` | none | `List<MaterialToWatchDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
 | Material | `GetAllAsync` | GET `api/Material/all` | query | `List<MaterialDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |

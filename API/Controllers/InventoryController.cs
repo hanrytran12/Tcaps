@@ -1,6 +1,5 @@
 ﻿using Application.DTOs.Response;
 using Application.Features.Inventories.Commands.AddInventory;
-using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +27,7 @@ namespace API.Controllers
 
         [HttpGet("{id:guid}")]
         [Authorize(Roles = "Admin,Lead")]
-        public async Task<Inventory> GetInventoryById(Guid id)
+        public async Task<InventoryResponseDTO> GetInventoryById(Guid id)
         {
             return await _sender.Send(new Application.Features.Inventories.Queries.GetInventoryById.GetInventoryByIdQuery(id));
         }

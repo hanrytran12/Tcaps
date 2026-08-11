@@ -21,6 +21,7 @@
 - Migrated the staff income history response to `IncomeHistoryDTO` with the legacy JSON fields preserved.
 - Migrated `MaterialWorkshop/all` to `MaterialWorkshopSummaryDTO`; the QC-specific DTO route remains unchanged.
 - Migrated ReworkRequest detail and assignment lookup responses to `ReworkRequestResponseDTO` while preserving the mobile-consumed scalar fields.
+- Migrated the Inventory detail response to `InventoryResponseDTO` while preserving its scalar entity fields.
 
 ### Verification
 
