@@ -49,14 +49,14 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | Auth | `ForgotPassword` | POST `api/Auth/forgot-password` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
 | Auth | `VerifyOtp` | POST `api/Auth/verify-otp` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
 | Auth | `ResetPassword` | POST `api/Auth/reset-password` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
-| Batch | `GetAllBatch` | GET `api/Batch` | none | `List<Batch>` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
+| Batch | `GetAllBatch` | GET `api/Batch` | none | `List<BatchResponseDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
 | Batch | `GetBatchForManagement` | GET `api/Batch/management` | none | `List<BatchDTO>` | `Roles=Admin,Lead` |
 | Batch | `GetBatchById` | GET `api/Batch/{batchId:guid}` | inferred | `BatchDetailResponseDTO` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
 | Batch | `GetDashboardStats` | GET `api/Batch/dashboard` | query | `DashboardResultDTO` | `Policy=CanViewDashboard` |
 | Batch | `GetBatchByWorkshopId` | GET `api/Batch/for-qc` | query | `List<BatchDTO>` | `Policy=QC` |
 | Batch | `GetBatchesByStaffIdAsync` | GET `api/Batch/staff/batches` | none | `List<StaffSummaryDashboardDTO>` | `Roles=Staff` |
 | Batch | `GetBatchesByQCIdAsync` | GET `api/Batch/qc/batches` | none | `List<BatchForQCDTO>` | `Roles=QC,QCK` |
-| Batch | `GetBatchesByLeadIdAsync` | GET `api/Batch/lead/batches` | none | `List<Batch>` | `Policy=Lead` |
+| Batch | `GetBatchesByLeadIdAsync` | GET `api/Batch/lead/batches` | none | `List<BatchResponseDTO>` | `Policy=Lead` |
 | Batch | `AddBatch` | POST `api/Batch` | inferred | `IActionResult` | `Policy=Admin` |
 | Batch | `UpdateBatch` | PUT `api/Batch/{id:guid}` | body | `IActionResult` | `Policy=Admin` |
 | Batch | `UpdateLeadForBatch` | PUT `api/Batch/lead-for-batch` | query | `IActionResult` | `Roles=Admin` |
@@ -191,8 +191,8 @@ These are the consumer files found during the baseline scan. This is not a claim
 
 - `GET api/User/{workshopId:guid}` now returns `UserDTO`, excluding `PasswordHash` and other domain-only fields.
 - `POST api/User` and `PUT api/User/change-password` explicitly bind JSON request bodies; route strings and success payloads are unchanged.
-- WorkshopInventory, Income, and MaterialWorkshop response boundaries now use DTOs while preserving the mobile-facing routes and scalar fields.
-- Batch/Inventory/Rework entity responses remain compatibility-sensitive and are scheduled for feature-by-feature DTO migration.
+- WorkshopInventory, Income, MaterialWorkshop, ReworkRequest, Inventory, and Batch response boundaries now use DTOs while preserving the mobile-facing routes and scalar fields.
+- The direct entity-response migration for the scoped Phase 4 endpoints is complete; future changes should extend DTOs deliberately and keep domain navigation data out of API contracts.
 
 ## Known contract issues
 

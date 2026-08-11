@@ -22,12 +22,14 @@
 - Migrated `MaterialWorkshop/all` to `MaterialWorkshopSummaryDTO`; the QC-specific DTO route remains unchanged.
 - Migrated ReworkRequest detail and assignment lookup responses to `ReworkRequestResponseDTO` while preserving the mobile-consumed scalar fields.
 - Migrated the Inventory detail response to `InventoryResponseDTO` while preserving its scalar entity fields.
+- Migrated Batch all and Lead lookup responses to `BatchResponseDTO` with assignment summaries, removing aggregate navigation data from the API contract.
 
 ### Verification
 
 - `dotnet restore Tcaps.sln` passed.
 - `dotnet build Tcaps.sln --no-restore` passed with 0 errors; legacy nullability warnings remain outside this change.
-- `dotnet test Tcaps.sln --no-build` passed with 9 focused API tests.
+- `dotnet test Tcaps.sln --no-build` passed with 12 focused API tests.
 - Static verification found no controller service-locator usage, no unmarked API matrix rows, and only `.env.example` tracked as an environment file.
 - Added focused handler coverage for MaterialWorkshop status filtering, ordering, and DTO field parity.
+- Added Batch response contract coverage for field parity, navigation-data exclusion, lead filtering, route templates, and authorization metadata.
 - Installed mobile dependencies from the existing lockfile. FE typecheck remains failing on pre-existing type/model issues; lint reports 4 errors and 105 warnings. No FE source or lockfile changes were made.
