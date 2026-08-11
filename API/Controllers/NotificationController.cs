@@ -2,35 +2,27 @@
 using Application.Features.Notifications.Queries.GetNotifications;
 using Application.Interfaces;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class NotificationController : BaseApiController
     {
-        private readonly IMediator _mediator;
         private readonly INotificationService _notificationService;
 
-        public NotificationController(INotificationService notificationService, IMediator mediator)
+        public NotificationController(INotificationService notificationService, ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
             _notificationService = notificationService;
         }
 
         [HttpGet("count")]
         public async Task<IActionResult> CountNotification()
         {
-            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userIdString))
-            {
-                return Unauthorized();
-            }
-
-            var userId = Guid.Parse(userIdString);
-            var response = await _notificationService.CountNotificationAsync(userId);
+            var response = await _notificationService.CountNotificationAsync(CurrentUserId);
             return StatusCode(response.StatusCode, response);
         }
 
@@ -38,7 +30,7 @@ namespace API.Controllers
         public async Task<List<NotificationDTO>> GetNotifications([FromQuery] GetNotificationsQuery query)
         {
             query.UserId = CurrentUserId;
-            return await _mediator.Send(query);
+            return await Mediator.Send(query);
         }
 
         [HttpPut("mark-as-read/{notificationId}")]

@@ -4,12 +4,14 @@ using System.Security.Claims;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class BaseApiController : ControllerBase
+    public abstract class BaseApiController : ControllerBase
     {
-        private ISender _mediator;
-        protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetService<ISender>();
+        protected BaseApiController(ISender mediator)
+        {
+            Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
+
+        protected ISender Mediator { get; }
 
         protected Guid CurrentUserId
         {
@@ -22,7 +24,7 @@ namespace API.Controllers
                     throw new UnauthorizedAccessException("Thông tin định danh người dùng không hợp lệ.");
                 }
 
-                return Guid.Parse(userIdString);
+                return userId;
             }
         }
     }

@@ -15,23 +15,24 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class WorkshopController : ControllerBase
     {
-        private readonly IMediator _mediator;
-        public WorkshopController(IMediator mediator)
+        private readonly ISender _sender;
+        public WorkshopController(ISender sender)
         {
-            _mediator = mediator;
+            _sender = sender;
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Lead,QC,Staff")]
         public async Task<List<WorkshopsDTO>> GetWorkshopsTemplate()
         {
-            return await _mediator.Send(new GetWorkshopTemplateQuery());
+            return await _sender.Send(new GetWorkshopTemplateQuery());
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddWorkshop([FromBody] AddWorkshopCommand command)
         {
-            await _mediator.Send(command);
+            await _sender.Send(command);
             return Ok("Workshop added successfully");
         }
 
@@ -39,7 +40,7 @@ namespace API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> InsertWorkshopAsync([FromQuery] InsertWorkshopCommand command)
         {
-            await _mediator.Send(command);
+            await _sender.Send(command);
             return Ok("Chèn xưởng thành công.");
         }
 
@@ -47,7 +48,7 @@ namespace API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAsync([FromQuery] UpdateWorkshopCommand command)
         {
-            await _mediator.Send(command);
+            await _sender.Send(command);
             return Ok("Cập nhật thành công");
         }
 
@@ -55,7 +56,7 @@ namespace API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SwapAsync([FromQuery] SwapWorkshopCommand command)
         {
-            await _mediator.Send(command);
+            await _sender.Send(command);
             return Ok("Đổi 2 xưởng thành công.");
         }
 
@@ -63,7 +64,7 @@ namespace API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync([FromQuery] DeleteWorkshopCommand command)
         {
-            await _mediator.Send(command);
+            await _sender.Send(command);
             return Ok("Xóa xưởng thành công");
         }
     }

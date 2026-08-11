@@ -13,23 +13,24 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
-        private readonly IMediator _mediator;
-        public ProductController(IMediator mediator)
+        private readonly ISender _sender;
+        public ProductController(ISender sender)
         {
-            _mediator = mediator;
+            _sender = sender;
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Lead,QC,Staff")]
         public async Task<List<ProductsDTO>> GetAllProduct()
         {
-            return await _mediator.Send(new GetAllProductQuery());
+            return await _sender.Send(new GetAllProductQuery());
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
-            await _mediator.Send(command);
+            await _sender.Send(command);
             return Ok("Product added successfully");
         }
 
@@ -38,7 +39,7 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateProduct(Guid id, [FromForm] UpdateProductCommand command)
         {
             command.Id = id;
-            await _mediator.Send(command);
+            await _sender.Send(command);
             return Ok("Product updated successfully");
         }
 
@@ -46,7 +47,7 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            await _mediator.Send(new DeleteProductCommand(id));
+            await _sender.Send(new DeleteProductCommand(id));
             return Ok("Product deleted successfully");
         }
     }

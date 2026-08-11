@@ -4,6 +4,7 @@ using Application.Features.Incomes.Queries.GetMonthlyIncome;
 using Application.Features.Incomes.Queries.GetTotalIncomeExpect;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -12,17 +13,15 @@ namespace API.Controllers
     [ApiController]
     public class IncomeController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public IncomeController(IMediator mediator)
+        public IncomeController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet("by-staff")]
+        [Authorize(Roles = "Staff")]
         public async Task<List<Income>> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
-            return await _mediator.Send(new GetIncomesByStaffIdQuery
+            return await Mediator.Send(new GetIncomesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 Date = date
@@ -30,9 +29,10 @@ namespace API.Controllers
         }
 
         [HttpGet("total-monthly")]
+        [Authorize(Roles = "Staff")]
         public async Task<MonthlyIncomeDTO> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
         {
-            return await _mediator.Send(new GetMonthlyIncomeQuery
+            return await Mediator.Send(new GetMonthlyIncomeQuery
             {
                 StaffId = CurrentUserId,
                 Month = month,
@@ -41,9 +41,10 @@ namespace API.Controllers
         }
 
         [HttpGet("income-expected")]
+        [Authorize(Roles = "Staff")]
         public async Task<IncomeExpectedDTO> GetIncomeExpected()
         {
-            return await _mediator.Send(new GetTotalIncomeExpectedQuery
+            return await Mediator.Send(new GetTotalIncomeExpectedQuery
             {
                 StaffId = CurrentUserId
             });

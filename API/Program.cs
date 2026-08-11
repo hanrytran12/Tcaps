@@ -4,6 +4,7 @@ using Application;
 using DotNetEnv;
 using Infrastructure;
 using Infrastructure.Persistence;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
@@ -97,10 +98,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
+        var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY")
+            ?? throw new InvalidOperationException("JWT_KEY environment variable is required.");
+
         options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
         {
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY"))),
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
 
             ValidateIssuer = true,
             ValidIssuer = Environment.GetEnvironmentVariable("ISSUER"),
@@ -148,7 +152,7 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("GuardQC"));
 
     options.AddPolicy("QCK", policy =>
-        policy.RequireClaim("QCK"));
+        policy.RequireRole("QCK"));
 
     options.AddPolicy("QCTransportOnly", policy =>
     {
@@ -179,6 +183,10 @@ builder.Services.AddAuthorization(options =>
 
     options.AddPolicy("CanViewDashboard", policy =>
         policy.RequireRole("Admin", "Lead"));
+
+    options.FallbackPolicy = new AuthorizationPolicyBuilder()
+        .RequireAuthenticatedUser()
+        .Build();
 });
 
 builder.Services.Configure<IdentityOptions>(options =>

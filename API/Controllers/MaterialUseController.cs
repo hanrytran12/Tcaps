@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Response;
 using Application.Features.MaterialUses.Query.GetMaterialUseByAssignId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -9,17 +10,18 @@ namespace API.Controllers
     [ApiController]
     public class MaterialUseController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly ISender _sender;
 
-        public MaterialUseController(IMediator mediator)
+        public MaterialUseController(ISender sender)
         {
-            _mediator = mediator;
+            _sender = sender;
         }
 
         [HttpGet("qc/materials/request")]
+        [Authorize(Policy = "QC")]
         public async Task<List<MaterialUseDTO>> GetByAssignIdAsync([FromQuery] GetMaterialUseByAssignIdQuery query)
         {
-            return await _mediator.Send(query);
+            return await _sender.Send(query);
         }
     }
 }

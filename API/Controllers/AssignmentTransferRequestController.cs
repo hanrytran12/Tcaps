@@ -7,6 +7,7 @@ using Application.Features.AssingmentTransferRequest.Queries.GetAllTransferReque
 using Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTransferForQcTransport;
 using Application.Features.AssingmentTransferRequest.Queries.GetReconciliationSummary;
 using Application.Features.AssingmentTransferRequest.Queries.GetTransferRequestByAssignmentId;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +18,10 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class AssignmentTransferRequestController : BaseApiController
     {
+        public AssignmentTransferRequestController(ISender mediator) : base(mediator)
+        {
+        }
+
         [HttpGet]
         [Authorize(Roles = "Lead")]
         public async Task<ActionResult<List<AssignmentTransferRequestDTO>>> GetAllTrasnferRequest()
@@ -25,12 +30,14 @@ namespace API.Controllers
         }
 
         [HttpGet("{assignmentId:guid}/reconcilliation-summary")]
+        [Authorize(Roles = "Admin,Lead,QC,QCTransport,Staff")]
         public async Task<ReconcilationSummaryDTO> GetReconciliationSummary(Guid assignmentId)
         {
             return await Mediator.Send(new GetReconciliationSummaryQuery(assignmentId));
         }
 
         [HttpGet("by-assignment/{assignmentId:guid}")]
+        [Authorize(Roles = "Admin,Lead,QC,QCTransport,Staff")]
         public async Task<TransferRequestDTO> GetTransferRequestByAssignmentId(Guid assignmentId)
         {
             return await Mediator.Send(new GetTransferRequestByAssignmentIdQuery(assignmentId));
@@ -45,6 +52,7 @@ namespace API.Controllers
         }
 
         [HttpGet("getAll-for-qcTransport")]
+        [Authorize(Policy = "QCTransportOnly")]
         public async Task<List<AssignmentTransferRequestDTO>> GetAllForQcTransport()
         {
             return await Mediator.Send(new GetAllForQcTransportQuery

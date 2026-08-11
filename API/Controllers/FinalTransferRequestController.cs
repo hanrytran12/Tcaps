@@ -12,24 +12,25 @@ namespace API.Controllers
     [ApiController]
     public class FinalTransferRequestController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly ISender _sender;
 
-        public FinalTransferRequestController(IMediator mediator)
+        public FinalTransferRequestController(ISender sender)
         {
-            _mediator = mediator;
+            _sender = sender;
         }
 
         [HttpGet("all")]
+        [Authorize(Roles = "GuardQC")]
         public async Task<List<FinalTransferRequestDTO>> GetAllAsync()
         {
-            return await _mediator.Send(new GetAllFinalTransferRequestQuery());
+            return await _sender.Send(new GetAllFinalTransferRequestQuery());
         }
 
         [HttpPut("approve-finalTransfer")]
         [Authorize(Roles = "GuardQC")]
         public async Task<IActionResult> UpdateApproveAsync([FromQuery] ApproveFinalTransferRequestCommand command)
         {
-            await _mediator.Send(command);
+            await _sender.Send(command);
             return Ok("Duyệt đơn chuyển giao cuối cùng thành công");
         }
     }

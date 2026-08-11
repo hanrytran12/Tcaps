@@ -16,34 +16,37 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IMediator _mediator;
+        private readonly ISender _sender;
         private readonly IEmailService _emailService;
         private readonly IUserRepository _userRepository;
         private readonly IOtpService _otpService;
 
-        public AuthController(IMediator mediator, IEmailService emailService, IUserRepository userRepository, IOtpService otpService)
+        public AuthController(ISender sender, IEmailService emailService, IUserRepository userRepository, IOtpService otpService)
         {
-            _mediator = mediator;
+            _sender = sender;
             _emailService = emailService;
             _userRepository = userRepository;
             _otpService = otpService;
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public async Task<AuthRepsponseDTO> LoginAsync([FromQuery] LoginQuery query)
         {
-            return await _mediator.Send(query);
+            return await _sender.Send(query);
         }
 
         [HttpPost("register")]
         [AllowAnonymous]
         public async Task<ActionResult<AuthRepsponseDTO>> RegisterAsync([FromBody] RegisterCommand command)
         {
-            var result = await _mediator.Send(command);
+            var result = await _sender.Send(command);
             return Ok(result.Value);
         }
 
         [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        [EnableRateLimiting("OtpPolicy")]
         public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
             var user = await _userRepository.GetByEmailAsync(request.Email);
@@ -69,6 +72,8 @@ namespace API.Controllers
         }
 
         [HttpPost("verify-otp")]
+        [AllowAnonymous]
+        [EnableRateLimiting("OtpPolicy")]
         public async Task<IActionResult> VerifyOtp([FromBody] VerifyOtpRequestDTO request)
         {
             bool isValid = await _otpService.VerifyOtpAsync(request.Email, request.OtpCode);
@@ -88,6 +93,7 @@ namespace API.Controllers
         }
 
         [HttpPost("reset-password")]
+        [AllowAnonymous]
         [EnableRateLimiting("OtpPolicy")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequestDTO request)
         {
@@ -98,7 +104,7 @@ namespace API.Controllers
                 return BadRequest("Phiên đổi mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng thử lại từ đầu.");
             }
 
-            await _mediator.Send(new Application.Features.Auth.Commands.ResetPassword.ResetPasswordCommand
+            await _sender.Send(new Application.Features.Auth.Commands.ResetPassword.ResetPasswordCommand
             {
                 Email = userEmail,
                 NewPassword = request.NewPassword,

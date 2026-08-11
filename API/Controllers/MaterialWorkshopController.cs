@@ -4,6 +4,7 @@ using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive;
 using Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,12 @@ namespace API.Controllers
     [ApiController]
     public class MaterialWorkshopController : BaseApiController
     {
+        public MaterialWorkshopController(ISender mediator) : base(mediator)
+        {
+        }
+
         [HttpGet("all")]
+        [Authorize(Roles = "Admin,Lead,QC")]
         public async Task<List<MaterialWorkshop>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
         {
             return await Mediator.Send(query);

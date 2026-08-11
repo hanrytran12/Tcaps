@@ -12,6 +12,7 @@ using Application.Features.Batches.Queries.GetBatchForLead;
 using Application.Features.Batches.Queries.GetBatchForManagement;
 using Application.Features.Batches.Queries.GetDashboardStats;
 using Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,19 +22,26 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class BatchController : BaseApiController
     {
+        public BatchController(ISender mediator) : base(mediator)
+        {
+        }
+
         [HttpGet]
+        [Authorize(Roles = "Admin,Lead,QC,Staff")]
         public async Task<List<Batch>> GetAllBatch()
         {
             return await Mediator.Send(new GetAllBatchQuery());
         }
 
         [HttpGet("management")]
+        [Authorize(Policy = "Admin")]
         public async Task<List<BatchDTO>> GetBatchForManagement()
         {
             return await Mediator.Send(new GetBatchForManagementQuery());
         }
 
         [HttpGet("{batchId:guid}")]
+        [Authorize(Roles = "Admin,Lead,QC,Staff")]
         public async Task<BatchDetailResponseDTO> GetBatchById(Guid batchId)
         {
             return await Mediator.Send(new GetBatchByIdQuery(batchId));
@@ -54,6 +62,7 @@ namespace API.Controllers
         }
 
         [HttpGet("staff/batches")]
+        [Authorize(Roles = "Staff")]
         public async Task<List<StaffSummaryDashboardDTO>> GetBatchesByStaffIdAsync()
         {
             return await Mediator.Send(new GetBatchesByStaffIdQuery
@@ -84,7 +93,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
-        public async Task<IActionResult> AddBatch(AddBatchCommand command)
+        public async Task<IActionResult> AddBatch([FromBody] AddBatchCommand command)
         {
             await Mediator.Send(command);
             return Ok("Create batch successfully");

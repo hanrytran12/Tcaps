@@ -13,24 +13,22 @@ namespace API.Controllers
     [ApiController]
     public class EvaluateController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public EvaluateController(IMediator mediator)
+        public EvaluateController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin,Lead,QC,Staff")]
         public async Task<List<EvaluateDTO>> GetAll()
         {
-            return await _mediator.Send(new GetAllEvaluateQuery());
+            return await Mediator.Send(new GetAllEvaluateQuery());
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
         public async Task<List<EvaluateDTO>> GetByQCId([FromQuery] string? status)
         {
-            return await _mediator.Send(new GetEvaluatesByQCIdQuery
+            return await Mediator.Send(new GetEvaluatesByQCIdQuery
             {
                 QC_Id = CurrentUserId,
                 Status = status
@@ -38,9 +36,10 @@ namespace API.Controllers
         }
 
         [HttpGet("for-staff")]
+        [Authorize(Roles = "Staff")]
         public async Task<List<EvaluateDTO>> GetByStaffId([FromQuery] Guid assignId)
         {
-            return await _mediator.Send(new GetEvaluatesByStaffIdQuery
+            return await Mediator.Send(new GetEvaluatesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 AssignId = assignId
@@ -52,7 +51,7 @@ namespace API.Controllers
         public async Task<IActionResult> CreateEvaluate([FromForm] AddEvaluateCommand command)
         {
             command.UserId = CurrentUserId;
-            await _mediator.Send(command);
+            await Mediator.Send(command);
             return Ok("Evaluate created successfully");
         }
     }

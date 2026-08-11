@@ -6,6 +6,7 @@ using Application.Features.Productions.Query.GetAllProduction;
 using Application.Features.Productions.Query.GetAllProductionByAssignId;
 using Application.Features.Productions.Query.GetAllProductionByQCId;
 using Application.Features.Productions.Query.GetAllProductionByStaffId;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,18 @@ namespace API.Controllers
     [ApiController]
     public class ProductionController : BaseApiController
     {
+        public ProductionController(ISender mediator) : base(mediator)
+        {
+        }
         [HttpGet("all")]
+        [Authorize(Roles = "Admin,Lead,QC")]
         public async Task<List<ProductionDTO>> GetAllAsync()
         {
             return await Mediator.Send(new GetAllProductionQuery());
         }
 
         [HttpGet("for-staff")]
+        [Authorize(Roles = "Staff")]
         public async Task<List<ProductionDTO>> GetByStaffIdAsync([FromQuery] string? status)
         {
             return await Mediator.Send(new GetAllProductionByStaffIdQuery
@@ -32,6 +38,7 @@ namespace API.Controllers
         }
 
         [HttpGet("for-qc")]
+        [Authorize(Policy = "QC")]
         public async Task<List<ProductionDTO>> GetProductionsWithStatusPendingQC([FromQuery] string? status)
         {
             return await Mediator.Send(new GetAllProductionByQCIdQuery
@@ -42,6 +49,7 @@ namespace API.Controllers
         }
 
         [HttpGet("by-assignId")]
+        [Authorize(Roles = "Staff")]
         public async Task<List<ProductionDTO>> GetProductionByAssignIdAsync([FromQuery] Guid assignId)
         {
             return await Mediator.Send(new GetAllProductionByAssignIdQuery
@@ -52,6 +60,7 @@ namespace API.Controllers
         }
 
         [HttpPost("report-work")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> ReportWork([FromBody] AddProductionReportCommand command)
         {
             command.StaffId = CurrentUserId;
@@ -62,6 +71,7 @@ namespace API.Controllers
         }
 
         [HttpPost("notify-material-shortage")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> NotifyMaterialShortage([FromBody] NotifyQCMaterialShortageCommand command)
         {
             command.StaffId = CurrentUserId;

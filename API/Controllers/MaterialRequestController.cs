@@ -24,7 +24,12 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class MaterialRequestController : BaseApiController
     {
+        public MaterialRequestController(ISender mediator) : base(mediator)
+        {
+        }
+
         [HttpGet]
+        [Authorize(Roles = "Admin,Lead,QC,QCTransport,Staff")]
         public async Task<IActionResult> GetAllRequest()
         {
             var query = new GetAllMaterialRequestQuery();
@@ -33,6 +38,7 @@ namespace API.Controllers
         }
 
         [HttpGet("pending-confirmation")]
+        [Authorize(Policy = "QC")]
         public async Task<ActionResult<List<PendingRequestDTO>>> GetPendingRequests()
         {
             var query = new GetPendingRequestForQcQuery(CurrentUserId);
@@ -48,6 +54,7 @@ namespace API.Controllers
         }
 
         [HttpGet("qc/request")]
+        [Authorize(Policy = "QC")]
         public async Task<Result<List<MaterialRequestDTO>>> GetByQCIdAsync([FromQuery] string? status)
         {
             var query = new GetMaterialRequestForQCQuery
@@ -66,6 +73,7 @@ namespace API.Controllers
         }
 
         [HttpGet("assignment-dashboard")]
+        [Authorize(Roles = "Lead,QC,Staff")]
         public async Task<List<MaterialRequestForAssignmentDashboardDTO>> GetForAssignmentDashboard([FromQuery] GetForAssignmentDashboardQuery query)
         {
             return await Mediator.Send(query);

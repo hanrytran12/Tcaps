@@ -4,6 +4,7 @@ using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransfe
 using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Queries.GetByMaterialRequestIdOrAssignTransferId;
 using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,20 +14,25 @@ namespace API.Controllers
     [ApiController]
     public class TaskTransferRequestController : BaseApiController
     {
+        public TaskTransferRequestController(ISender mediator) : base(mediator)
+        {
+        }
         [HttpGet("all")]
+        [Authorize(Roles = "Admin,Lead")]
         public async Task<List<TaskTransferRequestDTO>> GetAllAsync([FromQuery] GetAllTaskTransferRequestQuery query)
         {
             return await Mediator.Send(query);
         }
 
         [HttpGet("materialRequestId-assignmentTransferId")]
+        [Authorize(Roles = "Admin,Lead,QC,QCTransport")]
         public async Task<TaskTransferRequestDTO> GetById([FromQuery] GetByMaterialRequestIdOrAssignTransferIdQuery query)
         {
             return await Mediator.Send(query);
         }
 
         [HttpGet("for-QcTransport")]
-        //[Authorize(Roles = "QCTransportOnly")]
+        [Authorize(Policy = "QCTransportOnly")]
         public async Task<List<TaskTransferRequestDTO>> GetByQcTransportAsync([FromQuery] string? status)
         {
             return await Mediator.Send(new GetTaskTransferRequestByQCTransportIdQuery(CurrentUserId, status));

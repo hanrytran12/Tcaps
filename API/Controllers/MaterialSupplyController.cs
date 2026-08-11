@@ -5,6 +5,7 @@ using Application.Features.MaterialSupplies.Command.CompletedMaterialSupply;
 using Application.Features.MaterialSupplies.Command.UpdateApproveByAdmin;
 using Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTransport;
 using Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -15,7 +16,12 @@ namespace API.Controllers
     [ApiController]
     public class MaterialSupplyController : BaseApiController
     {
+        public MaterialSupplyController(ISender mediator) : base(mediator)
+        {
+        }
+
         [HttpGet()]
+        [Authorize(Roles = "Admin,Lead,QC,QCTransport")]
         public async Task<Result<List<MaterialSupplyDTO>>> GetAllAsync([FromQuery] string? status)
         {
             return await Mediator.Send(new GetAllMaterialSuppliesQuery

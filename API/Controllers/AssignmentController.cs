@@ -9,6 +9,7 @@ using Application.Features.Assignments.Queries.GetAssignmentsByStaffId;
 using Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId;
 using Application.Features.Assignments.Queries.GetTaskProgressByQCId;
 using Application.Features.Assignments.Queries.NewFolder;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,13 +19,19 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class AssignmentController : BaseApiController
     {
+        public AssignmentController(ISender mediator) : base(mediator)
+        {
+        }
+
         [HttpGet("{assignmentId:guid}/allocated-materials")]
+        [Authorize(Roles = "Admin,Lead,QC,Staff")]
         public async Task<List<AllocatedMaterialDto>> GetAllocatedMaterials(Guid assignmentId)
         {
             return await Mediator.Send(new GetAllocatedMaterialsQuery(assignmentId));
         }
 
         [HttpGet("for-staff")]
+        [Authorize(Roles = "Staff")]
         public async Task<List<AssignForStaffDTO>> GetAssignmentsForStaffById()
         {
             return await Mediator.Send(new GetAssignmentsByStaffIdQuery
@@ -34,6 +41,7 @@ namespace API.Controllers
         }
 
         [HttpGet("qc/assignments")]
+        [Authorize(Policy = "QC")]
         public async Task<List<AssignForStaffDTO>> GetAssignmentForQCIdAsync()
         {
             return await Mediator.Send(new GetAllAssignmentByQCIdQuery
@@ -43,6 +51,7 @@ namespace API.Controllers
         }
 
         [HttpGet("staff/{batchId}")]
+        [Authorize(Roles = "Staff")]
         public async Task<AssignForStaffDTO> GetAssignmentByBatchIdAsync(Guid batchId)
         {
             return await Mediator.Send(new GetAssignmentByBatchIdQuery
@@ -64,6 +73,7 @@ namespace API.Controllers
         }
 
         [HttpGet("qc/detail-assignment/{batchId}")]
+        [Authorize(Policy = "QC")]
         public async Task<List<DashboardAssignmentDTO>> GetDetailAssignmentForQCAsync(Guid batchId)
         {
             return await Mediator.Send(new GetDetailAssignmentByBatchIdQuery
@@ -73,6 +83,7 @@ namespace API.Controllers
         }
 
         [HttpGet("qc-staff/task-progress")]
+        [Authorize(Policy = "QC")]
         public async Task<List<TaskProgressDTO>> GetTaskProgressByQcIdAsync()
         {
             return await Mediator.Send(new GetTaskProgressByQCIdQuery
@@ -94,6 +105,7 @@ namespace API.Controllers
         }
 
         [HttpPut("update-ready-for-transfer")]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateReadyForTransfer([FromQuery] Guid assignmentId)
         {
             await Mediator.Send(new UpdateReadyForTransferCommand
