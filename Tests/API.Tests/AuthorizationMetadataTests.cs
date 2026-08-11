@@ -1,7 +1,10 @@
 using API.Controllers;
+using API.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Xunit;
 
@@ -46,6 +49,28 @@ public class AuthorizationMetadataTests
     }
 
     [Fact]
+    public async Task Named_policies_cover_qck_and_authenticated_fallback()
+    {
+        using var provider = new ServiceCollection()
+            .AddApiAuthorization()
+            .BuildServiceProvider();
+
+        var policyProvider = provider.GetRequiredService<IAuthorizationPolicyProvider>();
+        var qcPolicy = await policyProvider.GetPolicyAsync("QC");
+        var qckPolicy = await policyProvider.GetPolicyAsync("QCK");
+        var qcTransportPolicy = await policyProvider.GetPolicyAsync("QCTransportOnly");
+        var fallbackPolicy = await policyProvider.GetFallbackPolicyAsync();
+
+        Assert.Contains("QC", GetAllowedRoles(qcPolicy));
+        Assert.Contains("QCK", GetAllowedRoles(qcPolicy));
+        Assert.Equal(new[] { "QCK" }, GetAllowedRoles(qckPolicy));
+        Assert.Equal(new[] { "QCTransport" }, GetAllowedRoles(qcTransportPolicy));
+        Assert.NotNull(fallbackPolicy);
+        Assert.Contains(fallbackPolicy!.Requirements, requirement =>
+            requirement is DenyAnonymousAuthorizationRequirement);
+    }
+
+    [Fact]
     public void Every_controller_action_has_explicit_auth_metadata()
     {
         var controllerTypes = typeof(AuthController).Assembly
@@ -84,5 +109,15 @@ public class AuthorizationMetadataTests
     private static bool IsHttpAction(MethodInfo method)
     {
         return method.GetCustomAttributes<HttpMethodAttribute>().Any();
+    }
+
+    private static string[] GetAllowedRoles(AuthorizationPolicy? policy)
+    {
+        Assert.NotNull(policy);
+        return policy!.Requirements
+            .OfType<RolesAuthorizationRequirement>()
+            .Single()
+            .AllowedRoles
+            .ToArray();
     }
 }

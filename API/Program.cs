@@ -1,10 +1,10 @@
 ﻿using API.Hubs;
 using API.Middlewares;
+using API.Extensions;
 using Application;
 using DotNetEnv;
 using Infrastructure;
 using Infrastructure.Persistence;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
@@ -14,7 +14,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.RateLimiting;
 
@@ -137,57 +136,7 @@ builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.Authenticati
         };
     });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("Admin", policy =>
-        policy.RequireRole("Admin"));
-
-    options.AddPolicy("Lead", policy =>
-        policy.RequireRole("Lead"));
-
-    options.AddPolicy("QC", policy =>
-        policy.RequireRole("QC", "QCK"));
-
-    options.AddPolicy("GuardQC", policy =>
-        policy.RequireRole("GuardQC"));
-
-    options.AddPolicy("QCK", policy =>
-        policy.RequireRole("QCK"));
-
-    options.AddPolicy("QCTransportOnly", policy =>
-    {
-        policy.RequireRole("QCTransport");
-    });
-
-    options.AddPolicy("LeadOrValidQCTransport", policy =>
-    {
-        policy.RequireAssertion(context =>
-        {
-            var role = context.User.FindFirstValue(ClaimTypes.Role);
-
-            // Lead luôn được phép
-            if (role == "Lead")
-                return true;
-
-            // QCTransport phải có claim isQcTransport=true
-            if (role == "QCTransport" &&
-                context.User.HasClaim("isQcTransport", "true"))
-                return true;
-
-            return false;
-        });
-    });
-
-    options.AddPolicy("CanCreateMaterialRequest", policy =>
-        policy.RequireRole("Lead", "QC"));
-
-    options.AddPolicy("CanViewDashboard", policy =>
-        policy.RequireRole("Admin", "Lead"));
-
-    options.FallbackPolicy = new AuthorizationPolicyBuilder()
-        .RequireAuthenticatedUser()
-        .Build();
-});
+builder.Services.AddApiAuthorization();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
