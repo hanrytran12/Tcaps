@@ -97,3 +97,20 @@
 - `dotnet test Tcaps.sln --no-restore` passed with 26 tests.
 - FE `npx tsc --noEmit` passed with 0 errors.
 - FE `npm run lint` passed with 0 errors; 100 existing/legacy warnings remain.
+
+## 2026-08-14 — Shared API error handling
+
+- Centralized `Result` and exception error classification in
+  `ApiErrorResponseFactory` without changing the API error wire contract.
+- Kept `ApiResultMapper` for expected Application `Result` failures and
+  `GlobalExceptionHandler` as the exception safety net.
+- Replaced raw known-exception messages with safe client-facing messages while
+  retaining server-side exception logging and trace IDs.
+- Added contract tests for all mapped HTTP error statuses, validation details,
+  success responses, mapper invariants, and global exception sanitization.
+
+### Verification
+
+- `dotnet build Tcaps.sln --no-restore` passed with 0 errors.
+- `dotnet test Tcaps.sln --no-restore` passed with 37 tests.
+- `git diff --check` passed.

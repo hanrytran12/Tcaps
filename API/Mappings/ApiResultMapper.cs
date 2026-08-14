@@ -44,46 +44,43 @@ public static class ApiResultMapper
 
     public static IActionResult ToErrorActionResult<T>(
         this ControllerBase controller,
-        Result<T> result) =>
-        controller.ToErrorActionResult(
-            result.ErrorType,
-            result.ErrorCode,
-            result.Error,
-            result.ValidationErrors);
+        Result<T> result)
+    {
+        ArgumentNullException.ThrowIfNull(controller);
+        ArgumentNullException.ThrowIfNull(result);
+        EnsureFailure(result.IsSuccess);
+
+        return controller.ToErrorActionResult(
+            ApiErrorResponseFactory.FromResult(result, controller.HttpContext.TraceIdentifier));
+    }
 
     public static IActionResult ToErrorActionResult(
         this ControllerBase controller,
-        Result result) =>
-        controller.ToErrorActionResult(
-            result.ErrorType,
-            result.ErrorCode,
-            result.Error,
-            result.ValidationErrors);
+        Result result)
+    {
+        ArgumentNullException.ThrowIfNull(controller);
+        ArgumentNullException.ThrowIfNull(result);
+        EnsureFailure(result.IsSuccess);
+
+        return controller.ToErrorActionResult(
+            ApiErrorResponseFactory.FromResult(result, controller.HttpContext.TraceIdentifier));
+    }
 
     private static IActionResult ToErrorActionResult(
         this ControllerBase controller,
-        ResultErrorType? errorType,
-        string? errorCode,
-        string? error,
-        IReadOnlyDictionary<string, string[]>? validationErrors)
+        ApiErrorResponse payload)
     {
-        var status = errorType switch
+        ArgumentNullException.ThrowIfNull(payload);
+        return controller.StatusCode(payload.Status, payload);
+    }
+
+    private static void EnsureFailure(bool isSuccess)
+    {
+        if (isSuccess)
         {
-            ResultErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
-            ResultErrorType.Forbidden => StatusCodes.Status403Forbidden,
-            ResultErrorType.NotFound => StatusCodes.Status404NotFound,
-            ResultErrorType.Conflict => StatusCodes.Status409Conflict,
-            ResultErrorType.InternalServerError => StatusCodes.Status500InternalServerError,
-            _ => StatusCodes.Status400BadRequest
-        };
-
-        var payload = new ApiErrorResponse(
-            errorCode ?? "request_failed",
-            error ?? "Yêu cầu không hợp lệ.",
-            status,
-            controller.HttpContext.TraceIdentifier,
-            validationErrors);
-
-        return controller.StatusCode(status, payload);
+            throw new ArgumentException(
+                "Only failed results can be mapped to an error response.",
+                "result");
+        }
     }
 }

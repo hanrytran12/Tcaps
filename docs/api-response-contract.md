@@ -27,7 +27,12 @@ the result type to HTTP:
 ```
 
 The standard mapping is validation `400`, unauthorized `401`, forbidden `403`,
-not found `404`, conflict `409`, and internal failure `500`.
+not found `404`, conflict `409`, and internal failure `500`. Both
+`ApiResultMapper` and `GlobalExceptionHandler` use
+`API/Mappings/ApiErrorResponseFactory.cs` as the single source of truth for
+status/code/payload construction. The global handler remains the safety net
+for exceptions that escape the controller path and never exposes raw exception
+messages to clients.
 
 ## FE consumption
 
@@ -36,4 +41,3 @@ The mobile service layer returns its internal `ApiResponse<T>` (`success`,
 `app/utils/api-helper.ts`. `LegacyApiResponse<T>` and its adapter are temporary
 compatibility code for old deployments; new services must not add endpoint-level
 checks for `isSuccess` or `value`.
-
