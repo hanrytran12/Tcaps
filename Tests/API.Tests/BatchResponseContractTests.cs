@@ -100,10 +100,10 @@ public class BatchResponseContractTests
         var leadAction = typeof(BatchController).GetMethod(nameof(BatchController.GetBatchesByLeadIdAsync))!;
 
         Assert.Equal(
-            typeof(Task<List<BatchResponseDTO>>),
+            typeof(Task<ActionResult<List<BatchResponseDTO>>>),
             allAction.ReturnType);
         Assert.Equal(
-            typeof(Task<List<BatchResponseDTO>>),
+            typeof(Task<ActionResult<List<BatchResponseDTO>>>),
             leadAction.ReturnType);
 
         Assert.Null(allAction.GetCustomAttribute<HttpGetAttribute>()!.Template);

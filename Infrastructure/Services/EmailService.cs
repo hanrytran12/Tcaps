@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Request;
+using Application.DTOs.Request;
 using Application.Interfaces;
 using Microsoft.Extensions.Options;
 using System.Text;
@@ -21,7 +21,7 @@ namespace Infrastructure.Services
             _httpClient.DefaultRequestHeaders.Add("accept", "application/json");
         }
 
-        public async Task<bool> SendOtplEmailAsync(string toEmail, string userName, string otpCode)
+        public async Task<bool> SendOtpEmailAsync(string toEmail, string userName, string otpCode)
         {
             var payload = new
             {

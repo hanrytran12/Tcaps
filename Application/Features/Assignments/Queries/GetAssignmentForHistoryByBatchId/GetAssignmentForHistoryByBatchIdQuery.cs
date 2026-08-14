@@ -1,7 +1,7 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using MediatR;
 
-namespace Application.Features.Assignments.Queries.NewFolder
+namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatchId
 {
     public class GetAssignmentForHistoryByBatchIdQuery : IRequest<List<AssignmentHistoryDTO>>
     {

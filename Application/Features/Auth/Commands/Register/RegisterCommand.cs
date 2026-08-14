@@ -4,7 +4,7 @@ using MediatR;
 
 namespace Application.Features.Auth.Commands.Register
 {
-    public class RegisterCommand : IRequest<Result<AuthRepsponseDTO>>
+    public class RegisterCommand : IRequest<Result<AuthResponseDTO>>
     {
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;

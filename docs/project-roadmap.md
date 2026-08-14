@@ -2,7 +2,7 @@
 
 > This is an engineering roadmap based on the current repository. It is not a committed release schedule.
 >
-> Last verified: 2026-08-12 against the current API refactor worktree.
+> Last verified: 2026-08-14 against `refactor/api-contract-sync`.
 
 ## Current baseline
 
@@ -11,7 +11,7 @@
 | Layered .NET 8 backend | Complete baseline | Four projects in Tcaps.sln |
 | API/auth/authorization | Phase 1 complete; Phase 2 hardening in progress | API/Program.cs, controllers, policies, api-contract-matrix.md |
 | API controller composition | Phase 3 complete | Constructor-injected ISender across API controllers |
-| API response contracts | Phase 4 complete | User, WorkshopInventory, Income, MaterialWorkshop, ReworkRequest, Inventory, and Batch DTO boundaries completed |
+| API response contracts | Phase 5 in progress | DTO boundaries plus mobile request/response alignment for Auth, Batch, Product, Workshop, transfer, and defect flows |
 | Host/dependencies | Phase 5 complete | Service registration, host limits, middleware pipeline, and database initialization are composed through focused API extensions |
 | SQL Server persistence | Active baseline | EF Core context, migrations, repositories |
 | Startup migration/seeding | Active baseline | Program.cs, DbSeeder |
@@ -38,7 +38,7 @@
 
 - Add unit/integration tests for auth, authorization policies, state transitions, seeding, and critical repositories.
 - Verify role/claim semantics for QCK and QCTransport with representative JWTs before release; mobile-compatible read permissions are now aligned in source.
-- Establish API contract checks for the mobile/frontend consumers and add integration coverage for effective route authorization; the focused DTO consumer scan and FE typecheck/lint error baseline are complete. FE lint warnings and dedicated host integration coverage remain follow-ups.
+- Establish API contract checks for the mobile/frontend consumers and add integration coverage for effective route authorization; focused metadata tests and FE typecheck coverage are now in place. FE lint warnings and dedicated host integration coverage remain follow-ups.
 - Add structured logging and correlation IDs for workflow failures and background jobs.
 
 ### P2 — Maintainability

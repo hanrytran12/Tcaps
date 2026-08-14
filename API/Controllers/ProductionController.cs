@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.Productions.Command.AddProductionReport;
 using Application.Features.Productions.Command.NotifyQCMaterialShortage;
 using Application.Features.Productions.Command.UpdateProduction;
@@ -21,42 +21,46 @@ namespace API.Controllers
         }
         [HttpGet("all")]
         [Authorize(Roles = "Admin,Lead,QC,QCK")]
-        public async Task<List<ProductionDTO>> GetAllAsync()
+        public async Task<ActionResult<List<ProductionDTO>>> GetAllAsync()
         {
-            return await Mediator.Send(new GetAllProductionQuery());
+            var result = await Mediator.Send(new GetAllProductionQuery());
+            return Ok(result);
         }
 
         [HttpGet("for-staff")]
         [Authorize(Roles = "Staff")]
-        public async Task<List<ProductionDTO>> GetByStaffIdAsync([FromQuery] string? status)
+        public async Task<ActionResult<List<ProductionDTO>>> GetByStaffIdAsync([FromQuery] string? status)
         {
-            return await Mediator.Send(new GetAllProductionByStaffIdQuery
+            var result = await Mediator.Send(new GetAllProductionByStaffIdQuery
             {
                 UserId = CurrentUserId,
                 Status = status
             });
+            return Ok(result);
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<List<ProductionDTO>> GetProductionsWithStatusPendingQC([FromQuery] string? status)
+        public async Task<ActionResult<List<ProductionDTO>>> GetProductionsWithStatusPendingQC([FromQuery] string? status)
         {
-            return await Mediator.Send(new GetAllProductionByQCIdQuery
+            var result = await Mediator.Send(new GetAllProductionByQCIdQuery
             {
                 QC_Id = CurrentUserId,
                 Status = status
             });
+            return Ok(result);
         }
 
         [HttpGet("by-assignId")]
         [Authorize(Roles = "Staff")]
-        public async Task<List<ProductionDTO>> GetProductionByAssignIdAsync([FromQuery] Guid assignId)
+        public async Task<ActionResult<List<ProductionDTO>>> GetProductionByAssignIdAsync([FromQuery] Guid assignId)
         {
-            return await Mediator.Send(new GetAllProductionByAssignIdQuery
+            var result = await Mediator.Send(new GetAllProductionByAssignIdQuery
             {
                 AssignId = assignId,
                 UserId = CurrentUserId,
             });
+            return Ok(result);
         }
 
         [HttpPost("report-work")]
@@ -65,9 +69,7 @@ namespace API.Controllers
         {
             command.StaffId = CurrentUserId;
             var result = await Mediator.Send(command);
-            if (result.IsFailure)
-                return BadRequest(result.error);
-            return Ok("Nộp sản phẩm thành công.");
+            return HandleResult(result);
         }
 
         [HttpPost("notify-material-shortage")]
@@ -76,17 +78,15 @@ namespace API.Controllers
         {
             command.StaffId = CurrentUserId;
             var result = await Mediator.Send(command);
-            if (result.IsFailure)
-                return BadRequest(result.error);
-            return Ok("Đã gửi thông báo hết NVL đến QC thành công.");
+            return HandleResult(result);
         }
 
         [HttpPut("for-qc/reduce-quantity")]
         [Authorize(Policy = "QC")]
-        public async Task<IActionResult> UpdateQuantity([FromQuery] UpdateProductionCommand command)
+        public async Task<IActionResult> UpdateQuantity([FromBody] UpdateProductionCommand command)
         {
             await Mediator.Send(command);
-            return Ok("Cập nhật số lượng thành công.");
+            return Ok(new { message = "Cập nhật số lượng thành công." });
         }
     }
 }

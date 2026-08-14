@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Request;
+using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Auth.Commands.Register;
 using Application.Features.Auth.Queries;
@@ -9,39 +9,43 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Security.Cryptography;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseApiController
     {
-        private readonly ISender _sender;
         private readonly IEmailService _emailService;
         private readonly IUserRepository _userRepository;
         private readonly IOtpService _otpService;
 
-        public AuthController(ISender sender, IEmailService emailService, IUserRepository userRepository, IOtpService otpService)
+        public AuthController(
+            ISender mediator,
+            IEmailService emailService,
+            IUserRepository userRepository,
+            IOtpService otpService) : base(mediator)
         {
-            _sender = sender;
             _emailService = emailService;
             _userRepository = userRepository;
             _otpService = otpService;
         }
 
-        [HttpGet]
+        [HttpPost("login")]
         [AllowAnonymous]
-        public async Task<AuthRepsponseDTO> LoginAsync([FromQuery] LoginQuery query)
+        public async Task<ActionResult<AuthResponseDTO>> LoginAsync([FromBody] LoginQuery query)
         {
-            return await _sender.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost("register")]
         [AllowAnonymous]
-        public async Task<ActionResult<AuthRepsponseDTO>> RegisterAsync([FromBody] RegisterCommand command)
+        public async Task<IActionResult> RegisterAsync([FromBody] RegisterCommand command)
         {
-            var result = await _sender.Send(command);
-            return Ok(result.Value);
+            var result = await Mediator.Send(command);
+            return HandleResult(result);
         }
 
         [HttpPost("forgot-password")]
@@ -52,14 +56,14 @@ namespace API.Controllers
             var user = await _userRepository.GetByEmailAsync(request.Email);
             if (user is null)
             {
-                return NotFound("Email không tồn tại");
+                return NotFound(new { message = "Email không tồn tại" });
             }
 
-            string otpCode = new Random().Next(100000, 999999).ToString();
+            string otpCode = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
 
             await _otpService.SaveOtpAsync(request.Email, otpCode);
 
-            bool isSent = await _emailService.SendOtplEmailAsync(request.Email, user.FullName, otpCode);
+            bool isSent = await _emailService.SendOtpEmailAsync(request.Email, user.FullName, otpCode);
 
             if (isSent)
             {
@@ -67,7 +71,7 @@ namespace API.Controllers
             }
             else
             {
-                return StatusCode(500, "Có lỗi xảy ra khi gửi email.");
+                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra khi gửi email." });
             }
         }
 
@@ -80,7 +84,7 @@ namespace API.Controllers
 
             if (!isValid)
             {
-                return BadRequest("Mã OTP không đúng hoặc đã hết hạn.");
+                return BadRequest(new { message = "Mã OTP không đúng hoặc đã hết hạn." });
             }
 
             string resetToken = await _otpService.CreateResetTokenAsync(request.Email);
@@ -101,10 +105,10 @@ namespace API.Controllers
 
             if (userEmail == null)
             {
-                return BadRequest("Phiên đổi mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng thử lại từ đầu.");
+                return BadRequest(new { message = "Phiên đổi mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng thử lại từ đầu." });
             }
 
-            await _sender.Send(new Application.Features.Auth.Commands.ResetPassword.ResetPasswordCommand
+            await Mediator.Send(new Application.Features.Auth.Commands.ResetPassword.ResetPasswordCommand
             {
                 Email = userEmail,
                 NewPassword = request.NewPassword,

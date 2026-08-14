@@ -48,3 +48,20 @@
 
 - FE `npx tsc --noEmit` passed with 0 errors.
 - FE `npm run lint` passed with 0 errors; 105 legacy warnings remain for a separate cleanup pass.
+
+## 2026-08-14 — BE/FE API contract synchronization
+
+- Added focused API metadata tests for login, command binding, and product multipart updates.
+- Changed mobile login to `POST api/Auth/login` with a JSON body matching the backend `LoginQuery` contract.
+- Aligned Batch, ComponentDefect, TaskTransferRequest, Workshop, and assignment-transfer write callers with explicit backend request bodies.
+- Changed Batch, Product, and Workshop mobile write services to consume message-only responses without casting them to domain models.
+- Made product image updates optional on the backend and preserved the existing image when no replacement file is supplied.
+- Required explicit quantity and lead-note values for assignment-transfer approval callers.
+- Removed debug response/payload logging from the changed assignment-transfer and batch client services.
+
+### Verification
+
+- `dotnet build Tcaps.sln --no-restore` passed with 0 errors.
+- `dotnet test Tcaps.sln --no-restore` passed with 20 tests.
+- FE `npx tsc --noEmit` passed with 0 errors.
+- Targeted FE ESLint passed with 0 errors; existing warnings remain.

@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.Batches.Commands.AddBatch;
 using Application.Features.Batches.Commands.DeleteBatch;
 using Application.Features.Batches.Commands.UpdateBatch;
@@ -27,67 +27,75 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
-        public async Task<List<BatchResponseDTO>> GetAllBatch()
+        public async Task<ActionResult<List<BatchResponseDTO>>> GetAllBatch()
         {
-            return await Mediator.Send(new GetAllBatchQuery());
+            var result = await Mediator.Send(new GetAllBatchQuery());
+            return Ok(result);
         }
 
         [HttpGet("management")]
         [Authorize(Roles = "Admin,Lead")]
-        public async Task<List<BatchDTO>> GetBatchForManagement()
+        public async Task<ActionResult<List<BatchDTO>>> GetBatchForManagement()
         {
-            return await Mediator.Send(new GetBatchForManagementQuery());
+            var result = await Mediator.Send(new GetBatchForManagementQuery());
+            return Ok(result);
         }
 
         [HttpGet("{batchId:guid}")]
         [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
-        public async Task<BatchDetailResponseDTO> GetBatchById(Guid batchId)
+        public async Task<ActionResult<BatchDetailResponseDTO>> GetBatchById(Guid batchId)
         {
-            return await Mediator.Send(new GetBatchByIdQuery(batchId));
+            var result = await Mediator.Send(new GetBatchByIdQuery(batchId));
+            return Ok(result);
         }
 
         [HttpGet("dashboard")]
         [Authorize(Policy = "CanViewDashboard")]
-        public async Task<DashboardResultDTO> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
+        public async Task<ActionResult<DashboardResultDTO>> GetDashboardStats([FromQuery] GetDashboardStatsQuery query)
         {
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<List<BatchDTO>> GetBatchByWorkshopId([FromQuery] string? Status, DateOnly? FromDate, DateOnly? ToDate)
+        public async Task<ActionResult<List<BatchDTO>>> GetBatchByWorkshopId([FromQuery] string? Status, DateOnly? FromDate, DateOnly? ToDate)
         {
-            return await Mediator.Send(new GetBatchByWorkshopIdQuery(CurrentUserId, Status, FromDate, ToDate));
+            var result = await Mediator.Send(new GetBatchByWorkshopIdQuery(CurrentUserId, Status, FromDate, ToDate));
+            return Ok(result);
         }
 
         [HttpGet("staff/batches")]
         [Authorize(Roles = "Staff")]
-        public async Task<List<StaffSummaryDashboardDTO>> GetBatchesByStaffIdAsync()
+        public async Task<ActionResult<List<StaffSummaryDashboardDTO>>> GetBatchesByStaffIdAsync()
         {
-            return await Mediator.Send(new GetBatchesByStaffIdQuery
+            var result = await Mediator.Send(new GetBatchesByStaffIdQuery
             {
                 StaffId = CurrentUserId
             });
+            return Ok(result);
         }
 
         [HttpGet("qc/batches")]
         [Authorize(Roles = "QC,QCK")]
-        public async Task<List<BatchForQCDTO>> GetBatchesByQCIdAsync()
+        public async Task<ActionResult<List<BatchForQCDTO>>> GetBatchesByQCIdAsync()
         {
-            return await Mediator.Send(new GetBatchesByQCIdQuery
+            var result = await Mediator.Send(new GetBatchesByQCIdQuery
             {
                 QcId = CurrentUserId
             });
+            return Ok(result);
         }
 
         [HttpGet("lead/batches")]
         [Authorize(Policy = "Lead")]
-        public async Task<List<BatchResponseDTO>> GetBatchesByLeadIdAsync()
+        public async Task<ActionResult<List<BatchResponseDTO>>> GetBatchesByLeadIdAsync()
         {
-            return await Mediator.Send(new GetBatchForLeadQuery
+            var result = await Mediator.Send(new GetBatchForLeadQuery
             {
                 UserId = CurrentUserId
             });
+            return Ok(result);
         }
 
         [HttpPost]
@@ -95,7 +103,7 @@ namespace API.Controllers
         public async Task<IActionResult> AddBatch([FromBody] AddBatchCommand command)
         {
             await Mediator.Send(command);
-            return Ok("Create batch successfully");
+            return Ok(new { message = "Tạo lô hàng thành công." });
         }
 
         [HttpPut("{id:guid}")]
@@ -104,15 +112,15 @@ namespace API.Controllers
         {
             command.Id = id;
             await Mediator.Send(command);
-            return Ok("Update batch successfully");
+            return Ok(new { message = "Cập nhật lô hàng thành công." });
         }
 
         [HttpPut("lead-for-batch")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateLeadForBatch([FromQuery] UpdateLeadForBatchCommand command)
+        public async Task<IActionResult> UpdateLeadForBatch([FromBody] UpdateLeadForBatchCommand command)
         {
             await Mediator.Send(command);
-            return Ok("Cập nhật Lead cho lô hàng thành công.");
+            return Ok(new { message = "Cập nhật Lead cho lô hàng thành công." });
         }
 
         [HttpDelete("{id:guid}")]
@@ -120,7 +128,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteBatch(Guid id)
         {
             await Mediator.Send(new DeleteBatchCommand(id));
-            return Ok("Delete batch successfully");
+            return Ok(new { message = "Xóa lô hàng thành công." });
         }
     }
 }

@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Application.Features.Auth.Commands.Register
 {
-    public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<AuthRepsponseDTO>>
+    public class RegisterCommandHandler : IRequestHandler<RegisterCommand, Result<AuthResponseDTO>>
     {
         private const string DefaultRegisteredRole = "Staff";
 
@@ -29,7 +29,7 @@ namespace Application.Features.Auth.Commands.Register
             _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        public async Task<Result<AuthRepsponseDTO>> Handle(RegisterCommand request, CancellationToken cancellationToken)
+        public async Task<Result<AuthResponseDTO>> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             var email = request.Email.Trim().ToLowerInvariant();
             var phone = request.Phone.Trim();
@@ -55,7 +55,7 @@ namespace Application.Features.Auth.Commands.Register
 
             await _userRepository.AddAsync(user);
 
-            return Result<AuthRepsponseDTO>.Success(_jwtTokenGenerator.GenerateToken(user));
+            return Result<AuthResponseDTO>.Success(_jwtTokenGenerator.GenerateToken(user));
         }
     }
 }

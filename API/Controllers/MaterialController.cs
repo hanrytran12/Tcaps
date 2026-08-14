@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.Materials.Commands.AddMaterial;
 using Application.Features.Materials.Queries;
 using Application.Features.Materials.Queries.GetAllMaterialToWatch;
@@ -10,36 +10,34 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MaterialController : ControllerBase
+    public class MaterialController : BaseApiController
     {
-        private readonly ISender _sender;
-
-        public MaterialController(ISender sender)
+        public MaterialController(ISender mediator) : base(mediator)
         {
-            _sender = sender;
         }
 
         [HttpGet]
         [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
-        public async Task<List<MaterialToWatchDTO>> GetAllMaterialsAsync()
+        public async Task<ActionResult<List<MaterialToWatchDTO>>> GetAllMaterialsAsync()
         {
-            return await _sender.Send(new GetAllMaterialToWatchQuery());
+            var result = await Mediator.Send(new GetAllMaterialToWatchQuery());
+            return Ok(result);
         }
-
 
         [HttpGet("all")]
         [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
-        public async Task<List<MaterialDTO>> GetAllAsync([FromQuery] GetAllMaterialQuery query)
+        public async Task<ActionResult<List<MaterialDTO>>> GetAllAsync([FromQuery] GetAllMaterialQuery query)
         {
-            return await _sender.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> CreateMaterial([FromBody] AddMaterialCommand command)
         {
-            await _sender.Send(command);
-            return Ok("Material created successfully");
+            await Mediator.Send(command);
+            return Ok(new { message = "Tạo vật liệu thành công." });
         }
     }
 }

@@ -1,6 +1,6 @@
 # System Architecture
 
-> Last verified: 2026-08-12 against the current API refactor worktree.
+> Last verified: 2026-08-14 against `refactor/api-contract-sync`.
 
 ## High-level topology
 
@@ -30,7 +30,8 @@ flowchart LR
 5. The handler uses Domain objects and Infrastructure abstractions for persistence/integrations.
 6. EF Core persists changes to SQL Server; API-safe results are mapped to DTOs at the API boundary.
 7. Domain events can invoke notification, inventory, production, or follow-up handlers.
-8. The API returns a result/error response through the existing middleware conventions.
+8. The mobile service layer maps API message-only write responses and sends explicit JSON or multipart payloads according to the controller contract.
+9. The API returns a result/error response through the existing middleware conventions.
 
 ## Host responsibilities
 
@@ -74,3 +75,4 @@ AppDbContext implements the application database abstraction and unit-of-work co
 - OTP requests are rate-limited by remote IP.
 - File/static content handling and upload size limits are configured in the host.
 - Secret values must remain outside source and documentation. Historical revisions exposed .env/configuration credentials; rotate them and keep local copies ignored.
+- Contract changes must update both the controller binding/response and the corresponding mobile service/caller in the same migration branch.

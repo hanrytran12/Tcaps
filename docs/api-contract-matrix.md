@@ -2,7 +2,7 @@
 
 > Status: current API refactor verification matrix.
 >
-> Last verified: 2026-08-12 against `master`.
+> Last verified: 2026-08-14 against `refactor/api-contract-sync`.
 
 This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\API`. `UNMARKED` means the action has no explicit `[Authorize]` or `[AllowAnonymous]` marker at source level. It is not an approval that the endpoint should be public. The current matrix has no remaining `UNMARKED` rows after the authorization pass.
 
@@ -42,10 +42,10 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | AssignmentTransferRequest | `GetForQCTransportAsync` | GET `api/AssignmentTransferRequest/qc-transport` | query | `AssignmentTransferRequestDTO` | `Policy=QCTransportOnly` |
 | AssignmentTransferRequest | `GetAllForQcTransport` | GET `api/AssignmentTransferRequest/getAll-for-qcTransport` | none | `List<AssignmentTransferRequestDTO>` | `Policy=QCTransportOnly` |
 | AssignmentTransferRequest | `CreateTransferRequest` | POST `api/AssignmentTransferRequest` | body | `IActionResult` | `Roles=QC,QCK` |
-| AssignmentTransferRequest | `ApproveTrasnferRequest` | PUT `api/AssignmentTransferRequest/approved/{transferRequestId:guid}` | inferred | `IActionResult` | `Policy=LeadOrValidQCTransport` |
+| AssignmentTransferRequest | `ApproveTransferRequest` | PUT `api/AssignmentTransferRequest/approved/{transferRequestId:guid}` | route + body | `IActionResult` | `Policy=LeadOrValidQCTransport` |
 | AssignmentTransferRequest | `QCTransportReception` | PUT `api/AssignmentTransferRequest/qc-transport-reception` | query | `IActionResult` | `Policy=QCTransportOnly` |
-| Auth | `LoginAsync` | GET `api/Auth` | query | `AuthRepsponseDTO` | `[AllowAnonymous]` |
-| Auth | `RegisterAsync` | POST `api/Auth/register` | body | `ActionResult<AuthRepsponseDTO>` | `[AllowAnonymous]` |
+| Auth | `LoginAsync` | POST `api/Auth/login` | body | `AuthResponseDTO` | `[AllowAnonymous]` |
+| Auth | `RegisterAsync` | POST `api/Auth/register` | body | `ActionResult<AuthResponseDTO>` | `[AllowAnonymous]` |
 | Auth | `ForgotPassword` | POST `api/Auth/forgot-password` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
 | Auth | `VerifyOtp` | POST `api/Auth/verify-otp` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
 | Auth | `ResetPassword` | POST `api/Auth/reset-password` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
@@ -59,13 +59,13 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | Batch | `GetBatchesByLeadIdAsync` | GET `api/Batch/lead/batches` | none | `List<BatchResponseDTO>` | `Policy=Lead` |
 | Batch | `AddBatch` | POST `api/Batch` | inferred | `IActionResult` | `Policy=Admin` |
 | Batch | `UpdateBatch` | PUT `api/Batch/{id:guid}` | body | `IActionResult` | `Policy=Admin` |
-| Batch | `UpdateLeadForBatch` | PUT `api/Batch/lead-for-batch` | query | `IActionResult` | `Roles=Admin` |
+| Batch | `UpdateLeadForBatch` | PUT `api/Batch/lead-for-batch` | body | `IActionResult` | `Roles=Admin` |
 | Batch | `DeleteBatch` | DELETE `api/Batch/{id:guid}` | inferred | `IActionResult` | `Policy=Admin` |
 | ComponentDefect | `GetAllByEvaluateIdForStaffAsync` | GET `api/ComponentDefect/for-staff` | query | `List<ComponentDefectsDTO>` | `Roles=Staff` |
 | ComponentDefect | `GetAllByEvaluateIdForQCAsync` | GET `api/ComponentDefect/for-qc` | query | `List<ComponentDefectsDTO>` | `Policy=QC` |
-| ComponentDefect | `UpdateResolveAsync` | PUT `api/ComponentDefect/resolve/{componentId}` | query | `IActionResult` | `Roles=Staff` |
-| ComponentDefect | `UpdateConfirmAsync` | PUT `api/ComponentDefect/confirm/{componentId}` | query | `IActionResult` | `Policy=QC` |
-| ComponentDefect | `RejectComponentAsync` | PUT `api/ComponentDefect/reject/{componentId}` | query | `IActionResult` | `Policy=QC` |
+| ComponentDefect | `UpdateResolveAsync` | PUT `api/ComponentDefect/resolve/{componentId}` | route + body | `IActionResult` | `Roles=Staff` |
+| ComponentDefect | `UpdateConfirmAsync` | PUT `api/ComponentDefect/confirm/{componentId}` | route + body | `IActionResult` | `Policy=QC` |
+| ComponentDefect | `RejectComponentAsync` | PUT `api/ComponentDefect/reject/{componentId}` | route + body | `IActionResult` | `Policy=QC` |
 | Evaluate | `GetAll` | GET `api/Evaluate` | none | `List<EvaluateDTO>` | `Roles=Admin,Lead,QC,QCK,Staff` |
 | Evaluate | `GetByQCId` | GET `api/Evaluate/for-qc` | query | `List<EvaluateDTO>` | `Policy=QC` |
 | Evaluate | `GetByStaffId` | GET `api/Evaluate/for-staff` | query | `List<EvaluateDTO>` | `Roles=Staff` |
@@ -132,7 +132,7 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | TaskTransferRequest | `GetById` | GET `api/TaskTransferRequest/materialRequestId-assignmentTransferId` | query | `TaskTransferRequestDTO` | `Roles=Admin,Lead,QC,QCK,QCTransport` |
 | TaskTransferRequest | `GetByQcTransportAsync` | GET `api/TaskTransferRequest/for-QcTransport` | query | `List<TaskTransferRequestDTO>` | `Policy=QCTransportOnly` |
 | TaskTransferRequest | `CreateAsync` | POST `api/TaskTransferRequest/for-lead` | body | `IActionResult` | `Roles=Lead` |
-| TaskTransferRequest | `ApproveRequestAsync` | PUT `api/TaskTransferRequest/approved` | query | `IActionResult` | `Roles=Admin` |
+| TaskTransferRequest | `ApproveRequestAsync` | PUT `api/TaskTransferRequest/approved` | body | `IActionResult` | `Roles=Admin` |
 | User | `GetAllUser` | GET `api/User` | none | `List<UsersDTO>` | `Roles=Admin` |
 | User | `GetUserByWorkshopId` | GET `api/User/{workshopId:guid}` | inferred | `UserDTO` | `Roles=Admin,Lead` |
 | User | `GetStaffByWorkshopId` | GET `api/User/{workshopId:guid}/users-in-workshop` | inferred | `List<UsersDTO>` | `Roles=Admin,Lead` |
@@ -151,10 +151,10 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | User | `DeleteUser` | DELETE `api/User/{id:guid}` | inferred | `IActionResult` | `Roles=Admin` |
 | Workshop | `GetWorkshopsTemplate` | GET `api/Workshop` | none | `List<WorkshopsDTO>` | `Roles=Admin,Lead,QC,QCK,Staff` |
 | Workshop | `AddWorkshop` | POST `api/Workshop` | body | `IActionResult` | `Roles=Admin` |
-| Workshop | `InsertWorkshopAsync` | PUT `api/Workshop/insert` | query | `IActionResult` | `Roles=Admin` |
-| Workshop | `UpdateAsync` | PUT `api/Workshop/update` | query | `IActionResult` | `Roles=Admin` |
-| Workshop | `SwapAsync` | PUT `api/Workshop/swap-workshop` | query | `IActionResult` | `Roles=Admin` |
-| Workshop | `DeleteAsync` | DELETE `api/Workshop` | query | `IActionResult` | `Roles=Admin` |
+| Workshop | `InsertWorkshopAsync` | PUT `api/Workshop/insert` | body | `IActionResult` | `Roles=Admin` |
+| Workshop | `UpdateAsync` | PUT `api/Workshop/update` | body | `IActionResult` | `Roles=Admin` |
+| Workshop | `SwapAsync` | PUT `api/Workshop/swap-workshop` | body | `IActionResult` | `Roles=Admin` |
+| Workshop | `DeleteAsync` | DELETE `api/Workshop` | body | `IActionResult` | `Roles=Admin` |
 | WorkshopInventory | `GetAllWorkshopInventory` | GET `api/WorkshopInventory` | none | `List<WorkshopInventoryDTO>` | `Roles=Admin,Lead,QC,QCK` |
 | WorkshopInventory | `GetWorkshopInvenntoryByWorkshopId` | GET `api/WorkshopInventory/{workshopId:guid}` | inferred | `List<WorkshopInventoryForExportDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport` |
 | WorkshopInventory | `GetWorkshopInventoryForQC` | GET `api/WorkshopInventory/for-qc` | none | `List<WorkshopInventoryForQCDTO>` | `Policy=QC` |
@@ -194,15 +194,23 @@ These are the consumer files found during the baseline scan. This is not a claim
 - WorkshopInventory, Income, MaterialWorkshop, ReworkRequest, Inventory, and Batch response boundaries now use DTOs while preserving the mobile-facing routes and scalar fields.
 - The direct entity-response migration for the scoped Phase 4 endpoints is complete; future changes should extend DTOs deliberately and keep domain navigation data out of API contracts.
 
-## Mobile compatibility verification — 2026-08-12
+## Mobile compatibility verification — 2026-08-14
 
 - Batch consumers use the preserved root fields and `assignments`; the scan found no reads of removed aggregate navigation data such as `product`, `evaluates`, `productions`, or `materialUses`.
 - Rework consumers use the preserved scalar fields in `ReworkRequestResponseDTO`; the direct Inventory detail endpoint is not called by the current mobile services.
-- Full FE typecheck/lint remains a separate baseline issue: existing model/sample-data errors and lint findings remain outside this BE contract migration.
+- FE typecheck passes after aligning the changed request bindings and message-only write responses. ESLint has no errors; existing warnings remain in unrelated or pre-existing code.
+
+## Phase 5 contract changes
+
+- Login is now `POST api/Auth/login` with a JSON `LoginQuery` body; the mobile client sends the same contract.
+- Batch, ComponentDefect, TaskTransferRequest, and Workshop command writes now use explicit JSON bodies where their controllers bind `[FromBody]`.
+- Product update uses multipart form data and accepts an optional image; omitting an image preserves the existing stored image.
+- Batch, Product, and Workshop write methods expose message-only responses to the mobile service layer instead of casting `{ message }` to domain models.
+- Assignment-transfer approval requires explicit `completeQuantityReceive` and `noteLead` values from callers; callers now derive them from the selected transfer request or approval form.
 
 ## Known contract issues
 
 - The mobile client references legacy route spellings and some route names that do not exactly match current controller attributes. These must be verified per flow before renaming.
-- `Auth.LoginAsync` uses `GET` with query-bound credentials; changing it to `POST` is a breaking change and requires a compatibility plan.
-- Several write actions use query-bound command objects or primitive parameters. Normalize only after the mobile caller is migrated.
+- Older clients that still call `GET api/Auth` with query-bound credentials are incompatible with the current login contract and must migrate before deployment.
+- Several write actions outside the Phase 5 scope still use query-bound primitive parameters. Normalize them only with a matching mobile migration.
 - Authorization markers reflect the current source metadata; role/claim semantics still require integration coverage.

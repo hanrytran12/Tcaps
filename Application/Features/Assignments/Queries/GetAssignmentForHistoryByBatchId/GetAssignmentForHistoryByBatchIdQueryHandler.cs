@@ -1,6 +1,5 @@
-﻿using Application.Common.Exceptions;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
-using Application.Features.Assignments.Queries.NewFolder;
 using Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;

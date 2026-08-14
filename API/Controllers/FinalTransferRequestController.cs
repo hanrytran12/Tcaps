@@ -1,4 +1,4 @@
-﻿using System.ComponentModel;
+using System.ComponentModel;
 using Application.DTOs.Response;
 using Application.Features.FinalTransferRequest.Command.ApproveFinalTransferRequest;
 using Application.Features.FinalTransferRequest.Queries.GetAllFinalTransferRequest;
@@ -10,28 +10,26 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class FinalTransferRequestController : ControllerBase
+    public class FinalTransferRequestController : BaseApiController
     {
-        private readonly ISender _sender;
-
-        public FinalTransferRequestController(ISender sender)
+        public FinalTransferRequestController(ISender mediator) : base(mediator)
         {
-            _sender = sender;
         }
 
         [HttpGet("all")]
         [Authorize(Roles = "GuardQC")]
-        public async Task<List<FinalTransferRequestDTO>> GetAllAsync()
+        public async Task<ActionResult<List<FinalTransferRequestDTO>>> GetAllAsync()
         {
-            return await _sender.Send(new GetAllFinalTransferRequestQuery());
+            var result = await Mediator.Send(new GetAllFinalTransferRequestQuery());
+            return Ok(result);
         }
 
         [HttpPut("approve-finalTransfer")]
         [Authorize(Roles = "GuardQC")]
-        public async Task<IActionResult> UpdateApproveAsync([FromQuery] ApproveFinalTransferRequestCommand command)
+        public async Task<IActionResult> UpdateApproveAsync([FromBody] ApproveFinalTransferRequestCommand command)
         {
-            await _sender.Send(command);
-            return Ok("Duyệt đơn chuyển giao cuối cùng thành công");
+            await Mediator.Send(command);
+            return Ok(new { message = "Duyệt đơn chuyển giao cuối cùng thành công" });
         }
     }
 }

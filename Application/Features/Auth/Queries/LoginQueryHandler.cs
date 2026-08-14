@@ -1,4 +1,4 @@
-﻿using Application.Common.Exceptions;
+using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Interfaces;
@@ -6,7 +6,7 @@ using MediatR;
 
 namespace Application.Features.Auth.Queries
 {
-    public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthRepsponseDTO>
+    public class LoginQueryHandler : IRequestHandler<LoginQuery, AuthResponseDTO>
     {
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
@@ -17,7 +17,7 @@ namespace Application.Features.Auth.Queries
             _jwtTokenGenerator = jwtTokenGenerator;
         }
 
-        public async Task<AuthRepsponseDTO> Handle(LoginQuery request, CancellationToken cancellationToken)
+        public async Task<AuthResponseDTO> Handle(LoginQuery request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.FindByEmailOrPhoneAsync(request.EmailOrPhone);
 
@@ -33,7 +33,7 @@ namespace Application.Features.Auth.Queries
             }
 
             var tokenResponse = _jwtTokenGenerator.GenerateToken(user);
-            return new AuthRepsponseDTO
+            return new AuthResponseDTO
             {
                 Token = tokenResponse.Token,
                 ExpiresAt = tokenResponse.ExpiresAt,

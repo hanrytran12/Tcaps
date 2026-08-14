@@ -1,4 +1,4 @@
-﻿using Application.Common;
+using Application.Common;
 using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.MaterialRequest.Commands.ConfirmRequestFromLead;
@@ -48,35 +48,39 @@ namespace API.Controllers
 
         [HttpGet("lead/admin/all-request")]
         [Authorize(Roles = "Admin,Lead")]
-        public async Task<Result<List<MaterialRequestDTO>>> GetAllAsync([FromQuery] GetAllMaterialRequestForAdminQuery query)
+        public async Task<IActionResult> GetAllAsync([FromQuery] GetAllMaterialRequestForAdminQuery query)
         {
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return HandleResult(result);
         }
 
         [HttpGet("qc/request")]
         [Authorize(Policy = "QC")]
-        public async Task<Result<List<MaterialRequestDTO>>> GetByQCIdAsync([FromQuery] string? status)
+        public async Task<IActionResult> GetByQCIdAsync([FromQuery] string? status)
         {
             var query = new GetMaterialRequestForQCQuery
             {
                 QcId = CurrentUserId,
                 Status = status
             };
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return HandleResult(result);
         }
 
         [HttpGet("qc-transport")]
         [Authorize(Policy = "QCTransportOnly")]
-        public async Task<Result<MaterialRequestDTO>> GetRequestsForQcTransport([FromQuery] GetMaterialRequestForQcTransportQuery query)
+        public async Task<IActionResult> GetRequestsForQcTransport([FromQuery] GetMaterialRequestForQcTransportQuery query)
         {
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return HandleResult(result);
         }
 
         [HttpGet("assignment-dashboard")]
         [Authorize(Roles = "Lead,QC,QCK,Staff")]
-        public async Task<List<MaterialRequestForAssignmentDashboardDTO>> GetForAssignmentDashboard([FromQuery] GetForAssignmentDashboardQuery query)
+        public async Task<ActionResult<List<MaterialRequestForAssignmentDashboardDTO>>> GetForAssignmentDashboard([FromQuery] GetForAssignmentDashboardQuery query)
         {
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost("{assignmentId:guid}/dispatch-materials")]
@@ -91,16 +95,16 @@ namespace API.Controllers
             };
 
             await Mediator.Send(command);
-            return Ok("Cung cấp NVL thành công");
+            return Ok(new { message = "Cung cấp NVL thành công" });
         }
 
         [HttpPost("qc/material-requests")]
         [Authorize(Policy = "QC")]
-        public async Task<IActionResult> CreateMaterailRequestAsync([FromBody] CreateMaterialRequestFromQCCommand command)
+        public async Task<IActionResult> CreateMaterialRequestAsync([FromBody] CreateMaterialRequestFromQCCommand command)
         {
             command.UserId = CurrentUserId;
             var result = await Mediator.Send(command);
-            return Ok("Yêu cầu cung cấp thêm NVL thành công");
+            return Ok(new { message = "Yêu cầu cung cấp thêm NVL thành công" });
         }
 
         [HttpPut("approve/{id:guid}")]
@@ -109,7 +113,7 @@ namespace API.Controllers
         {
             var command = new Application.Features.MaterialRequest.Commands.ApproveRequestFromLead.ApproveRequestFromLeadCommand { Id = id };
             await Mediator.Send(command);
-            return Ok("Duyệt yêu cầu thành công");
+            return Ok(new { message = "Duyệt yêu cầu thành công" });
         }
 
         [HttpPut("confirmed/{id:guid}")]
@@ -118,7 +122,7 @@ namespace API.Controllers
         {
             command.Id = id;
             await Mediator.Send(command);
-            return Ok("Xác nhận yêu cầu thành công");
+            return Ok(new { message = "Xác nhận yêu cầu thành công" });
         }
 
         [HttpPut("rejected/{id:guid}")]
@@ -127,7 +131,7 @@ namespace API.Controllers
         {
             command.Id = id;
             await Mediator.Send(command);
-            return Ok("Từ chối yêu cầu thành công");
+            return Ok(new { message = "Từ chối yêu cầu thành công" });
         }
 
         [HttpPut("qc-transport-reception")]
@@ -140,7 +144,7 @@ namespace API.Controllers
                 MaterialRequestId = materialRequestId
             };
             await Mediator.Send(command);
-            return Ok("Tiếp nhận NVL thành công");
+            return Ok(new { message = "Tiếp nhận NVL thành công" });
         }
 
         [HttpPut("lead-confirm")]
@@ -148,7 +152,7 @@ namespace API.Controllers
         public async Task<IActionResult> LeadConfirm([FromQuery] ConfirmRequestFromLeadCommand command)
         {
             await Mediator.Send(command);
-            return Ok("Duyệt yêu cầu cho QC vận chuyển thành công.");
+            return Ok(new { message = "Duyệt yêu cầu cho QC vận chuyển thành công." });
         }
     }
 }
