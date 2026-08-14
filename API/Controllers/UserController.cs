@@ -133,8 +133,8 @@ namespace API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddUser([FromBody] AddUserCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Tạo User thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo User thành công");
         }
 
         [HttpPut("{id:guid}")]
@@ -142,16 +142,16 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserCommand command)
         {
             command.Id = id;
-            await Mediator.Send(command);
-            return Ok(new { message = "Cập nhật User thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật User thành công");
         }
 
         [HttpPut("change-password")]
         [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto, CancellationToken cancellationToken)
         {
-            var response = await _staffService.ChangePasswordAsync(CurrentUserId, dto.CurrentPassword, dto.NewPassword, cancellationToken);
-            return StatusCode(response.StatusCode, response);
+            var result = await _staffService.ChangePasswordAsync(CurrentUserId, dto.CurrentPassword, dto.NewPassword, cancellationToken);
+            return HandleResult(result, "Đổi mật khẩu thành công");
         }
 
         [HttpPut("update-profile")]
@@ -159,24 +159,24 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileCommand command)
         {
             command.Id = CurrentUserId;
-            await Mediator.Send(command);
-            return Ok(new { message = "Cập nhật thông tin thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật thông tin thành công.");
         }
 
         [HttpPut("{userId:guid}/re-active")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ReactiveUser(Guid userId)
         {
-            await Mediator.Send(new ReactiveUserCommand(userId));
-            return Ok(new { message = "Kích hoạt lại User thành công" });
+            var result = await Mediator.Send(new ReactiveUserCommand(userId));
+            return HandleResult(result, "Kích hoạt lại User thành công");
         }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            await Mediator.Send(new DeleteUserCommand(id));
-            return Ok(new { message = "Xóa User thành công" });
+            var result = await Mediator.Send(new DeleteUserCommand(id));
+            return HandleResult(result, "Xóa User thành công");
         }
     }
 }

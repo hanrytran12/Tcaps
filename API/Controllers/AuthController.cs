@@ -1,8 +1,10 @@
 using Application.DTOs.Request;
 using Application.DTOs.Response;
+using Application.Common;
 using Application.Features.Auth.Commands.Register;
 using Application.Features.Auth.Queries;
 using Application.Interfaces;
+using API.Contracts;
 using Domain.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -56,7 +58,7 @@ namespace API.Controllers
             var user = await _userRepository.GetByEmailAsync(request.Email);
             if (user is null)
             {
-                return NotFound(new { message = "Email không tồn tại" });
+                return HandleResult(Result.NotFound("Email không tồn tại"));
             }
 
             string otpCode = RandomNumberGenerator.GetInt32(100000, 1000000).ToString();
@@ -67,12 +69,16 @@ namespace API.Controllers
 
             if (isSent)
             {
-                return Ok(new { message = "Mã OTP đã được gửi đến email của bạn." });
+                return SuccessMessage("Mã OTP đã được gửi đến email của bạn.");
             }
-            else
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, new { message = "Có lỗi xảy ra khi gửi email." });
-            }
+
+            return StatusCode(
+                StatusCodes.Status500InternalServerError,
+                new ApiErrorResponse(
+                    "email_delivery_failed",
+                    "Có lỗi xảy ra khi gửi email.",
+                    StatusCodes.Status500InternalServerError,
+                    HttpContext.TraceIdentifier));
         }
 
         [HttpPost("verify-otp")]
@@ -84,16 +90,12 @@ namespace API.Controllers
 
             if (!isValid)
             {
-                return BadRequest(new { message = "Mã OTP không đúng hoặc đã hết hạn." });
+                return HandleResult(Result.Failure("Mã OTP không đúng hoặc đã hết hạn.", "invalid_otp"));
             }
 
             string resetToken = await _otpService.CreateResetTokenAsync(request.Email);
 
-            return Ok(new
-            {
-                message = "Xác thực thành công.",
-                token = resetToken
-            });
+            return Ok(new ApiTokenResponse("Xác thực thành công.", resetToken));
         }
 
         [HttpPost("reset-password")]
@@ -105,19 +107,26 @@ namespace API.Controllers
 
             if (userEmail == null)
             {
-                return BadRequest(new { message = "Phiên đổi mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng thử lại từ đầu." });
+                return HandleResult(Result.Failure(
+                    "Phiên đổi mật khẩu đã hết hạn hoặc không hợp lệ. Vui lòng thử lại từ đầu.",
+                    "invalid_reset_token"));
             }
 
-            await Mediator.Send(new Application.Features.Auth.Commands.ResetPassword.ResetPasswordCommand
+            var result = await Mediator.Send(new Application.Features.Auth.Commands.ResetPassword.ResetPasswordCommand
             {
                 Email = userEmail,
                 NewPassword = request.NewPassword,
                 ConfirmPassword = request.ConfirmPassword
             });
 
+            if (!result.IsSuccess)
+            {
+                return HandleResult(result);
+            }
+
             await _otpService.RevokeResetTokenAsync(request.Token);
 
-            return Ok(new { message = "Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại." });
+            return SuccessMessage("Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.");
         }
     }
 }

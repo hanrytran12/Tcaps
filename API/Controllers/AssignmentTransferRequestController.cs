@@ -80,20 +80,20 @@ namespace API.Controllers
         public async Task<IActionResult> ApproveTransferRequest(Guid transferRequestId, [FromBody] UpdateAssignmentTransferRequestCommand command)
         {
             command = new UpdateAssignmentTransferRequestCommand(transferRequestId, CurrentUserId, command.CompleteQuantityReceive, command.NoteLead);
-            await Mediator.Send(command);
-            return Ok(new { message = "Yêu cầu chuyển giao đã được phê duyệt thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Yêu cầu chuyển giao đã được phê duyệt thành công.");
         }
 
         [HttpPut("qc-transport-reception")]
         [Authorize(Policy = "QCTransportOnly")]
         public async Task<IActionResult> QCTransportReception([FromQuery] Guid assignmentTransferId)
         {
-            await Mediator.Send(new QcTransportReceptionCommand
+            var result = await Mediator.Send(new QcTransportReceptionCommand
             {
                 QCTransportId = CurrentUserId,
                 AssignmentTransferRequestId = assignmentTransferId
             });
-            return Ok(new { message = "Tiếp nhận yêu cầu chuyển giao thành công." });
+            return HandleResult(result, "Tiếp nhận yêu cầu chuyển giao thành công.");
         }
     }
 }

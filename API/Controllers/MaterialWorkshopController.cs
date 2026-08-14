@@ -19,31 +19,34 @@ namespace API.Controllers
 
         [HttpGet("all")]
         [Authorize(Roles = "Admin,Lead,QC,QCK")]
-        public async Task<List<MaterialWorkshopSummaryDTO>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
+        public async Task<ActionResult<List<MaterialWorkshopSummaryDTO>>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
         {
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<List<MaterialWorkshopDTO>> GetByQCIdAsync([FromQuery] Guid workshopId)
+        public async Task<ActionResult<List<MaterialWorkshopDTO>>> GetByQCIdAsync([FromQuery] Guid workshopId)
         {
-            return await Mediator.Send(new GetMaterialWorkshopByQCIdQuery { QC_Id = CurrentUserId, WorkshopId = workshopId });
+            var result = await Mediator.Send(new GetMaterialWorkshopByQCIdQuery { QC_Id = CurrentUserId, WorkshopId = workshopId });
+            return Ok(result);
         }
 
         [HttpGet("total-quantity-receive")]
         [Authorize(Roles = "QC,QCK,Lead")]
-        public async Task<int> GetTotalQuantityReceive([FromQuery] Guid batchId)
+        public async Task<ActionResult<int>> GetTotalQuantityReceive([FromQuery] Guid batchId)
         {
-            return await Mediator.Send(new TotalQuantityReceiveQuery { BatchId = batchId, QcId = CurrentUserId });
+            var result = await Mediator.Send(new TotalQuantityReceiveQuery { BatchId = batchId, QcId = CurrentUserId });
+            return Ok(result);
         }
 
         [HttpPut("update-confirm")]
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateConfirmAsync([FromQuery] UpdateConfirmMaterialWorkshopCommand query)
         {
-            await Mediator.Send(query);
-            return Ok("QC đã chấp nhận đơn hàng thành công");
+            var result = await Mediator.Send(query);
+            return HandleResult(result, "QC đã chấp nhận đơn hàng thành công");
         }
     }
 }

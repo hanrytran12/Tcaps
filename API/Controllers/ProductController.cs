@@ -29,8 +29,8 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Tạo sản phẩm thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo sản phẩm thành công.");
         }
 
         [HttpPut("{id:guid}")]
@@ -38,16 +38,16 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateProduct(Guid id, [FromForm] UpdateProductCommand command)
         {
             command.Id = id;
-            await Mediator.Send(command);
-            return Ok(new { message = "Cập nhật sản phẩm thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật sản phẩm thành công.");
         }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            await Mediator.Send(new DeleteProductCommand(id));
-            return Ok(new { message = "Xóa sản phẩm thành công." });
+            var result = await Mediator.Send(new DeleteProductCommand(id));
+            return HandleResult(result, "Xóa sản phẩm thành công.");
         }
     }
 }

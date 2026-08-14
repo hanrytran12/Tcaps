@@ -31,40 +31,40 @@ namespace API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddWorkshop([FromBody] AddWorkshopCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Thêm xưởng thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Thêm xưởng thành công.");
         }
 
         [HttpPut("insert")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> InsertWorkshopAsync([FromBody] InsertWorkshopCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Chèn xưởng thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Chèn xưởng thành công.");
         }
 
         [HttpPut("update")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateAsync([FromBody] UpdateWorkshopCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Cập nhật thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật thành công");
         }
 
         [HttpPut("swap-workshop")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SwapAsync([FromBody] SwapWorkshopCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Đổi 2 xưởng thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Đổi 2 xưởng thành công.");
         }
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteAsync([FromBody] DeleteWorkshopCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Xóa xưởng thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Xóa xưởng thành công");
         }
     }
 }

@@ -22,26 +22,27 @@ namespace API.Controllers
         [HttpGet("count")]
         public async Task<IActionResult> CountNotification()
         {
-            var response = await _notificationService.CountNotificationAsync(CurrentUserId);
-            return StatusCode(response.StatusCode, response);
+            var result = await _notificationService.CountNotificationAsync(CurrentUserId);
+            return HandleResult(result);
         }
 
         [HttpGet]
-        public async Task<List<NotificationDTO>> GetNotifications([FromQuery] GetNotificationsQuery query)
+        public async Task<ActionResult<List<NotificationDTO>>> GetNotifications([FromQuery] GetNotificationsQuery query)
         {
             query.UserId = CurrentUserId;
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPut("mark-as-read/{notificationId}")]
         public async Task<IActionResult> MarkAsRead(Guid notificationId)
         {
-            await Mediator.Send(new Application.Features.Notifications.Commands.MarkNotificationAsRead.MarkNotificationAsReadCommand
+            var result = await Mediator.Send(new Application.Features.Notifications.Commands.MarkNotificationAsRead.MarkNotificationAsReadCommand
             {
                 NotificationId = notificationId,
                 UserId = CurrentUserId
             });
-            return Ok("Notification marked as read successfully.");
+            return HandleResult(result, "Notification marked as read successfully.");
         }
     }
 }

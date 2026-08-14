@@ -1,6 +1,7 @@
 ﻿using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Interfaces;
+using Application.Common;
 using AutoMapper;
 using Domain.Interfaces;
 
@@ -37,23 +38,19 @@ namespace Application.Services
             _responseDTO = new ResponseDTO();
         }
 
-        public async Task<ResponseDTO> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken)
+        public async Task<Result> ChangePasswordAsync(Guid userId, string currentPassword, string newPassword, CancellationToken cancellationToken)
         {
             try
             {
                 var user = await _userRepository.GetByIdAsync(userId);
                 if (user == null)
                 {
-                    _responseDTO.StatusCode = 404;
-                    _responseDTO.Message = "User not found";
-                    return _responseDTO;
+                    return Result.NotFound("User not found", "user_not_found");
                 }
 
                 if (!_passwordHasher.Verify(currentPassword, user.PasswordHash))
                 {
-                    _responseDTO.StatusCode = 400;
-                    _responseDTO.Message = "Current password is incorrect";
-                    return _responseDTO;
+                    return Result.Failure("Current password is incorrect", "invalid_current_password");
                 }
 
                 var newHash = _passwordHasher.Hash(newPassword);
@@ -62,15 +59,12 @@ namespace Application.Services
 
                 _userRepository.Update(user);
                 await _unitOfWork.SaveChangesAsync(cancellationToken);
-                _responseDTO.StatusCode = 200;
-                _responseDTO.Message = "Success";
+                return Result.Success();
             }
-            catch (Exception ex)
+            catch
             {
-                _responseDTO.StatusCode = 500;
-                _responseDTO.Message = ex.Message;
+                return Result.Internal("Không thể đổi mật khẩu.", "change_password_failed");
             }
-            return _responseDTO;
         }
 
         public async Task<ResponseDTO> GetUserProfileAsync(Guid userId)

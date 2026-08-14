@@ -102,8 +102,8 @@ namespace API.Controllers
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddBatch([FromBody] AddBatchCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Tạo lô hàng thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo lô hàng thành công.");
         }
 
         [HttpPut("{id:guid}")]
@@ -111,24 +111,24 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateBatch(Guid id, [FromBody] UpdateBatchCommand command)
         {
             command.Id = id;
-            await Mediator.Send(command);
-            return Ok(new { message = "Cập nhật lô hàng thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật lô hàng thành công.");
         }
 
         [HttpPut("lead-for-batch")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateLeadForBatch([FromBody] UpdateLeadForBatchCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Cập nhật Lead cho lô hàng thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật Lead cho lô hàng thành công.");
         }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteBatch(Guid id)
         {
-            await Mediator.Send(new DeleteBatchCommand(id));
-            return Ok(new { message = "Xóa lô hàng thành công." });
+            var result = await Mediator.Send(new DeleteBatchCommand(id));
+            return HandleResult(result, "Xóa lô hàng thành công.");
         }
     }
 }

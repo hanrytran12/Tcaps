@@ -1,12 +1,18 @@
 using API.Controllers;
+using API.Contracts;
+using API.Mappings;
 using Application.Common;
 using Application.Features.Auth.Queries;
 using Application.Features.Batches.Commands.UpdateLeadForBatch;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectConfirm;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
+using Application.Features.Productions.Command.AddProductionReport;
+using Application.Features.Productions.Command.UpdateProduction;
+using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
 using Application.Features.Workshop.Command.InsertWorkshop;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System.Reflection;
 using Xunit;
 
@@ -26,6 +32,35 @@ public class ApiContractMetadataTests
         Assert.Equal(ResultErrorType.Validation, validation.ErrorType);
     }
 
+    [Theory]
+    [InlineData(ResultErrorType.NotFound, 404, "resource_not_found")]
+    [InlineData(ResultErrorType.Conflict, 409, "conflict")]
+    [InlineData(ResultErrorType.InternalServerError, 500, "internal_server_error")]
+    public void Api_mapper_returns_stable_error_contract(ResultErrorType errorType, int status, string code)
+    {
+        var controller = new TestController();
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext { TraceIdentifier = "trace-123" }
+        };
+
+        var result = errorType switch
+        {
+            ResultErrorType.NotFound => Result.NotFound("Missing"),
+            ResultErrorType.Conflict => Result.Conflict("Conflict"),
+            _ => Result.Internal("Internal")
+        };
+
+        var action = controller.ToActionResult(result);
+        var objectResult = Assert.IsType<ObjectResult>(action);
+        var payload = Assert.IsType<ApiErrorResponse>(objectResult.Value);
+
+        Assert.Equal(status, objectResult.StatusCode);
+        Assert.Equal(code, payload.Code);
+        Assert.Equal(status, payload.Status);
+        Assert.Equal("trace-123", payload.TraceId);
+    }
+
     [Fact]
     public void Login_uses_post_and_json_body()
     {
@@ -39,6 +74,9 @@ public class ApiContractMetadataTests
     [Theory]
     [InlineData(typeof(ComponentDefectController), nameof(ComponentDefectController.UpdateResolveAsync), typeof(UpdateComponentDefectResolvedCommand))]
     [InlineData(typeof(ComponentDefectController), nameof(ComponentDefectController.UpdateConfirmAsync), typeof(UpdateComponentDefectConfirmCommand))]
+    [InlineData(typeof(ProductionController), nameof(ProductionController.ReportWork), typeof(AddProductionReportCommand))]
+    [InlineData(typeof(ProductionController), nameof(ProductionController.UpdateQuantity), typeof(UpdateProductionCommand))]
+    [InlineData(typeof(TaskTransferRequestController), nameof(TaskTransferRequestController.CreateAsync), typeof(CreateTaskTransferRequestCommand))]
     [InlineData(typeof(TaskTransferRequestController), nameof(TaskTransferRequestController.ApproveRequestAsync), typeof(UpdateApproveTaskTransferRequestCommand))]
     [InlineData(typeof(BatchController), nameof(BatchController.UpdateLeadForBatch), typeof(UpdateLeadForBatchCommand))]
     [InlineData(typeof(WorkshopController), nameof(WorkshopController.InsertWorkshopAsync), typeof(InsertWorkshopCommand))]
@@ -59,6 +97,27 @@ public class ApiContractMetadataTests
             parameter.GetCustomAttribute<FromFormAttribute>() is not null);
     }
 
+    [Fact]
+    public void Legacy_read_routes_match_the_controller_contract()
+    {
+        Assert.Equal("staff/batches", GetAction<BatchController>(nameof(BatchController.GetBatchesByStaffIdAsync))
+            .GetCustomAttribute<HttpGetAttribute>()?.Template);
+        Assert.Equal("qc/batches", GetAction<BatchController>(nameof(BatchController.GetBatchesByQCIdAsync))
+            .GetCustomAttribute<HttpGetAttribute>()?.Template);
+        Assert.Equal("qc-lead-admin/assign-history/{batchId}",
+            GetAction<AssignmentController>(nameof(AssignmentController.GetAssignmentHistoryForQCAsync))
+                .GetCustomAttribute<HttpGetAttribute>()?.Template);
+    }
+
+    [Fact]
+    public void Direct_list_read_actions_return_unwrapped_action_results()
+    {
+        Assert.Contains("List", GetAction<AssignmentController>(nameof(AssignmentController.GetAssignmentHistoryForQCAsync))
+            .ReturnType.ToString());
+        Assert.Contains("List", GetAction<AssignmentController>(nameof(AssignmentController.GetDetailAssignmentForQCAsync))
+            .ReturnType.ToString());
+    }
+
     private static MethodInfo GetAction<TController>(string actionName) =>
         GetAction(typeof(TController), actionName);
 
@@ -71,5 +130,9 @@ public class ApiContractMetadataTests
         Assert.Contains(action.GetParameters(), parameter =>
             parameter.ParameterType == typeof(TCommand) &&
             parameter.GetCustomAttribute<FromBodyAttribute>() is not null);
+    }
+
+    private sealed class TestController : ControllerBase
+    {
     }
 }

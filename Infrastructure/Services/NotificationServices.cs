@@ -7,6 +7,7 @@ using Domain.Entities;
 using Domain.Events;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.SignalR;
+using Application.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
@@ -145,37 +146,23 @@ namespace Infrastructure.Services
             return _responseDTO;
         }
 
-        public async Task<ResponseDTO> CountNotificationAsync(Guid userId)
+        public async Task<Result<int>> CountNotificationAsync(Guid userId)
         {
             try
             {
                 var user = await _userRepository.GetByIdAsync(userId);
                 if (user == null)
                 {
-                    _responseDTO.StatusCode = 404;
-                    _responseDTO.Message = "User not found.";
-                    return _responseDTO;
+                    return Result<int>.NotFound("User not found.", "user_not_found");
                 }
 
                 var count = await _notificationRepository.CountNotificationAsync(userId);
-                if (count == 0)
-                {
-                    _responseDTO.StatusCode = 200;
-                    _responseDTO.Message = "Bạn không có thông báo.";
-                    _responseDTO.Data = count;
-                    return _responseDTO;
-                }
-
-                _responseDTO.StatusCode = 200;
-                _responseDTO.Message = "Success";
-                _responseDTO.Data = count;
+                return Result<int>.Success(count);
             }
-            catch (Exception ex)
+            catch
             {
-                _responseDTO.StatusCode = 500;
-                _responseDTO.Message = ex.Message;
+                return Result<int>.Internal("Không thể tải số lượng thông báo.", "notification_count_failed");
             }
-            return _responseDTO;
         }
 
         public async Task SendStockUpdateNotificationToAdminAsync(string name, int newStockQuantity, int stockChange)

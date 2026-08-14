@@ -65,3 +65,35 @@
 - `dotnet test Tcaps.sln --no-restore` passed with 20 tests.
 - FE `npx tsc --noEmit` passed with 0 errors.
 - Targeted FE ESLint passed with 0 errors; existing warnings remain.
+
+## 2026-08-14 — Legacy API contract cleanup
+
+- Fixed staff/QC batch route typos and aligned QC assignment history/detail with the BE direct-array responses.
+- Corrected production report-work empty-success handling and sent QC quantity reduction as the required JSON body.
+- Mapped assignment-transfer send/receive quantities and lead notes to the exact BE DTO and command fields.
+- Added required `dateToGo` to task-transfer creation and aligned task-transfer GET-by parsing with direct DTO responses.
+- Changed material-supply and rework creation services to message-only response contracts.
+- Replaced the ignored workshop `stepOrder` create field with the BE `WorkshopType` field.
+- Made mobile batch-update inputs require the BE validator's complete quantity/start/end-date payload.
+- Expanded API metadata tests for route templates and complex write body bindings.
+
+## 2026-08-14 — Result contract and mobile response standardization
+
+- Added typed `ApiErrorResponse`, `ApiMessageResponse`, and `ApiTokenResponse` contracts at the API boundary.
+- Added the centralized `ApiResultMapper` for validation, authorization, not-found, conflict, and internal-error status mapping.
+- Migrated controller writes and legacy password/notification service responses to Application `Result` handling.
+- Added an endpoint usage ledger; mobile-unused routes remain enabled until external consumers are confirmed.
+- Consolidated FE legacy response compatibility into `api-helper.ts` and removed endpoint-level wrapper parsing from migrated services.
+
+### Verification
+
+- `dotnet build Tcaps.sln --no-restore` passed with 0 errors.
+- `dotnet test Tcaps.sln --no-restore` passed with 29 tests.
+- FE `npx tsc --noEmit` passed with 0 errors.
+- FE `npx expo lint` passed with 0 errors; existing warnings remain.
+
+### Verification
+
+- `dotnet test Tcaps.sln --no-restore` passed with 26 tests.
+- FE `npx tsc --noEmit` passed with 0 errors.
+- FE `npm run lint` passed with 0 errors; 100 existing/legacy warnings remain.

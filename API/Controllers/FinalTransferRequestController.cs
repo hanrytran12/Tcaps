@@ -28,8 +28,8 @@ namespace API.Controllers
         [Authorize(Roles = "GuardQC")]
         public async Task<IActionResult> UpdateApproveAsync([FromBody] ApproveFinalTransferRequestCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Duyệt đơn chuyển giao cuối cùng thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Duyệt đơn chuyển giao cuối cùng thành công.");
         }
     }
 }

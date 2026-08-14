@@ -45,16 +45,16 @@ namespace API.Controllers
         [Authorize(Roles = "Lead")]
         public async Task<IActionResult> CreateAsync([FromBody] CreateTaskTransferRequestCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Tạo yêu cầu chuyển nhiệm vụ thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo yêu cầu chuyển nhiệm vụ thành công");
         }
 
         [HttpPut("approved")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ApproveRequestAsync([FromBody] UpdateApproveTaskTransferRequestCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Chấp nhận thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Chấp nhận thành công");
         }
     }
 }

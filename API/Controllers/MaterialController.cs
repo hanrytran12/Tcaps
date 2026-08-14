@@ -36,8 +36,8 @@ namespace API.Controllers
         [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> CreateMaterial([FromBody] AddMaterialCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Tạo vật liệu thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo vật liệu thành công.");
         }
     }
 }

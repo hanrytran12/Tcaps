@@ -38,8 +38,8 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateResolveAsync(Guid componentId, [FromBody] UpdateComponentDefectResolvedCommand command)
         {
             command.Id = componentId;
-            await Mediator.Send(command);
-            return Ok(new { message = "Sửa chữa thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Sửa chữa thành công.");
         }
 
         [HttpPut("confirm/{componentId}")]
@@ -47,8 +47,8 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateConfirmAsync(Guid componentId, [FromBody] UpdateComponentDefectConfirmCommand command)
         {
             command.ComponentId = componentId;
-            await Mediator.Send(command);
-            return Ok(new { message = "Chấp nhận đã sửa thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Chấp nhận đã sửa thành công.");
         }
 
         [HttpPut("reject/{componentId}")]
@@ -56,8 +56,8 @@ namespace API.Controllers
         public async Task<IActionResult> RejectComponentAsync(Guid componentId, [FromBody] RejectComponentFromQCCommand command)
         {
             command.Id = componentId;
-            await Mediator.Send(command);
-            return Ok(new { message = "Từ chối từ QC." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Từ chối từ QC.");
         }
     }
 }

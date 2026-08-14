@@ -15,13 +15,14 @@ namespace API.Controllers
         }
         [HttpGet("rework-requests")]
         [Authorize(Policy = "QC")]
-        public async Task<List<ComponentDefectsDTO>> GetAllComponentDefect([FromQuery] string? status)
+        public async Task<ActionResult<List<ComponentDefectsDTO>>> GetAllComponentDefect([FromQuery] string? status)
         {
-            return await Mediator.Send(new GetComponentDefectsQuery
+            var result = await Mediator.Send(new GetComponentDefectsQuery
             {
                 QCId = CurrentUserId,
                 Status = status
             });
+            return Ok(result);
         }
     }
 }

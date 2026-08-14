@@ -34,8 +34,8 @@ namespace API.Controllers
         [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> AddInventory([FromForm] AddInventoryCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Tạo kho thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo kho thành công.");
         }
     }
 }

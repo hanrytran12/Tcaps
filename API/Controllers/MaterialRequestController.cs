@@ -34,7 +34,7 @@ namespace API.Controllers
         {
             var query = new GetAllMaterialRequestQuery();
             var result = await Mediator.Send(query);
-            return Ok(result);
+            return HandleResult(result);
         }
 
         [HttpGet("pending-confirmation")]
@@ -94,8 +94,8 @@ namespace API.Controllers
                 Items = items
             };
 
-            await Mediator.Send(command);
-            return Ok(new { message = "Cung cấp NVL thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cung cấp NVL thành công");
         }
 
         [HttpPost("qc/material-requests")]
@@ -104,7 +104,7 @@ namespace API.Controllers
         {
             command.UserId = CurrentUserId;
             var result = await Mediator.Send(command);
-            return Ok(new { message = "Yêu cầu cung cấp thêm NVL thành công" });
+            return HandleResult(result, "Yêu cầu cung cấp thêm NVL thành công");
         }
 
         [HttpPut("approve/{id:guid}")]
@@ -112,8 +112,8 @@ namespace API.Controllers
         public async Task<IActionResult> ApproveMaterialRequest([FromRoute] Guid id)
         {
             var command = new Application.Features.MaterialRequest.Commands.ApproveRequestFromLead.ApproveRequestFromLeadCommand { Id = id };
-            await Mediator.Send(command);
-            return Ok(new { message = "Duyệt yêu cầu thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Duyệt yêu cầu thành công");
         }
 
         [HttpPut("confirmed/{id:guid}")]
@@ -121,8 +121,8 @@ namespace API.Controllers
         public async Task<IActionResult> ConfirmMaterialRequest([FromRoute] Guid id, [FromBody] ConfirmRequestFromQcCommand command)
         {
             command.Id = id;
-            await Mediator.Send(command);
-            return Ok(new { message = "Xác nhận yêu cầu thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Xác nhận yêu cầu thành công");
         }
 
         [HttpPut("rejected/{id:guid}")]
@@ -130,8 +130,8 @@ namespace API.Controllers
         public async Task<IActionResult> RejectMaterialRequest([FromRoute] Guid id, [FromBody] RejectMaterialRequestCommand command)
         {
             command.Id = id;
-            await Mediator.Send(command);
-            return Ok(new { message = "Từ chối yêu cầu thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Từ chối yêu cầu thành công");
         }
 
         [HttpPut("qc-transport-reception")]
@@ -143,16 +143,16 @@ namespace API.Controllers
                 QcTransportId = CurrentUserId,
                 MaterialRequestId = materialRequestId
             };
-            await Mediator.Send(command);
-            return Ok(new { message = "Tiếp nhận NVL thành công" });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tiếp nhận NVL thành công");
         }
 
         [HttpPut("lead-confirm")]
         [Authorize(Roles = "Lead")]
         public async Task<IActionResult> LeadConfirm([FromQuery] ConfirmRequestFromLeadCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Duyệt yêu cầu cho QC vận chuyển thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Duyệt yêu cầu cho QC vận chuyển thành công.");
         }
     }
 }

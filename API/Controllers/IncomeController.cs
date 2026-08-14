@@ -19,35 +19,38 @@ namespace API.Controllers
 
         [HttpGet("by-staff")]
         [Authorize(Roles = "Staff")]
-        public async Task<List<IncomeHistoryDTO>> GetIncomesByStaffId([FromQuery] DateOnly? date)
+        public async Task<ActionResult<List<IncomeHistoryDTO>>> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
-            return await Mediator.Send(new GetIncomesByStaffIdQuery
+            var result = await Mediator.Send(new GetIncomesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 Date = date
             });
+            return Ok(result);
         }
 
         [HttpGet("total-monthly")]
         [Authorize(Roles = "Staff")]
-        public async Task<MonthlyIncomeDTO> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
+        public async Task<ActionResult<MonthlyIncomeDTO>> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
         {
-            return await Mediator.Send(new GetMonthlyIncomeQuery
+            var result = await Mediator.Send(new GetMonthlyIncomeQuery
             {
                 StaffId = CurrentUserId,
                 Month = month,
                 Year = year
             });
+            return Ok(result);
         }
 
         [HttpGet("income-expected")]
         [Authorize(Roles = "Staff")]
-        public async Task<IncomeExpectedDTO> GetIncomeExpected()
+        public async Task<ActionResult<IncomeExpectedDTO>> GetIncomeExpected()
         {
-            return await Mediator.Send(new GetTotalIncomeExpectedQuery
+            var result = await Mediator.Send(new GetTotalIncomeExpectedQuery
             {
                 StaffId = CurrentUserId
             });
+            return Ok(result);
         }
     }
 }

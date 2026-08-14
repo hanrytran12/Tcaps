@@ -9,8 +9,10 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 ## Conventions
 
 - `body`, `form`, `query`, `route`, `inferred`, and `none` describe the current request binding.
-- Direct `IActionResult` actions commonly return `200 OK` string messages and rely on the global exception handler for errors.
-- Typed actions commonly return `200 OK` with the declared type and rely on the global exception handler for errors.
+- Read actions return the declared DTO/list/scalar directly with `200 OK`.
+- Write actions that use `Result` return `ApiMessageResponse` or `204 No Content`.
+- Result failures are mapped to `ApiErrorResponse` by `API/Mappings/ApiResultMapper.cs`.
+- Routes remain source-compatible while mobile and external-client usage is being verified.
 - Current routes are preserved during the first refactor release because `TCaps-Mobile-FE` calls many of them directly.
 
 ## Phase 2 authorization changes
@@ -117,7 +119,7 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | Production | `GetProductionByAssignIdAsync` | GET `api/production/by-assignId` | query | `List<ProductionDTO>` | `Roles=Staff` |
 | Production | `ReportWork` | POST `api/production/report-work` | body | `IActionResult` | `Roles=Staff` |
 | Production | `NotifyMaterialShortage` | POST `api/production/notify-material-shortage` | body | `IActionResult` | `Roles=Staff` |
-| Production | `UpdateQuantity` | PUT `api/production/for-qc/reduce-quantity` | query | `IActionResult` | `Policy=QC` |
+| Production | `UpdateQuantity` | PUT `api/production/for-qc/reduce-quantity` | body | `IActionResult` | `Policy=QC` |
 | QC | `GetAllComponentDefect` | GET `api/QC/rework-requests` | query | `List<ComponentDefectsDTO>` | `Policy=QC` (class) |
 | ReworkRequest | `GetAllReworkRequest` | GET `api/ReworkRequest` | none | `List<ReworkRequestDTO>` | `Policy=Lead` |
 | ReworkRequest | `GetReworkRequestById` | GET `api/ReworkRequest/{reworkRequestId:guid}` | inferred | `ReworkRequestResponseDTO` | `Roles=Lead,QC,QCK,Staff` |
@@ -208,9 +210,20 @@ These are the consumer files found during the baseline scan. This is not a claim
 - Batch, Product, and Workshop write methods expose message-only responses to the mobile service layer instead of casting `{ message }` to domain models.
 - Assignment-transfer approval requires explicit `completeQuantityReceive` and `noteLead` values from callers; callers now derive them from the selected transfer request or approval form.
 
+## Phase 6 legacy contract cleanup
+
+- Staff and QC batch reads use `staff/batches` and `qc/batches`; the mobile `bactches` typo is no longer supported by the current client.
+- QC assignment history uses `qc-lead-admin/assign-history/{batchId}` and both history/detail reads consume direct arrays.
+- QC material-request reads and task-transfer GET-by reads consume direct list/DTO responses from `HandleResult`/typed controller actions.
+- Production report-work accepts the BE's empty successful `200 OK`; QC quantity reduction sends `ProductionId` and `Quantity` in the JSON body.
+- Assignment-transfer approval maps `CompletedQuantitySend`/`CompletedQuantityReceive` and `NoteLead` explicitly before submitting `CompleteQuantityReceive`/`NoteLead`.
+- Task-transfer creation sends the required `DateToGo`; material-supply and rework creation are treated as message-only writes.
+- Workshop creation sends `Name`, `Description`, and `WorkshopType`; the mobile form no longer sends the ignored `stepOrder` field.
+- Login maps BE validation/not-found/conflict responses consistently for HTTP 400, 404, and 409.
+
 ## Known contract issues
 
-- The mobile client references legacy route spellings and some route names that do not exactly match current controller attributes. These must be verified per flow before renaming.
 - Older clients that still call `GET api/Auth` with query-bound credentials are incompatible with the current login contract and must migrate before deployment.
 - Several write actions outside the Phase 5 scope still use query-bound primitive parameters. Normalize them only with a matching mobile migration.
+- Staff-performance is an authenticated BE read but has no active mobile consumer in the current repository; implementation remains deferred until a screen contract exists.
 - Authorization markers reflect the current source metadata; role/claim semantics still require integration coverage.

@@ -23,47 +23,53 @@ namespace API.Controllers
         }
         [HttpGet]
         [Authorize(Policy = "Lead")]
-        public async Task<List<ReworkRequestDTO>> GetAllReworkRequest()
+        public async Task<ActionResult<List<ReworkRequestDTO>>> GetAllReworkRequest()
         {
-            return await Mediator.Send(new GetAllReworkRequestQuery());
+            var result = await Mediator.Send(new GetAllReworkRequestQuery());
+            return Ok(result);
         }
 
         [HttpGet("{reworkRequestId:guid}")]
         [Authorize(Roles = "Lead,QC,QCK,Staff")]
-        public async Task<ReworkRequestResponseDTO> GetReworkRequestById(Guid reworkRequestId)
+        public async Task<ActionResult<ReworkRequestResponseDTO>> GetReworkRequestById(Guid reworkRequestId)
         {
-            return await Mediator.Send(new GetRequestByIdQuery(reworkRequestId));
+            var result = await Mediator.Send(new GetRequestByIdQuery(reworkRequestId));
+            return Ok(result);
         }
 
         [HttpGet("{assignmentId:guid}/summary")]
         [Authorize(Roles = "Lead,QC,QCK,Staff")]
-        public async Task<ReconcilationSummaryDTO> GetReworkReconciliationSummary(Guid assignmentId)
+        public async Task<ActionResult<ReconcilationSummaryDTO>> GetReworkReconciliationSummary(Guid assignmentId)
         {
-            return await Mediator.Send(new GetReworkReconciliationSummaryQuery(assignmentId));
+            var result = await Mediator.Send(new GetReworkReconciliationSummaryQuery(assignmentId));
+            return Ok(result);
         }
 
         [HttpGet("by-assignId")]
         [Authorize(Roles = "Lead,QC,QCK,Staff")]
-        public async Task<ReworkRequestResponseDTO> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
+        public async Task<ActionResult<ReworkRequestResponseDTO>> GetByAssignId([FromQuery] GetReworkByAssignIdQuery query)
         {
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("{assignId:guid}/for-dashboard")]
         [Authorize(Roles = "Lead,QC,QCK,Staff")]
-        public async Task<ReworkRequestDTO> GetReworkForDashboard(Guid assignId)
+        public async Task<ActionResult<ReworkRequestDTO>> GetReworkForDashboard(Guid assignId)
         {
-            return await Mediator.Send(new GetReworkForDashboardQuery(assignId));
+            var result = await Mediator.Send(new GetReworkForDashboardQuery(assignId));
+            return Ok(result);
         }
 
         [HttpGet("by-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<List<ReworkRequestDTO>> GetReworkByQcId()
+        public async Task<ActionResult<List<ReworkRequestDTO>>> GetReworkByQcId()
         {
-            return await Mediator.Send(new GetReworkByQcIdQuery
+            var result = await Mediator.Send(new GetReworkByQcIdQuery
             {
                 QcId = CurrentUserId
             });
+            return Ok(result);
         }
 
         [HttpPost]
@@ -71,16 +77,16 @@ namespace API.Controllers
         public async Task<IActionResult> CreateReworkRequest([FromBody] CreateReworkRequestCommand command)
         {
             command.QCId = CurrentUserId;
-            await Mediator.Send(command);
-            return Ok("Create rework request successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Create rework request successfully");
         }
 
         [HttpPut("{requestId:guid}/rejected")]
         [Authorize(Policy = "Lead")]
         public async Task<IActionResult> RejectReworkRequest(Guid requestId)
         {
-            await Mediator.Send(new RejectRequestReworkCommand(requestId));
-            return Ok("Reject rework request successfully");
+            var result = await Mediator.Send(new RejectRequestReworkCommand(requestId));
+            return HandleResult(result, "Reject rework request successfully");
         }
 
         [HttpPut("{requestId:guid}/approved")]
@@ -88,8 +94,8 @@ namespace API.Controllers
         public async Task<IActionResult> ApproveReworkRequest(Guid requestId, [FromBody] ApproveReworkRequestCommand command)
         {
             command.RequestId = requestId;
-            await Mediator.Send(command);
-            return Ok("Approve rework request successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Approve rework request successfully");
         }
     }
 }

@@ -19,31 +19,34 @@ namespace API.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Admin,Lead,QC,QCK,Staff")]
-        public async Task<List<EvaluateDTO>> GetAll()
+        public async Task<ActionResult<List<EvaluateDTO>>> GetAll()
         {
-            return await Mediator.Send(new GetAllEvaluateQuery());
+            var result = await Mediator.Send(new GetAllEvaluateQuery());
+            return Ok(result);
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<List<EvaluateDTO>> GetByQCId([FromQuery] string? status)
+        public async Task<ActionResult<List<EvaluateDTO>>> GetByQCId([FromQuery] string? status)
         {
-            return await Mediator.Send(new GetEvaluatesByQCIdQuery
+            var result = await Mediator.Send(new GetEvaluatesByQCIdQuery
             {
                 QC_Id = CurrentUserId,
                 Status = status
             });
+            return Ok(result);
         }
 
         [HttpGet("for-staff")]
         [Authorize(Roles = "Staff")]
-        public async Task<List<EvaluateDTO>> GetByStaffId([FromQuery] Guid assignId)
+        public async Task<ActionResult<List<EvaluateDTO>>> GetByStaffId([FromQuery] Guid assignId)
         {
-            return await Mediator.Send(new GetEvaluatesByStaffIdQuery
+            var result = await Mediator.Send(new GetEvaluatesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 AssignId = assignId
             });
+            return Ok(result);
         }
 
         [HttpPost]
@@ -51,8 +54,8 @@ namespace API.Controllers
         public async Task<IActionResult> CreateEvaluate([FromForm] AddEvaluateCommand command)
         {
             command.UserId = CurrentUserId;
-            await Mediator.Send(command);
-            return Ok("Evaluate created successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Đánh giá đã được tạo thành công.");
         }
     }
 }

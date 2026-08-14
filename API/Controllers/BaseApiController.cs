@@ -1,4 +1,6 @@
 using Application.Common;
+using API.Contracts;
+using API.Mappings;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -30,29 +32,18 @@ namespace API.Controllers
         }
 
         protected IActionResult HandleResult<T>(Result<T> result)
-        {
-            if (result == null) return NotFound();
-            if (result.IsSuccess) return Ok(result.Value);
-            return MapFailure(result.ErrorType, result.Error);
-        }
+            => this.ToActionResult(result);
+
+        protected IActionResult HandleResult<T>(Result<T> result, string successMessage)
+            => this.ToActionResult(result, successMessage);
 
         protected IActionResult HandleResult(Result result)
-        {
-            if (result == null) return NotFound();
-            if (result.IsSuccess) return Ok();
-            return MapFailure(result.ErrorType, result.Error);
-        }
+            => this.ToActionResult(result);
 
-        private IActionResult MapFailure(ResultErrorType? errorType, string? error)
-        {
-            var payload = new { error };
+        protected IActionResult HandleResult(Result result, string successMessage)
+            => this.ToActionResult(result, successMessage);
 
-            return errorType switch
-            {
-                ResultErrorType.NotFound => NotFound(payload),
-                ResultErrorType.Conflict => Conflict(payload),
-                _ => BadRequest(payload)
-            };
-        }
+        protected IActionResult SuccessMessage(string message)
+            => Ok(new ApiMessageResponse(message));
     }
 }

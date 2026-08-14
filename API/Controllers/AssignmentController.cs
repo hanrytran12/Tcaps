@@ -103,24 +103,24 @@ namespace API.Controllers
         [Authorize(Roles = "Lead,Admin")]
         public async Task<IActionResult> PlanAssignments(Guid batchId, [FromBody] List<AssignmentPlanItemDTO> planItems)
         {
-            await Mediator.Send(new PlanAssignmentsCommand
+            var result = await Mediator.Send(new PlanAssignmentsCommand
             {
                 BatchId = batchId,
                 PlanItems = planItems,
             });
-            return Ok(new { message = "Kế hoạch sản xuất đã được tạo thành công." });
+            return HandleResult(result, "Kế hoạch sản xuất đã được tạo thành công.");
         }
 
         [HttpPut("update-ready-for-transfer")]
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateReadyForTransfer([FromQuery] Guid assignmentId)
         {
-            await Mediator.Send(new UpdateReadyForTransferCommand
+            var result = await Mediator.Send(new UpdateReadyForTransferCommand
             {
                 AssignmentId = assignmentId,
                 QcId = CurrentUserId
             });
-            return Ok(new { message = "Cập nhật trạng thái sẵn sàng chuyển giao thành công." });
+            return HandleResult(result, "Cập nhật trạng thái sẵn sàng chuyển giao thành công.");
         }
     }
 }

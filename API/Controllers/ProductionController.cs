@@ -85,8 +85,8 @@ namespace API.Controllers
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateQuantity([FromBody] UpdateProductionCommand command)
         {
-            await Mediator.Send(command);
-            return Ok(new { message = "Cập nhật số lượng thành công." });
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật số lượng thành công.");
         }
     }
 }
