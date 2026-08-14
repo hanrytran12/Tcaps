@@ -1,6 +1,6 @@
 # Deployment Guide
 
-> Last verified: 2026-08-11 against the current API refactor worktree.
+> Last verified: 2026-08-15 against `refactor/api-contract-sync`.
 
 ## Deployment model
 
@@ -95,7 +95,7 @@ Before relying on this workflow, verify branch protection, GitHub environment EN
 Before deploying the API refactor:
 
 1. Rotate all credentials that were present in historical tracked environment files.
-2. Run `dotnet restore Tcaps.sln`, `dotnet build Tcaps.sln`, and `dotnet test Tcaps.sln --no-build`.
+2. Run `dotnet restore Tcaps.sln`, `dotnet build Tcaps.sln`, and `dotnet test Tcaps.sln --no-restore`; the current focused suite has 44 passing tests.
 3. Verify representative JWTs for Admin, Lead, QC, QCK, QCTransport, GuardQC, and Staff against the contract matrix.
 4. Smoke-test login, password recovery, batch list/detail, material request, production report, notifications, user profile, and workshop inventory flows.
 5. Keep the previous image/tag and database backup available before rollout; rollback application image and configuration together if authorization or contract smoke tests fail.

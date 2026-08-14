@@ -77,6 +77,12 @@
 - Made mobile batch-update inputs require the BE validator's complete quantity/start/end-date payload.
 - Expanded API metadata tests for route templates and complex write body bindings.
 
+### Verification
+
+- `dotnet test Tcaps.sln --no-restore` passed with 26 tests.
+- FE `npx tsc --noEmit` passed with 0 errors.
+- FE `npm run lint` passed with 0 errors; 100 existing/legacy warnings remain.
+
 ## 2026-08-14 — Result contract and mobile response standardization
 
 - Added typed `ApiErrorResponse`, `ApiMessageResponse`, and `ApiTokenResponse` contracts at the API boundary.
@@ -91,12 +97,6 @@
 - `dotnet test Tcaps.sln --no-restore` passed with 29 tests.
 - FE `npx tsc --noEmit` passed with 0 errors.
 - FE `npx expo lint` passed with 0 errors; existing warnings remain.
-
-### Verification
-
-- `dotnet test Tcaps.sln --no-restore` passed with 26 tests.
-- FE `npx tsc --noEmit` passed with 0 errors.
-- FE `npm run lint` passed with 0 errors; 100 existing/legacy warnings remain.
 
 ## 2026-08-14 — Shared API error handling
 
@@ -114,3 +114,19 @@
 - `dotnet build Tcaps.sln --no-restore` passed with 0 errors.
 - `dotnet test Tcaps.sln --no-restore` passed with 37 tests.
 - `git diff --check` passed.
+
+## 2026-08-15 — Documentation contract synchronization
+
+- Updated the API response contract to reflect the current `Result`/`Result<T>` mapper branches, direct read responses, and authentication payload exceptions.
+- Synchronized the endpoint usage ledger with current controller action names and routes while preserving routes whose external consumers are unknown.
+- Updated the API matrix, architecture, README, roadmap, deployment guide, PDR metadata, and agent handoff guidance to match the current `refactor/api-contract-sync` source state.
+
+### Verification
+
+- `dotnet build Tcaps.sln --no-restore` passed with 0 warnings and 0 errors.
+- `dotnet test Tcaps.sln --no-restore` passed with 44 tests.
+- FE `npx tsc --noEmit` passed with 0 errors.
+- FE `npx expo lint` passed with 0 errors; 100 existing warnings remain.
+- Markdown internal-link and documentation secret-pattern scans passed. The
+  repository-local `validate-docs.cjs` script was unavailable in this checkout.
+- Runtime smoke tests against configured services and representative deployed JWTs remain release follow-ups.

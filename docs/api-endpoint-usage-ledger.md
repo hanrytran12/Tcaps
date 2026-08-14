@@ -1,5 +1,11 @@
 # API endpoint usage ledger
 
+> Last verified: 2026-08-15 against `refactor/api-contract-sync`.
+
+The usage statuses below come from a static mobile-repository audit. They do
+not prove that no web, integration, provisioning, or external client uses a
+route.
+
 This ledger records the mobile FE usage audit for the API contract refactor. A
 route is not removed or disabled solely because its path is absent from the
 mobile repository: the BE may have web, integration, seed, or external clients.
@@ -16,12 +22,12 @@ mobile repository: the BE may have web, integration, seed, or external clients.
 
 | Controller action | Route | Status | Evidence | Safe action now |
 | --- | --- | --- | --- | --- |
-| `AssignmentController.GetTaskProgress` | `GET /api/Assignment/qc-staff/task-progress` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
-| `FinalTransferRequestController.GetAll` | `GET /api/FinalTransferRequest/all` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
-| `FinalTransferRequestController.UpdateApprove` | `PUT /api/FinalTransferRequest/approve` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
+| `AssignmentController.GetTaskProgressByQcIdAsync` | `GET /api/Assignment/qc-staff/task-progress` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
+| `FinalTransferRequestController.GetAllAsync` | `GET /api/FinalTransferRequest/all` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
+| `FinalTransferRequestController.UpdateApproveAsync` | `PUT /api/FinalTransferRequest/approve-finalTransfer` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
 | `UserController.GetStaffPerformance` | `GET /api/User/staff-performance` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
-| `UserController.GetAllLead` | `GET /api/User/all-Lead` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
-| `UserController.GetByUserId` | `GET /api/User/by-userId` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
+| `UserController.GetAllLeadAsync` | `GET /api/User/all-Lead` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
+| `UserController.GetByUserIdAsync` | `GET /api/User/by-userId` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
 | `MaterialWorkshopController.GetAllAsync` | `GET /api/MaterialWorkshop/all` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
 | `QCController.GetAllComponentDefect` | `GET /api/QC/rework-requests` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |
 | `IncomeController.GetIncomesByStaffId` | `GET /api/Income/by-staff` | `UNUSED_MOBILE_EXTERNAL_UNKNOWN` | No matching mobile service call found in the static audit | Keep route; confirm consumers before deprecating |

@@ -2,7 +2,7 @@
 
 > Status: current API refactor verification matrix.
 >
-> Last verified: 2026-08-14 against `refactor/api-contract-sync`.
+> Last verified: 2026-08-15 against `refactor/api-contract-sync`.
 
 This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\API`. `UNMARKED` means the action has no explicit `[Authorize]` or `[AllowAnonymous]` marker at source level. It is not an approval that the endpoint should be public. The current matrix has no remaining `UNMARKED` rows after the authorization pass.
 
@@ -10,8 +10,16 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 
 - `body`, `form`, `query`, `route`, `inferred`, and `none` describe the current request binding.
 - Read actions return the declared DTO/list/scalar directly with `200 OK`.
-- Write actions that use `Result` return `ApiMessageResponse` or `204 No Content`.
-- Result failures are mapped to `ApiErrorResponse` by `API/Mappings/ApiResultMapper.cs`.
+- A read `Result<T>` is unwrapped on success; `Result<T>` is not the serialized
+  success envelope.
+- Write success bodies follow the four `ApiResultMapper` branches documented in
+  [api-response-contract.md](./api-response-contract.md). Rows marked
+  `IActionResult` show the controller signature; use those conventions for the
+  actual HTTP body/status.
+- Login, registration, and OTP verification use the explicit authentication
+  payloads documented in [api-response-contract.md](./api-response-contract.md).
+- Result and exception failures use `ApiErrorResponse` through
+  `ApiErrorResponseFactory` and `GlobalExceptionHandler`.
 - Routes remain source-compatible while mobile and external-client usage is being verified.
 - Current routes are preserved during the first refactor release because `TCaps-Mobile-FE` calls many of them directly.
 
@@ -85,9 +93,9 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | Material | `CreateMaterial` | POST `api/Material` | body | `IActionResult` | `Roles=Admin,Lead` |
 | MaterialRequest | `GetAllRequest` | GET `api/MaterialRequest` | none | `IActionResult` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
 | MaterialRequest | `GetPendingRequests` | GET `api/MaterialRequest/pending-confirmation` | none | `ActionResult<List<PendingRequestDTO>>` | `Policy=QC` |
-| MaterialRequest | `GetAllAsync` | GET `api/MaterialRequest/lead/admin/all-request` | query | `Result<List<MaterialRequestDTO>>` | `Roles=Admin,Lead` |
-| MaterialRequest | `GetByQCIdAsync` | GET `api/MaterialRequest/qc/request` | query | `Result<List<MaterialRequestDTO>>` | `Policy=QC` |
-| MaterialRequest | `GetRequestsForQcTransport` | GET `api/MaterialRequest/qc-transport` | query | `Result<MaterialRequestDTO>` | `Policy=QCTransportOnly` |
+| MaterialRequest | `GetAllAsync` | GET `api/MaterialRequest/lead/admin/all-request` | query | `List<MaterialRequestDTO>` on `200`; `ApiErrorResponse` on failure | `Roles=Admin,Lead` |
+| MaterialRequest | `GetByQCIdAsync` | GET `api/MaterialRequest/qc/request` | query | `List<MaterialRequestDTO>` on `200`; `ApiErrorResponse` on failure | `Policy=QC` |
+| MaterialRequest | `GetRequestsForQcTransport` | GET `api/MaterialRequest/qc-transport` | query | `MaterialRequestDTO` on `200`; `ApiErrorResponse` on failure | `Policy=QCTransportOnly` |
 | MaterialRequest | `GetForAssignmentDashboard` | GET `api/MaterialRequest/assignment-dashboard` | query | `List<MaterialRequestForAssignmentDashboardDTO>` | `Roles=Lead,QC,QCK,Staff` |
 | MaterialRequest | `DispatchMaterialsToAssignment` | POST `api/MaterialRequest/{assignmentId:guid}/dispatch-materials` | body | `IActionResult` | `Policy=Lead` |
 | MaterialRequest | `CreateMaterailRequestAsync` | POST `api/MaterialRequest/qc/material-requests` | body | `IActionResult` | `Policy=QC` |
@@ -96,7 +104,7 @@ This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\
 | MaterialRequest | `RejectMaterialRequest` | PUT `api/MaterialRequest/rejected/{id:guid}` | body | `IActionResult` | `Policy=QC` |
 | MaterialRequest | `QcTransportReceptionMaterialRequest` | PUT `api/MaterialRequest/qc-transport-reception` | query | `IActionResult` | `Policy=QCTransportOnly` |
 | MaterialRequest | `LeadConfirm` | PUT `api/MaterialRequest/lead-confirm` | query | `IActionResult` | `Roles=Lead` |
-| MaterialSupply | `GetAllAsync` | GET `api/MaterialSupply` | query | `Result<List<MaterialSupplyDTO>>` | `Roles=Admin,Lead,QC,QCK,QCTransport` |
+| MaterialSupply | `GetAllAsync` | GET `api/MaterialSupply` | query | `List<MaterialSupplyDTO>` on `200`; `ApiErrorResponse` on failure | `Roles=Admin,Lead,QC,QCK,QCTransport` |
 | MaterialSupply | `CreateAsync` | POST `api/MaterialSupply` | body | `IActionResult` | `Roles=Lead` |
 | MaterialSupply | `UpdateInProgressAsync` | PUT `api/MaterialSupply/qcTransport/InProgress/{supplyId}` | inferred | `IActionResult` | `Policy=QCTransportOnly` |
 | MaterialSupply | `UpdateCompletedAsync` | PUT `api/MaterialSupply/qc/Completed/{supplyId}` | inferred | `IActionResult` | `Policy=QC` |

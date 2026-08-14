@@ -31,7 +31,7 @@ flowchart LR
 6. EF Core persists changes to SQL Server; API-safe results are mapped to DTOs at the API boundary.
 7. Domain events can invoke notification, inventory, production, or follow-up handlers.
 8. The mobile service layer maps API message-only write responses and sends explicit JSON or multipart payloads according to the controller contract.
-9. The API returns a result/error response through the existing middleware conventions.
+9. `Result`/`Result<T>` failures are converted to HTTP by `ApiResultMapper` and the shared `ApiErrorResponseFactory`; exceptions escaping the controller path are handled by `GlobalExceptionHandler`.
 
 ## Host responsibilities
 

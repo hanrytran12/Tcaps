@@ -2,7 +2,7 @@
 
 > This is an engineering roadmap based on the current repository. It is not a committed release schedule.
 >
-> Last verified: 2026-08-14 against `refactor/api-contract-sync`.
+> Last verified: 2026-08-15 against `refactor/api-contract-sync`.
 
 ## Current baseline
 
@@ -38,7 +38,7 @@
 
 - Add unit/integration tests for auth, authorization policies, state transitions, seeding, and critical repositories.
 - Verify role/claim semantics for QCK and QCTransport with representative JWTs before release; mobile-compatible read permissions are now aligned in source.
-- Establish API contract checks for the mobile/frontend consumers and add integration coverage for effective route authorization; focused metadata tests, BE contract tests, and FE typecheck coverage are now in place. FE lint warnings, runtime smoke tests, and dedicated host integration coverage remain follow-ups.
+- Establish API contract checks for the mobile/frontend consumers and add integration coverage for effective route authorization; 44 BE tests, focused metadata/contract coverage, and FE typecheck coverage are now in place. FE lint warnings, runtime smoke tests, and dedicated host integration coverage remain follow-ups.
 - Add structured logging and correlation IDs for workflow failures and background jobs.
 
 ### P2 — Maintainability
