@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.AspNetCore.SignalR;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace API.Hubs
+namespace Infrastructure.Hubs
 {
     public class NotificationHub : Hub
     {

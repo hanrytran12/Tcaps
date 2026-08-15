@@ -1,4 +1,4 @@
-﻿using API.Hubs;
+using Infrastructure.Hubs;
 using Application.Interfaces;
 using Domain.Enums;
 using Domain.Interfaces;

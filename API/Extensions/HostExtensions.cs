@@ -1,4 +1,4 @@
-using API.Hubs;
+using Infrastructure.Hubs;
 using DotNetEnv;
 using Infrastructure.Persistence;
 using Infrastructure.Persistence.Seeders;

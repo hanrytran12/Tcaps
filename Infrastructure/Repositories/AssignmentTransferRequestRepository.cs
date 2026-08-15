@@ -1,15 +1,15 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
-    public class AssisgnmentTransferRequestRepository : IAssignmentTransferRequestRepository
+    public class AssignmentTransferRequestRepository : IAssignmentTransferRequestRepository
     {
         private readonly AppDbContext _appDbContext;
 
-        public AssisgnmentTransferRequestRepository(AppDbContext appDbContext)
+        public AssignmentTransferRequestRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;
         }

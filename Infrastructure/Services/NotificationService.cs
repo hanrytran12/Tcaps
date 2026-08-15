@@ -1,4 +1,4 @@
-﻿using API.Hubs;
+using Infrastructure.Hubs;
 using Application.Common.Exceptions;
 using Application.DTOs.Response;
 using Application.Interfaces;
@@ -13,7 +13,7 @@ using System.Data;
 
 namespace Infrastructure.Services
 {
-    public class NotificationServices : INotificationService
+    public class NotificationService : INotificationService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IUserRepository _userRepository;
@@ -34,7 +34,7 @@ namespace Infrastructure.Services
 
         private readonly IHubContext<NotificationHub> _hubContext;
 
-        public NotificationServices(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
+        public NotificationService(IUnitOfWork unitOfWork, IUserRepository userRepository, INotificationRepository notificationRepository, IMaterialRepository materialRepository, IBatchRepository batchRepository
             , IMapper mapper, IProductionRepository productionRepository, IIncomeRepository incomeRepository,
             IEvaluateRepository evaluateRepository, IWorkshopRepository workshopRepository, IComponentDefectRepository componentDefectRepository,
             IMaterialRequestRepository materialRequestRepository, IAssignmentRepository assignmentRepository,

@@ -1,9 +1,9 @@
-﻿using Application.Common.Behaviors;
+using Application.Common.Behaviors;
 using Application.DTOs.Request;
 using Application.Interfaces;
 using Azure.Storage.Blobs;
 using Domain.Interfaces;
-using Infrastructure.BackgroundService;
+using Infrastructure.BackgroundServices;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -70,7 +70,7 @@ namespace Infrastructure
             services.AddScoped<IFileStorageService, AzureBlobStorageService>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
-            services.AddScoped<INotificationService, NotificationServices>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IAssignmentAutomationService, AssignmentAutomationService>();
 
@@ -90,7 +90,7 @@ namespace Infrastructure
             services.AddScoped<IInventoryRepository, InventoryRepository>();
             services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
             services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
-            services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
+            services.AddScoped<IAssignmentTransferRequestRepository, AssignmentTransferRequestRepository>();
             services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
             services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRepository>();
             services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();

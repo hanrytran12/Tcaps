@@ -1,8 +1,8 @@
-﻿using Application.Interfaces;
+using Application.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace Infrastructure.BackgroundService
+namespace Infrastructure.BackgroundServices
 {
     public class DeadlineCheckerService : Microsoft.Extensions.Hosting.BackgroundService
     {
