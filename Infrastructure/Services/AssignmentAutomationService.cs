@@ -12,7 +12,7 @@ namespace Infrastructure.Services
     {
         private readonly IAppDbContext _context;
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IHubContext<NotificationHub> _hubContext; // SignalR
+        private readonly IHubContext<NotificationHub> _hubContext;
         private readonly ILogger<AssignmentAutomationService> _logger;
 
         public AssignmentAutomationService(
@@ -32,9 +32,7 @@ namespace Infrastructure.Services
             var today = DateOnly.FromDateTime(DateTime.Now);
 
             await CheckDueAssignmentsAsync(today, cancellationToken);
-
             await CheckOutsourceStartAsync(today, cancellationToken);
-
             await _unitOfWork.SaveChangesAsync(cancellationToken);
         }
 
@@ -45,18 +43,21 @@ namespace Infrastructure.Services
                 .Where(a => a.EndDate == today && a.Status == "InProgress")
                 .ToListAsync(token);
 
-            var QCId = await _context.Users.AsNoTracking()
+            var qcId = await _context.Users.AsNoTracking()
                 .Where(u => u.Role == "QC")
                 .Select(u => u.Id)
                 .FirstOrDefaultAsync(token);
 
-            if (!assignments.Any()) return;
+            if (!assignments.Any())
+            {
+                return;
+            }
 
             foreach (var assignment in assignments)
             {
                 assignment.UpdateStatus("ReadyForTransfer");
 
-                await _hubContext.Clients.User(QCId.ToString())
+                await _hubContext.Clients.User(qcId.ToString())
                     .SendAsync("AssignmentStatusChanged", new
                     {
                         Id = assignment.Id,
@@ -75,7 +76,10 @@ namespace Infrastructure.Services
                          && _context.Workshop.Any(w => w.Id == a.WorkshopId && w.WorkshopType == WorkshopType.Outsource))
                 .ToListAsync(token);
 
-            if (!assignments.Any()) return;
+            if (!assignments.Any())
+            {
+                return;
+            }
 
             foreach (var assignment in assignments)
             {

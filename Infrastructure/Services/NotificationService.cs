@@ -110,8 +110,6 @@ namespace Infrastructure.Services
         {
             try
             {
-                //var notifications = await _notificationRepository.GetByUserIdAsync(userId);
-                //lấy dữ liệu có phân trang
                 var notifications = await _notificationRepository.GetPagedAsync(
                     filter: n => n.UserId == userId,
                     orderBy: q => q.OrderByDescending(n => n.CreatedAt),
@@ -235,28 +233,27 @@ namespace Infrastructure.Services
 
         public async Task SendSubmitProductionNotification(Guid assignId, Guid userId, int quantity)
         {
-            //var user = await _userRepository.GetByIdAsync(userId);
-            //var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId);
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null) return;
 
-            //var title = "Nộp sản phẩm";
-            //var message = $"Nhân viên {user.FullName} nộp {quantity} sản phẩm để QC kiểm tra.";
-            //var type = "Production";
-            //var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
-            //await _notificationRepository.AddAsync(notification);
-            //await _unitOfWork.SaveChangesAsync();
+            var qc = await _userRepository.GetQCByWorkshopIdAsync(user.WorkshopId);
+            if (qc == null) return;
 
-            //Console.WriteLine($"🔔 Sending notification to QC User ID: {qc.Id}");
-            //Console.WriteLine($"   - QC Name: {qc.FullName}");
-            //Console.WriteLine($"   - Message: {message}");
+            var title = "Nộp sản phẩm";
+            var message = $"Nhân viên {user.FullName} nộp {quantity} sản phẩm để QC kiểm tra.";
+            var type = "Production";
+            var notification = new Notification(Guid.NewGuid(), qc.Id, title, message, type);
+            await _notificationRepository.AddAsync(notification);
+            await _unitOfWork.SaveChangesAsync();
 
-            //await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
-            //{
-            //    Id = notification.Id,
-            //    Title = title,
-            //    Message = message,
-            //    Type = type,
-            //    CreatedAt = DateTime.Now
-            //});
+            await _hubContext.Clients.User(qc.Id.ToString()).SendAsync("ReceiveNotification", new
+            {
+                Id = notification.Id,
+                Title = title,
+                Message = message,
+                Type = type,
+                CreatedAt = DateTime.Now
+            });
         }
 
         public async Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate)

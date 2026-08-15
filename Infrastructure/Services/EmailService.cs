@@ -1,5 +1,6 @@
 using Application.DTOs.Request;
 using Application.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Text;
 using System.Text.Json;
@@ -10,11 +11,13 @@ namespace Infrastructure.Services
     {
         private readonly HttpClient _httpClient;
         private readonly BrevoSettingsDTO _settings;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(HttpClient httpClient, IOptions<BrevoSettingsDTO> settings)
+        public EmailService(HttpClient httpClient, IOptions<BrevoSettingsDTO> settings, ILogger<EmailService> logger)
         {
             _httpClient = httpClient;
             _settings = settings.Value;
+            _logger = logger;
 
             _httpClient.BaseAddress = new Uri("https://api.brevo.com/v3/");
             _httpClient.DefaultRequestHeaders.Add("api-key", _settings.ApiKey);
@@ -58,12 +61,12 @@ namespace Infrastructure.Services
                 }
 
                 var errorBody = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Gửi email thất bại: {errorBody}");
+                _logger.LogError("Send email failed: {ErrorBody}", errorBody);
                 return false;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Lỗi kết nối: {ex.Message}");
+                _logger.LogError(ex, "Error occurred while sending email to {Email}", toEmail);
                 return false;
             }
         }

@@ -8,7 +8,6 @@ namespace Infrastructure.BackgroundServices
     {
         private readonly ILogger<DeadlineCheckerService> _logger;
         private readonly IServiceScopeFactory _scopeFactory;
-
         private readonly TimeSpan _period = TimeSpan.FromSeconds(1);
 
         public DeadlineCheckerService(ILogger<DeadlineCheckerService> logger, IServiceScopeFactory scopeFactory)
@@ -31,10 +30,6 @@ namespace Infrastructure.BackgroundServices
                     {
                         var assignmentService = scope.ServiceProvider.GetRequiredService<IAssignmentAutomationService>();
                         await assignmentService.ProcessDailyUpdatesAsync(stoppingToken);
-
-                        // 2. Lấy Rework Service (Nếu bạn tách riêng ra nữa)
-                        // var reworkService = scope.ServiceProvider.GetRequiredService<IReworkAutomationService>();
-                        // await reworkService.ProcessReworksAsync(stoppingToken);
                     }
                 }
                 catch (Exception ex)

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 using Domain.Common;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
@@ -22,19 +17,24 @@ namespace Infrastructure.Repositories
             _dbSet = _context.Set<T>();
         }
 
-        public virtual async Task<PageResult<T>> GetPagedAsync(Expression<Func<T, bool>>? filter = null, Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null, int pageNumber = 1, int pageSize = 10)
+        public virtual async Task<PageResult<T>> GetPagedAsync(
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
+            int pageNumber = 1,
+            int pageSize = 10)
         {
             IQueryable<T> query = _dbSet;
 
-            //lọc điều kiện
             if (filter != null)
+            {
                 query = query.Where(filter);
+            }
 
-            //sắp xếp
             if (orderBy != null)
+            {
                 query = orderBy(query);
+            }
 
-            //tính tổng số phần tử có trong db
             var totalCount = await query.CountAsync();
             var items = await query
                 .Skip((pageNumber - 1) * pageSize)
