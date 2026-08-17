@@ -28,7 +28,7 @@ namespace Application.Features.Users.Queries.GetGroupProgress
             if (user is null)
                 throw new NotFoundException("Không tìm thấy người dùng");
 
-            var workshop = await _context.Workshop.FindAsync(user.WorkshopId);
+            var workshop = await _context.Workshops.FindAsync(user.WorkshopId);
 
             // 🔹 Lấy assignment đang hoạt động
             var assignment = await _context.Assignments.FindAsync(request.AssignId);

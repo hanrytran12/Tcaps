@@ -1,40 +1,41 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.Inventories.Commands.AddInventory;
-using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class InventoryController : ControllerBase
+    public class InventoryController : BaseApiController
     {
-        private readonly IMediator _mediator;
-        public InventoryController(IMediator mediator)
+        public InventoryController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
-
         }
 
         [HttpGet("from-{materialId:guid}")]
-        public async Task<InventoryHistoryDTO> GetInventoryByMaterialId(Guid materialId, [FromQuery] int month, [FromQuery] int year)
+        [Authorize(Roles = "Admin,Lead,QC,QCK")]
+        public async Task<ActionResult<InventoryHistoryDTO>> GetInventoryByMaterialId(Guid materialId, [FromQuery] int month, [FromQuery] int year)
         {
-            return await _mediator.Send(new Application.Features.Inventories.Queries.GetInventoryByMaterialId.GetInventoryByMaterialIdQuery(materialId, month, year));
+            var result = await Mediator.Send(new Application.Features.Inventories.Queries.GetInventoryByMaterialId.GetInventoryByMaterialIdQuery(materialId, month, year));
+            return Ok(result);
         }
 
-
         [HttpGet("{id:guid}")]
-        public async Task<Inventory> GetInventoryById(Guid id)
+        [Authorize(Roles = "Admin,Lead")]
+        public async Task<ActionResult<InventoryResponseDTO>> GetInventoryById(Guid id)
         {
-            return await _mediator.Send(new Application.Features.Inventories.Queries.GetInventoryById.GetInventoryByIdQuery(id));
+            var result = await Mediator.Send(new Application.Features.Inventories.Queries.GetInventoryById.GetInventoryByIdQuery(id));
+            return Ok(result);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> AddInventory([FromForm] AddInventoryCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Inventory added successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo kho thành công.");
         }
     }
 }

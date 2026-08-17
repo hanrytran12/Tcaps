@@ -4,6 +4,7 @@ using Application.Features.Incomes.Queries.GetMonthlyIncome;
 using Application.Features.Incomes.Queries.GetTotalIncomeExpect;
 using Domain.Entities;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -12,41 +13,44 @@ namespace API.Controllers
     [ApiController]
     public class IncomeController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public IncomeController(IMediator mediator)
+        public IncomeController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet("by-staff")]
-        public async Task<List<Income>> GetIncomesByStaffId([FromQuery] DateOnly? date)
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<List<IncomeHistoryDTO>>> GetIncomesByStaffId([FromQuery] DateOnly? date)
         {
-            return await _mediator.Send(new GetIncomesByStaffIdQuery
+            var result = await Mediator.Send(new GetIncomesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 Date = date
             });
+            return Ok(result);
         }
 
         [HttpGet("total-monthly")]
-        public async Task<MonthlyIncomeDTO> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<MonthlyIncomeDTO>> GetMonthlyIncome([FromQuery] int month, [FromQuery] int year)
         {
-            return await _mediator.Send(new GetMonthlyIncomeQuery
+            var result = await Mediator.Send(new GetMonthlyIncomeQuery
             {
                 StaffId = CurrentUserId,
                 Month = month,
                 Year = year
             });
+            return Ok(result);
         }
 
         [HttpGet("income-expected")]
-        public async Task<IncomeExpectedDTO> GetIncomeExpected()
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<IncomeExpectedDTO>> GetIncomeExpected()
         {
-            return await _mediator.Send(new GetTotalIncomeExpectedQuery
+            var result = await Mediator.Send(new GetTotalIncomeExpectedQuery
             {
                 StaffId = CurrentUserId
             });
+            return Ok(result);
         }
     }
 }

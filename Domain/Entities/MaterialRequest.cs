@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class MaterialRequest : AggregrateRoot
+    public class MaterialRequest : AggregateRoot
     {
         public Guid MaterialId { get; private set; }
         public Guid UserId { get; private set; }
@@ -71,7 +71,7 @@ namespace Domain.Entities
             AddDomainEvent(new MaterialRequestConfirmedEvent(MaterialId, BatchId, AssignId, QuantityRequest, actualReceivedQuantity));
         }
 
-        public void MarkAdRejected(string rejectedReason)
+        public void MarkAsRejected(string rejectedReason)
         {
             if (Status != "Pending" && Status != "QCTransportReception")
                 throw new InvalidOperationException("Only pending or QCTransportReception requests can be confirmed.");

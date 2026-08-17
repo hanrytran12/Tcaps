@@ -2,7 +2,7 @@
 
 namespace Domain.Entities
 {
-    public class WorkshopInventory : AggregrateRoot
+    public class WorkshopInventory : AggregateRoot
     {
         public Guid WorkshopId { get; private set; }
         public Guid MaterialId { get; private set; }

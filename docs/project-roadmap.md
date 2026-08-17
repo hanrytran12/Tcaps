@@ -2,14 +2,17 @@
 
 > This is an engineering roadmap based on the current repository. It is not a committed release schedule.
 >
-> Last verified: 2026-08-09 against master at 24ddaf8.
+> Last verified: 2026-08-15 against `refactor/api-contract-sync`.
 
 ## Current baseline
 
 | Milestone | Status | Evidence |
 |---|---|---|
 | Layered .NET 8 backend | Complete baseline | Four projects in Tcaps.sln |
-| API/auth/authorization | Active baseline | API/Program.cs, controllers, policies |
+| API/auth/authorization | Phase 1 complete; Phase 2 hardening in progress | API/Program.cs, controllers, policies, api-contract-matrix.md |
+| API controller composition | Phase 3 complete | Constructor-injected ISender across API controllers |
+| API response contracts | Phase 6 implementation complete; rollout follow-up | Result-to-HTTP mapping, stable error/message DTOs, controller write handling, mobile response adapter, and endpoint usage ledger |
+| Host/dependencies | Phase 5 complete | Service registration, host limits, middleware pipeline, and database initialization are composed through focused API extensions |
 | SQL Server persistence | Active baseline | EF Core context, migrations, repositories |
 | Startup migration/seeding | Active baseline | Program.cs, DbSeeder |
 | Docker/Compose runtime | Active baseline | Dockerfile, compose.yml |
@@ -34,7 +37,8 @@
 ### P1 — Quality and contracts
 
 - Add unit/integration tests for auth, authorization policies, state transitions, seeding, and critical repositories.
-- Establish API contract checks for the mobile/frontend consumers.
+- Verify role/claim semantics for QCK and QCTransport with representative JWTs before release; mobile-compatible read permissions are now aligned in source.
+- Establish API contract checks for the mobile/frontend consumers and add integration coverage for effective route authorization; 44 BE tests, focused metadata/contract coverage, and FE typecheck coverage are now in place. FE lint warnings, runtime smoke tests, and dedicated host integration coverage remain follow-ups.
 - Add structured logging and correlation IDs for workflow failures and background jobs.
 
 ### P2 — Maintainability

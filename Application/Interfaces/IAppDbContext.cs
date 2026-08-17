@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Interfaces
@@ -11,18 +11,18 @@ namespace Application.Interfaces
         public DbSet<Inventory> Inventories { get; }
         public DbSet<Material> Materials { get; }
         public DbSet<MaterialRequest> MaterialRequests { get; }
-        public DbSet<MaterialUse> MaterialUse { get; }
+        public DbSet<MaterialUse> MaterialUses { get; }
         public DbSet<Notification> Notifications { get; }
         public DbSet<Product> Products { get; }
         public DbSet<User> Users { get; }
-        public DbSet<Workshop> Workshop { get; }
+        public DbSet<Workshop> Workshops { get; }
         public DbSet<Assignment> Assignments { get; }
         public DbSet<Production> Productions { get; }
         public DbSet<Evaluate> Evaluates { get; }
         public DbSet<AssignmentTransferRequest> AssignmentTransferRequests { get; }
         public DbSet<TaskTransferRequest> TaskTransferRequests { get; }
-        public DbSet<WorkshopInventory> WorkshopInventory { get; }
-        public DbSet<ReworkRequest> ReworkRequests { get; set; }
+        public DbSet<WorkshopInventory> WorkshopInventories { get; }
+        public DbSet<ReworkRequest> ReworkRequests { get; }
         public DbSet<MaterialSupply> MaterialSupplies { get; }
         public DbSet<MaterialWorkshop> MaterialWorkshops { get; }
         public DbSet<FinalTransferRequest> FinalTransferRequests { get; }

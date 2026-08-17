@@ -19,7 +19,7 @@ namespace Application.Features.Users.Commands.UpdateUserProfile
 
             if (user is null)
             {
-                return Result.Failure($"Không tìm thấy User với Id: {request.Id}.");
+                return Result.NotFound($"Không tìm thấy User với Id: {request.Id}.");
             }
 
             if (!string.IsNullOrEmpty(request.Email) && user.Email != request.Email)

@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -17,8 +16,7 @@ namespace Domain.Entities
         public bool RequiresMaterialDelivery { get; private set; }
         public string Status { get; private set; } = string.Empty;
         public DateTime CreatedAt { get; private set; }
-        [JsonIgnore]
-        public Batch Batch { get; private set; } = null!;
+                public Batch Batch { get; private set; } = null!;
         public Assignment(Guid id, Guid batchId, Guid workshopId, int? stepOrder, int quantity, DateOnly startDate, DateOnly endDate, DateOnly? expectedDeliveryDate, decimal unitPrice, bool requiresMaterialDelivery)
             : base(id)
         {

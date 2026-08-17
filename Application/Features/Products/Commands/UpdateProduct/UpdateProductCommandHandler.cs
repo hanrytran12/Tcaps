@@ -34,8 +34,13 @@ namespace Application.Features.Products.Commands.UpdateProduct
                 }
             }
 
-            await _fileStorageService.DeleteFileAsync(product.Image, cancellationToken);
-            string relativePath = await _fileStorageService.SaveFileAsync(request.ImageFile, "products", cancellationToken);
+            var relativePath = product.Image;
+            if (request.ImageFile is not null)
+            {
+                await _fileStorageService.DeleteFileAsync(product.Image, cancellationToken);
+                relativePath = await _fileStorageService.SaveFileAsync(request.ImageFile, "products", cancellationToken);
+            }
+
             product.UpdateDetails(request.Name, request.Description, relativePath);
             return Result.Success();
         }

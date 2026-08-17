@@ -2,7 +2,7 @@
 
 > Status: baseline inferred from the current source. Product requirements not represented in code require product-owner confirmation.
 >
-> Last verified: 2026-08-09 against master at 24ddaf8.
+> Last verified: 2026-08-15 against `refactor/api-contract-sync`; product assumptions remain inferred from source.
 
 ## Product context
 

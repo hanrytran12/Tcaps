@@ -32,7 +32,7 @@ namespace Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies
                         from receiverUser in receiverGroup.DefaultIfEmpty()
 
                             // 💡 JOIN 3: Workshop (dựa trên người yêu cầu, thường là QC Workshop)
-                        join w in _context.Workshop.AsNoTracking() on receiverUser.WorkshopId equals w.Id into workshopGroup
+                        join w in _context.Workshops.AsNoTracking() on receiverUser.WorkshopId equals w.Id into workshopGroup
                         from wItem in workshopGroup.DefaultIfEmpty() // Thêm DefaultIfEmpty()
                         select new { s, m, r, b, p, supplierUser, receiverUser, wItem };
 

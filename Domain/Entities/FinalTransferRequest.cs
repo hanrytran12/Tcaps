@@ -18,6 +18,10 @@ namespace Domain.Entities
         public DateTime CreatedAt { get; private set; }
         public DateTime ApprovedAt { get; private set; }
         
+        private FinalTransferRequest() : base(Guid.NewGuid()) { }
+
+
+
         public FinalTransferRequest(Guid id,  Guid assignTransferRequestId, decimal quantityFinalSend, string? note) : base(id)
         {
             AssignTransferRequestId = assignTransferRequestId;

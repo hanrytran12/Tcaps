@@ -3,7 +3,7 @@ using Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWorksh
 using Application.Features.MaterialWorkshops.Queries.GetAllMaterialWorkshop;
 using Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQCId;
 using Application.Features.MaterialWorkshops.Queries.TotalQuantityReceive;
-using Domain.Entities;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,32 +13,40 @@ namespace API.Controllers
     [ApiController]
     public class MaterialWorkshopController : BaseApiController
     {
-        [HttpGet("all")]
-        public async Task<List<MaterialWorkshop>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
+        public MaterialWorkshopController(ISender mediator) : base(mediator)
         {
-            return await Mediator.Send(query);
+        }
+
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin,Lead,QC,QCK")]
+        public async Task<ActionResult<List<MaterialWorkshopSummaryDTO>>> GetAllAsync([FromQuery] GetAllMaterialWorkshopQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<List<MaterialWorkshopDTO>> GetByQCIdAsync([FromQuery] Guid workshopId)
+        public async Task<ActionResult<List<MaterialWorkshopDTO>>> GetByQCIdAsync([FromQuery] Guid workshopId)
         {
-            return await Mediator.Send(new GetMaterialWorkshopByQCIdQuery { QC_Id = CurrentUserId, WorkshopId = workshopId });
+            var result = await Mediator.Send(new GetMaterialWorkshopByQCIdQuery { QC_Id = CurrentUserId, WorkshopId = workshopId });
+            return Ok(result);
         }
 
         [HttpGet("total-quantity-receive")]
-        [Authorize(Roles = "QC,Lead")]
-        public async Task<int> GetTotalQuantityReceive([FromQuery] Guid batchId)
+        [Authorize(Roles = "QC,QCK,Lead")]
+        public async Task<ActionResult<int>> GetTotalQuantityReceive([FromQuery] Guid batchId)
         {
-            return await Mediator.Send(new TotalQuantityReceiveQuery { BatchId = batchId, QcId = CurrentUserId });
+            var result = await Mediator.Send(new TotalQuantityReceiveQuery { BatchId = batchId, QcId = CurrentUserId });
+            return Ok(result);
         }
 
         [HttpPut("update-confirm")]
         [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateConfirmAsync([FromQuery] UpdateConfirmMaterialWorkshopCommand query)
         {
-            await Mediator.Send(query);
-            return Ok("QC đã chấp nhận đơn hàng thành công");
+            var result = await Mediator.Send(query);
+            return HandleResult(result, "QC đã chấp nhận đơn hàng thành công");
         }
     }
 }

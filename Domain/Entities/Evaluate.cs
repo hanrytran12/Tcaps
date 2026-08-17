@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class Evaluate : AggregrateRoot
+    public class Evaluate : AggregateRoot
     {
         public Guid ProductionId { get; private set; }
         public Guid? UserId { get; private set; }
@@ -29,7 +29,6 @@ namespace Domain.Entities
             CreatedAt = DateTime.Now;
             Status = status;
 
-            //AddDomainEvent(new EvaluateCreatedEvent(Id, productionId, userId.Value, quantityError, note, status));
         }
 
         private Evaluate() : base(Guid.NewGuid()) { }

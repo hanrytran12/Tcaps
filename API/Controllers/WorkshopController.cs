@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.Workshop.Command.AddWorkshop;
 using Application.Features.Workshop.Command.DeleteWorkshop;
 using Application.Features.Workshop.Command.InsertWorkshop;
@@ -13,58 +13,58 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class WorkshopController : ControllerBase
+    public class WorkshopController : BaseApiController
     {
-        private readonly IMediator _mediator;
-        public WorkshopController(IMediator mediator)
+        public WorkshopController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<List<WorkshopsDTO>> GetWorkshopsTemplate()
+        [Authorize(Roles = "Admin,Lead,QC,QCK,Staff")]
+        public async Task<ActionResult<List<WorkshopsDTO>>> GetWorkshopsTemplate()
         {
-            return await _mediator.Send(new GetWorkshopTemplateQuery());
+            var result = await Mediator.Send(new GetWorkshopTemplateQuery());
+            return Ok(result);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> AddWorkshop([FromBody] AddWorkshopCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Workshop added successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Thêm xưởng thành công.");
         }
 
         [HttpPut("insert")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> InsertWorkshopAsync([FromQuery] InsertWorkshopCommand command)
+        public async Task<IActionResult> InsertWorkshopAsync([FromBody] InsertWorkshopCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Chèn xưởng thành công.");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Chèn xưởng thành công.");
         }
 
         [HttpPut("update")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> UpdateAsync([FromQuery] UpdateWorkshopCommand command)
+        public async Task<IActionResult> UpdateAsync([FromBody] UpdateWorkshopCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Cập nhật thành công");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật thành công");
         }
 
         [HttpPut("swap-workshop")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> SwapAsync([FromQuery] SwapWorkshopCommand command)
+        public async Task<IActionResult> SwapAsync([FromBody] SwapWorkshopCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Đổi 2 xưởng thành công.");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Đổi 2 xưởng thành công.");
         }
 
         [HttpDelete]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeleteAsync([FromQuery] DeleteWorkshopCommand command)
+        public async Task<IActionResult> DeleteAsync([FromBody] DeleteWorkshopCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Xóa xưởng thành công");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Xóa xưởng thành công");
         }
     }
 }

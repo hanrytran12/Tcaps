@@ -1,58 +1,63 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.ComponentDefect.Commands.RejectComponentFromQC;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectConfirm;
 using Application.Features.ComponentDefect.Commands.UpdateComponentDefectResolve;
 using Application.Features.ComponentDefect.Query.GetComponentByEvaluateId;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ComponentDefectController : ControllerBase
+    public class ComponentDefectController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public ComponentDefectController(IMediator mediator)
+        public ComponentDefectController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet("for-staff")]
-        public async Task<List<ComponentDefectsDTO>> GetAllByEvaluateIdForStaffAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<List<ComponentDefectsDTO>>> GetAllByEvaluateIdForStaffAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
         {
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("for-qc")]
-        public async Task<List<ComponentDefectsDTO>> GetAllByEvaluateIdForQCAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
+        [Authorize(Policy = "QC")]
+        public async Task<ActionResult<List<ComponentDefectsDTO>>> GetAllByEvaluateIdForQCAsync([FromQuery] GetComponentByEvaluatedIdQuery query)
         {
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPut("resolve/{componentId}")]
-        public async Task<IActionResult> UpdateResolveAsync(Guid componentId, [FromQuery] UpdateComponentDefectResolvedCommand command)
+        [Authorize(Roles = "Staff")]
+        public async Task<IActionResult> UpdateResolveAsync(Guid componentId, [FromBody] UpdateComponentDefectResolvedCommand command)
         {
             command.Id = componentId;
-            await _mediator.Send(command);
-            return Ok("Sửa chữa thành công.");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Sửa chữa thành công.");
         }
 
         [HttpPut("confirm/{componentId}")]
-        public async Task<IActionResult> UpdateConfirmAsync(Guid componentId, [FromQuery] UpdateComponentDefectConfirmCommand command)
+        [Authorize(Policy = "QC")]
+        public async Task<IActionResult> UpdateConfirmAsync(Guid componentId, [FromBody] UpdateComponentDefectConfirmCommand command)
         {
             command.ComponentId = componentId;
-            await _mediator.Send(command);
-            return Ok("Chấp nhận đã sửa thành công.");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Chấp nhận đã sửa thành công.");
         }
 
         [HttpPut("reject/{componentId}")]
-        public async Task<IActionResult> RejectComponentAsync(Guid componentId, [FromQuery] RejectComponentFromQCCommand command)
+        [Authorize(Policy = "QC")]
+        public async Task<IActionResult> RejectComponentAsync(Guid componentId, [FromBody] RejectComponentFromQCCommand command)
         {
             command.Id = componentId;
-            await _mediator.Send(command);
-            return Ok("Từ chối từ QC.");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Từ chối từ QC.");
         }
     }
 }

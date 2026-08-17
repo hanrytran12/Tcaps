@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.Products.Commands.AddProduct;
 using Application.Features.Products.Commands.DeleteProduct;
 using Application.Features.Products.Commands.UpdateProduct;
@@ -11,26 +11,26 @@ namespace API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductController : BaseApiController
     {
-        private readonly IMediator _mediator;
-        public ProductController(IMediator mediator)
+        public ProductController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<List<ProductsDTO>> GetAllProduct()
+        [Authorize(Roles = "Admin,Lead,QC,QCK,Staff")]
+        public async Task<ActionResult<List<ProductsDTO>>> GetAllProduct()
         {
-            return await _mediator.Send(new GetAllProductQuery());
+            var result = await Mediator.Send(new GetAllProductQuery());
+            return Ok(result);
         }
 
         [HttpPost]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> AddProduct([FromForm] AddProductCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Product added successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo sản phẩm thành công.");
         }
 
         [HttpPut("{id:guid}")]
@@ -38,16 +38,16 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateProduct(Guid id, [FromForm] UpdateProductCommand command)
         {
             command.Id = id;
-            await _mediator.Send(command);
-            return Ok("Product updated successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật sản phẩm thành công.");
         }
 
         [HttpDelete("{id:guid}")]
         [Authorize(Policy = "Admin")]
         public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            await _mediator.Send(new DeleteProductCommand(id));
-            return Ok("Product deleted successfully");
+            var result = await Mediator.Send(new DeleteProductCommand(id));
+            return HandleResult(result, "Xóa sản phẩm thành công.");
         }
     }
 }

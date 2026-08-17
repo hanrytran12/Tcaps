@@ -1,88 +1,34 @@
-﻿using Application.Common.Exceptions;
+using API.Mappings;
 using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 
-namespace API.Middlewares
+namespace API.Middlewares;
+
+public class GlobalExceptionHandler : IExceptionHandler
 {
-    public class GlobalExceptionHandler : IExceptionHandler
+    private readonly ILogger<GlobalExceptionHandler> _logger;
+
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
     {
-        private readonly ILogger<GlobalExceptionHandler> _logger;
-        private readonly IHostEnvironment _env;
+        _logger = logger;
+    }
 
-        public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment env)
-        {
-            _logger = logger;
-            _env = env;
-        }
+    public async ValueTask<bool> TryHandleAsync(
+        HttpContext httpContext,
+        Exception exception,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogError(
+            exception,
+            "Unhandled API exception. TraceId: {TraceId}",
+            httpContext.TraceIdentifier);
 
-        public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
-        {
-            _logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
+        var payload = ApiErrorResponseFactory.FromException(
+            exception,
+            httpContext.TraceIdentifier);
 
-            if (exception is FluentValidation.ValidationException validationException)
-            {
-                var errors = validationException.Errors
-                    .GroupBy(e => e.PropertyName)
-                    .ToDictionary(
-                        g => g.Key,
-                        g => g.Select(e => e.ErrorMessage).ToArray()
-                    );
+        httpContext.Response.StatusCode = payload.Status;
+        await httpContext.Response.WriteAsJsonAsync(payload, cancellationToken);
 
-                var validationProblem = new ValidationProblemDetails(errors)
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    Title = "Dữ liệu không hợp lệ",
-                    Instance = httpContext.Request.Path
-                };
-
-                httpContext.Response.StatusCode = 400;
-                await httpContext.Response.WriteAsJsonAsync(validationProblem, cancellationToken);
-                return true;
-            }
-
-            (int statusCode, string title, string detail) = exception switch
-            {
-                FluentValidation.ValidationException =>
-                    (StatusCodes.Status400BadRequest, "Dữ liệu không hợp lệ", exception.Message),
-
-                NotFoundException =>
-                    (StatusCodes.Status404NotFound, "Không tìm thấy tài nguyên", exception.Message),
-
-                ArgumentException or ArgumentNullException or InvalidOperationException =>
-                    (StatusCodes.Status400BadRequest, "Dữ liệu không hợp lệ", exception.Message),
-
-                UnauthorizedAccessException =>
-                    (StatusCodes.Status401Unauthorized, "Truy cập bị từ chối", exception.Message),
-
-                BadRequestException =>
-                    (StatusCodes.Status400BadRequest, "Yêu cầu không hợp lệ", exception.Message),
-
-                ConflictException =>
-                    (StatusCodes.Status409Conflict, "Xung đột dữ liệu", exception.Message),
-
-                ForbiddenException =>
-                    (StatusCodes.Status403Forbidden, "Không có quyền truy cập", exception.Message),
-
-                _ => (StatusCodes.Status500InternalServerError, "Lỗi hệ thống", "Đã có lỗi không mong muốn xảy ra.")
-            };
-
-            var problemDetails = new ProblemDetails
-            {
-                Status = statusCode,
-                Title = title,
-                Detail = detail,
-                Instance = httpContext.Request.Path
-            };
-
-            if (statusCode == StatusCodes.Status500InternalServerError && _env.IsDevelopment())
-            {
-                problemDetails.Detail = exception.ToString();
-            }
-
-            httpContext.Response.StatusCode = statusCode;
-            await httpContext.Response.WriteAsJsonAsync(problemDetails, cancellationToken);
-
-            return true;
-        }
+        return true;
     }
 }

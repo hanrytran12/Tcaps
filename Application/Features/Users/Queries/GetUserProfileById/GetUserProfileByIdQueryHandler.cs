@@ -21,7 +21,7 @@ namespace Application.Features.Users.Queries.GetUserProfileById
         public async Task<UserDTO> Handle(GetUserProfileByIdQuery request, CancellationToken cancellationToken)
         {
             var dto = await (from user in _context.Users
-                             join workshop in _context.Workshop
+                             join workshop in _context.Workshops
                              on user.WorkshopId equals workshop.Id
                              where user.Id == request.UserId
                              select new UserDTO

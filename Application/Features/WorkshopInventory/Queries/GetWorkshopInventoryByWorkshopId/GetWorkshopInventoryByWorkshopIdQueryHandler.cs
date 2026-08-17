@@ -16,9 +16,9 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByW
 
         public async Task<List<WorkshopInventoryForExportDTO>> Handle(GetWorkshopInventoryByWorkshopIdQuery request, CancellationToken cancellationToken)
         {
-            var query = from w in _appDbContext.Workshop
+            var query = from w in _appDbContext.Workshops
                         where w.Id == request.WorkshopId
-                        join wi in _appDbContext.WorkshopInventory on w.Id equals wi.WorkshopId into workshopInventory
+                        join wi in _appDbContext.WorkshopInventories on w.Id equals wi.WorkshopId into workshopInventory
                         from subWi in workshopInventory.DefaultIfEmpty()
                         join m in _appDbContext.Materials on subWi.MaterialId equals m.Id
                         select new WorkshopInventoryForExportDTO

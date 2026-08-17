@@ -1,15 +1,20 @@
-﻿using MediatR;
+using Application.Common;
+using API.Contracts;
+using API.Mappings;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
 namespace API.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class BaseApiController : ControllerBase
+    public abstract class BaseApiController : ControllerBase
     {
-        private ISender _mediator;
-        protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetService<ISender>();
+        protected BaseApiController(ISender mediator)
+        {
+            Mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
+
+        protected ISender Mediator { get; }
 
         protected Guid CurrentUserId
         {
@@ -22,8 +27,23 @@ namespace API.Controllers
                     throw new UnauthorizedAccessException("Thông tin định danh người dùng không hợp lệ.");
                 }
 
-                return Guid.Parse(userIdString);
+                return userId;
             }
         }
+
+        protected IActionResult HandleResult<T>(Result<T> result)
+            => this.ToActionResult(result);
+
+        protected IActionResult HandleResult<T>(Result<T> result, string successMessage)
+            => this.ToActionResult(result, successMessage);
+
+        protected IActionResult HandleResult(Result result)
+            => this.ToActionResult(result);
+
+        protected IActionResult HandleResult(Result result, string successMessage)
+            => this.ToActionResult(result, successMessage);
+
+        protected IActionResult SuccessMessage(string message)
+            => Ok(new ApiMessageResponse(message));
     }
 }

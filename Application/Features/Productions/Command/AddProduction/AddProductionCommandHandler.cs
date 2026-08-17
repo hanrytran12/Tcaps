@@ -25,7 +25,7 @@ namespace Application.Features.Productions.Command.AddProduction
             var user = await _userRepository.GetByIdAsync(request.UserId);
             if (user == null)
             {
-                return Result<Guid>.Failure($"User với ID {request.UserId} không tồn tại.");
+                return Result<Guid>.NotFound($"User với ID {request.UserId} không tồn tại.");
             }
 
             //user.AddProduction(production);

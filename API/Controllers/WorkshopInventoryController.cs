@@ -1,8 +1,10 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByMaterialId;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryByWorkshopId;
 using Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryForQC;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -11,28 +13,39 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class WorkshopInventoryController : BaseApiController
     {
-        [HttpGet]
-        public async Task<List<Domain.Entities.WorkshopInventory>> GetAllWorkshopInventory()
+        public WorkshopInventoryController(ISender mediator) : base(mediator)
         {
-            return await Mediator.Send(new GetAllWorkshopInventoryQuery());
+        }
+        [HttpGet]
+        [Authorize(Roles = "Admin,Lead,QC,QCK")]
+        public async Task<ActionResult<List<WorkshopInventoryDTO>>> GetAllWorkshopInventory()
+        {
+            var result = await Mediator.Send(new GetAllWorkshopInventoryQuery());
+            return Ok(result);
         }
 
         [HttpGet("{workshopId:guid}")]
-        public async Task<List<WorkshopInventoryForExportDTO>> GetWorkshopInvenntoryByWorkshopId(Guid workshopId)
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport")]
+        public async Task<ActionResult<List<WorkshopInventoryForExportDTO>>> GetWorkshopInventoryByWorkshopId(Guid workshopId)
         {
-            return await Mediator.Send(new GetWorkshopInventoryByWorkshopIdQuery(workshopId));
+            var result = await Mediator.Send(new GetWorkshopInventoryByWorkshopIdQuery(workshopId));
+            return Ok(result);
         }
 
         [HttpGet("for-qc")]
-        public async Task<List<WorkshopInventoryForQCDTO>> GetWorkshopInventoryForQC()
+        [Authorize(Policy = "QC")]
+        public async Task<ActionResult<List<WorkshopInventoryForQCDTO>>> GetWorkshopInventoryForQC()
         {
-            return await Mediator.Send(new GetWorkshopInventoryForQCQuery());
+            var result = await Mediator.Send(new GetWorkshopInventoryForQCQuery());
+            return Ok(result);
         }
 
         [HttpGet("by-material")]
-        public async Task<Domain.Entities.WorkshopInventory> GetByMaterialId([FromQuery] GetWorkshopInventoryByMaterialIdQuery query)
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
+        public async Task<ActionResult<WorkshopInventoryDTO>> GetByMaterialId([FromQuery] GetWorkshopInventoryByMaterialIdQuery query)
         {
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
     }
 }

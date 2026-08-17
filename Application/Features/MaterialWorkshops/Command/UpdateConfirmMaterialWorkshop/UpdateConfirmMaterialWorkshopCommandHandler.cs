@@ -36,7 +36,7 @@ namespace Application.Features.MaterialWorkshops.Command.UpdateConfirmMaterialWo
         {
             var materialWorkshop = await _materialWorkshopRepository.GetByIdAsync(request.Id);
             if (materialWorkshop == null)
-                return Result<Guid>.Failure("Không tìm thấy phiếu vật liệu.");
+                return Result<Guid>.NotFound("Không tìm thấy phiếu vật liệu.");
 
             var supplier = await _userRepository.GetByIdAsync(materialWorkshop.SupplierId);
 

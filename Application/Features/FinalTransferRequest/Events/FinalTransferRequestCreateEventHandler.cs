@@ -37,7 +37,7 @@ namespace Application.Features.FinalTransferRequest.Events
                                     select a)
                                     .FirstOrDefaultAsync();
 
-            var workshop = await _context.Workshop.FindAsync(assignment.WorkshopId);
+            var workshop = await _context.Workshops.FindAsync(assignment.WorkshopId);
             var batch = await _context.Batches.FindAsync(assignment.BatchId);
             await _mediator.Publish(new FinalTransferRequestForGuardQCEvent(
                 notification.QuantityFinalSend,

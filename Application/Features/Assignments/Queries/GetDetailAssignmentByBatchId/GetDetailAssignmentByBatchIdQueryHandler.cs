@@ -18,7 +18,7 @@ namespace Application.Features.Assignments.Queries.GetDetailAssignmentByBatchId
             var assignments = await (
                 from a in _context.Assignments.AsNoTracking()
                 where a.BatchId == request.BatchId
-                join w in _context.Workshop.AsNoTracking() on a.WorkshopId equals w.Id
+                join w in _context.Workshops.AsNoTracking() on a.WorkshopId equals w.Id
                 orderby a.StepOrder
                 select new DashboardAssignmentDTO
                 {

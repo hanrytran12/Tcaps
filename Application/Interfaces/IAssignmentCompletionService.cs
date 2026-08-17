@@ -4,6 +4,6 @@ namespace Application.Interfaces
 {
     public interface IAssignmentCompletionService
     {
-        Task<SummaryCalculateCompletedDTO> CalculateCompetedQuantityAsync(Guid assignmentId, Guid? reworkRequestId);
+        Task<SummaryCalculateCompletedDTO> CalculateCompletedQuantityAsync(Guid assignmentId, Guid? reworkRequestId);
     }
 }

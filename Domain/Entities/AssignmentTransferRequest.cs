@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class AssignmentTransferRequest : AggregrateRoot
+    public class AssignmentTransferRequest : AggregateRoot
     {
         public Guid AssignmentId { get; private set; }
         public Guid? ReworkRequestId { get; private set; }
@@ -36,7 +36,6 @@ namespace Domain.Entities
             if (completedQuantitySend < 0) throw new ArgumentException("Quantity không được là số âm.");
 
             var transferRequest = new AssignmentTransferRequest(Guid.NewGuid(), assignmentId, userId, completedQuantitySend, note, reworkRequestId);
-            //transferRequest.AddDomainEvent(new TransferRequestAddedEvent(userId));
             return transferRequest;
         }
 

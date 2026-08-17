@@ -27,7 +27,7 @@ public class GetAllocatedMaterialsQueryHandler : IRequestHandler<GetAllocatedMat
             throw new NotFoundException($"Không tìm thấy công đoạn với Id: {request.AssignmentId}");
         }
 
-        var query = _context.MaterialUse.AsNoTracking()
+        var query = _context.MaterialUses.AsNoTracking()
             .Where(mu => mu.AssignId == request.AssignmentId);
 
         if (assignmentStatus == "InProgress")

@@ -25,7 +25,7 @@ namespace Application.Features.MaterialRequest.Commands.RejectMaterialRequest
                 throw new NotFoundException("MaterialRequest is not exist.");
             }
 
-            materialRequest.MarkAdRejected(request.RejectedReason);
+            materialRequest.MarkAsRejected(request.RejectedReason);
             await _unitOfWork.SaveChangesAsync();
             return Result.Success();
         }

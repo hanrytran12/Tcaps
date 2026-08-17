@@ -18,7 +18,7 @@ namespace Application.Features.Users.Queries.GetAllUser
         {
             var users = from u in _appDbContext.Users
                         where u.Role != "Admin"
-                        join w in _appDbContext.Workshop on u.WorkshopId equals w.Id into userWorkshops
+                        join w in _appDbContext.Workshops on u.WorkshopId equals w.Id into userWorkshops
                         from subW in userWorkshops.DefaultIfEmpty()
                         select new UsersDTO
                         {

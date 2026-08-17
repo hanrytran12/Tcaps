@@ -1,9 +1,10 @@
-﻿using Domain.Interfaces;
+using Application.Common.Behaviors;
+using Domain.Interfaces;
 using Infrastructure.Persistence;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Application.Common.Behaviors
+namespace Infrastructure.Behaviors
 {
     public class TransactionBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
         where TRequest : IRequest<TResponse>
@@ -20,16 +21,11 @@ namespace Application.Common.Behaviors
 
         public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
         {
-            // 🔹 Nếu đã có transaction, không mở mới nữa
             if (_context.Database.CurrentTransaction != null)
             {
-                // Chạy request trong transaction hiện có
                 return await next();
             }
 
-            // Khi bật EnableRetryOnFailure, EF Core dùng SqlServerRetryingExecutionStrategy.
-            // Strategy này không cho phép tự mở transaction (BeginTransaction) trực tiếp,
-            // nên phải bọc toàn bộ transaction trong execution strategy để retry như một đơn vị.
             var strategy = _context.Database.CreateExecutionStrategy();
 
             return await strategy.ExecuteAsync(async () =>

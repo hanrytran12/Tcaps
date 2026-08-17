@@ -1,6 +1,7 @@
-﻿using Application.DTOs.Request;
+using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Users.Commands.AddUser;
+using Application.Features.Users.Commands.ChangePassword;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.ReactiveUser;
 using Application.Features.Users.Commands.UpdateUser;
@@ -16,7 +17,6 @@ using Application.Features.Users.Queries.GetUserById;
 using Application.Features.Users.Queries.GetUserByWorkshopId;
 using Application.Features.Users.Queries.GetUserProfileById;
 using Application.Interfaces;
-using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,42 +28,45 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UserController : BaseApiController
     {
-        private readonly IMediator _mediator;
-        private readonly IStaffService _staffService;
-
-        public UserController(IMediator mediator, IStaffService staffService)
+        public UserController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
-            _staffService = staffService;
         }
 
         [HttpGet]
-        public async Task<List<UsersDTO>> GetAllUser()
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<List<UsersDTO>>> GetAllUser()
         {
-            return await _mediator.Send(new GetAllUserQuery());
+            var result = await Mediator.Send(new GetAllUserQuery());
+            return Ok(result);
         }
 
         [HttpGet("{workshopId:guid}")]
-        public async Task<User> GetUserByWorkshopId(Guid workshopId)
+        [Authorize(Roles = "Admin,Lead")]
+        public async Task<ActionResult<UserDTO>> GetUserByWorkshopId(Guid workshopId)
         {
-            return await _mediator.Send(new GetUserByWorkshopIdQuery(workshopId));
+            var result = await Mediator.Send(new GetUserByWorkshopIdQuery(workshopId));
+            return Ok(result);
         }
 
         [HttpGet("{workshopId:guid}/users-in-workshop")]
-        public async Task<List<UsersDTO>> GetStaffByWorkshopId(Guid workshopId)
+        [Authorize(Roles = "Admin,Lead")]
+        public async Task<ActionResult<List<UsersDTO>>> GetStaffByWorkshopId(Guid workshopId)
         {
-            return await _mediator.Send(new GetStaffByWorkshopIdQuery(workshopId));
+            var result = await Mediator.Send(new GetStaffByWorkshopIdQuery(workshopId));
+            return Ok(result);
         }
 
         [HttpGet("staff-performance")]
         [Authorize(Roles = "Admin")]
-        public async Task<List<StaffPerformanceDTO>> GetStaffPerformance([FromQuery] GetStaffPerformanceQuery query)
+        public async Task<ActionResult<List<StaffPerformanceDTO>>> GetStaffPerformance([FromQuery] GetStaffPerformanceQuery query)
         {
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("staff-dashboard/{assignId}")]
-        public async Task<StaffDashboardDTO> GetStaffDashboard(Guid assignId)
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<StaffDashboardDTO>> GetStaffDashboard(Guid assignId)
         {
             var query = new GetStaffDashboardQuery
             {
@@ -71,11 +74,13 @@ namespace API.Controllers
                 AssignId = assignId
             };
 
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("group-progress")]
-        public async Task<GroupProgressDTO> GetGroupProgress([FromQuery] Guid assignId)
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<GroupProgressDTO>> GetGroupProgress([FromQuery] Guid assignId)
         {
             var query = new GetGroupProgressQuery
             {
@@ -83,81 +88,94 @@ namespace API.Controllers
                 AssignId = assignId
             };
 
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("profile")]
-        public async Task<UserDTO> GetProfileAsync()
+        [Authorize]
+        public async Task<ActionResult<UserDTO>> GetProfileAsync()
         {
             var query = new GetUserByIdQuery(CurrentUserId);
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("all-QCTransport")]
         [Authorize(Roles = "Lead")]
-        public async Task<List<UserDTO>> GetAllQCTransportAsync()
+        public async Task<ActionResult<List<UserDTO>>> GetAllQCTransportAsync()
         {
             var query = new GetAllQCTransportQuery();
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("all-Lead")]
         [Authorize(Roles = "Admin")]
-        public async Task<List<UserDTO>> GetAllLeadAsync()
+        public async Task<ActionResult<List<UserDTO>>> GetAllLeadAsync()
         {
             var query = new GetAllLeadQuery();
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("by-userId")]
-        public async Task<UserDTO> GetByUserIdAsync([FromQuery] GetUserProfileByIdQuery query)
+        [Authorize(Roles = "Admin,Lead")]
+        public async Task<ActionResult<UserDTO>> GetByUserIdAsync([FromQuery] GetUserProfileByIdQuery query)
         {
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> AddUser(AddUserCommand command)
+        public async Task<IActionResult> AddUser([FromBody] AddUserCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Tạo User thành công");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo User thành công");
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UpdateUserCommand command)
         {
             command.Id = id;
-            await _mediator.Send(command);
-            return Ok("Cập nhật User thành công");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật User thành công");
         }
 
         [HttpPut("change-password")]
-        public async Task<IActionResult> ChangePassword(ChangePasswordDTO dto, CancellationToken cancellationToken)
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto, CancellationToken cancellationToken)
         {
-            var response = await _staffService.ChangePasswordAsync(CurrentUserId, dto.CurrentPassword, dto.NewPassword, cancellationToken);
-            return StatusCode(response.StatusCode, response);
+            var command = new ChangePasswordCommand(CurrentUserId, dto.CurrentPassword, dto.NewPassword);
+            var result = await Mediator.Send(command, cancellationToken);
+            return HandleResult(result, "Đổi mật khẩu thành công");
         }
 
         [HttpPut("update-profile")]
+        [Authorize]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserProfileCommand command)
         {
             command.Id = CurrentUserId;
-            await _mediator.Send(command);
-            return Ok("Cập nhật thông tin thành công.");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Cập nhật thông tin thành công.");
         }
 
         [HttpPut("{userId:guid}/re-active")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ReactiveUser(Guid userId)
         {
-            await _mediator.Send(new ReactiveUserCommand(userId));
-            return Ok("Kích hoạt lại User thành công");
+            var result = await Mediator.Send(new ReactiveUserCommand(userId));
+            return HandleResult(result, "Kích hoạt lại User thành công");
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUser(Guid id)
         {
-            await _mediator.Send(new DeleteUserCommand(id));
-            return Ok("Xóa User thành công");
+            var result = await Mediator.Send(new DeleteUserCommand(id));
+            return HandleResult(result, "Xóa User thành công");
         }
     }
 }

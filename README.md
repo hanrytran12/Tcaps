@@ -2,7 +2,7 @@
 
 Backend API for the TCAPS production, material, inventory, quality-control, transfer, notification, and user workflows.
 
-> Last verified: 2026-08-09 against master at 24ddaf8. Operational settings can change; verify API/Program.cs, compose.yml, and the CI workflow before deployment.
+> Last verified: 2026-08-15 against `refactor/api-contract-sync`. Operational settings can change; verify API/Program.cs, compose.yml, and the CI workflow before deployment.
 
 ## Capabilities
 
@@ -90,17 +90,18 @@ Compose defines tcaps, tcapdb (SQL Server), and tcaps_redis (Redis), with persis
 
 Use Swagger to inspect the current controller contract and authorize with a Bearer JWT. Controllers are grouped by resource under api/[controller]; authorization requirements are defined in source and can differ by action.
 
-For architecture and request flow, read [docs/system-architecture.md](./docs/system-architecture.md). For environment, Docker, and CI/CD details, read [docs/deployment-guide.md](./docs/deployment-guide.md).
+For architecture and request flow, read [docs/system-architecture.md](./docs/system-architecture.md). For the route, binding, response, and authorization inventory, read [docs/api-contract-matrix.md](./docs/api-contract-matrix.md). For response mapping details, read [docs/api-response-contract.md](./docs/api-response-contract.md). For mobile usage evidence, read [docs/api-endpoint-usage-ledger.md](./docs/api-endpoint-usage-ledger.md). For environment, Docker, and CI/CD details, read [docs/deployment-guide.md](./docs/deployment-guide.md).
 
 ## Verification
 
 ~~~powershell
 dotnet build Tcaps.sln
+dotnet test Tcaps.sln --no-restore
 git status --short
-git diff --check
+git -c core.autocrlf=false diff --check
 ~~~
 
-No test project was identified in the current source baseline. Run any tests added later and report their actual result; do not infer coverage from a successful build.
+The current BE test suite contains 44 passing tests. This verifies compilation, contract mapping, and focused authorization behavior; it does not replace runtime smoke testing against configured SQL Server, Redis, Blob Storage, email, or deployed JWTs.
 
 ## Documentation index
 
@@ -110,7 +111,11 @@ No test project was identified in the current source baseline. Run any tests add
 - [docs/code-standards.md](./docs/code-standards.md) — coding and architecture conventions
 - [docs/development-rules.md](./docs/development-rules.md) — contribution, security, and verification rules
 - [docs/system-architecture.md](./docs/system-architecture.md) — runtime and request architecture
+- [docs/api-contract-matrix.md](./docs/api-contract-matrix.md) — route, binding, response, and authorization matrix
+- [docs/api-response-contract.md](./docs/api-response-contract.md) — Result-to-HTTP and client response contract
+- [docs/api-endpoint-usage-ledger.md](./docs/api-endpoint-usage-ledger.md) — mobile static usage audit and deprecation guardrails
 - [docs/project-roadmap.md](./docs/project-roadmap.md) — evidence-based next steps
+- [docs/project-changelog.md](./docs/project-changelog.md) — implementation and verification history
 - [docs/deployment-guide.md](./docs/deployment-guide.md) — local/container/CI deployment notes
 
 ## Known issues to confirm

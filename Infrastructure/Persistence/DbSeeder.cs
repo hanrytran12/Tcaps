@@ -1,5 +1,6 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -53,7 +54,7 @@ namespace Infrastructure.Persistence.Seeders
         // ==========================================
         private static async Task SeedWorkshopsAsync(AppDbContext context)
         {
-            if (await context.Workshop.AnyAsync()) return;
+            if (await context.Workshops.AnyAsync()) return;
 
             var workshops = new List<Workshop>
             {
@@ -75,7 +76,7 @@ namespace Infrastructure.Persistence.Seeders
                 CreateEntity<Workshop>("A1C9B3A0-4F12-4E81-B17B-000000000016", new { Name = "Gấp cây + đóng bịch", Description = "Công đoạn Gấp cây + đóng bịch", StepOrder = 16, WorkshopType = 1, Status = "Assigned", CreatedAt = DateTime.Now }),
                 CreateEntity<Workshop>("A1C9B3A0-4F12-4E81-B17B-000000000017", new { Name = "Xưởng khoán", Description = "Xưởng làm tất cả", WorkshopType = 2, Status = "Assigned", CreatedAt = DateTime.Now })
             };
-            await context.Workshop.AddRangeAsync(workshops);
+            await context.Workshops.AddRangeAsync(workshops);
             await context.SaveChangesAsync(CancellationToken.None);
         }
 
@@ -286,12 +287,12 @@ namespace Infrastructure.Persistence.Seeders
         // ==========================================
         private static async Task SeedMaterialUseAsync(AppDbContext context)
         {
-            if (await context.MaterialUse.AnyAsync()) return;
+            if (await context.MaterialUses.AnyAsync()) return;
             var uses = new List<MaterialUse>
             {
                 CreateEntity<MaterialUse>("20000000-0000-0000-0000-000000000001", new { MaterialId = Guid.Parse("B0000000-0000-0000-0000-000000000001"), BatchId = Guid.Parse("D0000000-0000-0000-0000-000000000001"), AssignId = Guid.Parse("E0000000-0000-0000-0000-000000000001"), QuantityDivide = 200m, QuantityStaffUse = 0m, ReconciledQuantity = 0m, QuantityRequest = 0m, Date = DateTime.Parse("2025-11-02") })
             };
-            await context.MaterialUse.AddRangeAsync(uses);
+            await context.MaterialUses.AddRangeAsync(uses);
             await context.SaveChangesAsync(CancellationToken.None);
         }
 
@@ -419,12 +420,12 @@ namespace Infrastructure.Persistence.Seeders
         // ==========================================
         private static async Task SeedWorkshopInventoryAsync(AppDbContext context)
         {
-            if (await context.WorkshopInventory.AnyAsync()) return;
+            if (await context.WorkshopInventories.AnyAsync()) return;
             var winvs = new List<WorkshopInventory>
             {
                 CreateEntity<WorkshopInventory>("01B2C3D4-E5F6-7890-ABCD-EF1234567890", new { WorkshopId = Guid.Parse("A1C9B3A0-4F12-4E81-B17B-000000000003"), MaterialId = Guid.Parse("B0000000-0000-0000-0000-000000000001"), Quantity = 100m, HoldingQuantity = 0m })
             };
-            await context.WorkshopInventory.AddRangeAsync(winvs);
+            await context.WorkshopInventories.AddRangeAsync(winvs);
             await context.SaveChangesAsync(CancellationToken.None);
         }
 

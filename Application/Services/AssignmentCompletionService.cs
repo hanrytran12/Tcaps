@@ -12,7 +12,7 @@ namespace Application.Services
             _context = appDbContext;
         }
 
-        public async Task<SummaryCalculateCompletedDTO> CalculateCompetedQuantityAsync(Guid assignmentId, Guid? reworkRequestId)
+        public async Task<SummaryCalculateCompletedDTO> CalculateCompletedQuantityAsync(Guid assignmentId, Guid? reworkRequestId)
         {
             if (reworkRequestId == null)
             {

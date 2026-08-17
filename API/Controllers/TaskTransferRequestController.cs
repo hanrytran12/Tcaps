@@ -1,9 +1,10 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.TaskTransferRequests.Command.CreateTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Command.UpdateApproveTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRequest;
 using Application.Features.TaskTransferRequests.Queries.GetByMaterialRequestIdOrAssignTransferId;
 using Application.Features.TaskTransferRequests.Queries.GetTaskTransferRequestByQCTransportId;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,39 +14,47 @@ namespace API.Controllers
     [ApiController]
     public class TaskTransferRequestController : BaseApiController
     {
-        [HttpGet("all")]
-        public async Task<List<TaskTransferRequestDTO>> GetAllAsync([FromQuery] GetAllTaskTransferRequestQuery query)
+        public TaskTransferRequestController(ISender mediator) : base(mediator)
         {
-            return await Mediator.Send(query);
+        }
+        [HttpGet("all")]
+        [Authorize(Roles = "Admin,Lead")]
+        public async Task<ActionResult<List<TaskTransferRequestDTO>>> GetAllAsync([FromQuery] GetAllTaskTransferRequestQuery query)
+        {
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("materialRequestId-assignmentTransferId")]
-        public async Task<TaskTransferRequestDTO> GetById([FromQuery] GetByMaterialRequestIdOrAssignTransferIdQuery query)
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport")]
+        public async Task<ActionResult<TaskTransferRequestDTO>> GetById([FromQuery] GetByMaterialRequestIdOrAssignTransferIdQuery query)
         {
-            return await Mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpGet("for-QcTransport")]
-        //[Authorize(Roles = "QCTransportOnly")]
-        public async Task<List<TaskTransferRequestDTO>> GetByQcTransportAsync([FromQuery] string? status)
+        [Authorize(Policy = "QCTransportOnly")]
+        public async Task<ActionResult<List<TaskTransferRequestDTO>>> GetByQcTransportAsync([FromQuery] string? status)
         {
-            return await Mediator.Send(new GetTaskTransferRequestByQCTransportIdQuery(CurrentUserId, status));
+            var result = await Mediator.Send(new GetTaskTransferRequestByQCTransportIdQuery(CurrentUserId, status));
+            return Ok(result);
         }
 
         [HttpPost("for-lead")]
         [Authorize(Roles = "Lead")]
         public async Task<IActionResult> CreateAsync([FromBody] CreateTaskTransferRequestCommand command)
         {
-            await Mediator.Send(command);
-            return Ok("Tạo yêu cầu chuyển nhiệm vụ thành công");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo yêu cầu chuyển nhiệm vụ thành công");
         }
 
         [HttpPut("approved")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ApproveRequestAsync([FromQuery] UpdateApproveTaskTransferRequestCommand command)
+        public async Task<IActionResult> ApproveRequestAsync([FromBody] UpdateApproveTaskTransferRequestCommand command)
         {
-            await Mediator.Send(command);
-            return Ok("Chấp nhận thành công");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Chấp nhận thành công");
         }
     }
 }

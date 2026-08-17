@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class User : AggregrateRoot
+    public class User : AggregateRoot
     {
         public Guid? WorkshopId { get; private set; }
         public string Role { get; private set; } = string.Empty;
@@ -66,9 +66,9 @@ namespace Domain.Entities
             Phone = phone;
         }
 
-        public void ChangePassword(string currentPasswordHash, string newPasswordHash, IPasswordHasher passwordHasher)
+        public void ChangePassword(string currentPassword, string newPasswordHash, IPasswordHasher passwordHasher)
         {
-            if (!passwordHasher.Verify(currentPasswordHash, PasswordHash))
+            if (!passwordHasher.Verify(currentPassword, PasswordHash))
                 throw new InvalidOperationException("Mật khẩu hiện tại không chính xác.");
 
             PasswordHash = newPasswordHash;

@@ -1,6 +1,8 @@
 ﻿using Application.DTOs.Response;
 using Domain.Events;
 
+using Application.Common;
+
 namespace Application.Interfaces
 {
     public interface INotificationService
@@ -11,7 +13,7 @@ namespace Application.Interfaces
         Task SendStockUpdateNotificationToLeadAsync(string name, int newStockQuantity, int stockChange);
         Task SendAssignmentAddNotificationToQcAsync(string batchCode, Guid workshopId, DateOnly expectedDeliveryDate);
         Task<ResponseDTO> MarkAsReadAsync(Guid notificationId);
-        Task<ResponseDTO> CountNotificationAsync(Guid userId);
+        Task<Result<int>> CountNotificationAsync(Guid userId);
         Task SendEvaluateFixErrorNotificationAsync(Guid evaluateId, Guid productionId, Guid userId, int quantityError, int quantitySucess, string note, string status);
         Task SendSubmitProductionNotification(Guid assignId, Guid userId, int quantity);
         Task SendComponentResolvedNotification(Guid componentId, Guid evaluateId, int quantity, string status);

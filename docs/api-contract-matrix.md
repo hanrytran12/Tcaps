@@ -1,0 +1,237 @@
+# BE API Contract Matrix
+
+> Status: current API refactor verification matrix.
+>
+> Last verified: 2026-08-15 against `refactor/api-contract-sync`.
+
+This document records the current HTTP-facing contract of `D:\Clone\Tcaps\Tcaps\API`. `UNMARKED` means the action has no explicit `[Authorize]` or `[AllowAnonymous]` marker at source level. It is not an approval that the endpoint should be public. The current matrix has no remaining `UNMARKED` rows after the authorization pass.
+
+## Conventions
+
+- `body`, `form`, `query`, `route`, `inferred`, and `none` describe the current request binding.
+- Read actions return the declared DTO/list/scalar directly with `200 OK`.
+- A read `Result<T>` is unwrapped on success; `Result<T>` is not the serialized
+  success envelope.
+- Write success bodies follow the four `ApiResultMapper` branches documented in
+  [api-response-contract.md](./api-response-contract.md). Rows marked
+  `IActionResult` show the controller signature; use those conventions for the
+  actual HTTP body/status.
+- Login, registration, and OTP verification use the explicit authentication
+  payloads documented in [api-response-contract.md](./api-response-contract.md).
+- Result and exception failures use `ApiErrorResponse` through
+  `ApiErrorResponseFactory` and `GlobalExceptionHandler`.
+- Routes remain source-compatible while mobile and external-client usage is being verified.
+- Current routes are preserved during the first refactor release because `TCaps-Mobile-FE` calls many of them directly.
+
+## Phase 2 authorization changes
+
+- `API/Program.cs` now uses a fallback policy requiring an authenticated user for endpoints without explicit authorization metadata.
+- `AuthController` explicitly marks login, registration, forgot-password, OTP verification, and reset-password as `[AllowAnonymous]`.
+- Forgot-password, OTP verification, and reset-password use the existing `OtpPolicy` rate limiter.
+- `TaskTransferRequestController.GetByQcTransportAsync` now uses `Policy=QCTransportOnly`; its previous authorization marker was commented out.
+- The initial fallback policy is not treated as sufficient authorization. Sensitive user, inventory, production, component-defect, assignment, and rework actions now have explicit role/policy markers.
+- `User.UpdateUser`, `User.ReactiveUser`, and `User.DeleteUser` are restricted to Admin to prevent privilege escalation.
+- QCK is normalized as a role policy (`RequireRole("QCK")`); QCTransport still uses its role plus the existing `isQcTransport=true` assertion where required. Runtime authorization policy tests now cover Lead, QCK, QCTransport, and denial cases; representative deployed-token verification remains a release follow-up.
+
+## Controller actions
+
+| Controller | Action | Verb and route | Binding | Current response | Current auth marker |
+|---|---|---|---|---|---|
+| Assignment | `GetAllocatedMaterials` | GET `api/Assignment/{assignmentId:guid}/allocated-materials` | inferred | `List<AllocatedMaterialDto>` | `Roles=Admin,Lead,QC,QCK,Staff` |
+| Assignment | `GetAssignmentsForStaffById` | GET `api/Assignment/for-staff` | none | `List<AssignForStaffDTO>` | `Roles=Staff` |
+| Assignment | `GetAssignmentForQCIdAsync` | GET `api/Assignment/qc/assignments` | none | `List<AssignForStaffDTO>` | `Policy=QC` |
+| Assignment | `GetAssignmentByBatchIdAsync` | GET `api/Assignment/staff/{batchId}` | inferred | `AssignForStaffDTO` | `Roles=Staff` |
+| Assignment | `GetAssignmentHistoryForQCAsync` | GET `api/Assignment/qc-lead-admin/assign-history/{batchId}` | inferred | `List<AssignmentHistoryDTO>` | `Roles=QC,QCK,Admin,Lead` |
+| Assignment | `GetDetailAssignmentForQCAsync` | GET `api/Assignment/qc/detail-assignment/{batchId}` | inferred | `List<DashboardAssignmentDTO>` | `Policy=QC` |
+| Assignment | `GetTaskProgressByQcIdAsync` | GET `api/Assignment/qc-staff/task-progress` | none | `List<TaskProgressDTO>` | `Policy=QC` |
+| Assignment | `PlanAssignments` | POST `api/Assignment/{batchId:guid}/plan-assignments` | body | `IActionResult` | `Roles=Lead,Admin` |
+| Assignment | `UpdateReadyForTransfer` | PUT `api/Assignment/update-ready-for-transfer` | query | `IActionResult` | `Policy=QC` |
+| AssignmentTransferRequest | `GetAllTrasnferRequest` | GET `api/AssignmentTransferRequest` | none | `ActionResult<List<AssignmentTransferRequestDTO>>` | `Roles=Lead` |
+| AssignmentTransferRequest | `GetReconciliationSummary` | GET `api/AssignmentTransferRequest/{assignmentId:guid}/reconcilliation-summary` | inferred | `ReconcilationSummaryDTO` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
+| AssignmentTransferRequest | `GetTransferRequestByAssignmentId` | GET `api/AssignmentTransferRequest/by-assignment/{assignmentId:guid}` | inferred | `TransferRequestDTO` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
+| AssignmentTransferRequest | `GetForQCTransportAsync` | GET `api/AssignmentTransferRequest/qc-transport` | query | `AssignmentTransferRequestDTO` | `Policy=QCTransportOnly` |
+| AssignmentTransferRequest | `GetAllForQcTransport` | GET `api/AssignmentTransferRequest/getAll-for-qcTransport` | none | `List<AssignmentTransferRequestDTO>` | `Policy=QCTransportOnly` |
+| AssignmentTransferRequest | `CreateTransferRequest` | POST `api/AssignmentTransferRequest` | body | `IActionResult` | `Roles=QC,QCK` |
+| AssignmentTransferRequest | `ApproveTransferRequest` | PUT `api/AssignmentTransferRequest/approved/{transferRequestId:guid}` | route + body | `IActionResult` | `Policy=LeadOrValidQCTransport` |
+| AssignmentTransferRequest | `QCTransportReception` | PUT `api/AssignmentTransferRequest/qc-transport-reception` | query | `IActionResult` | `Policy=QCTransportOnly` |
+| Auth | `LoginAsync` | POST `api/Auth/login` | body | `AuthResponseDTO` | `[AllowAnonymous]` |
+| Auth | `RegisterAsync` | POST `api/Auth/register` | body | `ActionResult<AuthResponseDTO>` | `[AllowAnonymous]` |
+| Auth | `ForgotPassword` | POST `api/Auth/forgot-password` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
+| Auth | `VerifyOtp` | POST `api/Auth/verify-otp` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
+| Auth | `ResetPassword` | POST `api/Auth/reset-password` | body | `IActionResult` | `[AllowAnonymous],RateLimit=OtpPolicy` |
+| Batch | `GetAllBatch` | GET `api/Batch` | none | `List<BatchResponseDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
+| Batch | `GetBatchForManagement` | GET `api/Batch/management` | none | `List<BatchDTO>` | `Roles=Admin,Lead` |
+| Batch | `GetBatchById` | GET `api/Batch/{batchId:guid}` | inferred | `BatchDetailResponseDTO` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
+| Batch | `GetDashboardStats` | GET `api/Batch/dashboard` | query | `DashboardResultDTO` | `Policy=CanViewDashboard` |
+| Batch | `GetBatchByWorkshopId` | GET `api/Batch/for-qc` | query | `List<BatchDTO>` | `Policy=QC` |
+| Batch | `GetBatchesByStaffIdAsync` | GET `api/Batch/staff/batches` | none | `List<StaffSummaryDashboardDTO>` | `Roles=Staff` |
+| Batch | `GetBatchesByQCIdAsync` | GET `api/Batch/qc/batches` | none | `List<BatchForQCDTO>` | `Roles=QC,QCK` |
+| Batch | `GetBatchesByLeadIdAsync` | GET `api/Batch/lead/batches` | none | `List<BatchResponseDTO>` | `Policy=Lead` |
+| Batch | `AddBatch` | POST `api/Batch` | inferred | `IActionResult` | `Policy=Admin` |
+| Batch | `UpdateBatch` | PUT `api/Batch/{id:guid}` | body | `IActionResult` | `Policy=Admin` |
+| Batch | `UpdateLeadForBatch` | PUT `api/Batch/lead-for-batch` | body | `IActionResult` | `Roles=Admin` |
+| Batch | `DeleteBatch` | DELETE `api/Batch/{id:guid}` | inferred | `IActionResult` | `Policy=Admin` |
+| ComponentDefect | `GetAllByEvaluateIdForStaffAsync` | GET `api/ComponentDefect/for-staff` | query | `List<ComponentDefectsDTO>` | `Roles=Staff` |
+| ComponentDefect | `GetAllByEvaluateIdForQCAsync` | GET `api/ComponentDefect/for-qc` | query | `List<ComponentDefectsDTO>` | `Policy=QC` |
+| ComponentDefect | `UpdateResolveAsync` | PUT `api/ComponentDefect/resolve/{componentId}` | route + body | `IActionResult` | `Roles=Staff` |
+| ComponentDefect | `UpdateConfirmAsync` | PUT `api/ComponentDefect/confirm/{componentId}` | route + body | `IActionResult` | `Policy=QC` |
+| ComponentDefect | `RejectComponentAsync` | PUT `api/ComponentDefect/reject/{componentId}` | route + body | `IActionResult` | `Policy=QC` |
+| Evaluate | `GetAll` | GET `api/Evaluate` | none | `List<EvaluateDTO>` | `Roles=Admin,Lead,QC,QCK,Staff` |
+| Evaluate | `GetByQCId` | GET `api/Evaluate/for-qc` | query | `List<EvaluateDTO>` | `Policy=QC` |
+| Evaluate | `GetByStaffId` | GET `api/Evaluate/for-staff` | query | `List<EvaluateDTO>` | `Roles=Staff` |
+| Evaluate | `CreateEvaluate` | POST `api/Evaluate` | form | `IActionResult` | `Policy=QC` |
+| FinalTransferRequest | `GetAllAsync` | GET `api/FinalTransferRequest/all` | none | `List<FinalTransferRequestDTO>` | `Roles=GuardQC` |
+| FinalTransferRequest | `UpdateApproveAsync` | PUT `api/FinalTransferRequest/approve-finalTransfer` | query | `IActionResult` | `Roles=GuardQC` |
+| Income | `GetIncomesByStaffId` | GET `api/Income/by-staff` | query | `List<IncomeHistoryDTO>` | `Roles=Staff` |
+| Income | `GetMonthlyIncome` | GET `api/Income/total-monthly` | query | `MonthlyIncomeDTO` | `Roles=Staff` |
+| Income | `GetIncomeExpected` | GET `api/Income/income-expected` | none | `IncomeExpectedDTO` | `Roles=Staff` |
+| Inventory | `GetInventoryByMaterialId` | GET `api/Inventory/from-{materialId:guid}` | query | `InventoryHistoryDTO` | `Roles=Admin,Lead,QC,QCK` |
+| Inventory | `GetInventoryById` | GET `api/Inventory/{id:guid}` | inferred | `InventoryResponseDTO` | `Roles=Admin,Lead` |
+| Inventory | `AddInventory` | POST `api/Inventory` | form | `IActionResult` | `Roles=Admin,Lead` |
+| Material | `GetAllMaterialsAsync` | GET `api/Material` | none | `List<MaterialToWatchDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
+| Material | `GetAllAsync` | GET `api/Material/all` | query | `List<MaterialDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
+| Material | `CreateMaterial` | POST `api/Material` | body | `IActionResult` | `Roles=Admin,Lead` |
+| MaterialRequest | `GetAllRequest` | GET `api/MaterialRequest` | none | `IActionResult` | `Roles=Admin,Lead,QC,QCK,QCTransport,Staff` |
+| MaterialRequest | `GetPendingRequests` | GET `api/MaterialRequest/pending-confirmation` | none | `ActionResult<List<PendingRequestDTO>>` | `Policy=QC` |
+| MaterialRequest | `GetAllAsync` | GET `api/MaterialRequest/lead/admin/all-request` | query | `List<MaterialRequestDTO>` on `200`; `ApiErrorResponse` on failure | `Roles=Admin,Lead` |
+| MaterialRequest | `GetByQCIdAsync` | GET `api/MaterialRequest/qc/request` | query | `List<MaterialRequestDTO>` on `200`; `ApiErrorResponse` on failure | `Policy=QC` |
+| MaterialRequest | `GetRequestsForQcTransport` | GET `api/MaterialRequest/qc-transport` | query | `MaterialRequestDTO` on `200`; `ApiErrorResponse` on failure | `Policy=QCTransportOnly` |
+| MaterialRequest | `GetForAssignmentDashboard` | GET `api/MaterialRequest/assignment-dashboard` | query | `List<MaterialRequestForAssignmentDashboardDTO>` | `Roles=Lead,QC,QCK,Staff` |
+| MaterialRequest | `DispatchMaterialsToAssignment` | POST `api/MaterialRequest/{assignmentId:guid}/dispatch-materials` | body | `IActionResult` | `Policy=Lead` |
+| MaterialRequest | `CreateMaterailRequestAsync` | POST `api/MaterialRequest/qc/material-requests` | body | `IActionResult` | `Policy=QC` |
+| MaterialRequest | `ApproveMaterialRequest` | PUT `api/MaterialRequest/approve/{id:guid}` | route | `IActionResult` | `Policy=Lead` |
+| MaterialRequest | `ConfirmMaterialRequest` | PUT `api/MaterialRequest/confirmed/{id:guid}` | body | `IActionResult` | `Roles=QC,QCK,Lead` |
+| MaterialRequest | `RejectMaterialRequest` | PUT `api/MaterialRequest/rejected/{id:guid}` | body | `IActionResult` | `Policy=QC` |
+| MaterialRequest | `QcTransportReceptionMaterialRequest` | PUT `api/MaterialRequest/qc-transport-reception` | query | `IActionResult` | `Policy=QCTransportOnly` |
+| MaterialRequest | `LeadConfirm` | PUT `api/MaterialRequest/lead-confirm` | query | `IActionResult` | `Roles=Lead` |
+| MaterialSupply | `GetAllAsync` | GET `api/MaterialSupply` | query | `List<MaterialSupplyDTO>` on `200`; `ApiErrorResponse` on failure | `Roles=Admin,Lead,QC,QCK,QCTransport` |
+| MaterialSupply | `CreateAsync` | POST `api/MaterialSupply` | body | `IActionResult` | `Roles=Lead` |
+| MaterialSupply | `UpdateInProgressAsync` | PUT `api/MaterialSupply/qcTransport/InProgress/{supplyId}` | inferred | `IActionResult` | `Policy=QCTransportOnly` |
+| MaterialSupply | `UpdateCompletedAsync` | PUT `api/MaterialSupply/qc/Completed/{supplyId}` | inferred | `IActionResult` | `Policy=QC` |
+| MaterialSupply | `ApproveByAdminAsync` | PUT `api/MaterialSupply/admin/Approve/{supplyId}` | inferred | `IActionResult` | `Roles=Admin` |
+| MaterialUse | `GetByAssignIdAsync` | GET `api/MaterialUse/qc/materials/request` | query | `List<MaterialUseDTO>` | `Policy=QC` |
+| MaterialWorkshop | `GetAllAsync` | GET `api/MaterialWorkshop/all` | query | `List<MaterialWorkshopSummaryDTO>` | `Roles=Admin,Lead,QC,QCK` |
+| MaterialWorkshop | `GetByQCIdAsync` | GET `api/MaterialWorkshop/for-qc` | query | `List<MaterialWorkshopDTO>` | `Policy=QC` |
+| MaterialWorkshop | `GetTotalQuantityReceive` | GET `api/MaterialWorkshop/total-quantity-receive` | query | `int` | `Roles=QC,QCK,Lead` |
+| MaterialWorkshop | `UpdateConfirmAsync` | PUT `api/MaterialWorkshop/update-confirm` | query | `IActionResult` | `Policy=QC` |
+| Notification | `CountNotification` | GET `api/Notification/count` | none | `IActionResult` | `[Authorize]` |
+| Notification | `GetNotifications` | GET `api/Notification` | query | `List<NotificationDTO>` | `[Authorize]` |
+| Notification | `MarkAsRead` | PUT `api/Notification/mark-as-read/{notificationId}` | inferred | `IActionResult` | `[Authorize]` |
+| Product | `GetAllProduct` | GET `api/Product` | none | `List<ProductsDTO>` | `Roles=Admin,Lead,QC,QCK,Staff` |
+| Product | `AddProduct` | POST `api/Product` | form | `IActionResult` | `Policy=Admin` |
+| Product | `UpdateProduct` | PUT `api/Product/{id:guid}` | form | `IActionResult` | `Policy=Admin` |
+| Product | `DeleteProduct` | DELETE `api/Product/{id:guid}` | inferred | `IActionResult` | `Policy=Admin` |
+| Production | `GetAllAsync` | GET `api/production/all` | none | `List<ProductionDTO>` | `Roles=Admin,Lead,QC,QCK` |
+| Production | `GetByStaffIdAsync` | GET `api/production/for-staff` | query | `List<ProductionDTO>` | `Roles=Staff` |
+| Production | `GetProductionsWithStatusPendingQC` | GET `api/production/for-qc` | query | `List<ProductionDTO>` | `Policy=QC` |
+| Production | `GetProductionByAssignIdAsync` | GET `api/production/by-assignId` | query | `List<ProductionDTO>` | `Roles=Staff` |
+| Production | `ReportWork` | POST `api/production/report-work` | body | `IActionResult` | `Roles=Staff` |
+| Production | `NotifyMaterialShortage` | POST `api/production/notify-material-shortage` | body | `IActionResult` | `Roles=Staff` |
+| Production | `UpdateQuantity` | PUT `api/production/for-qc/reduce-quantity` | body | `IActionResult` | `Policy=QC` |
+| QC | `GetAllComponentDefect` | GET `api/QC/rework-requests` | query | `List<ComponentDefectsDTO>` | `Policy=QC` (class) |
+| ReworkRequest | `GetAllReworkRequest` | GET `api/ReworkRequest` | none | `List<ReworkRequestDTO>` | `Policy=Lead` |
+| ReworkRequest | `GetReworkRequestById` | GET `api/ReworkRequest/{reworkRequestId:guid}` | inferred | `ReworkRequestResponseDTO` | `Roles=Lead,QC,QCK,Staff` |
+| ReworkRequest | `GetReworkReconciliationSummary` | GET `api/ReworkRequest/{assignmentId:guid}/summary` | inferred | `ReconcilationSummaryDTO` | `Roles=Lead,QC,QCK,Staff` |
+| ReworkRequest | `GetByAssignId` | GET `api/ReworkRequest/by-assignId` | query | `ReworkRequestResponseDTO` | `Roles=Lead,QC,QCK,Staff` |
+| ReworkRequest | `GetReworkForDashboard` | GET `api/ReworkRequest/{assignId:guid}/for-dashboard` | inferred | `ReworkRequestDTO` | `Roles=Lead,QC,QCK,Staff` |
+| ReworkRequest | `GetReworkByQcId` | GET `api/ReworkRequest/by-qc` | none | `List<ReworkRequestDTO>` | `Policy=QC` |
+| ReworkRequest | `CreateReworkRequest` | POST `api/ReworkRequest` | body | `IActionResult` | `Policy=QC` |
+| ReworkRequest | `RejectReworkRequest` | PUT `api/ReworkRequest/{requestId:guid}/rejected` | inferred | `IActionResult` | `Policy=Lead` |
+| ReworkRequest | `ApproveReworkRequest` | PUT `api/ReworkRequest/{requestId:guid}/approved` | body | `IActionResult` | `Policy=Lead` |
+| TaskTransferRequest | `GetAllAsync` | GET `api/TaskTransferRequest/all` | query | `List<TaskTransferRequestDTO>` | `Roles=Admin,Lead` |
+| TaskTransferRequest | `GetById` | GET `api/TaskTransferRequest/materialRequestId-assignmentTransferId` | query | `TaskTransferRequestDTO` | `Roles=Admin,Lead,QC,QCK,QCTransport` |
+| TaskTransferRequest | `GetByQcTransportAsync` | GET `api/TaskTransferRequest/for-QcTransport` | query | `List<TaskTransferRequestDTO>` | `Policy=QCTransportOnly` |
+| TaskTransferRequest | `CreateAsync` | POST `api/TaskTransferRequest/for-lead` | body | `IActionResult` | `Roles=Lead` |
+| TaskTransferRequest | `ApproveRequestAsync` | PUT `api/TaskTransferRequest/approved` | body | `IActionResult` | `Roles=Admin` |
+| User | `GetAllUser` | GET `api/User` | none | `List<UsersDTO>` | `Roles=Admin` |
+| User | `GetUserByWorkshopId` | GET `api/User/{workshopId:guid}` | inferred | `UserDTO` | `Roles=Admin,Lead` |
+| User | `GetStaffByWorkshopId` | GET `api/User/{workshopId:guid}/users-in-workshop` | inferred | `List<UsersDTO>` | `Roles=Admin,Lead` |
+| User | `GetStaffPerformance` | GET `api/User/staff-performance` | query | `List<StaffPerformanceDTO>` | `Roles=Admin` |
+| User | `GetStaffDashboard` | GET `api/User/staff-dashboard/{assignId}` | inferred | `StaffDashboardDTO` | `Roles=Staff` |
+| User | `GetGroupProgress` | GET `api/User/group-progress` | query | `GroupProgressDTO` | `Roles=Staff` |
+| User | `GetProfileAsync` | GET `api/User/profile` | none | `UserDTO` | `[Authorize]` |
+| User | `GetAllQCTransportAsync` | GET `api/User/all-QCTransport` | none | `List<UserDTO>` | `Roles=Lead` |
+| User | `GetAllLeadAsync` | GET `api/User/all-Lead` | none | `List<UserDTO>` | `Roles=Admin` |
+| User | `GetByUserIdAsync` | GET `api/User/by-userId` | query | `UserDTO` | `Roles=Admin,Lead` |
+| User | `AddUser` | POST `api/User` | body | `IActionResult` | `Roles=Admin` |
+| User | `UpdateUser` | PUT `api/User/{id:guid}` | body | `IActionResult` | `Roles=Admin` |
+| User | `ChangePassword` | PUT `api/User/change-password` | body | `IActionResult` | `[Authorize]` |
+| User | `UpdateProfile` | PUT `api/User/update-profile` | body | `IActionResult` | `[Authorize]` |
+| User | `ReactiveUser` | PUT `api/User/{userId:guid}/re-active` | inferred | `IActionResult` | `Roles=Admin` |
+| User | `DeleteUser` | DELETE `api/User/{id:guid}` | inferred | `IActionResult` | `Roles=Admin` |
+| Workshop | `GetWorkshopsTemplate` | GET `api/Workshop` | none | `List<WorkshopsDTO>` | `Roles=Admin,Lead,QC,QCK,Staff` |
+| Workshop | `AddWorkshop` | POST `api/Workshop` | body | `IActionResult` | `Roles=Admin` |
+| Workshop | `InsertWorkshopAsync` | PUT `api/Workshop/insert` | body | `IActionResult` | `Roles=Admin` |
+| Workshop | `UpdateAsync` | PUT `api/Workshop/update` | body | `IActionResult` | `Roles=Admin` |
+| Workshop | `SwapAsync` | PUT `api/Workshop/swap-workshop` | body | `IActionResult` | `Roles=Admin` |
+| Workshop | `DeleteAsync` | DELETE `api/Workshop` | body | `IActionResult` | `Roles=Admin` |
+| WorkshopInventory | `GetAllWorkshopInventory` | GET `api/WorkshopInventory` | none | `List<WorkshopInventoryDTO>` | `Roles=Admin,Lead,QC,QCK` |
+| WorkshopInventory | `GetWorkshopInvenntoryByWorkshopId` | GET `api/WorkshopInventory/{workshopId:guid}` | inferred | `List<WorkshopInventoryForExportDTO>` | `Roles=Admin,Lead,QC,QCK,QCTransport` |
+| WorkshopInventory | `GetWorkshopInventoryForQC` | GET `api/WorkshopInventory/for-qc` | none | `List<WorkshopInventoryForQCDTO>` | `Policy=QC` |
+| WorkshopInventory | `GetByMaterialId` | GET `api/WorkshopInventory/by-material` | query | `WorkshopInventoryDTO` | `Roles=Admin,Lead,QC,QCK,Staff` |
+
+## Mobile consumer index
+
+These are the consumer files found during the baseline scan. This is not a claim that no other consumer exists.
+
+| API area | Mobile consumer files |
+|---|---|
+| Auth | `D:\Clone\Tcaps\TCaps-Mobile-FE\app\config\api.ts` |
+| Assignment | `app/services/assignment-service.ts`, `app/services/production.service.ts` |
+| Assignment transfer | `app/services/assignment-transfer-service.ts` |
+| Batch | `app/services/batch-service.ts`, `app/hooks/use-batch-queries.ts`, `app/services/production.service.ts`, `app/(tabs)/request.tsx` |
+| Income | `app/services/income-service.ts` |
+| Material request/supply/workshop/use | `app/services/material-request-service.ts`, `app/services/material-request.service.ts`, `app/services/material-supply-service.ts`, `app/services/material-workshop-service.ts`, `app/services/inventory-service.ts`, `app/services/production.service.ts` |
+| Product | `app/services/product-service.ts` |
+| Production/evaluate | `app/services/production.service.ts` |
+| Notifications | `app/services/production.service.ts` |
+| Rework | `app/services/rework-request-service.ts` |
+| User | `app/services/user-service.ts`, `app/services/production.service.ts` |
+| Workshop/inventory | `app/services/workshop-service.ts`, `app/services/workshop-inventory-service.ts`, `app/services/inventory-service.ts` |
+
+## Refactor decisions
+
+1. Treat `UNMARKED` business actions as protected by default in Phase 2 until a product owner confirms a public use case.
+2. Add explicit `[AllowAnonymous]` to the login and password-recovery flow instead of relying on an implicit anonymous default.
+3. Preserve route strings such as `reconcilliation-summary`, `all-QCTransport`, and `for-QcTransport` during the compatibility window.
+4. Replace direct Domain Entity responses with DTOs feature by feature.
+5. Do not introduce a universal response envelope until the mobile client has an approved migration plan.
+
+## Phase 4 contract changes
+
+- `GET api/User/{workshopId:guid}` now returns `UserDTO`, excluding `PasswordHash` and other domain-only fields.
+- `POST api/User` and `PUT api/User/change-password` explicitly bind JSON request bodies; route strings and success payloads are unchanged.
+- WorkshopInventory, Income, MaterialWorkshop, ReworkRequest, Inventory, and Batch response boundaries now use DTOs while preserving the mobile-facing routes and scalar fields.
+- The direct entity-response migration for the scoped Phase 4 endpoints is complete; future changes should extend DTOs deliberately and keep domain navigation data out of API contracts.
+
+## Mobile compatibility verification — 2026-08-14
+
+- Batch consumers use the preserved root fields and `assignments`; the scan found no reads of removed aggregate navigation data such as `product`, `evaluates`, `productions`, or `materialUses`.
+- Rework consumers use the preserved scalar fields in `ReworkRequestResponseDTO`; the direct Inventory detail endpoint is not called by the current mobile services.
+- FE typecheck passes after aligning the changed request bindings and message-only write responses. ESLint has no errors; existing warnings remain in unrelated or pre-existing code.
+
+## Phase 5 contract changes
+
+- Login is now `POST api/Auth/login` with a JSON `LoginQuery` body; the mobile client sends the same contract.
+- Batch, ComponentDefect, TaskTransferRequest, and Workshop command writes now use explicit JSON bodies where their controllers bind `[FromBody]`.
+- Product update uses multipart form data and accepts an optional image; omitting an image preserves the existing stored image.
+- Batch, Product, and Workshop write methods expose message-only responses to the mobile service layer instead of casting `{ message }` to domain models.
+- Assignment-transfer approval requires explicit `completeQuantityReceive` and `noteLead` values from callers; callers now derive them from the selected transfer request or approval form.
+
+## Phase 6 legacy contract cleanup
+
+- Staff and QC batch reads use `staff/batches` and `qc/batches`; the mobile `bactches` typo is no longer supported by the current client.
+- QC assignment history uses `qc-lead-admin/assign-history/{batchId}` and both history/detail reads consume direct arrays.
+- QC material-request reads and task-transfer GET-by reads consume direct list/DTO responses from `HandleResult`/typed controller actions.
+- Production report-work accepts the BE's empty successful `200 OK`; QC quantity reduction sends `ProductionId` and `Quantity` in the JSON body.
+- Assignment-transfer approval maps `CompletedQuantitySend`/`CompletedQuantityReceive` and `NoteLead` explicitly before submitting `CompleteQuantityReceive`/`NoteLead`.
+- Task-transfer creation sends the required `DateToGo`; material-supply and rework creation are treated as message-only writes.
+- Workshop creation sends `Name`, `Description`, and `WorkshopType`; the mobile form no longer sends the ignored `stepOrder` field.
+- Login maps BE validation/not-found/conflict responses consistently for HTTP 400, 404, and 409.
+
+## Known contract issues
+
+- Older clients that still call `GET api/Auth` with query-bound credentials are incompatible with the current login contract and must migrate before deployment.
+- Several write actions outside the Phase 5 scope still use query-bound primitive parameters. Normalize them only with a matching mobile migration.
+- Staff-performance is an authenticated BE read but has no active mobile consumer in the current repository; implementation remains deferred until a screen contract exists.
+- Authorization markers reflect the current source metadata; role/claim semantics still require integration coverage.

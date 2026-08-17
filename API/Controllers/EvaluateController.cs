@@ -13,38 +13,40 @@ namespace API.Controllers
     [ApiController]
     public class EvaluateController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public EvaluateController(IMediator mediator)
+        public EvaluateController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<List<EvaluateDTO>> GetAll()
+        [Authorize(Roles = "Admin,Lead,QC,QCK,Staff")]
+        public async Task<ActionResult<List<EvaluateDTO>>> GetAll()
         {
-            return await _mediator.Send(new GetAllEvaluateQuery());
+            var result = await Mediator.Send(new GetAllEvaluateQuery());
+            return Ok(result);
         }
 
         [HttpGet("for-qc")]
         [Authorize(Policy = "QC")]
-        public async Task<List<EvaluateDTO>> GetByQCId([FromQuery] string? status)
+        public async Task<ActionResult<List<EvaluateDTO>>> GetByQCId([FromQuery] string? status)
         {
-            return await _mediator.Send(new GetEvaluatesByQCIdQuery
+            var result = await Mediator.Send(new GetEvaluatesByQCIdQuery
             {
                 QC_Id = CurrentUserId,
                 Status = status
             });
+            return Ok(result);
         }
 
         [HttpGet("for-staff")]
-        public async Task<List<EvaluateDTO>> GetByStaffId([FromQuery] Guid assignId)
+        [Authorize(Roles = "Staff")]
+        public async Task<ActionResult<List<EvaluateDTO>>> GetByStaffId([FromQuery] Guid assignId)
         {
-            return await _mediator.Send(new GetEvaluatesByStaffIdQuery
+            var result = await Mediator.Send(new GetEvaluatesByStaffIdQuery
             {
                 StaffId = CurrentUserId,
                 AssignId = assignId
             });
+            return Ok(result);
         }
 
         [HttpPost]
@@ -52,8 +54,8 @@ namespace API.Controllers
         public async Task<IActionResult> CreateEvaluate([FromForm] AddEvaluateCommand command)
         {
             command.UserId = CurrentUserId;
-            await _mediator.Send(command);
-            return Ok("Evaluate created successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Đánh giá đã được tạo thành công.");
         }
     }
 }

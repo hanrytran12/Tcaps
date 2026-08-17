@@ -1,41 +1,43 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Features.Materials.Commands.AddMaterial;
 using Application.Features.Materials.Queries;
 using Application.Features.Materials.Queries.GetAllMaterialToWatch;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MaterialController : ControllerBase
+    public class MaterialController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public MaterialController(IMediator mediator)
+        public MaterialController(ISender mediator) : base(mediator)
         {
-            _mediator = mediator;
         }
 
         [HttpGet]
-        public async Task<List<MaterialToWatchDTO>> GetAllMaterialsAsync()
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
+        public async Task<ActionResult<List<MaterialToWatchDTO>>> GetAllMaterialsAsync()
         {
-            return await _mediator.Send(new GetAllMaterialToWatchQuery());
+            var result = await Mediator.Send(new GetAllMaterialToWatchQuery());
+            return Ok(result);
         }
 
-
         [HttpGet("all")]
-        public async Task<List<MaterialDTO>> GetAllAsync([FromQuery] GetAllMaterialQuery query)
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport,Staff")]
+        public async Task<ActionResult<List<MaterialDTO>>> GetAllAsync([FromQuery] GetAllMaterialQuery query)
         {
-            return await _mediator.Send(query);
+            var result = await Mediator.Send(query);
+            return Ok(result);
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin,Lead")]
         public async Task<IActionResult> CreateMaterial([FromBody] AddMaterialCommand command)
         {
-            await _mediator.Send(command);
-            return Ok("Material created successfully");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo vật liệu thành công.");
         }
     }
 }

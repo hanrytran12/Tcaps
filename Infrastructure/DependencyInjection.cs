@@ -1,9 +1,9 @@
-﻿using Application.Common.Behaviors;
 using Application.DTOs.Request;
 using Application.Interfaces;
 using Azure.Storage.Blobs;
 using Domain.Interfaces;
-using Infrastructure.BackgroundService;
+using Infrastructure.BackgroundServices;
+using Infrastructure.Behaviors;
 using Infrastructure.Persistence;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -48,33 +48,26 @@ namespace Infrastructure
                     "Missing blob storage connection string. Set BLOB_STORAGE_SETTINGS or BlobStorageSettings:ConnectionString.");
             }
 
-            // Đăng ký DbContext
             services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(dbConnectionString, sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
-            // Đăng ký các interface của DbContext
             services.AddScoped<IAppDbContext>(provider => provider.GetRequiredService<AppDbContext>());
             services.AddScoped<IUnitOfWork>(provider => provider.GetRequiredService<AppDbContext>());
 
-            // Đăng ký Azure Blob Service
             services.AddSingleton(x =>
                 new BlobServiceClient(blobConnectionString));
 
-            // Đăng ký Behavior của Infrastructure
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
 
-            // Đăng ký Background Service
             services.AddHostedService<DeadlineCheckerService>();
 
-            // Đăng ký các Service của Infrastructure
             services.AddScoped<IFileStorageService, AzureBlobStorageService>();
             services.AddScoped<IJwtTokenGenerator, JwtTokenGenerator>();
             services.AddScoped<IPasswordHasher, PasswordHasher>();
-            services.AddScoped<INotificationService, NotificationServices>();
+            services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IAssignmentAutomationService, AssignmentAutomationService>();
 
-            // Đăng ký Repositories 
             services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
@@ -90,7 +83,7 @@ namespace Infrastructure
             services.AddScoped<IInventoryRepository, InventoryRepository>();
             services.AddScoped<IComponentDefectRepository, ComponentDefectRepository>();
             services.AddScoped<IMaterialUseRepository, MaterialUseRepository>();
-            services.AddScoped<IAssignmentTransferRequestRepository, AssisgnmentTransferRequestRepository>();
+            services.AddScoped<IAssignmentTransferRequestRepository, AssignmentTransferRequestRepository>();
             services.AddScoped<IMaterialWorkshopRepository, MaterialWorkshopRepository>();
             services.AddScoped<ITaskTransferRequestRepository, TaskTransferRequestRepository>();
             services.AddScoped<IWorkshopInventoryRepository, WorkshopInventoryRepository>();

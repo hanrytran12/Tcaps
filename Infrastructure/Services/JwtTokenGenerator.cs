@@ -1,4 +1,4 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
 using Application.Interfaces;
 using Domain.Entities;
 using Microsoft.Extensions.Configuration;
@@ -17,7 +17,7 @@ namespace Infrastructure.Services
             _configuration = configuration;
         }
 
-        public AuthRepsponseDTO GenerateToken(User user)
+        public AuthResponseDTO GenerateToken(User user)
         {
             var issuer = GetRequiredSetting("ISSUER", "JwtSettings:Issuer");
             var audience = GetRequiredSetting("AUDIENCE", "JwtSettings:Audience");
@@ -55,7 +55,7 @@ namespace Infrastructure.Services
             var securityToken = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(securityToken);
 
-            return new AuthRepsponseDTO
+            return new AuthResponseDTO
             {
                 Token = tokenString,
                 ExpiresAt = tokenDescriptor.Expires.Value,

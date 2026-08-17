@@ -20,7 +20,7 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkForDashboard
             var query = from rr in _appDbContext.ReworkRequests
                         where rr.AssignmentId == request.AssignmentId
                         join a in _appDbContext.Assignments on rr.AssignmentId equals a.Id
-                        join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
+                        join w in _appDbContext.Workshops on a.WorkshopId equals w.Id
                         join b in _appDbContext.Batches on a.BatchId equals b.Id
                         join u in _appDbContext.Users on rr.QcId equals u.Id
                         select new ReworkRequestDTO

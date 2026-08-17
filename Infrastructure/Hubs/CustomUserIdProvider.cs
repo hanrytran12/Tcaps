@@ -8,11 +8,9 @@ namespace Infrastructure.Hubs
     {
         public string? GetUserId(HubConnectionContext connection)
         {
-            // Lấy User ID từ 'sub' claim hoặc ClaimTypes.NameIdentifier
             var userId = connection.User?.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
                       ?? connection.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            
-            Console.WriteLine($"🔍 SignalR GetUserId: {userId}");
+
             return userId;
         }
     }

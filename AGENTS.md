@@ -4,10 +4,10 @@ This file contains repository-local guidance for the backend at D:\Clone\Tcaps\T
 
 ## Source of truth
 
-- Canonical baseline inspected for this guide: branch master, commit 24ddaf8.
+- Historical baseline used when this guide was created: branch master, commit 24ddaf8. Current branch/status is tracked in `docs/project-roadmap.md` and `docs/project-changelog.md`.
 - [docs/](./docs/) is the source of truth for architecture, standards, deployment, roadmap, and project context.
 - [README.md](./README.md) is the short onboarding entry point. Keep detailed explanations in docs/.
-- Verify branch and deployment assumptions before describing them as policy; the current workflow mentions main and feature/db-seeder, while this repository is on master.
+- Verify branch and deployment assumptions before describing them as policy; CI currently mentions main and feature/db-seeder, while this refactor work is on `refactor/api-contract-sync`.
 
 ## Repository map
 
@@ -73,7 +73,7 @@ The host and JwtTokenGenerator read JWT values from environment variables first.
 At minimum:
 
 1. Run dotnet build Tcaps.sln after code changes.
-2. Run available tests; do not claim coverage if no test project exists.
+2. Run the available test projects and report their actual result; do not infer coverage from a successful build.
 3. Check migration, configuration, and authorization changes for regressions.
 4. Inspect git diff and ensure no .env, credential, token, or generated build output is included.
 5. Update the relevant [docs/](./docs/) page when behavior, setup, architecture, or deployment changes.

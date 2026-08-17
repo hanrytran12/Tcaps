@@ -25,7 +25,7 @@ namespace Infrastructure.Repositories
 
         public async Task<IEnumerable<Batch>> GetAllAsync()
         {
-            return await _context.Batches.Include(b => b.Assignments).Where(b => !b.isDeleted).ToListAsync();
+            return await _context.Batches.Include(b => b.Assignments).Where(b => !b.IsDeleted).ToListAsync();
         }
 
         public async Task<Batch?> GetByIdAsync(Guid Id)
@@ -62,7 +62,7 @@ namespace Infrastructure.Repositories
         public async Task<bool> IsProductInUseAsync(Guid productId)
         {
             return await _context.Batches
-                                 .AnyAsync(b => b.ProductId == productId && !b.isDeleted);
+                                 .AnyAsync(b => b.ProductId == productId && !b.IsDeleted);
         }
 
         public async Task<bool> AreAllAssignmentsCompletedAsync(Guid batchId)
@@ -108,8 +108,7 @@ namespace Infrastructure.Repositories
         {
             return await _context.Batches
                                  .Include(b => b.Assignments)
-                                 .Include(b => b.Product)
-                                 .Where(b => b.UserId == userId && !b.isDeleted)
+                                 .Where(b => b.UserId == userId && !b.IsDeleted)
                                  .ToListAsync();
         }
     }

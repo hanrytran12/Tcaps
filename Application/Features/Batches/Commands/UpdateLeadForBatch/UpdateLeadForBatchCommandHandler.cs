@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Application.Common;
-using Application.Common.Exceptions;
-using Domain.Events;
 using Domain.Interfaces;
 using MediatR;
 
@@ -14,28 +7,29 @@ namespace Application.Features.Batches.Commands.UpdateLeadForBatch
     public class UpdateLeadForBatchCommandHandler : IRequestHandler<UpdateLeadForBatchCommand, Result<Guid>>
     {
         private readonly IBatchRepository _batchRepository;
-        private readonly IMediator _mediator;
+        private readonly IUserRepository _userRepository;
 
-        public UpdateLeadForBatchCommandHandler(IBatchRepository batchRepository, IMediator mediator)
+        public UpdateLeadForBatchCommandHandler(IBatchRepository batchRepository, IUserRepository userRepository)
         {
             _batchRepository = batchRepository;
-            _mediator = mediator;
+            _userRepository = userRepository;
         }
+
         public async Task<Result<Guid>> Handle(UpdateLeadForBatchCommand request, CancellationToken cancellationToken)
         {
             var batch = await _batchRepository.GetByIdAsync(request.BatchId);
             if (batch is null)
             {
-                throw new NotFoundException("Không tìm thấy lô hàng");
+                return Result<Guid>.NotFound($"Không tìm thấy lô hàng với mã {request.BatchId}.", "batch_not_found");
+            }
+
+            var user = await _userRepository.GetByIdAsync(request.UserId);
+            if (user is null)
+            {
+                return Result<Guid>.NotFound($"Không tìm thấy người dùng với mã {request.UserId}.", "user_not_found");
             }
 
             batch.UpdateLeadForBatch(request.UserId);
-
-            await _mediator.Publish(new AddBatchEvent(
-                request.UserId,
-                batch.Code,
-                batch.Quantity));
-
             return Result<Guid>.Success(batch.Id);
         }
     }

@@ -2,7 +2,7 @@
 
 namespace Application.Features.ReworkRequest.Queries.GetRequestById
 {
-    public class GetRequestByIdQuery : IRequest<Domain.Entities.ReworkRequest>
+    public class GetRequestByIdQuery : IRequest<Application.DTOs.Response.ReworkRequestResponseDTO>
     {
         public Guid ReworkRequestId { get; set; }
 

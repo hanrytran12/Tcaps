@@ -5,6 +5,7 @@ using Application.Features.MaterialSupplies.Command.CompletedMaterialSupply;
 using Application.Features.MaterialSupplies.Command.UpdateApproveByAdmin;
 using Application.Features.MaterialSupplies.Command.UpdateInProgressByQcTransport;
 using Application.Features.MaterialSupplies.Query.GetAllMaterialSupplies;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -15,15 +16,21 @@ namespace API.Controllers
     [ApiController]
     public class MaterialSupplyController : BaseApiController
     {
-        [HttpGet()]
-        public async Task<Result<List<MaterialSupplyDTO>>> GetAllAsync([FromQuery] string? status)
+        public MaterialSupplyController(ISender mediator) : base(mediator)
         {
-            return await Mediator.Send(new GetAllMaterialSuppliesQuery
+        }
+
+        [HttpGet()]
+        [Authorize(Roles = "Admin,Lead,QC,QCK,QCTransport")]
+        public async Task<IActionResult> GetAllAsync([FromQuery] string? status)
+        {
+            var result = await Mediator.Send(new GetAllMaterialSuppliesQuery
             {
                 UserId = CurrentUserId,
                 Role = User.FindFirstValue(ClaimTypes.Role),
                 Status = status
             });
+            return HandleResult(result);
         }
 
         [HttpPost]
@@ -31,45 +38,45 @@ namespace API.Controllers
         public async Task<IActionResult> CreateAsync([FromBody] AddMaterialSupplyCommand command)
         {
             command.LeadId = CurrentUserId;
-            await Mediator.Send(command);
-            return Ok("Tạo phiếu cung cấp vật tư thành công");
+            var result = await Mediator.Send(command);
+            return HandleResult(result, "Tạo phiếu cung cấp vật tư thành công");
         }
 
         [HttpPut("qcTransport/InProgress/{supplyId}")]
         [Authorize(Policy = "QCTransportOnly")]
         public async Task<IActionResult> UpdateInProgressAsync(Guid supplyId)
         {
-            await Mediator.Send(new UpdateInProgressByQcTransportCommand
+            var result = await Mediator.Send(new UpdateInProgressByQcTransportCommand
             {
                 QcTransportId = CurrentUserId,
                 SupplyId = supplyId
             });
-            return Ok("Cập nhật trạng thái thành công");
+            return HandleResult(result, "Cập nhật trạng thái thành công");
         }
 
         [HttpPut("qc/Completed/{supplyId}")]
-        [Authorize(Roles = "QC")]
+        [Authorize(Policy = "QC")]
         public async Task<IActionResult> UpdateCompletedAsync(Guid supplyId, int quantityReceive, string? note)
         {
-            await Mediator.Send(new CompletedMaterialSupplyCommand
+            var result = await Mediator.Send(new CompletedMaterialSupplyCommand
             {
                 QcId = CurrentUserId,
                 SupplyId = supplyId,
                 QuantityReceive = quantityReceive,
                 Note = note
             });
-            return Ok("Cập nhật trạng thái thành công");
+            return HandleResult(result, "Cập nhật trạng thái thành công");
         }
 
         [HttpPut("admin/Approve/{supplyId}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ApproveByAdminAsync(Guid supplyId)
         {
-            await Mediator.Send(new UpdateApproveByAdminCommand
+            var result = await Mediator.Send(new UpdateApproveByAdminCommand
             {
                 MaterialSupplyId = supplyId
             });
-            return Ok("Cập nhật trạng thái thành công");
+            return HandleResult(result, "Cập nhật trạng thái thành công");
         }
     }
 }

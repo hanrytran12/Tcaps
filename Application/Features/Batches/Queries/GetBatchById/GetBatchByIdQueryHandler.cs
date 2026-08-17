@@ -17,7 +17,7 @@ namespace Application.Features.Batches.Queries.GetBatchById
         public async Task<BatchDetailResponseDTO> Handle(GetBatchByIdQuery request, CancellationToken cancellationToken)
         {
             var query = _appDbContext.Batches.AsNoTracking();
-            query = query.Where(b => b.Id == request.BatchId && !b.isDeleted);
+            query = query.Where(b => b.Id == request.BatchId && !b.IsDeleted);
 
             var totalIncome = await _appDbContext.Incomes.Where(i => i.BatchId == request.BatchId).SumAsync(i => i.TotalPrice);
 
@@ -49,7 +49,7 @@ namespace Application.Features.Batches.Queries.GetBatchById
                 Assignments =
                 (
                     from a in data.Batch.Assignments
-                    join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
+                    join w in _appDbContext.Workshops on a.WorkshopId equals w.Id
                     orderby a.StepOrder
                     select new DashboardAssignmentDTO
                     {
