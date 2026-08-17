@@ -57,14 +57,14 @@ namespace Application.Features.MaterialSupplies.Command.CompletedMaterialSupply
             materialRequest.IncreaseQuantityActual(request.QuantityReceive);
             materialRequest.UpdateNoteFromQC(request.Note);
 
-            var materialUse = await _context.MaterialUse
+            var materialUse = await _context.MaterialUses
                 .FirstOrDefaultAsync(m => m.BatchId == materialRequest.BatchId
                                        && m.MaterialId == materialSupply.MaterialId);
             if (materialUse == null)
                 throw new NotFoundException("Không tìm thấy bản ghi sử dụng vật liệu cho lô hàng này.");
 
             materialUse.IncreaseQuantityRequest(materialSupply.QuantityReceive.Value);
-            _context.MaterialUse.Update(materialUse);
+            _context.MaterialUses.Update(materialUse);
 
             var supplier = await _context.Users.FindAsync(materialSupply.SupplierId);
             if (supplier == null)

@@ -53,7 +53,7 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkReconciliationSumm
             var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;
             var finalCompletedQuantity = summaryData.TotalSubmitted - totalLoss;
 
-            var materialSummaries = await _appDbContext.MaterialUse
+            var materialSummaries = await _appDbContext.MaterialUses
                 .AsNoTracking()
                 .Where(m => m.ReworkRequestId == summaryData.ReworkRequestId)
                 .Join(_appDbContext.Materials,

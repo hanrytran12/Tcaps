@@ -18,7 +18,7 @@ namespace Application.Features.MaterialWorkshops.Queries.GetMaterialWorkshopByQC
             var query = from mw in _appDbContext.MaterialWorkshops
                         where mw.WorkshopId == request.WorkshopId
                         join a in _appDbContext.Assignments on mw.AssignId equals a.Id
-                        join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
+                        join w in _appDbContext.Workshops on a.WorkshopId equals w.Id
                         join b in _appDbContext.Batches on a.BatchId equals b.Id
                         join p in _appDbContext.Products on b.ProductId equals p.Id
                         join u in _appDbContext.Users on mw.SupplierId equals u.Id

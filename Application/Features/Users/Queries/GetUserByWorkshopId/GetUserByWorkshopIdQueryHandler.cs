@@ -18,7 +18,7 @@ namespace Application.Features.Users.Queries.GetUserByWorkshopId
         public async Task<UserDTO> Handle(GetUserByWorkshopIdQuery request, CancellationToken cancellationToken)
         {
             var user = await (from u in _appDbContext.Users
-                              join workshop in _appDbContext.Workshop
+                              join workshop in _appDbContext.Workshops
                                   on u.WorkshopId equals workshop.Id into userWorkshops
                               from subWorkshop in userWorkshops.DefaultIfEmpty()
                               where u.WorkshopId == request.WorkshopId && u.Role == "QC"

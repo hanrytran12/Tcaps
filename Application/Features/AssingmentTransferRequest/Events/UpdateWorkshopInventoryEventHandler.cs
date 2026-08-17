@@ -19,7 +19,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
         public async Task Handle(TransferRequestAddedEvent notification, CancellationToken cancellationToken)
         {
-            var materialUse = await _appDbContext.MaterialUse.Where(m => m.AssignId == notification.AssignmentId).ToListAsync();
+            var materialUse = await _appDbContext.MaterialUses.Where(m => m.AssignId == notification.AssignmentId).ToListAsync();
 
             var assignment = await _appDbContext.Assignments.Where(a => a.Id == notification.AssignmentId).FirstOrDefaultAsync();
 
@@ -34,7 +34,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
 
                 if (surplusQuantity > 0)
                 {
-                    var workshopInventory = await _appDbContext.WorkshopInventory.Where(w => w.MaterialId == itemMaterialUse.MaterialId && w.WorkshopId == assignment.WorkshopId).FirstOrDefaultAsync();
+                    var workshopInventory = await _appDbContext.WorkshopInventories.Where(w => w.MaterialId == itemMaterialUse.MaterialId && w.WorkshopId == assignment.WorkshopId).FirstOrDefaultAsync();
                     if (workshopInventory is not null)
                     {
                         workshopInventory.IncreaseQuantity(surplusQuantity);

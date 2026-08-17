@@ -107,7 +107,7 @@ namespace Application.Features.Productions.Command.AddProductionReport
                     if (items.QuantityUsed <= 0)
                         throw new BadRequestException("Số lượng sử dụng phải lớn hơn 0");
 
-                    var listMaterialUse = await _appDbContext.MaterialUse.Where(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId).ToListAsync();
+                    var listMaterialUse = await _appDbContext.MaterialUses.Where(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId).ToListAsync();
 
                     if (listMaterialUse is null || listMaterialUse.Count == 0)
                     {
@@ -170,7 +170,7 @@ namespace Application.Features.Productions.Command.AddProductionReport
             {
                 foreach (var items in request.MaterialUsed)
                 {
-                    var listMaterialUse = await _appDbContext.MaterialUse.Where(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId).ToListAsync();
+                    var listMaterialUse = await _appDbContext.MaterialUses.Where(m => m.MaterialId == items.MaterialId && m.AssignId == request.AssignId).ToListAsync();
 
                     MaterialUse? targetMaterialUse;
 

@@ -16,7 +16,7 @@ namespace Application.Features.Users.Queries.GetStaffByWorkshopId
 
         public async Task<List<UsersDTO>> Handle(GetStaffByWorkshopIdQuery request, CancellationToken cancellationToken)
         {
-            var query = from w in _appDbContext.Workshop
+            var query = from w in _appDbContext.Workshops
                         join u in _appDbContext.Users on w.Id equals u.WorkshopId
                         where w.Id == request.WorkshopId && (u.Role == "Staff")
                         select new UsersDTO

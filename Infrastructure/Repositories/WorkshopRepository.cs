@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+using Domain.Entities;
 using Domain.Interfaces;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -16,47 +16,47 @@ namespace Infrastructure.Repositories
 
         public async Task AddAsync(Workshop workshop)
         {
-            await _context.Workshop.AddAsync(workshop);
+            await _context.Workshops.AddAsync(workshop);
         }
 
         public void Delete(Workshop workshop)
         {
-            _context.Workshop.Remove(workshop);
+            _context.Workshops.Remove(workshop);
         }
 
         public async Task<bool> ExistNameAsync(string name)
         {
-            return await _context.Workshop.AnyAsync(ws => ws.Name == name);
+            return await _context.Workshops.AnyAsync(ws => ws.Name == name);
         }
 
         public Task<bool> ExistsAsync(Guid? id)
         {
-            return _context.Workshop.AnyAsync(ws => ws.Id == id);
+            return _context.Workshops.AnyAsync(ws => ws.Id == id);
         }
 
         public async Task<bool> ExistsStepOrderAsync(int stepOrder)
         {
-            return await _context.Workshop.AnyAsync(ws => ws.StepOrder == stepOrder);
+            return await _context.Workshops.AnyAsync(ws => ws.StepOrder == stepOrder);
         }
 
         public async Task<IEnumerable<Workshop>> FindByNameAsync(string name)
         {
-            return await _context.Workshop.Where(ws => ws.Name.Contains(name)).ToListAsync();
+            return await _context.Workshops.Where(ws => ws.Name.Contains(name)).ToListAsync();
         }
 
         public async Task<IEnumerable<Workshop>> GetAllAsync()
         {
-            return await _context.Workshop.ToListAsync();
+            return await _context.Workshops.ToListAsync();
         }
 
         public async Task<Workshop?> GetByIdAsync(Guid? id)
         {
-            return await _context.Workshop.FindAsync(id);
+            return await _context.Workshops.FindAsync(id);
         }
 
         public async Task<List<Workshop>> GetByIdsAsync(List<Guid> ids)
         {
-            return await _context.Workshop
+            return await _context.Workshops
                 .AsNoTracking()
                 .Where(w => ids.Contains(w.Id))
                 .ToListAsync();
@@ -64,28 +64,28 @@ namespace Infrastructure.Repositories
 
         public async Task<int?> GetMaxStepOrderAsync()
         {
-            return await _context.Workshop
+            return await _context.Workshops
                 .Where(w => w.WorkshopType == Domain.Enums.WorkshopType.Internal)
                 .MaxAsync(w => w.StepOrder);
         }
 
         public async Task ShiftStepOrdersUpAsync(int from, int to)
         {
-            await _context.Workshop
+            await _context.Workshops
                 .Where(w => w.StepOrder >= from && w.StepOrder <= to)
                 .ExecuteUpdateAsync(s => s.SetProperty(w => w.StepOrder, w => w.StepOrder - 1));
         }
 
         public async Task ShiftStepOrdersDownAsync(int from, int to)
         {
-            await _context.Workshop
+            await _context.Workshops
                 .Where(w => w.StepOrder >= from && w.StepOrder <= to)
                 .ExecuteUpdateAsync(s => s.SetProperty(w => w.StepOrder, w => w.StepOrder + 1));
         }
 
         public async Task ReindexFromAsync(int fromStepOrder)
         {
-            var workshops = await _context.Workshop
+            var workshops = await _context.Workshops
                 .Where(w => w.StepOrder != null && w.StepOrder >= fromStepOrder)
                 .OrderBy(w => w.StepOrder)
                 .ToListAsync();
@@ -99,7 +99,7 @@ namespace Infrastructure.Repositories
 
         public void Update(Workshop workshop)
         {
-            _context.Workshop.Update(workshop);
+            _context.Workshops.Update(workshop);
         }
     }
 }

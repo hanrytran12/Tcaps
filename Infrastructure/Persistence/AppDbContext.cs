@@ -26,15 +26,15 @@ namespace Infrastructure.Persistence
         public DbSet<Notification> Notifications { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<User> Users { get; set; }
-        public DbSet<Workshop> Workshop { get; set; }
+        public DbSet<Workshop> Workshops { get; set; }
         public DbSet<Assignment> Assignments { get; set; }
         public DbSet<Production> Productions { get; set; }
         public DbSet<Evaluate> Evaluates { get; set; }
-        public DbSet<MaterialUse> MaterialUse { get; set; }
+        public DbSet<MaterialUse> MaterialUses { get; set; }
         public DbSet<AssignmentTransferRequest> AssignmentTransferRequests { get; set; }
         public DbSet<MaterialWorkshop> MaterialWorkshops { get; set; }
         public DbSet<TaskTransferRequest> TaskTransferRequests { get; set; }
-        public DbSet<WorkshopInventory> WorkshopInventory { get; set; }
+        public DbSet<WorkshopInventory> WorkshopInventories { get; set; }
         public DbSet<ReworkRequest> ReworkRequests { get; set; }
         public DbSet<MaterialSupply> MaterialSupplies { get; set; }
         public DbSet<FinalTransferRequest> FinalTransferRequests { get; set; }

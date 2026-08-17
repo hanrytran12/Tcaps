@@ -53,7 +53,7 @@ namespace Application.Features.Batches.Queries.GetDashboardStats
                 Assignments =
                 (
                     from a in data.Batch.Assignments
-                    join w in _context.Workshop on a.WorkshopId equals w.Id
+                    join w in _context.Workshops on a.WorkshopId equals w.Id
                     select new DashboardAssignmentDTO
                     {
                         WorkshopName = w.Name,

@@ -34,7 +34,7 @@ namespace Application.Features.MaterialRequest.Queries.GetMaterialRequestForQcTr
                                         join u in _context.Users.AsNoTracking()
                                             on mr.UserId equals u.Id
 
-                                        join w in _context.Workshop.AsNoTracking()
+                                        join w in _context.Workshops.AsNoTracking()
                                             on u.WorkshopId equals w.Id into workshopGroup
                                         from wItem in workshopGroup.DefaultIfEmpty()
                                         where mr.Id == request.MaterialRequestId

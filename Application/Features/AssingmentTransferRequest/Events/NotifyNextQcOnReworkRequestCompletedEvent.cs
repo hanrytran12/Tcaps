@@ -32,7 +32,7 @@ namespace Application.Features.AssingmentTransferRequest.Events
             var nextAssigment = assigment.Where(a => a.StepOrder > stepCurrent).OrderBy(a => a.StepOrder).FirstOrDefault();
 
             var qcUser = await _appDbContext.Users.Where(u => u.WorkshopId == nextAssigment.WorkshopId).FirstOrDefaultAsync();
-            var workshopName = await _appDbContext.Workshop.Where(w => w.Id == queryInfo.a.WorkshopId).Select(w => w.Name).FirstOrDefaultAsync(cancellationToken);
+            var workshopName = await _appDbContext.Workshops.Where(w => w.Id == queryInfo.a.WorkshopId).Select(w => w.Name).FirstOrDefaultAsync(cancellationToken);
             var batchCode = await _appDbContext.Batches.Where(b => b.Id == queryInfo.a.BatchId).Select(b => b.Code).FirstOrDefaultAsync();
 
             var type = "REWORK_DELIVERY_INCOMING";

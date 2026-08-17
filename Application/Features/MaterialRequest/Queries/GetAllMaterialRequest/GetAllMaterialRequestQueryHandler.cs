@@ -37,7 +37,7 @@ namespace Application.Features.MaterialRequest.Queries.GetAllMaterialRequest
                                         join u in _appDbContext.Users.AsNoTracking()
                                             on mr.UserId equals u.Id
 
-                                        join w in _appDbContext.Workshop.AsNoTracking()
+                                        join w in _appDbContext.Workshops.AsNoTracking()
                                             on u.WorkshopId equals w.Id into workshopGroup
                                         from wItem in workshopGroup.DefaultIfEmpty()
                                         select new MaterialRequestDTO

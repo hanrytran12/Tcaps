@@ -35,7 +35,7 @@ namespace Application.Features.Batches.Queries.GetBatchesByQCId
                 join p in _context.Products.AsNoTracking()
                     on b.ProductId equals p.Id
 
-                join w in _context.Workshop.AsNoTracking()
+                join w in _context.Workshops.AsNoTracking()
                     on a.WorkshopId equals w.Id
 
                 // 🔥 FIX: LEFT JOIN User (Lead có thể NULL)

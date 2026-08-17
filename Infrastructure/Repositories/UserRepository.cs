@@ -93,9 +93,12 @@ namespace Infrastructure.Repositories
 
         public async Task<Guid> GetWorkshopIdByQCIdAsync(Guid qc_id)
         {
-            return (Guid)await _context.Users
+            var workshopId = await _context.Users
                 .Where(u => u.Id == qc_id)
-                .Select(u => u.WorkshopId).FirstOrDefaultAsync();
+                .Select(u => u.WorkshopId)
+                .FirstOrDefaultAsync();
+
+            return workshopId ?? Guid.Empty;
         }
 
         public async Task<bool> IsEmailTakenByAnotherUserAsync(string email, Guid userId)

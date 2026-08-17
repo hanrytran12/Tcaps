@@ -36,7 +36,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetTransferRequ
             var qcUser = resultInfo.QcUser;
             var listMaterial = new List<ReconciliationMaterials>();
 
-            var materialQuery = from mu in _appDbContext.MaterialUse
+            var materialQuery = from mu in _appDbContext.MaterialUses
                                 join ma in _appDbContext.Materials on mu.MaterialId equals ma.Id
                                 select new { mu, ma };
 

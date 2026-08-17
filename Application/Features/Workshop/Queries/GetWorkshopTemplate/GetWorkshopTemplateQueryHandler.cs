@@ -17,7 +17,7 @@ namespace Application.Features.Workshop.Queries.GetWorkshopTemplate
 
         public async Task<List<WorkshopsDTO>> Handle(GetWorkshopTemplateQuery request, CancellationToken cancellationToken)
         {
-            return await _appDbContext.Workshop
+            return await _appDbContext.Workshops
                 .OrderBy(w => w.StepOrder)
                 .Select(w => new WorkshopsDTO
                 {

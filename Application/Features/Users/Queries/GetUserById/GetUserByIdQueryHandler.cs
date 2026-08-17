@@ -18,7 +18,7 @@ namespace Application.Features.Users.Queries.GetUserById
         {
             var user = from u in _appDbContext.Users
                        where u.Id == request.UserId && u.Status == "Active"
-                       join w in _appDbContext.Workshop on u.WorkshopId equals w.Id into userWorkshop
+                       join w in _appDbContext.Workshops on u.WorkshopId equals w.Id into userWorkshop
                        from subW in userWorkshop.DefaultIfEmpty()
                        select new UserDTO
                        {

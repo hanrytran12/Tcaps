@@ -21,7 +21,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAssignmentTr
                       join batch in _context.Batches on assignment.BatchId equals batch.Id
                       join product in _context.Products on batch.ProductId equals product.Id
                       join user in _context.Users on assignTransfer.UserId equals user.Id
-                      join workshop in _context.Workshop on assignment.WorkshopId equals workshop.Id
+                      join workshop in _context.Workshops on assignment.WorkshopId equals workshop.Id
                       where assignTransfer.Id == request.AssignmentTransferRequestId
                       select new AssignmentTransferRequestDTO
                       {

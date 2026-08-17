@@ -32,7 +32,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllForQcTran
                                      join assignment in _context.Assignments
                                      on assignTransfer.AssignmentId equals assignment.Id
 
-                                     join workshop in _context.Workshop
+                                     join workshop in _context.Workshops
                                      on assignment.WorkshopId equals workshop.Id
 
                                      join batch in _context.Batches

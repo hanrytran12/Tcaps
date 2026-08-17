@@ -18,7 +18,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
         {
             var query = from tr in _appDbContext.AssignmentTransferRequests.AsNoTracking()
                         join a in _appDbContext.Assignments.AsNoTracking() on tr.AssignmentId equals a.Id
-                        join w in _appDbContext.Workshop.AsNoTracking() on a.WorkshopId equals w.Id
+                        join w in _appDbContext.Workshops.AsNoTracking() on a.WorkshopId equals w.Id
                         join b in _appDbContext.Batches.AsNoTracking() on a.BatchId equals b.Id
                         join p in _appDbContext.Products.AsNoTracking() on b.ProductId equals p.Id
                         join u in _appDbContext.Users.AsNoTracking() on tr.UserId equals u.Id
@@ -44,7 +44,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetAllTransferR
                             NextWorkshopName = _appDbContext.Assignments
                                 .Where(nextA => nextA.BatchId == a.BatchId && nextA.StepOrder > a.StepOrder)
                                 .OrderBy(nextA => nextA.StepOrder)
-                                .Join(_appDbContext.Workshop,
+                                .Join(_appDbContext.Workshops,
                                       nextA => nextA.WorkshopId,
                                       nextW => nextW.Id,
                                       (nextA, nextW) => nextW.Name)

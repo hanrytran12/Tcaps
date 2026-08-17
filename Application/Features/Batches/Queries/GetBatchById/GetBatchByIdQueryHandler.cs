@@ -49,7 +49,7 @@ namespace Application.Features.Batches.Queries.GetBatchById
                 Assignments =
                 (
                     from a in data.Batch.Assignments
-                    join w in _appDbContext.Workshop on a.WorkshopId equals w.Id
+                    join w in _appDbContext.Workshops on a.WorkshopId equals w.Id
                     orderby a.StepOrder
                     select new DashboardAssignmentDTO
                     {

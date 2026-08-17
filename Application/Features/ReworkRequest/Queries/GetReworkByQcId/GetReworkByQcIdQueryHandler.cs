@@ -22,7 +22,7 @@ namespace Application.Features.ReworkRequest.Queries.GetReworkByQcId
         {
             var dtos = await (from r in _context.ReworkRequests
                              join assign in _context.Assignments on r.AssignmentId equals assign.Id
-                             join w in _context.Workshop on assign.WorkshopId equals w.Id
+                             join w in _context.Workshops on assign.WorkshopId equals w.Id
                              join u in _context.Users on w.Id equals u.WorkshopId
                              join b in _context.Batches on assign.BatchId equals b.Id
                              where u.Id == request.QcId

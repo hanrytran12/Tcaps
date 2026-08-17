@@ -15,7 +15,7 @@ namespace Application.Features.MaterialUses.Query.GetMaterialUseByAssignId
         }
         public async Task<List<MaterialUseDTO>> Handle(GetMaterialUseByAssignIdQuery request, CancellationToken cancellationToken)
         {
-            var query = from mu in _context.MaterialUse
+            var query = from mu in _context.MaterialUses
                         join m in _context.Materials on mu.MaterialId equals m.Id
                         where mu.AssignId == request.AssignId
                         select new MaterialUseDTO

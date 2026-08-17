@@ -27,7 +27,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                         from batchItem in batchGroup.DefaultIfEmpty()
 
                             // LEFT JOIN với Workshop
-                        join workshop in _context.Workshop.AsNoTracking()
+                        join workshop in _context.Workshops.AsNoTracking()
                             on ttr.WorkshopId equals workshop.Id into workshopGroup
                         from workshopItem in workshopGroup.DefaultIfEmpty()
 
@@ -67,7 +67,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetAllTaskTransferRe
                                     from a in _context.Assignments
                                     where a.StepOrder > assignment.StepOrder
                                     orderby a.StepOrder
-                                    join w in _context.Workshop on a.WorkshopId equals w.Id
+                                    join w in _context.Workshops on a.WorkshopId equals w.Id
                                     select w.Name
                                   ).FirstOrDefault()
 

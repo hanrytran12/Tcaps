@@ -50,7 +50,7 @@ namespace Application.Features.AssingmentTransferRequest.Queries.GetReconciliati
             var totalLoss = summaryData.TotalRejected + summaryData.TotalUnfixable;
             var finalCompletedQuantity = summaryData.TotalSubmitted - totalLoss;
 
-            var materialSummaries = await _context.MaterialUse
+            var materialSummaries = await _context.MaterialUses
                 .AsNoTracking()
                 .Where(m => m.AssignId == request.AssigmentId)
                 .Join(_context.Materials,

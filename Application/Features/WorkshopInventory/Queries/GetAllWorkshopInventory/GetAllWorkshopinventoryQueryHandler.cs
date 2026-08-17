@@ -15,7 +15,7 @@ namespace Application.Features.WorkshopInventory.Queries.GetAllWorkshopInventory
 
         public async Task<List<Application.DTOs.Response.WorkshopInventoryDTO>> Handle(GetAllWorkshopInventoryQuery request, CancellationToken cancellationToken)
         {
-            return await _appDbContext.WorkshopInventory
+            return await _appDbContext.WorkshopInventories
                 .AsNoTracking()
                 .Select(inventory => new Application.DTOs.Response.WorkshopInventoryDTO
                 {

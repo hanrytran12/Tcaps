@@ -37,7 +37,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                             on ttr.BatchId equals batch.Id into batchGroup
                         from batchItem in batchGroup.DefaultIfEmpty()
 
-                        join workshop in _context.Workshop.AsNoTracking()
+                        join workshop in _context.Workshops.AsNoTracking()
                             on ttr.WorkshopId equals workshop.Id into workshopGroup
                         from workshopItem in workshopGroup.DefaultIfEmpty()
 
@@ -70,7 +70,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetTaskTransferReque
                                     where a.BatchId == currentAssign.BatchId
                                        && a.StepOrder > currentAssign.StepOrder
                                     orderby a.StepOrder
-                                    join w in _context.Workshop on a.WorkshopId equals w.Id
+                                    join w in _context.Workshops on a.WorkshopId equals w.Id
                                     select w.Name
                                 ).FirstOrDefault()
 

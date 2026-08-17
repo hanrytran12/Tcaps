@@ -59,7 +59,7 @@ namespace Application.Features.FinalTransferRequest.Command.ApproveFinalTransfer
             }
 
             var workshop = await (from a in _context.Assignments
-                           join w in _context.Workshop
+                           join w in _context.Workshops
                            on a.WorkshopId equals w.Id
                            where a.Id == assignTransfer.AssignmentId
                            select w).FirstOrDefaultAsync();

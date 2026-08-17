@@ -73,7 +73,7 @@ namespace Infrastructure.Services
             var assignments = await _context.Assignments
                 .Where(a => a.StartDate == today
                          && a.Status == "Planned"
-                         && _context.Workshop.Any(w => w.Id == a.WorkshopId && w.WorkshopType == WorkshopType.Outsource))
+                         && _context.Workshops.Any(w => w.Id == a.WorkshopId && w.WorkshopType == WorkshopType.Outsource))
                 .ToListAsync(token);
 
             if (!assignments.Any())

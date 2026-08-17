@@ -27,7 +27,7 @@ namespace Application.Features.WorkshopInventory.Queries.GetWorkshopInventoryFor
                 throw new NotFoundException("User not found");
             }
 
-            var query = from w in _appDbContext.WorkshopInventory
+            var query = from w in _appDbContext.WorkshopInventories
                         join m in _appDbContext.Materials on w.MaterialId equals m.Id
                         join a in _appDbContext.Assignments on w.WorkshopId equals a.WorkshopId
                         join b in _appDbContext.Batches on a.BatchId equals b.Id

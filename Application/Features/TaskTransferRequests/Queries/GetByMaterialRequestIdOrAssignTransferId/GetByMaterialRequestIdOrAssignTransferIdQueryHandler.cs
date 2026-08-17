@@ -31,7 +31,7 @@ namespace Application.Features.TaskTransferRequests.Queries.GetByMaterialRequest
                         from batchItem in batchGroup.DefaultIfEmpty()
 
                             // LEFT JOIN với Workshop
-                        join workshop in _context.Workshop.AsNoTracking()
+                        join workshop in _context.Workshops.AsNoTracking()
                             on ttr.WorkshopId equals workshop.Id into workshopGroup
                         from workshopItem in workshopGroup.DefaultIfEmpty()
 

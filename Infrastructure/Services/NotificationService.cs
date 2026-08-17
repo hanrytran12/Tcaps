@@ -1212,7 +1212,7 @@ namespace Infrastructure.Services
             var query = from a in _context.Assignments
                         where a.Id == assignmentId
                         join b in _context.Batches on a.BatchId equals b.Id
-                        join w in _context.Workshop on a.WorkshopId equals w.Id
+                        join w in _context.Workshops on a.WorkshopId equals w.Id
                         select new { batchCode = b.Code, workshopName = w.Name, LeadId = b.UserId };
 
             var assignmentInfo = await query.AsNoTracking().FirstOrDefaultAsync();
