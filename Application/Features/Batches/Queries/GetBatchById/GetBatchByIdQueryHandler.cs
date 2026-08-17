@@ -17,7 +17,7 @@ namespace Application.Features.Batches.Queries.GetBatchById
         public async Task<BatchDetailResponseDTO> Handle(GetBatchByIdQuery request, CancellationToken cancellationToken)
         {
             var query = _appDbContext.Batches.AsNoTracking();
-            query = query.Where(b => b.Id == request.BatchId && !b.isDeleted);
+            query = query.Where(b => b.Id == request.BatchId && !b.IsDeleted);
 
             var totalIncome = await _appDbContext.Incomes.Where(i => i.BatchId == request.BatchId).SumAsync(i => i.TotalPrice);
 

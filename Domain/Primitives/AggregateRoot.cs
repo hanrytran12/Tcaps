@@ -1,8 +1,8 @@
-﻿using MediatR;
+using MediatR;
 
 namespace Domain.Primitives
 {
-    public abstract class AggregrateRoot : Entity
+    public abstract class AggregateRoot : Entity
     {
         private readonly List<INotification> _domainEvents = new();
 
@@ -13,11 +13,11 @@ namespace Domain.Primitives
             _domainEvents.Add(domainEvent);
         }
 
-        public void ClearDomainEvent()
+        public void ClearDomainEvents()
         {
             _domainEvents.Clear();
         }
 
-        protected AggregrateRoot(Guid Id) : base(Id) { }
+        protected AggregateRoot(Guid Id) : base(Id) { }
     }
 }

@@ -146,13 +146,13 @@ namespace Infrastructure.Persistence
             while (true)
             {
                 var domainEvents = ChangeTracker
-                    .Entries<AggregrateRoot>()
+                    .Entries<AggregateRoot>()
                     .Select(e => e.Entity)
                     .Where(e => e.DomainEvents.Any())
                     .SelectMany(e =>
                     {
                         var events = e.DomainEvents.ToList();
-                        e.ClearDomainEvent();
+                        e.ClearDomainEvents();
                         return events;
                     }).ToList();
 

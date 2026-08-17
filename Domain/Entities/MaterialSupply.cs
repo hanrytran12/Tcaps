@@ -17,6 +17,10 @@ namespace Domain.Entities
         public string? Note { get; private set; }
         public string? LeadNote { get; private set; }
 
+        private MaterialSupply() : base(Guid.NewGuid()) { }
+
+
+
         public MaterialSupply(Guid id, Guid requestId, Guid materialId, Guid supplierId, Guid workshopId, int quantitySend, string unit, DateTime dateShip, string? status, string? leadNote) : base(id)
         {
             RequestId = requestId;

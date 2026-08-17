@@ -2,7 +2,7 @@
 
 namespace Domain.Entities
 {
-    public class Production : AggregrateRoot
+    public class Production : AggregateRoot
     {
         public Guid AssignId { get; private set; }
         public Guid UserId { get; private set; }
@@ -24,7 +24,6 @@ namespace Domain.Entities
             Status = "PendingQC";
             ReworkRequestId = reworkRequestId;
 
-            //AddDomainEvent(new ProductionCreatedEvent(assignId, userId, quantitySend));
         }
 
         private Production() : base(Guid.NewGuid()) { }

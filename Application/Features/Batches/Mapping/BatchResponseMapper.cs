@@ -21,7 +21,7 @@ public static class BatchResponseMapper
             CreatedAt = batch.CreatedAt,
             Status = batch.Status,
             Note = batch.Note,
-            IsDeleted = batch.isDeleted,
+            IsDeleted = batch.IsDeleted,
             Assignments = batch.Assignments.Select(assignment => new BatchAssignmentResponseDTO
             {
                 Id = assignment.Id,

@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class Inventory : AggregrateRoot
+    public class Inventory : AggregateRoot
     {
         public Guid MaterialId { get; private set; }
         public int Quantity { get; private set; }

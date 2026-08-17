@@ -52,7 +52,7 @@ public class BatchResponseContractTests
         Assert.Equal(batch.CreatedAt, dto.CreatedAt);
         Assert.Equal(batch.Status, dto.Status);
         Assert.Equal(batch.Note, dto.Note);
-        Assert.Equal(batch.isDeleted, dto.IsDeleted);
+        Assert.Equal(batch.IsDeleted, dto.IsDeleted);
 
         var assignmentDto = Assert.Single(dto.Assignments);
         Assert.Equal(assignment.Id, assignmentDto.Id);

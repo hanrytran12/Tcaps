@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class ReworkRequest : AggregrateRoot
+    public class ReworkRequest : AggregateRoot
     {
         public Guid QcId { get; private set; }
         public Guid AssignmentId { get; private set; }

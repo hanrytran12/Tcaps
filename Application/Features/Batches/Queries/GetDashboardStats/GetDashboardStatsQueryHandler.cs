@@ -16,7 +16,7 @@ namespace Application.Features.Batches.Queries.GetDashboardStats
         public async Task<DashboardResultDTO> Handle(GetDashboardStatsQuery request, CancellationToken cancellationToken)
         {
             var query = _context.Batches.AsNoTracking();
-            query = query.Where(batch => batch.ProductId == request.ProductId && !batch.isDeleted);
+            query = query.Where(batch => batch.ProductId == request.ProductId && !batch.IsDeleted);
 
             if (request.StartDate != null)
             {

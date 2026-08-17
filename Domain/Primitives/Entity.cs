@@ -35,13 +35,13 @@
             return other.Id == Id;
         }
 
-        public static bool operator ==(Entity one, Entity two)
+        public static bool operator ==(Entity? one, Entity? two)
         {
             if (ReferenceEquals(one, null) && ReferenceEquals(two, null)) return true;
             if (ReferenceEquals(one, null) || ReferenceEquals(two, null)) return false;
             return one.Equals(two);
         }
 
-        public static bool operator !=(Entity one, Entity two) => !(one == two);
+        public static bool operator !=(Entity? one, Entity? two) => !(one == two);
     }
 }

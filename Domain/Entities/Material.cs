@@ -3,7 +3,7 @@ using Domain.Primitives;
 
 namespace Domain.Entities
 {
-    public class Material : AggregrateRoot
+    public class Material : AggregateRoot
     {
         public string Name { get; private set; } = string.Empty;
         public string Description { get; private set; } = string.Empty;

@@ -1,5 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using Domain.Primitives;
+﻿using Domain.Primitives;
 
 namespace Domain.Entities
 {
@@ -11,8 +10,7 @@ namespace Domain.Entities
         public string Description { get; private set; } = string.Empty;
         public bool IsDeleted { get; private set; }
         public DateTime CreatedAt { get; private set; } = DateTime.Now;
-        [JsonIgnore]
-        public ICollection<Batch> Batches { get; private set; } = new List<Batch>();
+                public ICollection<Batch> Batches { get; private set; } = new List<Batch>();
 
         public Product(Guid id, string code, string name, string image, string description)
             : base(id)
