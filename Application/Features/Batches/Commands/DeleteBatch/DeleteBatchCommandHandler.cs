@@ -1,5 +1,4 @@
-﻿using Application.Common;
-using Application.Common.Exceptions;
+using Application.Common;
 using Domain.Interfaces;
 using MediatR;
 
@@ -18,7 +17,7 @@ namespace Application.Features.Batches.Commands.DeleteBatch
             var batch = await _batchRepository.GetByIdAsync(request.Id);
             if (batch is null)
             {
-                throw new NotFoundException($"Batch with Id: {request.Id} not found.");
+                return Result.NotFound($"Không tìm thấy lô hàng với mã {request.Id}.", "batch_not_found");
             }
 
             try
@@ -27,8 +26,9 @@ namespace Application.Features.Batches.Commands.DeleteBatch
             }
             catch (InvalidOperationException ex)
             {
-                return Result.Failure(ex.Message);
+                return Result.Failure(ex.Message, "invalid_batch_state");
             }
+
             return Result.Success();
         }
     }
