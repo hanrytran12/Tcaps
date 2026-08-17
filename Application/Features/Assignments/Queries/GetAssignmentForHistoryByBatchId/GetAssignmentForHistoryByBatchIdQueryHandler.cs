@@ -88,7 +88,7 @@ namespace Application.Features.Assignments.Queries.GetAssignmentForHistoryByBatc
 
                         Items = g
                             .GroupBy(x => new { x.StaffId, x.StaffName })
-                            .Select(sg => new StaffWorksingDTO
+                            .Select(sg => new StaffWorkingDTO
                             {
                                 StaffId = sg.Key.StaffId,
                                 StaffName = sg.Key.StaffName ?? "Chưa có dữ liệu.",

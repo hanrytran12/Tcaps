@@ -18,6 +18,6 @@ namespace Application.DTOs.Response
         public DateOnly? DateCompleted { get; set; }
         public DateOnly? ExpectedDeliveryDate { get; set; }
         public string Status { get; set; } = string.Empty;
-        public ICollection<StaffWorksingDTO> Items { get; set; }
+        public ICollection<StaffWorkingDTO> Items { get; set; }
     }
 }

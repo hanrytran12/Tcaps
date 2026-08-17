@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using Application.DTOs.Response;
-using Application.Features.FinalTransferRequest.Command.ApproveFinalTransferRequest;
+using Application.Features.FinalTransferRequest.Commands.ApproveFinalTransferRequest;
 using Application.Features.FinalTransferRequest.Queries.GetAllFinalTransferRequest;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
