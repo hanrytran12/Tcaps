@@ -1,6 +1,6 @@
-﻿using Application.DTOs.Response;
+using Application.DTOs.Response;
+using Application.Features.Notifications.Queries.GetNotificationCount;
 using Application.Features.Notifications.Queries.GetNotifications;
-using Application.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,17 +12,14 @@ namespace API.Controllers
     [Authorize]
     public class NotificationController : BaseApiController
     {
-        private readonly INotificationService _notificationService;
-
-        public NotificationController(INotificationService notificationService, ISender mediator) : base(mediator)
+        public NotificationController(ISender mediator) : base(mediator)
         {
-            _notificationService = notificationService;
         }
 
         [HttpGet("count")]
         public async Task<IActionResult> CountNotification()
         {
-            var result = await _notificationService.CountNotificationAsync(CurrentUserId);
+            var result = await Mediator.Send(new GetNotificationCountQuery(CurrentUserId));
             return HandleResult(result);
         }
 

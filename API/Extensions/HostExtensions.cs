@@ -86,6 +86,7 @@ public static class HostExtensions
 
     public static void UseApiPipeline(this WebApplication app)
     {
+        app.UseExceptionHandler();
         app.UseForwardedHeaders(new ForwardedHeadersOptions
         {
             ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
@@ -113,7 +114,6 @@ public static class HostExtensions
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseRateLimiter();
-        app.UseExceptionHandler();
         app.MapControllers();
         app.MapHub<NotificationHub>("/hubs/notificationHub");
     }
