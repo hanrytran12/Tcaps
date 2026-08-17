@@ -2,8 +2,6 @@
 
 Backend API for the TCAPS production, material, inventory, quality-control, transfer, notification, and user workflows.
 
-> Last verified: 2026-08-15 against `refactor/api-contract-sync`. Operational settings can change; verify API/Program.cs, compose.yml, and the CI workflow before deployment.
-
 ## Capabilities
 
 - JWT authentication, registration, password reset, OTP verification, and role/policy authorization.
@@ -42,7 +40,7 @@ See [AGENTS.md](./AGENTS.md) for repository rules and [docs/codebase-summary.md]
 
 ## Configuration
 
-The host searches the current directory and parent directories for .env. Do not commit or share secret values. Historical revisions contained a tracked .env; keep local copies ignored and rotate every exposed value.
+The host searches the current directory and parent directories for .env. Do not commit or share secret values.
 
 | Purpose | Configuration names |
 |---|---|
@@ -53,8 +51,6 @@ The host searches the current directory and parent directories for .env. Do not 
 | Azure Blob | BLOB_STORAGE_SETTINGS or BlobStorageSettings__ConnectionString |
 | Email | BREVO_API_KEY, BREVO_SENDER_NAME, BREVO_SENDER_EMAIL |
 | SQL Server container | SA_PASSWORD, ACCEPT_EULA |
-
-Use placeholders in local notes and CI secret stores. Never copy real values into this README or docs/.
 
 ## Run locally
 
@@ -84,7 +80,7 @@ docker compose logs -f tcaps
 docker compose down
 ~~~
 
-Compose defines tcaps, tcapdb (SQL Server), and tcaps_redis (Redis), with persistent volumes for database and Redis data. The current Compose file pulls hanryhuy/tcaps:latest; it does not build the API image from the working tree.
+Compose defines tcaps, tcapdb (SQL Server), and tcaps_redis (Redis), with persistent volumes for database and Redis data.
 
 ## API usage
 
@@ -101,7 +97,7 @@ git status --short
 git -c core.autocrlf=false diff --check
 ~~~
 
-The current BE test suite contains 44 passing tests. This verifies compilation, contract mapping, and focused authorization behavior; it does not replace runtime smoke testing against configured SQL Server, Redis, Blob Storage, email, or deployed JWTs.
+The current BE test suite contains 44 passing tests.
 
 ## Documentation index
 
@@ -117,9 +113,3 @@ The current BE test suite contains 44 passing tests. This verifies compilation, 
 - [docs/project-roadmap.md](./docs/project-roadmap.md) — evidence-based next steps
 - [docs/project-changelog.md](./docs/project-changelog.md) — implementation and verification history
 - [docs/deployment-guide.md](./docs/deployment-guide.md) — local/container/CI deployment notes
-
-## Known issues to confirm
-
-- CI/CD triggers main and feature/db-seeder, while the current canonical source is master.
-- Historical revisions exposed .env and configuration credentials; rotate them and keep local .env files ignored.
-- JWT signing and startup seeding require environment variables; do not restore secrets to appsettings files.
