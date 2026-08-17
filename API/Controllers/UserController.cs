@@ -1,6 +1,7 @@
 using Application.DTOs.Request;
 using Application.DTOs.Response;
 using Application.Features.Users.Commands.AddUser;
+using Application.Features.Users.Commands.ChangePassword;
 using Application.Features.Users.Commands.DeleteUser;
 using Application.Features.Users.Commands.ReactiveUser;
 using Application.Features.Users.Commands.UpdateUser;
@@ -27,11 +28,8 @@ namespace API.Controllers
     [Route("api/[controller]")]
     public class UserController : BaseApiController
     {
-        private readonly IStaffService _staffService;
-
-        public UserController(ISender mediator, IStaffService staffService) : base(mediator)
+        public UserController(ISender mediator) : base(mediator)
         {
-            _staffService = staffService;
         }
 
         [HttpGet]
@@ -150,7 +148,8 @@ namespace API.Controllers
         [Authorize]
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDTO dto, CancellationToken cancellationToken)
         {
-            var result = await _staffService.ChangePasswordAsync(CurrentUserId, dto.CurrentPassword, dto.NewPassword, cancellationToken);
+            var command = new ChangePasswordCommand(CurrentUserId, dto.CurrentPassword, dto.NewPassword);
+            var result = await Mediator.Send(command, cancellationToken);
             return HandleResult(result, "Đổi mật khẩu thành công");
         }
 

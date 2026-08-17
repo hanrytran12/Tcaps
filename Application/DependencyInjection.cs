@@ -1,4 +1,4 @@
-﻿using Application.Common.Behaviors;
+using Application.Common.Behaviors;
 using Application.Interfaces;
 using Application.Services;
 using FluentValidation;
@@ -28,7 +28,6 @@ namespace Application
 
             // Đăng ký các Service
             services.AddScoped<IAssignmentCompletionService, AssignmentCompletionService>();
-            services.AddScoped<IStaffService, StaffService>();
 
             return services;
         }
